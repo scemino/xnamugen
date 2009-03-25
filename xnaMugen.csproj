@@ -1,0 +1,599 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{B0B64C1B-4908-4B5E-9DAC-7CFDDA38BFF3}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>xnaMugen</RootNamespace>
+    <AssemblyName>xnaMugen</AssemblyName>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <StartupObject>xnaMugen.EntryPoint</StartupObject>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release - Diagnostic|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Local Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;FRANTZX</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release - Diagnostic|x64' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Local Debug|x64' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Local Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Local Release|AnyCPU' ">
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE;FRANTZX</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Local Release|x64' ">
+    <OutputPath>bin\x64\Local Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release - Diagnostic|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>EMULATE_ENGINE_BUG DIAGNOSTIC</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>EMULATE_ENGINE_BUG</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Local Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;FRANTZX EMULATE_ENGINE_BUG</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Local Release|x86' ">
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE;FRANTZX EMULATE_ENGINE_BUG</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Test Program|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;FRANTZX TEST</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Test Program|x64' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Test Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Test Program|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;FRANTZX TEST EMULATE_ENGINE_BUG</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;FRANTZX</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;EMULATE_ENGINE_BUG</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <ItemGroup>
+    <Reference Include="Microsoft.DirectX, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" />
+    <Reference Include="Microsoft.DirectX.DirectSound, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" />
+    <Reference Include="Microsoft.Xna.Framework, Version=3.0.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d, processorArchitecture=x86">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Microsoft.Xna.Framework.Game, Version=3.0.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d, processorArchitecture=MSIL">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Windows.Forms" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="data\Internal.cns" />
+    <Compile Include="src\AssemblyInfo.cs" />
+    <Compile Include="src\Animations\Animation.cs" />
+    <Compile Include="src\Animations\AnimationElement.cs" />
+    <Compile Include="src\Animations\AnimationLoader.cs" />
+    <Compile Include="src\Animations\AnimationManager.cs" />
+    <Compile Include="src\Animations\AnimationSystem.cs" />
+    <Compile Include="src\Animations\Clsn.cs" />
+    <Compile Include="src\Audio\Channel.cs" />
+    <Compile Include="src\Audio\ChannelId.cs" />
+    <Compile Include="src\Audio\SoundManager.cs" />
+    <Compile Include="src\Audio\SoundSystem.cs" />
+    <Compile Include="src\Backgrounds\Animated.cs" />
+    <Compile Include="src\Backgrounds\BackgroundType.cs" />
+    <Compile Include="src\Backgrounds\Base.cs" />
+    <Compile Include="src\Backgrounds\Collection.cs" />
+    <Compile Include="src\Backgrounds\Parallax.cs" />
+    <Compile Include="src\Backgrounds\Static.cs" />
+    <Compile Include="src\Blending.cs" />
+    <Compile Include="src\Collections\CircularBuffer.cs" />
+    <Compile Include="src\Collections\DataList.cs" />
+    <Compile Include="src\Collections\DictionaryIterator.cs" />
+    <Compile Include="src\Collections\KeyedCollection.cs" />
+    <Compile Include="src\Collections\ListIterator.cs" />
+    <Compile Include="src\Collections\ReadOnlyDictionary.cs" />
+    <Compile Include="src\Collections\ReadOnlyKeyedCollection.cs" />
+    <Compile Include="src\Collections\ReadOnlyList.cs" />
+    <Compile Include="src\Combat\AfterImage.cs" />
+    <Compile Include="src\Combat\Camera.cs" />
+    <Compile Include="src\Combat\Character.cs" />
+    <Compile Include="src\Combat\CharacterAssertions.cs" />
+    <Compile Include="src\Combat\CharacterBind.cs" />
+    <Compile Include="src\Combat\CharacterDimensions.cs" />
+    <Compile Include="src\Combat\CharacterVariables.cs" />
+    <Compile Include="src\Combat\Clock.cs" />
+    <Compile Include="src\Combat\Collision.cs" />
+    <Compile Include="src\Combat\CombatChecker.cs" />
+    <Compile Include="src\Combat\ComboCounter.cs" />
+    <Compile Include="src\Combat\DefensiveInfo.cs" />
+    <Compile Include="src\Combat\EngineAssertions.cs" />
+    <Compile Include="src\Combat\EngineInitialization.cs" />
+    <Compile Include="src\Combat\EngineObject.cs" />
+    <Compile Include="src\Combat\Entity.cs" />
+    <Compile Include="src\Combat\EntityCollection.cs" />
+    <Compile Include="src\Combat\EnvironmentColor.cs" />
+    <Compile Include="src\Combat\EnvironmentShake.cs" />
+    <Compile Include="src\Combat\Explod.cs" />
+    <Compile Include="src\Combat\ExplodData.cs" />
+    <Compile Include="src\Combat\FightEngine.cs" />
+    <Compile Include="src\Combat\Helper.cs" />
+    <Compile Include="src\Combat\HelperData.cs" />
+    <Compile Include="src\Combat\HitAttribute.cs" />
+    <Compile Include="src\Combat\HitBy.cs" />
+    <Compile Include="src\Combat\HitDefinition.cs" />
+    <Compile Include="src\Combat\HitFlag.cs" />
+    <Compile Include="src\Combat\HitOverride.cs">
+    </Compile>
+    <Compile Include="src\Combat\HitPriority.cs" />
+    <Compile Include="src\Combat\HitType.cs" />
+    <Compile Include="src\Combat\Logic\Base.cs" />
+    <Compile Include="src\Combat\Logic\CombatOver.cs" />
+    <Compile Include="src\Combat\Logic\DisplayRoundNumber.cs" />
+    <Compile Include="src\Combat\Logic\Fighting.cs" />
+    <Compile Include="src\Combat\Logic\NoMoreFighting.cs" />
+    <Compile Include="src\Combat\Logic\ShowCharacterIntro.cs" />
+    <Compile Include="src\Combat\Logic\PreIntro.cs" />
+    <Compile Include="src\Combat\Logic\ShowFight.cs" />
+    <Compile Include="src\Combat\Logic\ShowWinPose.cs" />
+    <Compile Include="src\Combat\OffensiveInfo.cs" />
+    <Compile Include="src\Combat\PaletteFx.cs" />
+    <Compile Include="src\Combat\Pause.cs" />
+    <Compile Include="src\Combat\Player.cs" />
+    <Compile Include="src\Combat\PlayerConstants.cs" />
+    <Compile Include="src\Combat\Projectile.cs" />
+    <Compile Include="src\Combat\ProjectileData.cs" />
+    <Compile Include="src\Combat\ProjectileInfo.cs" />
+    <Compile Include="src\Combat\RoundInformation.cs" />
+    <Compile Include="src\Combat\Stage.cs" />
+    <Compile Include="src\Combat\Team.cs" />
+    <Compile Include="src\Combat\TeamDisplay.cs" />
+    <Compile Include="src\Combat\VictoryStatus.cs" />
+    <Compile Include="src\Combat\Win.cs" />
+    <Compile Include="src\Commands\BufferCount.cs" />
+    <Compile Include="src\Commands\ButtonArray.cs" />
+    <Compile Include="src\Commands\Command.cs" />
+    <Compile Include="src\Commands\CommandChecker.cs" />
+    <Compile Include="src\Commands\CommandElement.cs" />
+    <Compile Include="src\Commands\CommandManager.cs" />
+    <Compile Include="src\Commands\CommandSystem.cs" />
+    <Compile Include="src\Commands\InputBuffer.cs" />
+    <Compile Include="src\Delegates.cs" />
+    <Compile Include="src\Diagnostics\DiagnosticForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="src\Diagnostics\DiagnosticSystem.cs" />
+    <Compile Include="src\Diagnostics\GeneralPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="src\Drawing\Font.cs" />
+    <Compile Include="src\Drawing\FontMap.cs" />
+    <Compile Include="src\Drawing\Palette.cs" />
+    <Compile Include="src\Drawing\PcxLoader.cs" />
+    <Compile Include="src\Drawing\PrintData.cs" />
+    <Compile Include="src\Drawing\Sprite.cs" />
+    <Compile Include="src\Drawing\SpriteFile.cs" />
+    <Compile Include="src\Drawing\SpriteFileData.cs" />
+    <Compile Include="src\Drawing\SpriteFileDataCollection.cs" />
+    <Compile Include="src\Drawing\SpriteFileVersion.cs" />
+    <Compile Include="src\Drawing\SpriteManager.cs" />
+    <Compile Include="src\Drawing\SpriteSystem.cs" />
+    <Compile Include="src\Elements\AnimatedImage.cs" />
+    <Compile Include="src\Elements\Base.cs" />
+    <Compile Include="src\Elements\Collection.cs" />
+    <Compile Include="src\Elements\DataMap.cs" />
+    <Compile Include="src\Elements\StaticImage.cs" />
+    <Compile Include="src\Elements\Text.cs" />
+    <Compile Include="src\EntryPoint.cs" />
+    <Compile Include="src\Enumerations.cs" />
+    <Compile Include="src\EvaluationHelper.cs" />
+    <Compile Include="src\Evaluation\Attributes.cs" />
+    <Compile Include="src\Evaluation\EvaluationSystem.cs" />
+    <Compile Include="src\Evaluation\Expression.cs" />
+    <Compile Include="src\Evaluation\Function.cs" />
+    <Compile Include="src\Evaluation\IExpression.cs" />
+    <Compile Include="src\Evaluation\Node.cs" />
+    <Compile Include="src\Evaluation\Number.cs" />
+    <Compile Include="src\Evaluation\NumberReturn.cs" />
+    <Compile Include="src\Evaluation\Operations.cs" />
+    <Compile Include="src\Evaluation\Operators.cs" />
+    <Compile Include="src\Evaluation\ParseState.cs" />
+    <Compile Include="src\Evaluation\PrefixedExpression.cs" />
+    <Compile Include="src\Evaluation\Result.cs" />
+    <Compile Include="src\Evaluation\Symbols.cs" />
+    <Compile Include="src\Evaluation\Token.cs" />
+    <Compile Include="src\Evaluation\Tokenizer.cs" />
+    <Compile Include="src\Evaluation\TokenizerData.cs" />
+    <Compile Include="src\Evaluation\TreeBuilder.cs" />
+    <Compile Include="src\Evaluation\Triggers\Abs.cs" />
+    <Compile Include="src\Evaluation\Triggers\Acos.cs" />
+    <Compile Include="src\Evaluation\Triggers\Alive.cs" />
+    <Compile Include="src\Evaluation\Triggers\Anim.cs" />
+    <Compile Include="src\Evaluation\Triggers\AnimElem.cs" />
+    <Compile Include="src\Evaluation\Triggers\AnimElemNo.cs" />
+    <Compile Include="src\Evaluation\Triggers\AnimElemTime.cs" />
+    <Compile Include="src\Evaluation\Triggers\AnimExist.cs" />
+    <Compile Include="src\Evaluation\Triggers\AnimTime.cs" />
+    <Compile Include="src\Evaluation\Triggers\Asin.cs" />
+    <Compile Include="src\Evaluation\Triggers\Assertion.cs" />
+    <Compile Include="src\Evaluation\Triggers\Atan.cs" />
+    <Compile Include="src\Evaluation\Triggers\AuthorName.cs" />
+    <Compile Include="src\Evaluation\Triggers\BackEdgeBodyDist.cs" />
+    <Compile Include="src\Evaluation\Triggers\BackEdgeDist.cs" />
+    <Compile Include="src\Evaluation\Triggers\CanRecover.cs" />
+    <Compile Include="src\Evaluation\Triggers\Ceil.cs" />
+    <Compile Include="src\Evaluation\Triggers\Command.cs" />
+    <Compile Include="src\Evaluation\Triggers\Const.cs" />
+    <Compile Include="src\Evaluation\Triggers\Cos.cs" />
+    <Compile Include="src\Evaluation\Triggers\Ctrl.cs" />
+    <Compile Include="src\Evaluation\Triggers\DrawGame.cs" />
+    <Compile Include="src\Evaluation\Triggers\E.cs" />
+    <Compile Include="src\Evaluation\Triggers\Exp.cs" />
+    <Compile Include="src\Evaluation\Triggers\Facing.cs" />
+    <Compile Include="src\Evaluation\Triggers\Floor.cs" />
+    <Compile Include="src\Evaluation\Triggers\FrontEdgeBodyDist.cs" />
+    <Compile Include="src\Evaluation\Triggers\FrontEdgeDist.cs" />
+    <Compile Include="src\Evaluation\Triggers\FVar.cs" />
+    <Compile Include="src\Evaluation\Triggers\GameTime.cs" />
+    <Compile Include="src\Evaluation\Triggers\GetHitVar.cs" />
+    <Compile Include="src\Evaluation\Triggers\HitCount.cs" />
+    <Compile Include="src\Evaluation\Triggers\HitDefAttr.cs" />
+    <Compile Include="src\Evaluation\Triggers\HitFall.cs" />
+    <Compile Include="src\Evaluation\Triggers\HitOver.cs" />
+    <Compile Include="src\Evaluation\Triggers\HitPauseTime.cs" />
+    <Compile Include="src\Evaluation\Triggers\HitShakeOver.cs" />
+    <Compile Include="src\Evaluation\Triggers\HitVel.cs" />
+    <Compile Include="src\Evaluation\Triggers\ID.cs" />
+    <Compile Include="src\Evaluation\Triggers\IfElse.cs" />
+    <Compile Include="src\Evaluation\Triggers\InGuardDist.cs" />
+    <Compile Include="src\Evaluation\Triggers\IsHelper.cs" />
+    <Compile Include="src\Evaluation\Triggers\IsHomeTeam.cs" />
+    <Compile Include="src\Evaluation\Triggers\Life.cs" />
+    <Compile Include="src\Evaluation\Triggers\LifeMax.cs" />
+    <Compile Include="src\Evaluation\Triggers\Ln.cs" />
+    <Compile Include="src\Evaluation\Triggers\Log.cs" />
+    <Compile Include="src\Evaluation\Triggers\Lose.cs" />
+    <Compile Include="src\Evaluation\Triggers\MatchNo.cs" />
+    <Compile Include="src\Evaluation\Triggers\MatchOver.cs" />
+    <Compile Include="src\Evaluation\Triggers\MoveContact.cs" />
+    <Compile Include="src\Evaluation\Triggers\MoveGuarded.cs" />
+    <Compile Include="src\Evaluation\Triggers\MoveHit.cs" />
+    <Compile Include="src\Evaluation\Triggers\MoveReversed.cs" />
+    <Compile Include="src\Evaluation\Triggers\MoveType.cs" />
+    <Compile Include="src\Evaluation\Triggers\Name.cs" />
+    <Compile Include="src\Evaluation\Triggers\NumEnemy.cs" />
+    <Compile Include="src\Evaluation\Triggers\NumExplod.cs" />
+    <Compile Include="src\Evaluation\Triggers\NumHelper.cs" />
+    <Compile Include="src\Evaluation\Triggers\NumPartner.cs" />
+    <Compile Include="src\Evaluation\Triggers\NumProj.cs" />
+    <Compile Include="src\Evaluation\Triggers\NumProjID.cs" />
+    <Compile Include="src\Evaluation\Triggers\NumTarget.cs" />
+    <Compile Include="src\Evaluation\Triggers\P1Name.cs" />
+    <Compile Include="src\Evaluation\Triggers\P2BodyDist.cs" />
+    <Compile Include="src\Evaluation\Triggers\P2Dist.cs" />
+    <Compile Include="src\Evaluation\Triggers\P2Life.cs" />
+    <Compile Include="src\Evaluation\Triggers\P2MoveType.cs" />
+    <Compile Include="src\Evaluation\Triggers\P2Name.cs" />
+    <Compile Include="src\Evaluation\Triggers\P2StateNo.cs" />
+    <Compile Include="src\Evaluation\Triggers\P2StateType.cs" />
+    <Compile Include="src\Evaluation\Triggers\P3Name.cs" />
+    <Compile Include="src\Evaluation\Triggers\P4Name.cs" />
+    <Compile Include="src\Evaluation\Triggers\PalNo.cs" />
+    <Compile Include="src\Evaluation\Triggers\ParentDist.cs" />
+    <Compile Include="src\Evaluation\Triggers\Physics.cs" />
+    <Compile Include="src\Evaluation\Triggers\Pi.cs" />
+    <Compile Include="src\Evaluation\Triggers\PlayerIDExist.cs" />
+    <Compile Include="src\Evaluation\Triggers\Pos.cs" />
+    <Compile Include="src\Evaluation\Triggers\Power.cs" />
+    <Compile Include="src\Evaluation\Triggers\PowerMax.cs" />
+    <Compile Include="src\Evaluation\Triggers\PrevStateNo.cs" />
+    <Compile Include="src\Evaluation\Triggers\ProjCancelTime.cs" />
+    <Compile Include="src\Evaluation\Triggers\ProjContact.cs" />
+    <Compile Include="src\Evaluation\Triggers\ProjContactTime.cs" />
+    <Compile Include="src\Evaluation\Triggers\ProjGuarded.cs" />
+    <Compile Include="src\Evaluation\Triggers\ProjGuardedTime.cs" />
+    <Compile Include="src\Evaluation\Triggers\ProjHit.cs" />
+    <Compile Include="src\Evaluation\Triggers\ProjHitTime.cs" />
+    <Compile Include="src\Evaluation\Triggers\Random.cs" />
+    <Compile Include="src\Evaluation\Triggers\Redirection.cs" />
+    <Compile Include="src\Evaluation\Triggers\RootDist.cs" />
+    <Compile Include="src\Evaluation\Triggers\RoundNo.cs" />
+    <Compile Include="src\Evaluation\Triggers\RoundsExisted.cs" />
+    <Compile Include="src\Evaluation\Triggers\RoundState.cs" />
+    <Compile Include="src\Evaluation\Triggers\ScreenPos.cs" />
+    <Compile Include="src\Evaluation\Triggers\SelfAnimExist.cs" />
+    <Compile Include="src\Evaluation\Triggers\Sin.cs" />
+    <Compile Include="src\Evaluation\Triggers\StateNo.cs" />
+    <Compile Include="src\Evaluation\Triggers\StateType.cs" />
+    <Compile Include="src\Evaluation\Triggers\SysFVar.cs" />
+    <Compile Include="src\Evaluation\Triggers\SysVar.cs" />
+    <Compile Include="src\Evaluation\Triggers\Tan.cs" />
+    <Compile Include="src\Evaluation\Triggers\TeamMode.cs" />
+    <Compile Include="src\Evaluation\Triggers\TeamSide.cs" />
+    <Compile Include="src\Evaluation\Triggers\TicksPerSecond.cs" />
+    <Compile Include="src\Evaluation\Triggers\Time.cs" />
+    <Compile Include="src\Evaluation\Triggers\TimeMod.cs" />
+    <Compile Include="src\Evaluation\Triggers\UniqHitCount.cs" />
+    <Compile Include="src\Evaluation\Triggers\Var.cs" />
+    <Compile Include="src\Evaluation\Triggers\Vel.cs" />
+    <Compile Include="src\Evaluation\Triggers\Win.cs" />
+    <Compile Include="src\Events\Base.cs" />
+    <Compile Include="src\Events\FadeScreen.cs" />
+    <Compile Include="src\Events\SetupCombat.cs" />
+    <Compile Include="src\Events\SwitchScreen.cs" />
+    <Compile Include="src\InitializationSettings.cs" />
+    <Compile Include="src\Input\ButtonMap.cs" />
+    <Compile Include="src\Input\ButtonWrapper.cs" />
+    <Compile Include="src\Input\InputElement.cs" />
+    <Compile Include="src\Input\InputState.cs" />
+    <Compile Include="src\Input\InputSystem.cs" />
+    <Compile Include="src\Input\PlayerButtonDelegate.cs" />
+    <Compile Include="src\Input\PlayerButtonMap.cs" />
+    <Compile Include="src\Input\SystemButtonDelegate.cs" />
+    <Compile Include="src\Input\SystemButtonMap.cs" />
+    <Compile Include="src\IO\File.cs" />
+    <Compile Include="src\IO\FileHeaders\PCX.cs" />
+    <Compile Include="src\IO\FileSystem.cs" />
+    <Compile Include="src\IO\TextFile.cs" />
+    <Compile Include="src\IO\TextFileBuilder.cs" />
+    <Compile Include="src\IO\TextSection.cs" />
+    <Compile Include="src\Log.cs" />
+    <Compile Include="src\Menus\CombatScreen.cs" />
+    <Compile Include="src\Menus\MenuSystem.cs" />
+    <Compile Include="src\Menus\NonCombatScreen.cs" />
+    <Compile Include="src\Menus\Screen.cs" />
+    <Compile Include="src\Menus\SelectData.cs" />
+    <Compile Include="src\Menus\SelectScreen.cs" />
+    <Compile Include="src\Menus\TitleScreen.cs" />
+    <Compile Include="src\Menus\VersusData.cs" />
+    <Compile Include="src\Menus\VersusScreen.cs" />
+    <Compile Include="src\Mugen.cs" />
+    <Compile Include="src\PlayerCreation.cs" />
+    <Compile Include="src\Point.cs" />
+    <Compile Include="src\Profiles.cs" />
+    <Compile Include="src\Resource.cs" />
+    <Compile Include="src\Random.cs" />
+    <Compile Include="src\SharedBuffer.cs" />
+    <Compile Include="src\SoundId.cs" />
+    <Compile Include="src\SpriteId.cs" />
+    <Compile Include="src\StageProfile.cs" />
+    <Compile Include="src\StateMachine\Controllers\AfterImage.cs" />
+    <Compile Include="src\StateMachine\Controllers\AfterImageTime.cs" />
+    <Compile Include="src\StateMachine\Controllers\AllPalFx.cs" />
+    <Compile Include="src\StateMachine\Controllers\AngleAdd.cs" />
+    <Compile Include="src\StateMachine\Controllers\AngleDraw.cs" />
+    <Compile Include="src\StateMachine\Controllers\AngleMul.cs" />
+    <Compile Include="src\StateMachine\Controllers\AngleSet.cs" />
+    <Compile Include="src\StateMachine\Controllers\AppendToClipboard.cs" />
+    <Compile Include="src\StateMachine\Controllers\AssertSpecial.cs" />
+    <Compile Include="src\StateMachine\Controllers\AttackDist.cs" />
+    <Compile Include="src\StateMachine\Controllers\AttackMulSet.cs" />
+    <Compile Include="src\StateMachine\Controllers\BGPalFx.cs" />
+    <Compile Include="src\StateMachine\Controllers\BindToParent.cs" />
+    <Compile Include="src\StateMachine\Controllers\BindToRoot.cs" />
+    <Compile Include="src\StateMachine\Controllers\BindToTarget.cs" />
+    <Compile Include="src\StateMachine\Controllers\ChangeAnim.cs" />
+    <Compile Include="src\StateMachine\Controllers\ChangeAnim2.cs" />
+    <Compile Include="src\StateMachine\Controllers\ChangeState.cs" />
+    <Compile Include="src\StateMachine\Controllers\ClearClipboard.cs" />
+    <Compile Include="src\StateMachine\Controllers\CtrlSet.cs" />
+    <Compile Include="src\StateMachine\Controllers\DefenseMulSet.cs" />
+    <Compile Include="src\StateMachine\Controllers\DestroySelf.cs" />
+    <Compile Include="src\StateMachine\Controllers\DisplayToClipboard.cs" />
+    <Compile Include="src\StateMachine\Controllers\EnvColor.cs" />
+    <Compile Include="src\StateMachine\Controllers\EnvShake.cs" />
+    <Compile Include="src\StateMachine\Controllers\Explod.cs" />
+    <Compile Include="src\StateMachine\Controllers\ExplodBindTime.cs" />
+    <Compile Include="src\StateMachine\Controllers\FallEnvShake.cs" />
+    <Compile Include="src\StateMachine\Controllers\ForceFeedback.cs" />
+    <Compile Include="src\StateMachine\Controllers\GameMakeAnim.cs" />
+    <Compile Include="src\StateMachine\Controllers\Gravity.cs" />
+    <Compile Include="src\StateMachine\Controllers\Helper.cs" />
+    <Compile Include="src\StateMachine\Controllers\HitAdd.cs" />
+    <Compile Include="src\StateMachine\Controllers\HitBy.cs" />
+    <Compile Include="src\StateMachine\Controllers\HitDef.cs" />
+    <Compile Include="src\StateMachine\Controllers\HitFallDamage.cs" />
+    <Compile Include="src\StateMachine\Controllers\HitFallSet.cs" />
+    <Compile Include="src\StateMachine\Controllers\HitFallVel.cs" />
+    <Compile Include="src\StateMachine\Controllers\HitOverride.cs" />
+    <Compile Include="src\StateMachine\Controllers\HitVelSet.cs" />
+    <Compile Include="src\StateMachine\Controllers\LifeAdd.cs" />
+    <Compile Include="src\StateMachine\Controllers\LifeSet.cs" />
+    <Compile Include="src\StateMachine\Controllers\MakeDust.cs" />
+    <Compile Include="src\StateMachine\Controllers\ModifyExplod.cs" />
+    <Compile Include="src\StateMachine\Controllers\MoveHitReset.cs" />
+    <Compile Include="src\StateMachine\Controllers\NotHitBy.cs" />
+    <Compile Include="src\StateMachine\Controllers\Null.cs" />
+    <Compile Include="src\StateMachine\Controllers\Offset.cs" />
+    <Compile Include="src\StateMachine\Controllers\PalFx.cs" />
+    <Compile Include="src\StateMachine\Controllers\ParentVarAdd.cs" />
+    <Compile Include="src\StateMachine\Controllers\ParentVarSet.cs" />
+    <Compile Include="src\StateMachine\Controllers\Pause.cs" />
+    <Compile Include="src\StateMachine\Controllers\PlayerPush.cs" />
+    <Compile Include="src\StateMachine\Controllers\PlaySnd.cs" />
+    <Compile Include="src\StateMachine\Controllers\PosAdd.cs" />
+    <Compile Include="src\StateMachine\Controllers\PosFreeze.cs" />
+    <Compile Include="src\StateMachine\Controllers\PosSet.cs" />
+    <Compile Include="src\StateMachine\Controllers\PowerAdd.cs" />
+    <Compile Include="src\StateMachine\Controllers\PowerSet.cs" />
+    <Compile Include="src\StateMachine\Controllers\Projectile.cs" />
+    <Compile Include="src\StateMachine\Controllers\RemoveExplod.cs" />
+    <Compile Include="src\StateMachine\Controllers\ReversalDef.cs" />
+    <Compile Include="src\StateMachine\Controllers\ScreenBound.cs" />
+    <Compile Include="src\StateMachine\Controllers\SelfState.cs" />
+    <Compile Include="src\StateMachine\Controllers\SndPan.cs" />
+    <Compile Include="src\StateMachine\Controllers\SprPriority.cs" />
+    <Compile Include="src\StateMachine\Controllers\StateTypeSet.cs" />
+    <Compile Include="src\StateMachine\Controllers\StopSound.cs" />
+    <Compile Include="src\StateMachine\Controllers\SuperPause.cs" />
+    <Compile Include="src\StateMachine\Controllers\TargetBind.cs" />
+    <Compile Include="src\StateMachine\Controllers\TargetDrop.cs" />
+    <Compile Include="src\StateMachine\Controllers\TargetFacing.cs" />
+    <Compile Include="src\StateMachine\Controllers\TargetLifeAdd.cs" />
+    <Compile Include="src\StateMachine\Controllers\TargetPowerAdd.cs" />
+    <Compile Include="src\StateMachine\Controllers\TargetState.cs" />
+    <Compile Include="src\StateMachine\Controllers\TargetVelAdd.cs" />
+    <Compile Include="src\StateMachine\Controllers\TargetVelSet.cs" />
+    <Compile Include="src\StateMachine\Controllers\Trans.cs" />
+    <Compile Include="src\StateMachine\Controllers\Turn.cs" />
+    <Compile Include="src\StateMachine\Controllers\VarAdd.cs" />
+    <Compile Include="src\StateMachine\Controllers\VarRandom.cs" />
+    <Compile Include="src\StateMachine\Controllers\VarRangeSet.cs" />
+    <Compile Include="src\StateMachine\Controllers\VarSet.cs" />
+    <Compile Include="src\StateMachine\Controllers\VelAdd.cs" />
+    <Compile Include="src\StateMachine\Controllers\VelMul.cs" />
+    <Compile Include="src\StateMachine\Controllers\VelSet.cs" />
+    <Compile Include="src\StateMachine\Controllers\Width.cs" />
+    <Compile Include="src\StateMachine\State.cs" />
+    <Compile Include="src\StateMachine\StateController.cs" />
+    <Compile Include="src\StateMachine\StateControllerNameAttribute.cs" />
+    <Compile Include="src\StateMachine\StateManager.cs" />
+    <Compile Include="src\StateMachine\StateNumber.cs" />
+    <Compile Include="src\StateMachine\StateSystem.cs" />
+    <Compile Include="src\StateMachine\Trigger.cs" />
+    <Compile Include="src\StateMachine\TriggerMap.cs" />
+    <Compile Include="src\StringConverter.cs" />
+    <Compile Include="src\StringFormatter.cs" />
+    <Compile Include="src\SubString.cs" />
+    <Compile Include="src\SubSystems.cs" />
+    <Compile Include="src\MugenTest.cs" />
+    <Compile Include="src\Timer.cs" />
+    <Compile Include="src\Misc.cs" />
+    <Compile Include="src\Video\DrawData.cs" />
+    <Compile Include="src\Video\DrawState.cs" />
+    <Compile Include="src\Video\FRect.cs" />
+    <Compile Include="src\Video\Renderer.cs" />
+    <Compile Include="src\Video\ShaderParameters.cs" />
+    <Compile Include="src\Video\Vertex.cs" />
+    <Compile Include="src\Video\VideoSystem.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="data\Shader.fx" />
+  </ItemGroup>
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="data\Internal.cmd" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="xnaMugen.ini">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+</Project>
