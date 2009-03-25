@@ -159,6 +159,8 @@ namespace xnaMugen.Combat
             {
                 if (RoundState == RoundState.Fight)
                 {
+                    Clock.Time = GetSubSystem<InitializationSettings>().RoundLength;
+
                     Team1.DoAction(PlayerRestore);
                     Team2.DoAction(PlayerRestore);
                 }
