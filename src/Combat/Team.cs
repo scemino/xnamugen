@@ -103,26 +103,6 @@ namespace xnaMugen.Combat
 			ResetPlayers();
 		}
 
-		public DyingState GetDyingState()
-		{
-			if (VictoryStatus.Lose == false) return DyingState.None;
-
-			if ((MainPlayer.StateManager.CurrentState.Number == StateMachine.StateNumber.HitLieDead && MainPlayer.CurrentVelocity == Vector2.Zero) == false)
-			{
-				return DyingState.Dying;
-			}
-
-			if (TeamMate != null)
-			{
-				if ((TeamMate.StateManager.CurrentState.Number == StateMachine.StateNumber.HitLieDead && TeamMate.CurrentVelocity == Vector2.Zero) == false)
-				{
-					return DyingState.Dying;
-				}
-			}
-
-			return DyingState.Dead;
-		}
-
 		public TeamSide Side
 		{
 			get { return m_side; }

@@ -14,8 +14,6 @@ namespace xnaMugen
 
 	enum BindToTargetPostion { None, Foot, Mid, Head }
 
-	enum DyingState { None, Dying, Dead }
-
 	enum Victory { None, Normal, Special, Hyper, NormalThrow, Cheese, Time, Suicude, TeamKill }
 
 	enum TeamSide { None, Left, Right }

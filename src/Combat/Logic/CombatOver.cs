@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using Microsoft.Xna.Framework;
 
 namespace xnaMugen.Combat.Logic
 {
@@ -87,22 +88,33 @@ namespace xnaMugen.Combat.Logic
 		{
 			if (TickCount < Engine.RoundInformation.OverWaitTime) return false;
 
-			switch (m_wintype)
-			{
-				case WinType.KO:
-				case WinType.DoubleKO:
-					if (Engine.Team1.VictoryStatus.LoseKO == true && Engine.Team1.GetDyingState() != DyingState.Dead) return false;
-					if (Engine.Team2.VictoryStatus.LoseKO == true && Engine.Team2.GetDyingState() != DyingState.Dead) return false;
-					return TickCount - Engine.RoundInformation.OverWaitTime > Engine.RoundInformation.WinTime;
-
-				case WinType.TimeOut:
-				case WinType.Draw:
-					return TickCount - Engine.RoundInformation.OverWaitTime > Engine.RoundInformation.WinTime;
-
-				default:
-					throw new ArgumentOutOfRangeException("m_wintype");
-			}
+            if (IsReady(Engine.Team1) == false || IsReady(Engine.Team2) == false) return false;
+            return TickCount - Engine.RoundInformation.OverWaitTime > Engine.RoundInformation.WinTime;
 		}
+
+        Boolean IsReady(Team team)
+        {
+            if (team == null) throw new ArgumentNullException("team");
+
+            if (IsDone(team.MainPlayer) == false) return false;
+            if (team.TeamMate != null && IsDone(team.TeamMate) == false) return false;
+
+            return true;
+        }
+
+        Boolean IsDone(Player player)
+        {
+            if (player == null) throw new ArgumentNullException("player");
+
+            if (player.Life > 0)
+            {
+                return player.StateManager.CurrentState.Number == StateMachine.StateNumber.Standing;
+            }
+            else
+            {
+                return player.StateManager.CurrentState.Number == StateMachine.StateNumber.HitLieDead && player.CurrentVelocity == Vector2.Zero;
+            }
+        }
 
 		#region Fields
 
