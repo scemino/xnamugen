@@ -135,7 +135,7 @@ namespace xnaMugen.Combat
 			m_zoffset = stageinfosection.GetAttribute<Int32>("zoffset");
 			m_zoffsetlink = stageinfosection.GetAttribute<Int32?>("zoffsetlink", null);
 			m_autoturn = stageinfosection.GetAttribute<Boolean>("autoturn");
-			m_resetbg = stageinfosection.GetAttribute<Boolean>("resetBG");
+			m_resetbg = stageinfosection.GetAttribute<Boolean>("resetBG", true);
 
 			m_shadowintensity = stageinfosection.GetAttribute<Byte>("intensity", 128);
 			m_shadowcolor = stageinfosection.GetAttribute<Color>("color", Color.TransparentBlack);
