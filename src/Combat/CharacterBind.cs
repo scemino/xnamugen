@@ -34,7 +34,7 @@ namespace xnaMugen.Combat
 
 		public void Update()
 		{
-			if (IsActive == true && (Time == -1 || Time > 0) && HelperCheck())
+			if (IsActive == true && (Time == -1 || Time > 1) && HelperCheck())
 			{
 				if (Time > 0) --m_time;
 

@@ -162,7 +162,7 @@ namespace xnaMugen.Combat
 
 		public override void UpdatePhsyics()
 		{
-			if (InHitPause == true || DefensiveInfo.HitShakeTime > 0) return;
+			if (InHitPause == true) return;
 
 			CurrentVelocity += CurrentAcceleration;
 
