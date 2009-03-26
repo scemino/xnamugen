@@ -310,7 +310,7 @@ namespace xnaMugen.Combat
 			HitOverride hitoverride = target.DefensiveInfo.GetOverride(hitdef);
 			if (hitoverride != null)
 			{
-				if (hitoverride.ForceAir == true) hitdef.Fall = true;
+				if (hitoverride.ForceAir == true) target.DefensiveInfo.IsFalling = true;
 
 				target.StateManager.ForeignManager = null;
 				target.StateManager.ChangeState(hitoverride.StateNumber);
@@ -357,7 +357,7 @@ namespace xnaMugen.Combat
 			HitOverride hitoverride = target.DefensiveInfo.GetOverride(myhitdef);
 			if (hitoverride != null)
 			{
-				if (hitoverride.ForceAir == true) myhitdef.Fall = true;
+				if (hitoverride.ForceAir == true) target.DefensiveInfo.IsFalling = true;
 
 				target.StateManager.ForeignManager = null;
 				target.StateManager.ChangeState(hitoverride.StateNumber);
@@ -414,7 +414,7 @@ namespace xnaMugen.Combat
 			if (target.Life == 0)
 			{
 				target.DefensiveInfo.Killed = true;
-				hitdef.Fall = true;
+				target.DefensiveInfo.IsFalling = true;
 			}
 
 			switch (target.DefensiveInfo.HitStateType)

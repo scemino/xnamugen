@@ -62,7 +62,7 @@ namespace xnaMugen.Combat
 			if (HitShakeTime < 0) HitShakeTime = 0;
 			if (HitTime < 0) HitTime = 0;
 
-			if (m_character.StateManager.CurrentState.Number == StateMachine.StateNumber.HitGetUp && m_character.StateManager.StateTime == 0) HitDef.Fall = false;
+			if (m_character.StateManager.CurrentState.Number == StateMachine.StateNumber.HitGetUp && m_character.StateManager.StateTime == 0) IsFalling = false;
 
 			foreach (HitOverride hitoverride in m_hitoverrides) hitoverride.Update();
 		}
@@ -72,21 +72,9 @@ namespace xnaMugen.Combat
 			if (hitdef == null) throw new ArgumentNullException("hitdef");
 			if (attacker == null) throw new ArgumentNullException("attacker");
 
-			Boolean alreadyfalling = IsFalling;
-
 			HitDef.Set(hitdef);
 			Attacker = attacker;
 			Blocked = blocked;
-
-			if (alreadyfalling == true)
-			{
-				HitDef.Fall = true;
-			}
-			else
-			{
-				m_character.JugglePoints = m_character.BasePlayer.Constants.AirJuggle;
-			}
-
 			HitCount = (m_character.MoveType == MoveType.BeingHit) ? HitCount + 1 : 1;
 			HitStateType = m_character.StateType;
 
@@ -106,10 +94,23 @@ namespace xnaMugen.Combat
 
 				m_character.PaletteFx.Set(HitDef.PalFxTime, HitDef.PalFxAdd, HitDef.PalFxMul, HitDef.PalFxSinAdd, HitDef.PalFxInvert, HitDef.PalFxBaseColor);
 
+				if (HitStateType == StateType.Airborne)
+				{
+					if (HitDef.AirFall == true) IsFalling = true;
+				}
+				else
+				{
+					if (HitDef.Fall == true) IsFalling = true;
+				}
+
 				if (IsFalling == true)
 				{
 					Int32 neededjugglepoints = EvaluationHelper.AsInt32(Attacker, Attacker.StateManager.CurrentState.JugglePoints, 0);
 					m_character.JugglePoints -= neededjugglepoints;
+				}
+				else
+				{
+					m_character.JugglePoints = m_character.BasePlayer.Constants.AirJuggle;
 				}
 			}
 		}
@@ -219,7 +220,19 @@ namespace xnaMugen.Combat
 
 		public Boolean IsFalling
 		{
-			get { return (m_character.MoveType == MoveType.BeingHit) ? HitDef.Fall : false; }
+			get
+			{
+				if (m_character.MoveType != MoveType.BeingHit) m_isfalling = false;
+
+				return m_isfalling;
+			}
+
+			set
+			{
+				if (m_character.MoveType != MoveType.BeingHit) value = false;
+
+				m_isfalling = value;
+			}
 		}
 
 		public ListIterator<HitOverride> HitOverrides

@@ -22,8 +22,8 @@ namespace xnaMugen.StateMachine.Controllers
 			Single? velx = EvaluationHelper.AsSingle(character, XVelocity, null);
 			Single? vely = EvaluationHelper.AsSingle(character, YVelocity, null);
 
-			if (fallset == 0) character.DefensiveInfo.HitDef.Fall = false;
-			else if (fallset == 1) character.DefensiveInfo.HitDef.Fall = true;
+			if (fallset == 0) character.DefensiveInfo.IsFalling = false;
+			else if (fallset == 1) character.DefensiveInfo.IsFalling = true;
 
 			if (velx != null) character.DefensiveInfo.HitDef.FallVelocityX = velx.Value;
 			if (vely != null) character.DefensiveInfo.HitDef.FallVelocityY = vely.Value;
