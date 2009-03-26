@@ -22,6 +22,7 @@ namespace xnaMugen
 			m_p1keys = new Dictionary<PlayerButton, Keys>();
 			m_p2keys = new Dictionary<PlayerButton, Keys>();
 			m_roundlength = 99;
+            m_soundchannels = 10;
 		}
 
 		public override void Initialize()
@@ -48,8 +49,9 @@ namespace xnaMugen
 			if (gamesettings != null)
 			{
 				m_preloadsprites = gamesettings.GetAttribute<Boolean>("PreloadCharacterSprites", m_preloadsprites);
-				m_roundlength = gamesettings.GetAttribute<Int32>("RoundLength", m_roundlength);
-			}
+                m_roundlength = gamesettings.GetAttribute<Int32>("RoundLength", m_roundlength);
+                m_soundchannels = gamesettings.GetAttribute<Int32>("SoundChannels", m_soundchannels);
+            }
 
 			IO.TextSection systemkeys = inifile.GetSection("System Keys");
 			if (systemkeys != null)
@@ -165,6 +167,11 @@ namespace xnaMugen
 			get { return m_roundlength; }
 		}
 
+		public Int32 SoundChannels
+		{
+			get { return m_soundchannels; }
+		}
+
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
@@ -199,6 +206,9 @@ namespace xnaMugen
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		Int32 m_roundlength;
+
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        Int32 m_soundchannels;
 
 		#endregion
 	}
