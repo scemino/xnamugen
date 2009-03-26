@@ -89,11 +89,11 @@ namespace xnaMugen.Evaluation.Triggers
 			s_playermap["size.shadowoffset"] = x => new Number(x.Constants.Shadowoffset);
 			s_helpermap["size.shadowoffset"] = x => new Number(x.Data.ShadowOffset);
 
-			s_playermap["size.draw.offset.x"] = x => new Number(x.Constants.Drawoffset.X);
-			s_helpermap["size.draw.offset.x"] = x => new Number(x.BasePlayer.Constants.Drawoffset.X);
+			s_playermap["size.draw.offset.x"] = x => new Number(x.Constants.DrawOffset.X);
+			s_helpermap["size.draw.offset.x"] = x => new Number(x.BasePlayer.Constants.DrawOffset.X);
 
-			s_playermap["size.draw.offset.y"] = x => new Number(x.Constants.Drawoffset.Y);
-			s_helpermap["size.draw.offset.y"] = x => new Number(x.BasePlayer.Constants.Drawoffset.Y);
+			s_playermap["size.draw.offset.y"] = x => new Number(x.Constants.DrawOffset.Y);
+			s_helpermap["size.draw.offset.y"] = x => new Number(x.BasePlayer.Constants.DrawOffset.Y);
 
 			s_playermap["velocity.walk.fwd.x"] = x => new Number(x.Constants.Walk_forward);
 			s_helpermap["velocity.walk.fwd.x"] = x => new Number(x.BasePlayer.Constants.Walk_forward);

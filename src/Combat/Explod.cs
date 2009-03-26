@@ -229,7 +229,7 @@ namespace xnaMugen.Combat
 			{
 				case PositionType.P1:
 				case PositionType.P2:
-					drawlocation += new Vector2(Mugen.ScreenSize.X / 2, Engine.Stage.ZOffset);
+					drawlocation += new Vector2(Mugen.ScreenSize.X / 2, Engine.Stage.ZOffset) + Misc.GetOffset(Vector2.Zero, CurrentFacing, BasePlayer.Constants.DrawOffset);
 					break;
 
 				case PositionType.Front:

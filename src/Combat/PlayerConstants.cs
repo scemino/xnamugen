@@ -57,7 +57,7 @@ namespace xnaMugen.Combat
 			m_headposition = sizesection.GetAttribute<Vector2>("head.pos", Vector2.Zero);
 			m_midposition = sizesection.GetAttribute<Vector2>("mid.pos", Vector2.Zero);
 			m_shadowoffset = sizesection.GetAttribute<Int32>("shadowoffset", 0);
-			m_drawoffset = sizesection.GetAttribute<Point>("draw.offset", new Point(0, 0));
+			m_drawoffset = (Vector2)sizesection.GetAttribute<Point>("draw.offset", new Point(0, 0));
 
 			m_walk_forward = velocitysection.GetAttribute<Single>("walk.fwd");
 			m_walk_back = velocitysection.GetAttribute<Single>("walk.back");
@@ -217,7 +217,7 @@ namespace xnaMugen.Combat
 			get { return m_shadowoffset; }
 		}
 
-		public Point Drawoffset
+		public Vector2 DrawOffset
 		{
 			get { return m_drawoffset; }
 		}
@@ -385,7 +385,7 @@ namespace xnaMugen.Combat
 		readonly Int32 m_shadowoffset; // Number of pixels to vertically offset the shadow
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Point m_drawoffset; // Player drawing offset in pixels	
+		readonly Vector2 m_drawoffset; // Player drawing offset in pixels	
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		readonly Single m_walk_forward; // Walk forward

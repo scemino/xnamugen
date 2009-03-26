@@ -64,6 +64,17 @@ namespace xnaMugen.StateMachine
 			Vector2? velocity = EvaluationHelper.AsVector2(m_character, state.Velocity, null);
 			if (velocity != null) Character.CurrentVelocity = velocity.Value;
 
+			Boolean faceenemy = EvaluationHelper.AsBoolean(m_character, state.FaceEnemy, false);
+			if (faceenemy == true)
+			{
+				Combat.Player enemy = m_character.GetOpponent();
+				if (enemy != null)
+				{
+					if (enemy.CurrentLocation.X > m_character.CurrentLocation.X) m_character.CurrentFacing = Facing.Right;
+					if (enemy.CurrentLocation.X < m_character.CurrentLocation.X) m_character.CurrentFacing = Facing.Left;
+				}
+			}
+
 			Boolean hitdefpersistance = EvaluationHelper.AsBoolean(m_character, state.HitdefPersistance, false);
 			if (hitdefpersistance == false)
 			{
@@ -98,12 +109,6 @@ namespace xnaMugen.StateMachine
 			{
 				return false;
 			}
-
-			if (CurrentState != null && CurrentState.Number == 5100 && state.Number == 1996)
-			{ }
-
-			if (state.Number == 1998)
-			{ }
 
 			m_stateorder.Add(state);
 			m_statetime = -1;

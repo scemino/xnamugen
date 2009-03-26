@@ -355,7 +355,7 @@ namespace xnaMugen.Combat
 
 		public override Vector2 GetDrawLocation()
 		{
-			return CurrentLocation + Misc.GetOffset(Vector2.Zero, CurrentFacing, DrawOffset) + new Vector2(Mugen.ScreenSize.X / 2, Engine.Stage.ZOffset);
+			return CurrentLocation + Misc.GetOffset(Vector2.Zero, CurrentFacing, DrawOffset + BasePlayer.Constants.DrawOffset) + new Vector2(Mugen.ScreenSize.X / 2, Engine.Stage.ZOffset);
 		}
 
 		public Player GetOpponent()
