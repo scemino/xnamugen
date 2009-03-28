@@ -10,6 +10,7 @@ namespace xnaMugen.Evaluation.Triggers
 			: base(children, arguments)
 		{
 		}
+
 		public override Number Evaluate(Object state)
 		{
 			Combat.Character character = state as Combat.Character;
@@ -20,10 +21,20 @@ namespace xnaMugen.Evaluation.Triggers
 			switch (axis)
 			{
 				case Axis.X:
-					return new Number(character.DefensiveInfo.GetHitVelocity().X);
+                    switch (character.CurrentFacing)
+                    {
+                        case xnaMugen.Facing.Right:
+                            return new Number(character.DefensiveInfo.HitVelocity.X);
+
+                        case xnaMugen.Facing.Left:
+                            return new Number(-character.DefensiveInfo.HitVelocity.X);
+
+                        default:
+                            return new Number();
+                    }
 
 				case Axis.Y:
-					return new Number(character.DefensiveInfo.GetHitVelocity().Y);
+					return new Number(character.DefensiveInfo.HitVelocity.Y);
 
 				default:
 					return new Number();

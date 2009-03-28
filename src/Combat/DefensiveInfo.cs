@@ -6,294 +6,307 @@ using Microsoft.Xna.Framework;
 
 namespace xnaMugen.Combat
 {
-	class DefensiveInfo
-	{
-		public DefensiveInfo(Character character)
-		{
-			if (character == null) throw new ArgumentNullException("character");
+    class DefensiveInfo
+    {
+        public DefensiveInfo(Character character)
+        {
+            if (character == null) throw new ArgumentNullException("character");
 
-			m_character = character;
-			m_hitdef = new HitDefinition();
-			m_blocked = false;
-			m_killed = false;
-			m_hitstatetype = StateType.None;
-			m_hitshaketime = 0;
-			m_defensemultiplier = 1;
-			m_attacker = null;
-			m_hittime = 0;
-			m_hitby1 = new HitBy();
-			m_hitby2 = new HitBy();
-			m_isfalling = false;
+            m_character = character;
+            m_hitdef = new HitDefinition();
+            m_blocked = false;
+            m_killed = false;
+            m_hitstatetype = StateType.None;
+            m_hitshaketime = 0;
+            m_defensemultiplier = 1;
+            m_attacker = null;
+            m_hittime = 0;
+            m_hitby1 = new HitBy();
+            m_hitby2 = new HitBy();
+            m_isfalling = false;
 
-			m_hitoverrides = new List<HitOverride>();
-			for (Int32 i = 0; i != 8; ++i) m_hitoverrides.Add(new HitOverride());
+            m_hitoverrides = new List<HitOverride>();
+            for (Int32 i = 0; i != 8; ++i) m_hitoverrides.Add(new HitOverride());
 
-			m_hitcount = 0;
+            m_hitcount = 0;
+            m_hitvelocity = Vector2.Zero;
+        }
 
-		}
+        public void Reset()
+        {
+            m_hitdef.Reset();
+            m_blocked = false;
+            m_killed = false;
+            m_hitstatetype = StateType.None;
+            m_hitshaketime = 0;
+            m_defensemultiplier = 1;
+            m_attacker = null;
+            m_hittime = 0;
+            m_hitby1.Reset();
+            m_hitby2.Reset();
+            m_isfalling = false;
 
-		public void Reset()
-		{
-			m_hitdef.Reset();
-			m_blocked = false;
-			m_killed = false;
-			m_hitstatetype = StateType.None;
-			m_hitshaketime = 0;
-			m_defensemultiplier = 1;
-			m_attacker = null;
-			m_hittime = 0;
-			m_hitby1.Reset();
-			m_hitby2.Reset();
-			m_isfalling = false;
+            for (Int32 i = 0; i != 8; ++i) m_hitoverrides[i].Reset();
 
-			for (Int32 i = 0; i != 8; ++i) m_hitoverrides[i].Reset();
+            m_hitcount = 0;
+            m_hitvelocity = Vector2.Zero;
+        }
 
-			m_hitcount = 0;
-		}
+        public void Update()
+        {
+            HitBy1.Update();
+            HitBy2.Update();
 
-		public void Update()
-		{
-			HitBy1.Update();
-			HitBy2.Update();
+            if (HitShakeTime > 0) --HitShakeTime;
+            else if (HitTime > -1) --HitTime;
 
-			if (HitShakeTime > 0) --HitShakeTime;
-			else if (HitTime > -1) --HitTime;
-
-			if (HitShakeTime < 0) HitShakeTime = 0;
-			if (HitTime < 0) HitTime = 0;
+            if (HitShakeTime < 0) HitShakeTime = 0;
+            if (HitTime < 0) HitTime = 0;
 
             HitDef.HitDamage = 0;
             HitDef.GuardDamage = 0;
 
-			if (m_character.StateManager.CurrentState.Number == StateMachine.StateNumber.HitGetUp && m_character.StateManager.StateTime == 0) IsFalling = false;
+            if (m_character.StateManager.CurrentState.Number == StateMachine.StateNumber.HitGetUp && m_character.StateManager.StateTime == 0) IsFalling = false;
 
-			foreach (HitOverride hitoverride in m_hitoverrides) hitoverride.Update();
-		}
+            foreach (HitOverride hitoverride in m_hitoverrides) hitoverride.Update();
+        }
 
-		public void OnHit(HitDefinition hitdef, Character attacker, Boolean blocked)
-		{
-			if (hitdef == null) throw new ArgumentNullException("hitdef");
-			if (attacker == null) throw new ArgumentNullException("attacker");
+        public void OnHit(HitDefinition hitdef, Character attacker, Boolean blocked)
+        {
+            if (hitdef == null) throw new ArgumentNullException("hitdef");
+            if (attacker == null) throw new ArgumentNullException("attacker");
 
-			HitDef.Set(hitdef);
-			Attacker = attacker;
-			Blocked = blocked;
-			HitCount = (m_character.MoveType == MoveType.BeingHit) ? HitCount + 1 : 1;
-			HitStateType = m_character.StateType;
+            HitDef.Set(hitdef);
+            Attacker = attacker;
+            Blocked = blocked;
+            HitCount = (m_character.MoveType == MoveType.BeingHit) ? HitCount + 1 : 1;
+            HitStateType = m_character.StateType;
 
-			m_character.DrawOrder = HitDef.P2SpritePriority;
-			m_character.PlayerControl = PlayerControl.NoControl;
-			m_character.MoveType = MoveType.BeingHit;
+            m_character.DrawOrder = HitDef.P2SpritePriority;
+            m_character.PlayerControl = PlayerControl.NoControl;
+            m_character.MoveType = MoveType.BeingHit;
 
-			if (blocked == true)
-			{
-				HitShakeTime = HitDef.GuardShakeTime;
-				m_character.BasePlayer.Power += HitDef.P2GuardPowerAdjustment;
-			}
-			else
-			{
-				HitShakeTime = HitDef.ShakeTime;
-				m_character.BasePlayer.Power += HitDef.P2HitPowerAdjustment;
+            if (blocked == true)
+            {
+                HitShakeTime = HitDef.GuardShakeTime;
+                m_character.BasePlayer.Power += HitDef.P2GuardPowerAdjustment;
+            }
+            else
+            {
+                HitShakeTime = HitDef.ShakeTime;
+                m_character.BasePlayer.Power += HitDef.P2HitPowerAdjustment;
 
-				m_character.PaletteFx.Set(HitDef.PalFxTime, HitDef.PalFxAdd, HitDef.PalFxMul, HitDef.PalFxSinAdd, HitDef.PalFxInvert, HitDef.PalFxBaseColor);
+                m_character.PaletteFx.Set(HitDef.PalFxTime, HitDef.PalFxAdd, HitDef.PalFxMul, HitDef.PalFxSinAdd, HitDef.PalFxInvert, HitDef.PalFxBaseColor);
 
-				if (HitStateType == StateType.Airborne)
-				{
-					if (HitDef.AirFall == true) IsFalling = true;
-				}
-				else
-				{
-					if (HitDef.Fall == true) IsFalling = true;
-				}
+                if (HitStateType == StateType.Airborne)
+                {
+                    if (HitDef.AirFall == true) IsFalling = true;
+                }
+                else
+                {
+                    if (HitDef.Fall == true) IsFalling = true;
+                }
 
-				if (IsFalling == true)
-				{
-					Int32 neededjugglepoints = EvaluationHelper.AsInt32(Attacker, Attacker.StateManager.CurrentState.JugglePoints, 0);
-					m_character.JugglePoints -= neededjugglepoints;
-				}
-				else
-				{
-					m_character.JugglePoints = m_character.BasePlayer.Constants.AirJuggle;
-				}
-			}
-		}
+                if (IsFalling == true)
+                {
+                    Int32 neededjugglepoints = EvaluationHelper.AsInt32(Attacker, Attacker.StateManager.CurrentState.JugglePoints, 0);
+                    m_character.JugglePoints -= neededjugglepoints;
+                }
+                else
+                {
+                    m_character.JugglePoints = m_character.BasePlayer.Constants.AirJuggle;
+                }
+            }
 
-		public HitOverride GetOverride(HitDefinition hitdef)
-		{
-			if (hitdef == null) throw new ArgumentNullException("hitdef");
+            CalculateHitVelocity();
+        }
 
-			foreach (HitOverride hitoverride in HitOverrides)
-			{
-				if (hitoverride.IsActive == false) continue;
+        public HitOverride GetOverride(HitDefinition hitdef)
+        {
+            if (hitdef == null) throw new ArgumentNullException("hitdef");
 
-				if (hitoverride.Attribute.HasHeight(hitdef.HitAttribute.AttackHeight) == false) continue;
-				foreach (HitType hittype in hitdef.HitAttribute.AttackData) if (hitoverride.Attribute.HasData(hittype) == false) continue;
+            foreach (HitOverride hitoverride in HitOverrides)
+            {
+                if (hitoverride.IsActive == false) continue;
 
-				return hitoverride;
-			}
+                if (hitoverride.Attribute.HasHeight(hitdef.HitAttribute.AttackHeight) == false) continue;
+                foreach (HitType hittype in hitdef.HitAttribute.AttackData) if (hitoverride.Attribute.HasData(hittype) == false) continue;
 
-			return null;
-		}
+                return hitoverride;
+            }
 
-		public Vector2 GetHitVelocity()
-		{
-			Vector2 velocity;
+            return null;
+        }
 
-			if (Blocked == true)
-			{
-				velocity = (HitStateType == xnaMugen.StateType.Airborne) ? HitDef.AirGuardVelocity : HitDef.GroundGuardVelocity;
-			}
-			else
-			{
-				velocity = (HitStateType == xnaMugen.StateType.Airborne) ? HitDef.AirVelocity : HitDef.GroundVelocity;
+        void CalculateHitVelocity()
+        {
+            Vector2 velocity;
 
-				if (Killed == true)
-				{
-					velocity.X *= .66f;
-					velocity.Y = -6;
-				}
-			}
+            if (Blocked == true)
+            {
+                velocity = (HitStateType == StateType.Airborne) ? HitDef.AirGuardVelocity : HitDef.GroundGuardVelocity;
+            }
+            else
+            {
+                velocity = (HitStateType == StateType.Airborne) ? HitDef.AirVelocity : HitDef.GroundVelocity;
 
-			return velocity;
-		}
+                if (Killed == true)
+                {
+                    velocity.X *= .66f;
+                    velocity.Y = -6;
+                }
+            }
 
-		public HitDefinition HitDef
-		{
-			get { return m_hitdef; }
-		}
+            if (Attacker.CurrentFacing == Facing.Right) velocity.X = -velocity.X;
 
-		public Boolean Blocked
-		{
-			get { return m_blocked; }
+            m_hitvelocity = velocity;
+        }
 
-			set { m_blocked = value; }
-		}
+        public HitDefinition HitDef
+        {
+            get { return m_hitdef; }
+        }
 
-		public Boolean Killed
-		{
-			get { return m_killed; }
+        public Boolean Blocked
+        {
+            get { return m_blocked; }
 
-			set { m_killed = value; }
-		}
+            set { m_blocked = value; }
+        }
 
-		public StateType HitStateType
-		{
-			get { return m_hitstatetype; }
+        public Boolean Killed
+        {
+            get { return m_killed; }
 
-			set { m_hitstatetype = value; }
-		}
+            set { m_killed = value; }
+        }
 
-		public Int32 HitShakeTime
-		{
-			get { return m_hitshaketime; }
+        public StateType HitStateType
+        {
+            get { return m_hitstatetype; }
 
-			set { m_hitshaketime = value; }
-		}
+            set { m_hitstatetype = value; }
+        }
 
-		public Single DefenseMultiplier
-		{
-			get { return m_defensemultiplier; }
+        public Int32 HitShakeTime
+        {
+            get { return m_hitshaketime; }
 
-			set { m_defensemultiplier = value; }
-		}
+            set { m_hitshaketime = value; }
+        }
 
-		public Character Attacker
-		{
-			get { return m_attacker; }
+        public Single DefenseMultiplier
+        {
+            get { return m_defensemultiplier; }
 
-			set { m_attacker = value; }
-		}
+            set { m_defensemultiplier = value; }
+        }
 
-		public Int32 HitTime
-		{
-			get { return m_hittime; }
+        public Character Attacker
+        {
+            get { return m_attacker; }
 
-			set { m_hittime = value; }
-		}
+            set { m_attacker = value; }
+        }
 
-		public HitBy HitBy1
-		{
-			get { return m_hitby1; }
-		}
+        public Int32 HitTime
+        {
+            get { return m_hittime; }
 
-		public HitBy HitBy2
-		{
-			get { return m_hitby2; }
-		}
+            set { m_hittime = value; }
+        }
 
-		public Boolean IsFalling
-		{
-			get
-			{
-				if (m_character.MoveType != MoveType.BeingHit) m_isfalling = false;
+        public HitBy HitBy1
+        {
+            get { return m_hitby1; }
+        }
 
-				return m_isfalling;
-			}
+        public HitBy HitBy2
+        {
+            get { return m_hitby2; }
+        }
 
-			set
-			{
-				if (m_character.MoveType != MoveType.BeingHit) value = false;
+        public Boolean IsFalling
+        {
+            get
+            {
+                if (m_character.MoveType != MoveType.BeingHit) m_isfalling = false;
 
-				m_isfalling = value;
-			}
-		}
+                return m_isfalling;
+            }
 
-		public ListIterator<HitOverride> HitOverrides
-		{
-			get { return new ListIterator<HitOverride>(m_hitoverrides); }
-		}
+            set
+            {
+                if (m_character.MoveType != MoveType.BeingHit) value = false;
 
-		public Int32 HitCount
-		{
-			get { return m_hitcount; }
+                m_isfalling = value;
+            }
+        }
 
-			set { m_hitcount = value; }
-		}
+        public ListIterator<HitOverride> HitOverrides
+        {
+            get { return new ListIterator<HitOverride>(m_hitoverrides); }
+        }
 
-		#region Fields
+        public Int32 HitCount
+        {
+            get { return m_hitcount; }
 
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Character m_character;
+            set { m_hitcount = value; }
+        }
 
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly HitDefinition m_hitdef;
+        public Vector2 HitVelocity
+        {
+            get { return m_hitvelocity; }
+        }
 
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Boolean m_blocked;
+        #region Fields
 
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Boolean m_killed;
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        readonly Character m_character;
 
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		StateType m_hitstatetype;
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        readonly HitDefinition m_hitdef;
 
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Int32 m_hitshaketime;
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        Boolean m_blocked;
 
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Single m_defensemultiplier;
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        Boolean m_killed;
 
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Character m_attacker;
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        StateType m_hitstatetype;
 
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Int32 m_hittime;
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        Int32 m_hitshaketime;
 
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly HitBy m_hitby1;
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        Single m_defensemultiplier;
 
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly HitBy m_hitby2;
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        Character m_attacker;
 
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Boolean m_isfalling;
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        Int32 m_hittime;
 
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly List<HitOverride> m_hitoverrides;
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        readonly HitBy m_hitby1;
 
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Int32 m_hitcount;
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        readonly HitBy m_hitby2;
 
-		#endregion
-	}
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        Boolean m_isfalling;
+
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        readonly List<HitOverride> m_hitoverrides;
+
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        Int32 m_hitcount;
+
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        Vector2 m_hitvelocity;
+
+        #endregion
+    }
 }

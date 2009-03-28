@@ -71,15 +71,12 @@ namespace xnaMugen.Evaluation.Triggers
 		{
 			if (axis == Axis.X)
 			{
-				Single result = character.DefensiveInfo.GetHitVelocity().X;
-				//if (character.CurrentFacing == xnaMugen.Facing.Left) result = -result;
-
-				return new Number(result);
+                return new Number(character.DefensiveInfo.HitVelocity.X);
 			}
 
 			if (axis == Axis.Y)
 			{
-				return new Number(character.DefensiveInfo.GetHitVelocity().Y);
+                return new Number(character.DefensiveInfo.HitVelocity.Y);
 			}
 
 			return new Number();
