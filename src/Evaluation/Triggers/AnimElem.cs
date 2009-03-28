@@ -132,14 +132,21 @@ namespace xnaMugen.Evaluation.Triggers
 					++parsestate.TokenIndex;
 					break;
 
-				default:
-					return null;
+#warning Hack for terrible WinMugen parser (Part I)
+                case Operator.None:
+                    break;
+
+                default:
+                    return null;
 			}
 
 			Node arg = parsestate.BuildNode(false);
 			if (arg == null) return null;
 
-			parsestate.BaseNode.Arguments.Add(@operator);
+#warning Hack for terrible WinMugen parser (Part II)
+            if (@operator == Operator.None) @operator = Operator.Equals;
+
+            parsestate.BaseNode.Arguments.Add(@operator);
 			parsestate.BaseNode.Children.Add(arg);
 
 			return parsestate.BaseNode;
