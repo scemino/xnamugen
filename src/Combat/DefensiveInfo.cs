@@ -62,6 +62,9 @@ namespace xnaMugen.Combat
 			if (HitShakeTime < 0) HitShakeTime = 0;
 			if (HitTime < 0) HitTime = 0;
 
+            HitDef.HitDamage = 0;
+            HitDef.GuardDamage = 0;
+
 			if (m_character.StateManager.CurrentState.Number == StateMachine.StateNumber.HitGetUp && m_character.StateManager.StateTime == 0) IsFalling = false;
 
 			foreach (HitOverride hitoverride in m_hitoverrides) hitoverride.Update();
