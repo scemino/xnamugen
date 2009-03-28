@@ -43,6 +43,8 @@ namespace xnaMugen.Combat
 
 			CurrentScale = Constants.Scale;
 			PushFlag = true;
+            Life = Constants.MaximumLife;
+            Power = 0;
 		}
 
 		public override void Reset()

@@ -39,6 +39,8 @@ namespace xnaMugen.Combat
 			SetLocalAnimation(0, 0);
 
 			StateManager.ChangeState(Data.InitialStateNumber);
+
+            Life = BasePlayer.Constants.MaximumLife;
 		}
 
 		Vector2 GetStartLocation()
