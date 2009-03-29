@@ -249,6 +249,18 @@ namespace xnaMugen.Combat
             return drawlocation;
         }
 
+        public override SpriteEffects GetDrawFlip()
+        {
+            SpriteEffects flip = base.GetDrawFlip();
+
+            if ((Data.Flip & SpriteEffects.FlipVertically) == SpriteEffects.FlipVertically)
+            {
+                flip |= SpriteEffects.FlipVertically;
+            }
+
+            return flip;
+        }
+
         public void Kill()
         {
             m_forceremove = true;

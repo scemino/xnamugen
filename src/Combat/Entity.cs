@@ -264,7 +264,7 @@ namespace xnaMugen.Combat
 
 		public abstract Vector2 GetDrawLocation();
 
-		public SpriteEffects GetDrawFlip()
+		public virtual SpriteEffects GetDrawFlip()
 		{
 			Animations.AnimationElement currentelement = AnimationManager.CurrentElement;
 
