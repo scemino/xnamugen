@@ -25,7 +25,10 @@ namespace xnaMugen.Evaluation.Triggers
 			}
 			else
 			{
-				return new Number(animtime - animation.TotalTime);
+                Int32 result = animtime - animation.TotalTime;
+                while (result > 0) result -= animation.TotalTime;
+
+                return new Number(result);
 			}
 		}
 
