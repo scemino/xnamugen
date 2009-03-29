@@ -133,6 +133,9 @@ namespace xnaMugen.StateMachine
 		{
 			if (Character is Combat.Helper)
 			{
+                State internalstate = StateSystem.GetInternalState(-2);
+                if (internalstate != null) RunState(internalstate, hitpause);
+
 				if ((Character as Combat.Helper).Data.KeyControl == true)
 				{
 					RunState(-1, true, hitpause);

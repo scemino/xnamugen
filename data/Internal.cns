@@ -33,6 +33,7 @@ type = ChangeState
 trigger1 = Pos Y > 0 && StateType = A && Physics = A && StateNo != 105 && StateNo != 106
 value = 52
 
+
 [Statedef 10]
 
 [State Stop Ducking]
