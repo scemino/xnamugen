@@ -15,7 +15,8 @@ namespace xnaMugen.Combat
 
 			m_character = character;
 			m_bindcharacter = null;
-			m_time = 0;
+			m_totaltime = 0;
+            m_time = 0;
 			m_offset = new Vector2(0, 0);
 			m_facingflag = 0;
 			m_isactive = false;
@@ -25,8 +26,9 @@ namespace xnaMugen.Combat
 		public void Reset()
 		{
 			m_bindcharacter = null;
-			m_time = 0;
-			m_offset = new Vector2(0, 0);
+			m_totaltime = 0;
+            m_time = 0;
+            m_offset = new Vector2(0, 0);
 			m_facingflag = 0;
 			m_isactive = false;
 			m_istargetbind = false;
@@ -34,9 +36,9 @@ namespace xnaMugen.Combat
 
 		public void Update()
 		{
-			if (IsActive == true && (Time == -1 || Time > 1) && HelperCheck())
+			if (IsActive == true && (TotalTime == -1 || TimeInBind < TotalTime) && HelperCheck())
 			{
-				if (Time > 0) --m_time;
+                ++m_time;
 
 				Bind();
 			}
@@ -51,7 +53,7 @@ namespace xnaMugen.Combat
 			if (bindcharacter == null) throw new ArgumentNullException("bindcharacter");
 
 			m_bindcharacter = bindcharacter;
-			m_time = time;
+			m_totaltime = time;
 			m_offset = offset;
 			m_facingflag = facingflag;
 			m_istargetbind = targetbind;
@@ -102,10 +104,15 @@ namespace xnaMugen.Combat
 			get { return m_bindcharacter; }
 		}
 
-		public Int32 Time
+		public Int32 TotalTime
 		{
-			get { return m_time; }
+			get { return m_totaltime; }
 		}
+
+        public Int32 TimeInBind
+        {
+            get { return m_time; }
+        }
 
 		public Vector2 Offset
 		{
@@ -134,7 +141,10 @@ namespace xnaMugen.Combat
 		Character m_bindcharacter;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Int32 m_time;
+		Int32 m_totaltime;
+
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        Int32 m_time;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		Vector2 m_offset;
