@@ -637,7 +637,7 @@ namespace xnaMugen.Combat
 			foreach (Entity entity in Engine.Entities)
 			{
 				Character target = entity as Character;
-				if (target == null) continue;
+				if (target == null || target == attacker) continue;
 
 				if (CanBlock(attacker, target, attacker.OffensiveInfo.HitDef, true) == true)
 				{
