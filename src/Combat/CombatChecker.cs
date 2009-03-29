@@ -282,6 +282,8 @@ namespace xnaMugen.Combat
 
 			hitdef = target.DefensiveInfo.HitDef;
 
+            attacker.OffensiveInfo.AddToTargetList(target);
+
 			projectile.TotalHits += 1;
 			projectile.HitCountdown = projectile.Data.TimeBetweenHits;
 

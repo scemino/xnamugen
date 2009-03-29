@@ -23,7 +23,7 @@ namespace xnaMugen.Combat
 		{
 			m_projectileid = proj_id;
 			m_datatype = datatype;
-			m_time = 0;
+			m_time = 1;
 		}
 
 		public void Update()
