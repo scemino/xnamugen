@@ -91,7 +91,7 @@ namespace xnaMugen.Combat
 					if (projectile.CanAttack() == false) break;
 
 					Character character = subentity as Character;
-					if (character != null)
+					if (character != null && character != projectile.BasePlayer)
 					{
 						ProjectileAttack(projectile, character);
 					}
