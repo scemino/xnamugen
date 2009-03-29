@@ -36,7 +36,7 @@ namespace xnaMugen.Combat
 
 		public void Update()
 		{
-			if (IsActive == true && (TotalTime == -1 || TimeInBind < TotalTime) && HelperCheck())
+            if (IsActive == true && TimeCheck() && HelperCheck())
 			{
                 ++m_time;
 
@@ -48,12 +48,31 @@ namespace xnaMugen.Combat
 			}
 		}
 
+        Boolean TimeCheck()
+        {
+            if (IsActive == false) return false;
+
+            if (TotalTime == -1) return true;
+
+            if (TotalTime == 1)
+            {
+                if (TimeInBind >= TotalTime) return false;
+            }
+            else
+            {
+                if (TimeInBind >= TotalTime - 1) return false;
+            }
+
+            return true;
+        }
+
 		public void Set(Character bindcharacter, Vector2 offset, Int32 time, Int32 facingflag, Boolean targetbind)
 		{
 			if (bindcharacter == null) throw new ArgumentNullException("bindcharacter");
 
 			m_bindcharacter = bindcharacter;
 			m_totaltime = time;
+            m_time = 0;
 			m_offset = offset;
 			m_facingflag = facingflag;
 			m_istargetbind = targetbind;
