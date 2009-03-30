@@ -20,7 +20,7 @@ namespace xnaMugen.Evaluation.Triggers
 			String text = (String)Arguments[1];
 
 #warning Hack
-			Boolean match = String.Equals(text, "versus", StringComparison.OrdinalIgnoreCase);
+			Boolean match = String.Equals(text, "single", StringComparison.OrdinalIgnoreCase);
 
 			switch (@operator)
 			{
