@@ -44,7 +44,7 @@ namespace xnaMugen.Video
 		{
 			InitializationSettings settings = GetSubSystem<InitializationSettings>();
 
-#if FRANTZX
+#if DEBUG
 			ScreenSize = Mugen.ScreenSize * 2;
 #else
 			ScreenSize = settings.ScreenSize;
