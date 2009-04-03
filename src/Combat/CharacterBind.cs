@@ -54,16 +54,7 @@ namespace xnaMugen.Combat
 
             if (TotalTime == -1) return true;
 
-            if (TotalTime == 1)
-            {
-                if (TimeInBind >= TotalTime) return false;
-            }
-            else
-            {
-                if (TimeInBind >= TotalTime - 1) return false;
-            }
-
-            return true;
+			return TimeInBind < TotalTime;
         }
 
 		public void Set(Character bindcharacter, Vector2 offset, Int32 time, Int32 facingflag, Boolean targetbind)
