@@ -142,8 +142,11 @@ namespace xnaMugen.Combat
 
 		public void Remove()
 		{
-			m_remove = true;
-			Engine.Entities.Remove(this);
+			if (m_remove == false)
+			{
+				m_remove = true;
+				Engine.Entities.Remove(this);
+			}
 		}
 
 		public override Boolean RemoveCheck()
