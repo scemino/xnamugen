@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace xnaMugen.Combat
 {
@@ -577,6 +578,7 @@ namespace xnaMugen.Combat
 			data.Location = GetSparkLocation(attacker, target, sparklocation);
 			data.Creator = attacker;
 			data.Offseter = target;
+			data.Flip = SpriteEffects.FlipHorizontally;
 
 			Explod explod = new Explod(attacker.Engine, data);
 			if (explod.IsValid == true) explod.Engine.Entities.Add(explod);
@@ -647,7 +649,7 @@ namespace xnaMugen.Combat
 				{
 					m_attacks.Add(new Contact(attacker, target, attacker.OffensiveInfo.HitDef, ContactType.Hit));
 				}
-				else if (CanBlock(attacker, target, attacker.OffensiveInfo.HitDef, false) == true)
+				else if (CanBlock(attacker, target, attacker.OffensiveInfo.HitDef, false) == true && target is Player)
 				{
 					m_attacks.Add(new Contact(attacker, target, attacker.OffensiveInfo.HitDef, ContactType.MissBlock));
 				}
