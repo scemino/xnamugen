@@ -27,7 +27,7 @@ namespace xnaMugen
 			m_subsystems.GetSubSystem<Video.VideoSystem>().Initialize();
 
 			m_font = m_subsystems.GetSubSystem<Drawing.SpriteSystem>().LoadFont(@"font/num1.fnt");
-            m_sprites = m_subsystems.GetSubSystem<Drawing.SpriteSystem>().CreateManager(@"chars/BuraiYamamoto/Burai.sff");
+            m_sprites = m_subsystems.GetSubSystem<Drawing.SpriteSystem>().CreateManager(@"chars/BuraiYamamoto/Burai.sff", true);
             m_animations = m_subsystems.GetSubSystem<Animations.AnimationSystem>().CreateManager(@"chars/BuraiYamamoto/Burai.air");
 
 			//m_sprites = m_subsystems.GetSubSystem<Drawing.SpriteSystem>().CreateManager(@"chars/kfm/kfm.sff");

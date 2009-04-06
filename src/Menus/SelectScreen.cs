@@ -130,30 +130,24 @@ namespace xnaMugen.Menus
 			Elements.StaticImage cellbg = m_elements.GetElement("cell.bg") as Elements.StaticImage;
 			if (cellbg != null)
 			{
-				Drawing.Sprite sprite = cellbg.SpriteManager.GetSprite(cellbg.DataMap.SpriteId);
-				if (sprite != null)
-				{
-					Video.DrawState drawstate = cellbg.SpriteManager.DrawState;
-					drawstate.Reset();
-					drawstate.Set(sprite);
+                Video.DrawState drawstate = cellbg.SpriteManager.SetupDrawing(cellbg.DataMap.SpriteId, null, Vector2.Zero, Vector2.One, SpriteEffects.None);
 
-					for (Int32 y = 0; y != m_gridsize.Y; ++y)
-					{
-						for (Int32 x = 0; x != m_gridsize.X; ++x)
-						{
-							Point location = m_gridposition;
-							location.X += (m_cellsize.X + m_cellspacing) * x;
-							location.Y += (m_cellsize.Y + m_cellspacing) * y;
+                for (Int32 y = 0; y != m_gridsize.Y; ++y)
+                {
+                    for (Int32 x = 0; x != m_gridsize.X; ++x)
+                    {
+                        Point location = m_gridposition;
+                        location.X += (m_cellsize.X + m_cellspacing) * x;
+                        location.Y += (m_cellsize.Y + m_cellspacing) * y;
 
-							PlayerSelect selection = GetSelection(new Point(x, y), false);
-							if (selection == null && m_showemptyboxes == false) continue;
+                        PlayerSelect selection = GetSelection(new Point(x, y), false);
+                        if (selection == null && m_showemptyboxes == false) continue;
 
-							drawstate.AddData((Vector2)location, null);
-						}
-					}
+                        drawstate.AddData((Vector2)location, null);
+                    }
+                }
 
-					drawstate.Use();
-				}
+                drawstate.Use();
 			}
 
 			for (Int32 y = 0; y != m_gridsize.Y; ++y)

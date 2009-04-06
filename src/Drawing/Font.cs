@@ -12,21 +12,34 @@ namespace xnaMugen.Drawing
 	[DebuggerDisplay("{Filepath}")]
 	class Font : Resource
 	{
-		public Font(SpriteSystem spritesystem, String filepath, Sprite sprite, ReadOnlyDictionary<Char, Rectangle> sizemap, Point charsize, Int32 colors)
+        public Font(SpriteSystem spritesystem, String filepath, ReadOnlyList<Texture2D> textures, ReadOnlyDictionary<Char, Rectangle> sizemap, Point charsize, Int32 colors)
 		{
 			if (spritesystem == null) throw new ArgumentNullException("spritesystem");
 			if (filepath == null) throw new ArgumentNullException("filepath");
-			if (sprite == null) throw new ArgumentNullException("sprite");
+            if (textures == null) throw new ArgumentNullException("textures");
 			if (sizemap == null) throw new ArgumentNullException("sizemap");
 
 			m_spritesystem = spritesystem;
 			m_filepath = filepath;
-			m_sprite = sprite;
+            m_textures = textures;
 			m_sizemap = sizemap;
 			m_charsize = charsize;
 			m_colors = colors;
 			m_drawstate = new Video.DrawState(m_spritesystem.GetSubSystem<Video.VideoSystem>());
 		}
+
+        protected override void Dispose(Boolean disposing)
+        {
+            if (m_textures != null)
+            {
+                foreach (Texture2D texture in m_textures)
+                {
+                    if (texture != null) texture.Dispose();
+                }
+            }
+
+            base.Dispose(disposing);
+        }
 
 		public void Print(Vector2 location, Int32 color, PrintJustification just, String text, Rectangle? scissorrect)
 		{
@@ -35,11 +48,9 @@ namespace xnaMugen.Drawing
 			location = GetPrintLocation(text, location, just);
 
 			m_drawstate.Reset();
-			m_drawstate.Set(Sprite);
+            m_drawstate.Texture = m_textures[color];
 			m_drawstate.Mode = DrawMode.Font;
 			m_drawstate.ScissorRectangle = scissorrect ?? Rectangle.Empty;
-			m_drawstate.ShaderParameters.FontColorIndex = color;
-			m_drawstate.ShaderParameters.FontTotalColors = m_colors;
 
 			foreach (Char c in text)
 			{
@@ -106,24 +117,9 @@ namespace xnaMugen.Drawing
 			return location;
 		}
 
-		protected override void Dispose(Boolean disposing)
-		{
-			if (disposing == true)
-			{
-				if (m_sprite != null) m_sprite.Dispose();
-			}
-
-			base.Dispose(disposing);
-		}
-
 		public String Filepath
 		{
 			get { return m_filepath; }
-		}
-
-		Sprite Sprite
-		{
-			get { return m_sprite; }
 		}
 
 		ReadOnlyDictionary<Char, Rectangle> SizeMap
@@ -137,7 +133,7 @@ namespace xnaMugen.Drawing
 		readonly String m_filepath;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Sprite m_sprite;
+        readonly ReadOnlyList<Texture2D> m_textures;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		readonly ReadOnlyDictionary<Char, Rectangle> m_sizemap;

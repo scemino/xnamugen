@@ -16,7 +16,7 @@ namespace xnaMugen.Elements
 
 		public override void Draw(Vector2 location)
 		{
-			SpriteManager.Draw(DataMap.SpriteId, location, (Vector2)DataMap.Offset, DataMap.Scale, DataMap.Flip);
+			SpriteManager.Draw(DataMap.SpriteId, location, DataMap.Offset, DataMap.Scale, DataMap.Flip);
 		}
 
 		public override Boolean FinishedDrawing(Int32 tickcount)

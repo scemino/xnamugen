@@ -1,8 +1,5 @@
-﻿Texture xPixels;
-sampler xPixelsSampler = sampler_state { texture = <xPixels>; AddressU = clamp; AddressV = clamp; magfilter = point; minfilter = point; mipfilter = point; };
-
-Texture xPalette;
-sampler xPaletteSampler = sampler_state { texture = <xPalette>; AddressU = clamp; AddressV = clamp; magfilter = none; minfilter = none; mipfilter = none; };
+﻿Texture xTexture;
+sampler xTextureSampler = sampler_state { texture = <xTexture>; AddressU = clamp; AddressV = clamp; magfilter = none; minfilter = none; mipfilter = none; };
 
 float4x4 xMatrix;
 float4x4 xRotation;
@@ -34,11 +31,11 @@ float4 BaseColor(float4 inputcolor, float base)
 	if(base == 0.0f)
 	{	
 		float color = (0.299f * inputcolor.r) + (0.587f * inputcolor.g) + (0.114f * inputcolor.b);
-		return float4(color, color, color, 1.0f);
+		return float4(color, color, color, inputcolor.a);
 	}
 	else
 	{
-		return inputcolor * base;
+		return float4(inputcolor.rgb * base, inputcolor.a);
 	}
 }
 
@@ -50,7 +47,7 @@ float4 PalFx(float4 inputcolor)
 		
 	output = (output + xPalFx_Add + xPalFx_SinMath) * xPalFx_Mul;
 	
-	return output;
+	return float4(output.rgb, inputcolor.a);
 }
 
 float4 AfterImageOLD(float4 inputcolor)
@@ -63,7 +60,7 @@ float4 AfterImageOLD(float4 inputcolor)
 	output *= xAI_contrast;
 	output += xAI_postadd;
 	
-	return output;
+	return float4(output.rgb, inputcolor.a);
 }
 
 float4 AfterImage(float4 inputcolor)
@@ -78,7 +75,7 @@ float4 AfterImage(float4 inputcolor)
 	
 	for(int i = 0; i <= xAI_number; ++i) output = (output + xAI_paladd) * xAI_palmul;
 	
-	return output;
+	return float4(output.rgb, inputcolor.a);
 }
 
 struct VS_Output
@@ -99,17 +96,16 @@ VS_Output VertexShader(float4 inPos : POSITION, float2 inTexCoords: TEXCOORD, fl
 
 float4 DefaultPixelShader(float4 color : COLOR, float2 texCoord : TEXCOORD) : COLOR
 {
-	float color_index = tex2D(xPixelsSampler, texCoord).a;
-	float4 output_color = tex1D(xPaletteSampler, color_index);
+	float4 output_color = tex2D(xTextureSampler, texCoord);
 	
 	if(xPalFx_Use == true) output_color = PalFx(output_color);
 	if(xAI_Use == true) output_color = AfterImage(output_color);
 	
 	output_color *= color;
 	
-	if(color_index == 0.0f)
+	if(output_color.a == 0.0f)
 	{
-		return float4(output_color.rgb, 0);
+		return output_color;
 	}
 	else
 	{
@@ -119,17 +115,16 @@ float4 DefaultPixelShader(float4 color : COLOR, float2 texCoord : TEXCOORD) : CO
 
 float4 PixelShaderOLD(float4 color : COLOR, float2 texCoord : TEXCOORD) : COLOR
 {
-	float color_index = tex2D(xPixelsSampler, texCoord).a;
-	float4 output_color = tex1D(xPaletteSampler, color_index);
+	float4 output_color = tex2D(xTextureSampler, texCoord);
 	
 	if(xPalFx_Use == true) output_color = PalFx(output_color);
 	if(xAI_Use == true) output_color = AfterImageOLD(output_color);
 	
 	output_color *= color;
 	
-	if(color_index == 0.0f)
+	if(output_color.a == 0.0f)
 	{
-		return float4(output_color.rgb, 0);
+		return output_color;
 	}
 	else
 	{
@@ -139,15 +134,12 @@ float4 PixelShaderOLD(float4 color : COLOR, float2 texCoord : TEXCOORD) : COLOR
 
 float4 FontPixelShader(float4 color : COLOR, float2 texCoord : TEXCOORD) : COLOR
 {
-	float color_index = tex2D(xPixelsSampler, texCoord).a;
-	float per = 1.0 - float(xFontColorIndex) / float(xFontTotalColors);
-	float4 output_color = tex1D(xPaletteSampler, color_index * per - 1.0/255.0);
-		
+	float4 output_color = tex2D(xTextureSampler, texCoord);		
 	output_color *= color;
 	
-	if(color_index == 0.0f)
+	if(output_color.a == 0.0f)
 	{
-		return float4(output_color.rgb, 0);
+		return output_color;
 	}
 	else
 	{

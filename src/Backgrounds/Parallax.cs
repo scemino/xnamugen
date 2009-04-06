@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using xnaMugen.IO;
 using Microsoft.Xna.Framework;
 using xnaMugen.Collections;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace xnaMugen.Backgrounds
 {
@@ -27,27 +28,25 @@ namespace xnaMugen.Backgrounds
 
 		public override void Draw(Combat.PaletteFx palettefx)
 		{
-			Point tilestart;
-			Point tileend;
-			GetTileLength(Sprite.Size, out tilestart, out tileend);
+            Video.DrawState drawstate = SpriteManager.SetupDrawing(SpriteId, null, Vector2.Zero, Vector2.One, SpriteEffects.None);
+            drawstate.Blending = Transparency;
+            drawstate.ScissorRectangle = DrawRect;
 
-			Video.DrawState drawstate = SpriteManager.DrawState;
-			drawstate.Reset();
-			drawstate.Blending = Transparency;
-			drawstate.ScissorRectangle = DrawRect;
-			drawstate.Set(Sprite);
+            Point tilestart;
+            Point tileend;
+            GetTileLength(Sprite.Size, out tilestart, out tileend);
 
-			for (Int32 x = tilestart.X; x != tileend.X; ++x)
-			{
-				Vector2 adjustment = (Vector2)Sprite.Size * new Vector2(x, 0);
-				Vector2 location = CurrentLocation + adjustment;
+            for (Int32 x = tilestart.X; x != tileend.X; ++x)
+            {
+                Vector2 adjustment = (Vector2)Sprite.Size * new Vector2(x, 0);
+                Vector2 location = CurrentLocation + adjustment;
 
-				drawstate.AddData(location, null);
-			}
+                drawstate.AddData(location, null);
+            }
 
-			if (palettefx != null) palettefx.SetShader(drawstate.ShaderParameters);
+            if (palettefx != null) palettefx.SetShader(drawstate.ShaderParameters);
 
-			drawstate.Use();
+            drawstate.Use();
 		}
 
 		void Movement()

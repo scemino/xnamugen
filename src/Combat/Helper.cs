@@ -31,7 +31,6 @@ namespace xnaMugen.Combat
 			m_dimensions = new CharacterDimensions(Data.GroundFront, Data.GroundBack, Data.AirFront, Data.AirBack, Data.Height);
 			m_palfx = (Data.OwnPaletteFx == true) ? new PaletteFx() : Parent.PaletteFx;
 
-			CurrentPalette = Parent.CurrentPalette;
 			CurrentFacing = GetFacing(Data.PositionType, m_offsetcharacter.CurrentFacing, Data.FacingFlag < 0);
 			CurrentLocation = GetStartLocation();
 			CurrentScale = Data.Scale;

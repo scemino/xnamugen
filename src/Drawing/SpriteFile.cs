@@ -9,7 +9,7 @@ using System.Text.RegularExpressions;
 
 namespace xnaMugen.Drawing
 {
-	class SpriteFile : Resource
+	class SpriteFile
 	{
 		public SpriteFile(SpriteSystem spritesystem, File file, SpriteFileVersion version, List<SpriteFileData> data, Boolean sharedpalette)
 		{
@@ -66,8 +66,8 @@ namespace xnaMugen.Drawing
 			if (TryGetSpriteData(id, out data, out dataindex) == false || data.Killbit == true) return null;
 
 			Point size;
-			Texture2D pixels;
-			Texture2D palette;
+			Pixels pixels;
+			Palette palette;
 			Boolean paletteoverride = false;
 
 			if (data.PcxSize > 0)
@@ -91,8 +91,8 @@ namespace xnaMugen.Drawing
 
 				size = shared_sprite.Size;
 				paletteoverride = shared_sprite.PaletteOverride;
-				pixels = m_spritesystem.GetSubSystem<Video.VideoSystem>().CloneTexture(shared_sprite.Pixels);
-				palette = m_spritesystem.GetSubSystem<Video.VideoSystem>().CloneTexture(shared_sprite.Palette);
+				pixels = shared_sprite.Pixels;
+				palette = shared_sprite.Palette;
 			}
 
 			if (data.CopyLastPalette == true && dataindex != 0)
@@ -104,7 +104,7 @@ namespace xnaMugen.Drawing
 					if (previoussprite != null)
 					{
 						paletteoverride = previoussprite.PaletteOverride;
-						m_spritesystem.GetSubSystem<Video.VideoSystem>().CopyTexture(previoussprite.Palette, palette);
+                        palette = previoussprite.Palette;
 					}
 				}
 			}
@@ -119,16 +119,13 @@ namespace xnaMugen.Drawing
 
 		public void LoadAllSprites()
 		{
-			for (Int32 i = 0; i != m_collection.Count; ++i)
+			foreach (SpriteId id in m_collection)
 			{
-				SpriteFileData data = m_collection.GetData(i);
-				if (data == null) continue;
-
-				GetSprite(data.Id);
+				GetSprite(id);
 			}
 		}
 
-		public Texture2D GetFirstPalette()
+		public Palette GetFirstPalette()
 		{
 			if (m_collection.Count == 0) return null;
 
@@ -141,18 +138,9 @@ namespace xnaMugen.Drawing
 			return sprite.Palette;
 		}
 
-		protected override void Dispose(Boolean disposing)
+		public Dictionary<SpriteId, Int32>.KeyCollection.Enumerator GetEnumerator()
 		{
-			if (disposing == true)
-			{
-				if (m_cachedsprites != null)
-				{
-					foreach (Sprite sprite in m_cachedsprites.Values) sprite.Dispose();
-					m_cachedsprites.Clear();
-				}
-			}
-
-			base.Dispose(disposing);
+			return m_collection.GetEnumerator();
 		}
 
 		public SpriteSystem SpriteSystem

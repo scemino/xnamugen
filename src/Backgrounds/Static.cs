@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using xnaMugen.IO;
 using Microsoft.Xna.Framework;
 using xnaMugen.Collections;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace xnaMugen.Backgrounds
 {
@@ -27,15 +28,13 @@ namespace xnaMugen.Backgrounds
 
 		public override void Draw(Combat.PaletteFx palettefx)
 		{
+            Video.DrawState drawstate = SpriteManager.SetupDrawing(SpriteId, null, Vector2.Zero, Vector2.One, SpriteEffects.None);
+			drawstate.Blending = Transparency;
+			drawstate.ScissorRectangle = DrawRect;
+
 			Point tilestart;
 			Point tileend;
 			GetTileLength(Sprite.Size, out tilestart, out tileend);
-
-			Video.DrawState drawstate = SpriteManager.DrawState;
-			drawstate.Reset();
-			drawstate.Blending = Transparency;
-			drawstate.ScissorRectangle = DrawRect;
-			drawstate.Set(Sprite);
 
 			for (Int32 y = tilestart.Y; y != tileend.Y; ++y)
 			{

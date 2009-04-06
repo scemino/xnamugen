@@ -29,16 +29,9 @@ namespace xnaMugen.Video
 
 			m_drawbuffer = new Vertex[500];
 			m_parameters = new KeyedCollection<String, EffectParameter>(x => x.Name);
+			m_nulltexture = new Texture2D(Device, 1, 1, 1, TextureUsage.None, SurfaceFormat.Color);
 
-			m_nullpixels = m_videosystem.CreatePixelTexture(new Point(1, 1));
-			m_nullpalette = m_videosystem.CreatePaletteTexture();
-
-			Byte[] pixels = new Byte[] { 1 };
-			m_nullpixels.SetData<Byte>(pixels);
-
-			Color[] paldata = new Color[256];
-			paldata[1] = Color.White;
-			m_nullpalette.SetData<Color>(paldata);
+			m_nulltexture.SetData<Color>(new Color[] { Color.White });
 		}
 
 		public void OnDeviceReset(Object sender, EventArgs args)
@@ -61,11 +54,11 @@ namespace xnaMugen.Video
 
 			if (drawstate.Mode == DrawMode.None) return;
 
-			drawstate.Pixels = drawstate.Pixels ?? m_nullpixels;
-			drawstate.Palette = drawstate.Palette ?? m_nullpalette;
+			drawstate.Texture = drawstate.Texture ?? m_nulltexture;
 
 			SetBlending(drawstate.Blending);
 			SetScissorTest(drawstate.ScissorRectangle);
+			SetShaderParameters(drawstate.ShaderParameters, drawstate.Texture);
 
 			switch (drawstate.Mode)
 			{
@@ -186,9 +179,7 @@ namespace xnaMugen.Video
 
 			m_effect.CurrentTechnique = (UseOldShader == true) ? m_effect.Techniques["DrawOLD"] : m_effect.Techniques["Draw"];
 
-			SetShaderParameters(drawstate.ShaderParameters, drawstate.Pixels, drawstate.Palette);
-
-			Int32 count = DefaultDrawSetup(drawstate, new Point(drawstate.Pixels.Width, drawstate.Pixels.Height));
+			Int32 count = DefaultDrawSetup(drawstate, new Point(drawstate.Texture.Width, drawstate.Texture.Height));
 			if (count > 0) FinishDrawing(PrimitiveType.TriangleList, count * 2);
 		}
 
@@ -199,9 +190,7 @@ namespace xnaMugen.Video
 
 			m_effect.CurrentTechnique = m_effect.Techniques["FontDraw"];
 
-			SetShaderParameters(drawstate.ShaderParameters, drawstate.Pixels, drawstate.Palette);
-
-			Int32 count = DefaultDrawSetup(drawstate, new Point(drawstate.Pixels.Width, drawstate.Pixels.Height));
+			Int32 count = DefaultDrawSetup(drawstate, new Point(drawstate.Texture.Width, drawstate.Texture.Height));
 			if (count > 0) FinishDrawing(PrimitiveType.TriangleList, count * 2);
 		}
 
@@ -211,8 +200,6 @@ namespace xnaMugen.Video
 			if (drawstate.Mode != DrawMode.OutlinedRectangle) throw new ArgumentException("Incorrect drawstate");
 
 			m_effect.CurrentTechnique = (UseOldShader == true) ? m_effect.Techniques["DrawOLD"] : m_effect.Techniques["Draw"];
-
-			SetShaderParameters(drawstate.ShaderParameters, drawstate.Pixels, drawstate.Palette);
 
 			Int32 count = 0;
 			foreach (DrawData data in drawstate)
@@ -247,9 +234,7 @@ namespace xnaMugen.Video
 
 			m_effect.CurrentTechnique = (UseOldShader == true) ? m_effect.Techniques["DrawOLD"] : m_effect.Techniques["Draw"];
 
-			SetShaderParameters(drawstate.ShaderParameters, drawstate.Pixels, drawstate.Palette);
-
-			Int32 count = DefaultDrawSetup(drawstate, new Point(drawstate.Pixels.Width, drawstate.Pixels.Height));
+			Int32 count = DefaultDrawSetup(drawstate, new Point(drawstate.Texture.Width, drawstate.Texture.Height));
 			if (count > 0) FinishDrawing(PrimitiveType.TriangleList, count * 2);
 		}
 
@@ -259,8 +244,6 @@ namespace xnaMugen.Video
 			if (drawstate.Mode != DrawMode.Lines) throw new ArgumentException("Incorrect drawstate");
 
 			m_effect.CurrentTechnique = (UseOldShader == true) ? m_effect.Techniques["DrawOLD"] : m_effect.Techniques["Draw"];
-
-			SetShaderParameters(drawstate.ShaderParameters, drawstate.Pixels, drawstate.Palette);
 
 			Int32 count = 0;
 			Boolean point = false;
@@ -301,17 +284,12 @@ namespace xnaMugen.Video
 			m_effect.GraphicsDevice.Textures[1] = null;
 		}
 
-		void SetShaderParameters(ShaderParameters parameters, Texture2D pixels, Texture2D palette)
+		void SetShaderParameters(ShaderParameters parameters, Texture2D texture)
 		{
 			if (parameters == null) throw new ArgumentNullException("parameters");
-			if (pixels == null) throw new ArgumentNullException("pixels");
-			if (palette == null) throw new ArgumentNullException("palette");
+			if (texture == null) throw new ArgumentNullException("texture");
 
-			GetShaderParameter("xPixels").SetValue(pixels);
-			GetShaderParameter("xPalette").SetValue(palette);
-
-			GetShaderParameter("xFontColorIndex").SetValue(parameters.FontColorIndex);
-			GetShaderParameter("xFontTotalColors").SetValue(parameters.FontTotalColors);
+			GetShaderParameter("xTexture").SetValue(texture);
 
 			if (parameters.PaletteFxEnable == true)
 			{
@@ -365,9 +343,7 @@ namespace xnaMugen.Video
 		{
 			if (disposing == true)
 			{
-				if (m_nullpixels != null) m_nullpixels.Dispose();
-
-				if (m_nullpalette != null) m_nullpalette.Dispose();
+				if (m_nulltexture != null) m_nulltexture.Dispose();
 			}
 
 			base.Dispose(disposing);
@@ -654,10 +630,7 @@ namespace xnaMugen.Video
 		readonly KeyedCollection<String, EffectParameter> m_parameters;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Texture2D m_nullpixels;
-
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Texture2D m_nullpalette;
+		readonly Texture2D m_nulltexture;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		Boolean m_useoldshader;

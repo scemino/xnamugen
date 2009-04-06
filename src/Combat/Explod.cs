@@ -32,7 +32,6 @@ namespace xnaMugen.Combat
 
             m_creationfacing = Data.Offseter.CurrentFacing;
 
-            CurrentPalette = Creator.CurrentPalette;
             CurrentFacing = GetStartFacing();
             CurrentLocation = GetStartLocation();
             CurrentVelocity = m_data.Velocity;

@@ -159,8 +159,6 @@ namespace xnaMugen.Combat
 			Vector2 drawlocation = GetDrawLocation();
 			Vector2 drawoffset = Misc.GetOffset(Vector2.Zero, CurrentFacing, currentelement.Offset);
 
-			SpriteManager.OverridePalette = CurrentPalette;
-
 			Vector2 drawscale = CurrentScale;
 			if (this is Character) drawscale *= (this as Character).DrawScale;
 
@@ -339,13 +337,6 @@ namespace xnaMugen.Combat
 			set { m_scale = value; }
 		}
 
-		public Texture2D CurrentPalette
-		{
-			get { return m_currentpalette; }
-
-			set { m_currentpalette = value; }
-		}
-
 		public Blending Transparency
 		{
 			get { return m_blending; }
@@ -397,9 +388,6 @@ namespace xnaMugen.Combat
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		Vector2 m_scale;
-
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Texture2D m_currentpalette;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		Blending m_blending;

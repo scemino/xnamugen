@@ -28,7 +28,6 @@ namespace xnaMugen.Combat
             m_currentpriority = Data.Priority;
             m_palfx = new PaletteFx();
 
-            CurrentPalette = Creator.CurrentPalette;
             CurrentFacing = Creator.CurrentFacing;
             CurrentLocation = GetStartLocation();
             CurrentVelocity = Data.InitialVelocity;

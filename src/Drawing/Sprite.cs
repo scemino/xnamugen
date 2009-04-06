@@ -9,9 +9,9 @@ using System.Text.RegularExpressions;
 
 namespace xnaMugen.Drawing
 {
-	class Sprite : Resource
+	class Sprite
 	{
-		public Sprite(Point size, Point axis, Texture2D pixels, Texture2D palette, Boolean paletteoverride)
+		public Sprite(Point size, Point axis, Pixels pixels, Palette palette, Boolean paletteoverride)
 		{
 			if (pixels == null) throw new ArgumentNullException("pixels");
 			if (palette == null) throw new ArgumentNullException("palette");
@@ -21,18 +21,6 @@ namespace xnaMugen.Drawing
 			m_pixels = pixels;
 			m_palette = palette;
 			m_paletteoverride = paletteoverride;
-		}
-
-		protected override void Dispose(Boolean disposing)
-		{
-			if (disposing == true)
-			{
-				if (m_pixels != null) m_pixels.Dispose();
-
-				if (m_palette != null) m_palette.Dispose();
-			}
-
-			base.Dispose(disposing);
 		}
 
 		public Point Size
@@ -45,12 +33,12 @@ namespace xnaMugen.Drawing
 			get { return m_axis; }
 		}
 
-		public Texture2D Pixels
+        public Pixels Pixels
 		{
 			get { return m_pixels; }
 		}
 
-		public Texture2D Palette
+        public Palette Palette
 		{
 			get { return m_palette; }
 		}
@@ -69,10 +57,10 @@ namespace xnaMugen.Drawing
 		readonly Point m_axis;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Texture2D m_pixels;
+        readonly Pixels m_pixels;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Texture2D m_palette;
+        readonly Palette m_palette;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		readonly Boolean m_paletteoverride;

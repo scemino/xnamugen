@@ -83,6 +83,11 @@ namespace xnaMugen.Drawing
 			return index;
 		}
 
+		public Dictionary<SpriteId, Int32>.KeyCollection.Enumerator GetEnumerator()
+		{
+			return m_indexcache.Keys.GetEnumerator();
+		}
+
 		public Int32 Count
 		{
 			get { return m_indexeddata.Count; }
