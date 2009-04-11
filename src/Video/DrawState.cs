@@ -15,8 +15,9 @@ namespace xnaMugen.Video
 
 			m_videosystem = videosystem;
 			m_mode = DrawMode.Normal;
-            m_texture = null;
-            m_scissorrect = Rectangle.Empty;
+			m_pixels = null;
+			m_palette = null;
+			m_scissorrect = Rectangle.Empty;
 			m_blending = new Blending();
 			m_drawdata = new List<DrawData>(10);
 			m_scale = Vector2.One;
@@ -35,7 +36,8 @@ namespace xnaMugen.Video
 		public void Reset()
 		{
 			m_mode = DrawMode.Normal;
-			m_texture = null;
+			m_pixels = null;
+			m_palette = null;
 			m_scissorrect = Rectangle.Empty;
 			m_blending = new Blending();
 			m_drawdata.Clear();
@@ -45,6 +47,23 @@ namespace xnaMugen.Video
 			m_rotation = 0;
 			m_offset = Vector2.Zero;
 			m_parameters.Reset();
+		}
+
+		public void Set(Drawing.Sprite sprite)
+		{
+			if (sprite != null)
+			{
+				Pixels = sprite.Pixels;
+				Palette = sprite.Palette;
+				Axis = (Vector2)sprite.Axis;
+			}
+			else
+			{
+				Mode = DrawMode.None;
+				Pixels = null;
+				Palette = null;
+				Axis = Vector2.Zero;
+			}
 		}
 
 		public void AddData(Vector2 location, Rectangle? rect)
@@ -74,11 +93,18 @@ namespace xnaMugen.Video
 			set { m_mode = value; }
 		}
 
-		public Texture2D Texture
+		public Texture2D Pixels
 		{
-            get { return m_texture; }
+			get { return m_pixels; }
 
-            set { m_texture = value; }
+			set { m_pixels = value; }
+		}
+
+		public Texture2D Palette
+		{
+			get { return m_palette; }
+
+			set { m_palette = value; }
 		}
 
 		public Rectangle ScissorRectangle
@@ -142,7 +168,10 @@ namespace xnaMugen.Video
 		DrawMode m_mode;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Texture2D m_texture;
+		Texture2D m_pixels;
+
+		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+		Texture2D m_palette;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		Rectangle m_scissorrect;

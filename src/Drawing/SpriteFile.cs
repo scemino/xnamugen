@@ -9,7 +9,7 @@ using System.Text.RegularExpressions;
 
 namespace xnaMugen.Drawing
 {
-	class SpriteFile
+	class SpriteFile : Resource
 	{
 		public SpriteFile(SpriteSystem spritesystem, File file, SpriteFileVersion version, List<SpriteFileData> data, Boolean sharedpalette)
 		{
@@ -57,7 +57,7 @@ namespace xnaMugen.Drawing
 
 		public Sprite GetSprite(SpriteId id)
 		{
-			if (id == SpriteId.Invalid) return null;			
+			if (id == SpriteId.Invalid) return null;
 
 			if (m_cachedsprites.ContainsKey(id) == true) return m_cachedsprites[id];
 
@@ -66,8 +66,8 @@ namespace xnaMugen.Drawing
 			if (TryGetSpriteData(id, out data, out dataindex) == false || data.Killbit == true) return null;
 
 			Point size;
-			Pixels pixels;
-			Palette palette;
+			Texture2D pixels;
+			Texture2D palette;
 			Boolean paletteoverride = false;
 
 			if (data.PcxSize > 0)
@@ -91,8 +91,8 @@ namespace xnaMugen.Drawing
 
 				size = shared_sprite.Size;
 				paletteoverride = shared_sprite.PaletteOverride;
-				pixels = shared_sprite.Pixels;
-				palette = shared_sprite.Palette;
+				pixels = m_spritesystem.GetSubSystem<Video.VideoSystem>().CloneTexture(shared_sprite.Pixels);
+				palette = m_spritesystem.GetSubSystem<Video.VideoSystem>().CloneTexture(shared_sprite.Palette);
 			}
 
 			if (data.CopyLastPalette == true && dataindex != 0)
@@ -104,7 +104,7 @@ namespace xnaMugen.Drawing
 					if (previoussprite != null)
 					{
 						paletteoverride = previoussprite.PaletteOverride;
-                        palette = previoussprite.Palette;
+						m_spritesystem.GetSubSystem<Video.VideoSystem>().CopyTexture(previoussprite.Palette, palette);
 					}
 				}
 			}
@@ -119,13 +119,16 @@ namespace xnaMugen.Drawing
 
 		public void LoadAllSprites()
 		{
-			foreach (SpriteId id in m_collection)
+			for (Int32 i = 0; i != m_collection.Count; ++i)
 			{
-				GetSprite(id);
+				SpriteFileData data = m_collection.GetData(i);
+				if (data == null) continue;
+
+				GetSprite(data.Id);
 			}
 		}
 
-		public Palette GetFirstPalette()
+		public Texture2D GetFirstPalette()
 		{
 			if (m_collection.Count == 0) return null;
 
@@ -138,9 +141,18 @@ namespace xnaMugen.Drawing
 			return sprite.Palette;
 		}
 
-		public Dictionary<SpriteId, Int32>.KeyCollection.Enumerator GetEnumerator()
+		protected override void Dispose(Boolean disposing)
 		{
-			return m_collection.GetEnumerator();
+			if (disposing == true)
+			{
+				if (m_cachedsprites != null)
+				{
+					foreach (Sprite sprite in m_cachedsprites.Values) sprite.Dispose();
+					m_cachedsprites.Clear();
+				}
+			}
+
+			base.Dispose(disposing);
 		}
 
 		public SpriteSystem SpriteSystem

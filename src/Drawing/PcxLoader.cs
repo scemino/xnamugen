@@ -14,7 +14,7 @@ namespace xnaMugen.Drawing
 			m_filebuffer = new Byte[1];
 		}
 
-		public Boolean Load(IO.File file, Int32 pcxsize, out Point size, out Pixels pixels, out Palette palette)
+		public Boolean Load(IO.File file, Int32 pcxsize, out Point size, out Texture2D pixels, out Texture2D palette)
 		{
 			if (file == null) throw new ArgumentNullException("file");
 
@@ -44,37 +44,11 @@ namespace xnaMugen.Drawing
 				}
 				else
 				{
-					palette = new Palette();
+					palette = m_system.GetSubSystem<Video.VideoSystem>().CreatePaletteTexture();
 				}
 
 				return true;
 			}
-		}
-
-		public Boolean Load(IO.File file, Int32 pcxsize, out Point size, out Texture2D pixeltexture, out Texture2D palettetexture)
-		{
-			if (file == null) throw new ArgumentNullException("file");
-
-			Pixels pixels;
-			Palette palette;
-
-			if (Load(file, pcxsize, out size, out pixels, out palette) == true)
-			{
-				pixeltexture = m_system.GetSubSystem<Video.VideoSystem>().CreatePixelTexture(pixels.Size);
-				pixeltexture.SetData<Byte>(pixels.Buffer);
-
-				palettetexture = m_system.GetSubSystem<Video.VideoSystem>().CreatePaletteTexture();
-				palettetexture.SetData<Color>(palette.Buffer);
-
-				return true;
-			}
-			else
-			{
-				pixeltexture = null;
-				palettetexture = null;
-				return false;
-			}
-
 		}
 
 		Int32 ReadFile(IO.File file, Int32 count)
@@ -87,11 +61,11 @@ namespace xnaMugen.Drawing
 			return file.ReadBytes(m_filebuffer, count);
 		}
 
-		Pixels LoadPixels(Point size, Int32 bytesperline, ref Int32 readoffset)
+		Texture2D LoadPixels(Point size, Int32 bytesperline, ref Int32 readoffset)
 		{
-			readoffset = IO.FileHeaders.PCX.HeaderSize;
+			if (m_pixelbuffer == null || m_pixelbuffer.Length < size.X * size.Y) m_pixelbuffer = new Single[size.X * size.Y];
 
-			Byte[] buffer = new Byte[size.X * size.Y];
+			readoffset = IO.FileHeaders.PCX.HeaderSize;
 
 			for (Int32 y = 0; y != size.Y; ++y)
 			{
@@ -109,7 +83,7 @@ namespace xnaMugen.Drawing
 						{
 							for (Byte repeat = 0; repeat < data; ++repeat)
 							{
-								if (offset < buffer.Length) buffer[offset++] = color;
+								m_pixelbuffer[offset++] = color / 255.0f;
 								++x;
 							}
 						}
@@ -120,37 +94,52 @@ namespace xnaMugen.Drawing
 					}
 					else
 					{
-						if (x <= size.X && offset < buffer.Length) buffer[offset++] = data;
+						if (x <= size.X) m_pixelbuffer[offset++] = data / 255.0f;
 						++x;
 					}
 				}
+
+
 			}
 
-			return new Pixels(size, buffer);
+			Texture2D texture = m_system.GetSubSystem<Video.VideoSystem>().CreatePixelTexture(size);
+			texture.SetData<Single>(m_pixelbuffer, 0, size.X * size.Y, SetDataOptions.None);
+			return texture;
 		}
 
-		Palette LoadPalette(Int32 pcxsize, IO.FileHeaders.PCX header, ref Int32 readoffset)
+		Texture2D LoadPalette(Int32 pcxsize, IO.FileHeaders.PCX header, ref Int32 readoffset)
 		{
-			Color[] colors = new Color[256];
+			Texture2D texture = m_system.GetSubSystem<Video.VideoSystem>().CreatePaletteTexture();
+			SharedBuffer buffer = m_system.GetSubSystem<SharedBuffer>();
 
-			for (Int32 i = 0; i != 256; ++i)
+			lock (buffer.LockObject)
 			{
-				Byte red = m_filebuffer[readoffset + 0];
-				Byte green = m_filebuffer[readoffset + 1];
-				Byte blue = m_filebuffer[readoffset + 2];
-				Byte alpha = (i != 0) ? (Byte)255 : (Byte)0;
+				buffer.EnsureSize(256 * 4);
 
-				colors[i] = new Color(red, green, blue, alpha);
-				readoffset += 3;
+				for (Int32 i = 0; i != 256; ++i)
+				{
+					Int32 writeoffset = i * 4;
+
+					buffer[writeoffset + 0] = m_filebuffer[readoffset + 2];
+					buffer[writeoffset + 1] = m_filebuffer[readoffset + 1];
+					buffer[writeoffset + 2] = m_filebuffer[readoffset + 0];
+					buffer[writeoffset + 3] = 255;
+
+					readoffset += 3;
+				}
+
+				texture.SetData<Byte>(buffer.Buffer, 0, 256 * 4, SetDataOptions.None);
+				return texture;
 			}
-
-			return new Palette(colors);
 		}
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		Byte[] m_filebuffer;
+
+		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+		Single[] m_pixelbuffer;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		readonly SpriteSystem m_system;

@@ -103,7 +103,6 @@ namespace xnaMugen.Video
         public Texture2D CloneTexture(Texture2D texture)
         {
             if (texture == null) throw new ArgumentNullException("texture");
-            if (texture.Format != SurfaceFormat.Alpha8 && texture.Format != SurfaceFormat.Color) throw new ArgumentException("Cannot copy texture with format: " + texture.Format);
 
             Texture2D clone = new Texture2D(Device, texture.Width, texture.Height, 1, TextureUsage.None, texture.Format);
             SharedBuffer buffer = GetSubSystem<SharedBuffer>();
@@ -127,7 +126,6 @@ namespace xnaMugen.Video
 
             if (input.Width != output.Width || input.Height != output.Height) throw new ArgumentException("Textures are not same size");
             if (input.Format != output.Format) throw new ArgumentException("Textures do not have same SurfaceFormat");
-            if (input.Format != SurfaceFormat.Alpha8 && input.Format != SurfaceFormat.Color) throw new ArgumentException("Cannot copy texture with format: " + input.Format);
 
             SharedBuffer buffer = GetSubSystem<SharedBuffer>();
             Int32 buffersize = input.Width * input.Height * GetFormatSize(input.Format);
@@ -143,7 +141,7 @@ namespace xnaMugen.Video
 
         public Texture2D CreatePixelTexture(Point size)
         {
-            Texture2D texture = new Texture2D(Device, size.X, size.Y, 1, TextureUsage.None, SurfaceFormat.Alpha8);
+            Texture2D texture = new Texture2D(Device, size.X, size.Y, 1, TextureUsage.None, SurfaceFormat.Single);
             return texture;
         }
 
@@ -213,6 +211,9 @@ namespace xnaMugen.Video
 
                 case SurfaceFormat.Color:
                     return 4;
+
+				case SurfaceFormat.Single:
+					return 4;
 
                 default:
                     throw new ArgumentException("Cannot get size of SurfaceFormat: " + format);

@@ -17,7 +17,7 @@ namespace xnaMugen.Menus
 			if (soundpath == null) throw new ArgumentNullException("soundpath");
 
 			m_soundmanager = MenuSystem.GetSubSystem<Audio.SoundSystem>().CreateManager(soundpath);
-			m_spritemanager = MenuSystem.GetSubSystem<Drawing.SpriteSystem>().CreateManager(spritepath, false);
+			m_spritemanager = MenuSystem.GetSubSystem<Drawing.SpriteSystem>().CreateManager(spritepath);
 			m_animationmanager = MenuSystem.GetSubSystem<Animations.AnimationSystem>().CreateManager(animationpath);
 			m_backgrounds = new Backgrounds.Collection(m_spritemanager.Clone(), m_animationmanager.Clone());
 			m_fadeintime = textsection.GetAttribute<Int32>("fadein.time");

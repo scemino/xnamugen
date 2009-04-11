@@ -9,197 +9,122 @@ using System.Text.RegularExpressions;
 
 namespace xnaMugen.Drawing
 {
-    [DebuggerDisplay("{SpriteFile.Filepath}")]
-    class SpriteManager : Resource
-    {
-        public SpriteManager(SpriteFile spritefile, Boolean useoverride)
-        {
-            if (spritefile == null) throw new ArgumentNullException("spritefile");
+	[DebuggerDisplay("{SpriteFile.Filepath}")]
+	class SpriteManager
+	{
+		public SpriteManager(SpriteFile spritefile)
+		{
+			if (spritefile == null) throw new ArgumentNullException("spritefile");
 
-            m_spritefile = spritefile;
-            m_drawstate = new Video.DrawState(m_spritefile.SpriteSystem.GetSubSystem<Video.VideoSystem>());
-            m_useoverride = useoverride;
-            m_textures = new Dictionary<SpriteId, Texture2D>();
-            m_ischild = false;
-        }
+			m_spritefile = spritefile;
+			m_drawstate = new Video.DrawState(m_spritefile.SpriteSystem.GetSubSystem<Video.VideoSystem>());
+		}
 
-        SpriteManager(SpriteManager parent)
-        {
-            if (parent == null) throw new ArgumentNullException("parent");
+		public SpriteManager Clone()
+		{
+			SpriteManager clone = new SpriteManager(m_spritefile);
+			clone.OverridePalette = OverridePalette;
+			clone.UseOverride = UseOverride;
 
-            m_spritefile = parent.m_spritefile;
-            m_drawstate = new Video.DrawState(m_spritefile.SpriteSystem.GetSubSystem<Video.VideoSystem>());
-            m_useoverride = parent.m_useoverride;
-            m_textures = parent.m_textures;
-            m_overridepalette = parent.m_overridepalette;
-            m_ischild = true;
-        }
+			return clone;
+		}
 
-        protected override void Dispose(Boolean disposing)
-        {
-            if (disposing == true)
-            {
-                if (m_ischild == false)
-                {
-                    if (m_textures != null)
-                    {
-                        foreach (Texture2D texture in m_textures.Values)
-                        {
-                            if (texture != null) texture.Dispose();
-                        }
+		public void LoadAllSprites()
+		{
+			SpriteFile.LoadAllSprites();
+		}
 
-                        m_textures.Clear();
-                    }
-                }
-            }
+		public void LoadSprites(Animations.Animation animation)
+		{
+			if (animation == null) throw new ArgumentNullException("animation");
 
-            base.Dispose(disposing);
-        }
-
-        public SpriteManager Clone()
-        {
-            return new SpriteManager(this);
-        }
-
-        public void LoadAllSprites()
-        {
-			foreach (SpriteId id in SpriteFile)
+			foreach (Animations.AnimationElement element in animation)
 			{
-				GetSprite(id);
-				GetTexture(id);
+				GetSprite(element.SpriteId);
 			}
-        }
+		}
 
-        public void LoadSprites(Animations.Animation animation)
-        {
-            if (animation == null) throw new ArgumentNullException("animation");
+		public Sprite GetSprite(SpriteId spriteid)
+		{
+			if (m_spritefile.ContainsSprite(spriteid) == false) return null;
 
-            foreach (Animations.AnimationElement element in animation)
-            {
-                GetSprite(element.SpriteId);
-                GetTexture(element.SpriteId);
-            }
-        }
+			return m_spritefile.GetSprite(spriteid);
+		}
 
-        Texture2D GetTexture(SpriteId spriteid)
-        {
-            Texture2D texture = null;
-            if (m_textures.TryGetValue(spriteid, out texture) == false)
-            {
-                Sprite sprite = GetSprite(spriteid);
-                if (sprite == null) return null;
+		public void Draw(SpriteId id, Vector2 location, Vector2 offset, Vector2 scale, SpriteEffects flip)
+		{
+			SetupDrawing(id, location, offset, scale, flip).Use();
+		}
 
-                texture = m_spritefile.SpriteSystem.GetSubSystem<Video.VideoSystem>().CreateTexture(sprite.Pixels, GetPalette(sprite));
-                m_textures[spriteid] = texture;
-            }
+		public Video.DrawState SetupDrawing(SpriteId id, Vector2? location, Vector2 offset, Vector2 scale, SpriteEffects flip)
+		{
+			Sprite sprite = GetSprite(id);
 
-            return texture;
-        }
+			if ((flip & SpriteEffects.FlipHorizontally) == SpriteEffects.FlipHorizontally) offset.X = -offset.X;
+			if ((flip & SpriteEffects.FlipVertically) == SpriteEffects.FlipVertically) offset.Y = -offset.Y;
 
-        public Sprite GetSprite(SpriteId spriteid)
-        {
-            if (m_spritefile.ContainsSprite(spriteid) == false) return null;
+			m_drawstate.Reset();
+			m_drawstate.Set(sprite);
+			m_drawstate.Offset = offset;
+			m_drawstate.Flip = flip;
+			m_drawstate.Scale = scale;
 
-            return m_spritefile.GetSprite(spriteid);
-        }
+			if (location != null) m_drawstate.AddData(location.Value, null);
 
-        public void Draw(SpriteId id, Vector2? location, Vector2 offset, Vector2 scale, SpriteEffects flip)
-        {
-            SetupDrawing(id, location, offset, scale, flip).Use();
-        }
+			if (UseOverride == true && sprite != null && sprite.PaletteOverride == true)
+			{
+				if (OverridePalette != null)
+				{
+					m_drawstate.Palette = OverridePalette;
+				}
+				else
+				{
+					Texture2D newpalette = SpriteFile.GetFirstPalette();
+					if (newpalette != null) m_drawstate.Palette = newpalette;
+				}
+			}
 
-        public Video.DrawState SetupDrawing(SpriteId id, Vector2? location, Vector2 offset, Vector2 scale, SpriteEffects flip)
-        {
-            if ((flip & SpriteEffects.FlipHorizontally) == SpriteEffects.FlipHorizontally) offset.X = -offset.X;
-            if ((flip & SpriteEffects.FlipVertically) == SpriteEffects.FlipVertically) offset.Y = -offset.Y;
+			return m_drawstate;
+		}
 
-            m_drawstate.Reset();
-            m_drawstate.Offset = offset;
-            m_drawstate.Flip = flip;
-            m_drawstate.Scale = scale;
+		public Video.DrawState DrawState
+		{
+			get { return m_drawstate; }
+		}
 
-            if (location != null) m_drawstate.AddData(location.Value, null);
+		public Texture2D OverridePalette
+		{
+			get { return m_overridepalette; }
 
-            Sprite sprite = GetSprite(id);
-            if (sprite != null)
-            {
-                m_drawstate.Axis = (Vector2)sprite.Axis;
-                m_drawstate.Texture = GetTexture(id);
-            }
-            else
-            {
-                m_drawstate.Mode = DrawMode.None;
-                m_drawstate.Texture = null;
-                m_drawstate.Axis = Vector2.Zero;
-            }
+			set { m_overridepalette = value; }
+		}
 
-            return m_drawstate;
-        }
+		public Boolean UseOverride
+		{
+			get { return m_useoverride; }
 
-        Palette GetPalette(Sprite sprite)
-        {
-            if (sprite == null) throw new ArgumentNullException("sprite");
+			set { m_useoverride = value; }
+		}
 
-            if (m_useoverride == true && sprite.PaletteOverride == true)
-            {
-                return OverridePalette ?? SpriteFile.GetFirstPalette();
-            }
-            else
-            {
-                return sprite.Palette;
-            }
-        }
+		SpriteFile SpriteFile
+		{
+			get { return m_spritefile; }
+		}
 
-        void ClearTextureCache()
-        {
-            foreach (Texture2D texture in m_textures.Values) texture.Dispose();
+		#region Fields
 
-            m_textures.Clear();
-        }
+		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+		readonly SpriteFile m_spritefile;
 
-        public Video.DrawState DrawState
-        {
-            get { return m_drawstate; }
-        }
+		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+		readonly Video.DrawState m_drawstate;
 
-        public Palette OverridePalette
-        {
-            get { return m_overridepalette; }
+		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+		Texture2D m_overridepalette;
 
-            set
-            {
-                if (m_ischild == true) throw new ArgumentException("Cannot change palette for child spritemanager.");
+		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+		Boolean m_useoverride;
 
-                if (m_overridepalette != value) ClearTextureCache();
-                m_overridepalette = value;
-            }
-        }
-
-        SpriteFile SpriteFile
-        {
-            get { return m_spritefile; }
-        }
-
-        #region Fields
-
-        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        readonly SpriteFile m_spritefile;
-
-        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        readonly Video.DrawState m_drawstate;
-
-        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        Palette m_overridepalette;
-
-        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        readonly Boolean m_useoverride;
-
-        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        readonly Dictionary<SpriteId, Texture2D> m_textures;
-
-        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        readonly Boolean m_ischild;
-
-        #endregion
-    }
+		#endregion
+	}
 }

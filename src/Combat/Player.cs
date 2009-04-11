@@ -19,7 +19,7 @@ namespace xnaMugen.Combat
 			if (team == null) throw new ArgumentNullException("team");
 
 			m_profile = profile;
-			m_spritemanager = Engine.GetSubSystem<Drawing.SpriteSystem>().CreateManager(Profile.SpritePath, true);
+			m_spritemanager = Engine.GetSubSystem<Drawing.SpriteSystem>().CreateManager(Profile.SpritePath);
 			m_animationmanager = Engine.GetSubSystem<Animations.AnimationSystem>().CreateManager(Profile.AnimationPath);
 			m_soundmanager = Engine.GetSubSystem<Audio.SoundSystem>().CreateManager(Profile.SoundPath);
 			m_statemanager = Engine.GetSubSystem<StateMachine.StateSystem>().CreateManager(this, Profile.StateFiles);
@@ -32,6 +32,7 @@ namespace xnaMugen.Combat
 			m_palfx = new PaletteFx();
 			m_team = team;
 
+			SpriteManager.UseOverride = true;
             SpriteManager.OverridePalette = Palettes[PaletteNumber];
 
 			if (Engine.GetSubSystem<InitializationSettings>().PreloadCharacterSprites == true)
@@ -82,25 +83,25 @@ namespace xnaMugen.Combat
 			}
 		}
 
-		ReadOnlyList<Drawing.Palette> BuildPalettes()
+		ReadOnlyList<Texture2D> BuildPalettes()
 		{
-            List<Drawing.Palette> palettes = new List<Drawing.Palette>(12);
+			List<Texture2D> palettes = new List<Texture2D>(12);
 
 			for (Int32 i = 0; i != 12; ++i)
 			{
 				String filepath = Profile.PaletteFiles[i];
 				if (String.Equals(filepath, String.Empty) == true)
 				{
-					palettes.Add(new Drawing.Palette());
+					palettes.Add(Engine.GetSubSystem<Video.VideoSystem>().CreatePaletteTexture());
 				}
 				else
 				{
-					Drawing.Palette palette = Engine.GetSubSystem<Drawing.SpriteSystem>().LoadPaletteFile(filepath);
+					Texture2D palette = Engine.GetSubSystem<Drawing.SpriteSystem>().LoadPaletteFile(filepath);
 					palettes.Add(palette);
 				}
 			}
 
-            return new ReadOnlyList<Drawing.Palette>(palettes);
+			return new ReadOnlyList<Texture2D>(palettes);
 		}
 
 		public PlayerProfile Profile
@@ -143,7 +144,7 @@ namespace xnaMugen.Combat
 			get { return m_dimensions; }
 		}
 
-		public ReadOnlyList<Drawing.Palette> Palettes
+		public ReadOnlyList<Texture2D> Palettes
 		{
 			get { return m_palettes; }
 		}
@@ -219,7 +220,7 @@ namespace xnaMugen.Combat
 		readonly CharacterDimensions m_dimensions;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly ReadOnlyList<Drawing.Palette> m_palettes;
+		readonly ReadOnlyList<Texture2D> m_palettes;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		Int32 m_palettenumber;

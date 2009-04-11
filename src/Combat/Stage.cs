@@ -157,7 +157,7 @@ namespace xnaMugen.Combat
 			m_spritefile = bgdefsection.GetAttribute<String>("spr");
 			m_debug = bgdefsection.GetAttribute<Boolean>("debugbg", false);
 
-			Drawing.SpriteManager spritemanager = Engine.GetSubSystem<Drawing.SpriteSystem>().CreateManager(SpritePath, false);
+			Drawing.SpriteManager spritemanager = Engine.GetSubSystem<Drawing.SpriteSystem>().CreateManager(SpritePath);
 			Animations.AnimationManager animationmanager = Engine.GetSubSystem<Animations.AnimationSystem>().CreateManager(Profile.Filepath);
 			m_backgrounds = new Backgrounds.Collection(spritemanager, animationmanager);
 

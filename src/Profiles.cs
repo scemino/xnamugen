@@ -213,7 +213,7 @@ namespace xnaMugen
 			m_soundfile = FilterPath(filesection.GetAttribute<String>("sound", String.Empty));
 			m_palettefiles = BuildPaletteFiles(filesection);
 
-			m_spritemanager = m_loader.SubSystems.GetSubSystem<Drawing.SpriteSystem>().CreateManager(SpritePath, false);
+			m_spritemanager = m_loader.SubSystems.GetSubSystem<Drawing.SpriteSystem>().CreateManager(SpritePath);
 
 			SpriteManager.GetSprite(SpriteId.LargePortrait);
 			SpriteManager.GetSprite(SpriteId.SmallPortrait);

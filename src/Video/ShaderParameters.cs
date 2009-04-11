@@ -16,6 +16,9 @@ namespace xnaMugen.Video
 
 		public void Reset()
 		{
+			m_fontcolorindex = 0;
+			m_fonttotalcolors = 0;
+
 			m_afterimageuse = false;
 			m_afterimageinvert = false;
 			m_afterimagecolor = 0;
@@ -33,6 +36,20 @@ namespace xnaMugen.Video
 			m_palfxmul = Vector3.Zero;
 			m_palfxsinadd = Vector4.Zero;
 			m_palfxtime = 0;
+		}
+
+		public Int32 FontColorIndex
+		{
+			get { return m_fontcolorindex; }
+
+			set { m_fontcolorindex = value; }
+		}
+
+		public Int32 FontTotalColors
+		{
+			get { return m_fonttotalcolors; }
+
+			set { m_fonttotalcolors = value; }
 		}
 
 		public Boolean AfterImageEnable
@@ -148,6 +165,12 @@ namespace xnaMugen.Video
 		}
 
 		#region Fields
+
+		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+		Int32 m_fontcolorindex;
+
+		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+		Int32 m_fonttotalcolors;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		Boolean m_afterimageuse;

@@ -14,17 +14,15 @@ namespace xnaMugen.Drawing
 			: base(subsystems)
 		{
 			m_spritefiles = new KeyedCollection<String, SpriteFile>(x => x.Filepath, StringComparer.OrdinalIgnoreCase);
-			m_palettefilecache = new Dictionary<String, Palette>(StringComparer.OrdinalIgnoreCase);
+			m_palettefilecache = new Dictionary<String, Texture2D>(StringComparer.OrdinalIgnoreCase);
 			m_fontcache = new KeyedCollection<String, Font>(x => x.Filepath, StringComparer.OrdinalIgnoreCase);
 			m_fontlinemapregex = new Regex("(\\S+)\\s?(\\d+)?\\s?(\\d+)?", RegexOptions.IgnoreCase);
 			m_loader = new PcxLoader(this);
 		}
 
-		public SpriteManager CreateManager(String filepath, Boolean useoverride)
+		public SpriteManager CreateManager(String filepath)
 		{
-			if (filepath == null) throw new ArgumentNullException("filepath");
-
-			return new SpriteManager(GetSpriteFile(filepath), useoverride);
+			return new SpriteManager(GetSpriteFile(filepath));
 		}
 
 		public Font LoadFont(String filepath)
@@ -34,8 +32,8 @@ namespace xnaMugen.Drawing
 			if (m_fontcache.Contains(filepath) == true) return m_fontcache[filepath];
 
 			Point size = new Point(0, 0);
-			Pixels pixels = null;
-			Palette palette = null;
+			Texture2D pixels = null;
+			Texture2D palette = null;
 			IO.TextFile textfile = null;
 
 			using (IO.File file = GetSubSystem<IO.FileSystem>().OpenFile(filepath))
@@ -52,13 +50,13 @@ namespace xnaMugen.Drawing
 				textfile = GetSubSystem<IO.FileSystem>().BuildTextFile(file);
 			}
 
+			Sprite sprite = new Sprite(size, new Point(0, 0), pixels, palette, false);
+
 			IO.TextSection data = textfile.GetSection("Def");
 			IO.TextSection textmap = textfile.GetSection("Map");
 
 			Int32 colors = data.GetAttribute<Int32>("colors");
 			Point defaultcharsize = data.GetAttribute<Point>("size");
-
-			ReadOnlyList<Texture2D> textures = BuildFontTextures(pixels, palette, colors);
 
 			Int32 numchars = 0;
 			Dictionary<Char, Rectangle> sizemap = new Dictionary<Char, Rectangle>();
@@ -69,7 +67,7 @@ namespace xnaMugen.Drawing
 
 				Char c = GetChar(m.Groups[1].Value);
 				Point offset = (m.Groups[2].Value == "") ? new Point(defaultcharsize.X * numchars, 0) : new Point(Int32.Parse(m.Groups[2].Value), 0);
-				Point charsize = (m.Groups[3].Value == "") ? defaultcharsize : new Point(Int32.Parse(m.Groups[3].Value), pixels.Size.Y);
+				Point charsize = (m.Groups[3].Value == "") ? defaultcharsize : new Point(Int32.Parse(m.Groups[3].Value), sprite.Size.Y);
 
 				if (sizemap.ContainsKey(c) == false)
 				{
@@ -80,31 +78,10 @@ namespace xnaMugen.Drawing
 				++numchars;
 			}
 
-			Font font = new Font(this, filepath, textures, new ReadOnlyDictionary<Char, Rectangle>(sizemap), defaultcharsize, colors);
+			Font font = new Font(this, filepath, sprite, new ReadOnlyDictionary<Char, Rectangle>(sizemap), defaultcharsize, colors);
 			m_fontcache.Add(font);
 
 			return font;
-		}
-
-		ReadOnlyList<Texture2D> BuildFontTextures(Pixels pixels, Palette palette, Int32 colors)
-		{
-			if (pixels == null) throw new ArgumentNullException("pixels");
-			if (palette == null) throw new ArgumentNullException("palette");
-			if (colors <= 0) throw new ArgumentOutOfRangeException("colors");
-
-			Int32 number = 1 + (255 / colors);
-			List<Texture2D> textures = new List<Texture2D>(colors);
-
-			for (Int32 i = 0; i != colors; ++i)
-			{
-				Color[] palettecolors = new Color[256];
-				for (Int32 index = 0; index != number; ++index) palettecolors[255 - index] = palette.Buffer[255 - index - (i * number)];
-
-				Palette subpalette = new Palette(palettecolors);
-				textures.Add(GetSubSystem<Video.VideoSystem>().CreateTexture(pixels, subpalette));
-			}
-
-			return new ReadOnlyList<Texture2D>(textures);
 		}
 
 		SpriteFile GetSpriteFile(String filepath)
@@ -168,22 +145,17 @@ namespace xnaMugen.Drawing
 			return m_loader.Load(file, pcxsize, out size, out pixels, out palette);
 		}
 
-		public Boolean LoadImage(IO.File file, Int32 pcxsize, out Point size, out Pixels pixels, out Palette palette)
-		{
-			if (file == null) throw new ArgumentNullException("file");
-
-			return m_loader.Load(file, pcxsize, out size, out pixels, out palette);
-		}
-
-		public Palette LoadPaletteFile(String filepath)
+		public Texture2D LoadPaletteFile(String filepath)
 		{
 			if (filepath == null) throw new ArgumentNullException("filepath");
 
-			Palette palette;
+			Texture2D palette;
 			if (m_palettefilecache.TryGetValue(filepath, out palette) == true) return palette;
 
-			Color[] colors = new Color[256];
+			palette = GetSubSystem<Video.VideoSystem>().CreatePaletteTexture();
+			m_palettefilecache.Add(filepath, palette);
 
+			SharedBuffer buffer = GetSubSystem<SharedBuffer>();
 			using (IO.File file = GetSubSystem<IO.FileSystem>().OpenFile(filepath))
 			{
 				if (file.FileLength != 768)
@@ -192,20 +164,23 @@ namespace xnaMugen.Drawing
 				}
 				else
 				{
-					for (Int32 i = 255; i != -1; --i)
+					lock (buffer.LockObject)
 					{
-						Byte red = file.ReadByte();
-						Byte green = file.ReadByte();
-						Byte blue = file.ReadByte();
-						Byte alpha = (i != 0) ? (Byte)255 : (Byte)0;
+						buffer.EnsureSize(256 * 4);
 
-						colors[i] = new Color(red, green, blue, alpha);
+						for (Int32 i = 255; i != -1; --i)
+						{
+							//blue, green, red, alpha
+							buffer[i * 4 + 2] = file.ReadByte();
+							buffer[i * 4 + 1] = file.ReadByte();
+							buffer[i * 4 + 0] = file.ReadByte();
+							buffer[i * 4 + 3] = 255;
+						}
+
+						palette.SetData<Byte>(buffer.Buffer, 0, 256 * 4, SetDataOptions.None);
 					}
 				}
 			}
-
-			palette = new Palette(colors);
-			m_palettefilecache.Add(filepath, palette);
 
 			return palette;
 		}
@@ -214,6 +189,9 @@ namespace xnaMugen.Drawing
 		{
 			if (disposing == true)
 			{
+				if (m_spritefiles != null) foreach (SpriteFile spritefile in m_spritefiles) spritefile.Dispose();
+
+				if (m_palettefilecache != null) foreach (Texture2D texture in m_palettefilecache.Values) texture.Dispose();
 			}
 
 			base.Dispose(disposing);
@@ -235,7 +213,7 @@ namespace xnaMugen.Drawing
 
 		KeyedCollection<String, Font> m_fontcache;
 
-		Dictionary<String, Palette> m_palettefilecache;
+		Dictionary<String, Texture2D> m_palettefilecache;
 
 		readonly Regex m_fontlinemapregex;
 
