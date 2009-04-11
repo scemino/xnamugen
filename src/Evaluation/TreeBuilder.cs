@@ -265,7 +265,9 @@ namespace xnaMugen.Evaluation
 
 			Tokenizing.BinaryOperatorData lhsdata = lhs.Token.Data as Tokenizing.BinaryOperatorData;
 			Tokenizing.BinaryOperatorData rhsdata = rhs.Token.Data as Tokenizing.BinaryOperatorData;
-			if (lhsdata == null || rhsdata == null) return false;
+
+			if (lhsdata == null || lhs.Children.Count != 2) return false;
+			if (rhsdata == null || rhs.Children.Count != 2) return false;
 
 			return lhsdata.Precedence >= rhsdata.Precedence;
 		}
