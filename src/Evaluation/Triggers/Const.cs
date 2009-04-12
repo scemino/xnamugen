@@ -11,6 +11,9 @@ namespace xnaMugen.Evaluation.Triggers
 			s_playermap = new Dictionary<String, Converter<Combat.Player, Number>>(StringComparer.OrdinalIgnoreCase);
 			s_helpermap = new Dictionary<String, Converter<Combat.Helper, Number>>(StringComparer.OrdinalIgnoreCase);
 
+			s_playermap["data.power"] = x => new Number(x.Constants.MaximumPower);
+			s_helpermap["data.power"] = x => new Number(x.BasePlayer.Constants.MaximumPower);
+
 			s_playermap["data.life"] = x => new Number(x.Constants.MaximumLife);
 			s_helpermap["data.life"] = x => new Number(x.BasePlayer.Constants.MaximumLife);
 

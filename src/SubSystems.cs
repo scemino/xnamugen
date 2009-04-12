@@ -29,6 +29,11 @@ namespace xnaMugen
 			return SubSystems.GetSubSystem<T>();
 		}
 
+		public T GetMainSystem<T>() where T : MainSystem
+		{
+			return SubSystems.GetMainSystem<T>();
+		}
+
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]

@@ -60,16 +60,14 @@ namespace xnaMugen.Diagnostics
             }
         }
 
-        public void Update(Combat.FightEngine engine)
+        public void Update()
         {
-            if (engine == null) throw new ArgumentNullException("engine");
-
             lock (m_lock)
             {
                 if (m_formthread.IsAlive == true)
                 {
-                    Action<Combat.FightEngine> func = UpdateForm;
-                    m_form.Invoke(func, engine);
+                    ThreadStart func = UpdateForm;
+                    m_form.Invoke(func);
                 }
             }
         }
@@ -84,11 +82,9 @@ namespace xnaMugen.Diagnostics
             Application.ExitThread();
         }
 
-        void UpdateForm(Combat.FightEngine engine)
+        void UpdateForm()
         {
-            if (engine == null) throw new ArgumentNullException("engine");
-
-            m_form.Set(engine);
+            m_form.Set(GetMainSystem<Combat.FightEngine>());
         }
 
         #region Fields
