@@ -76,10 +76,11 @@ namespace xnaMugen.Combat
             if (hitdef == null) throw new ArgumentNullException("hitdef");
             if (attacker == null) throw new ArgumentNullException("attacker");
 
+			Boolean beinghit = m_character.MoveType == MoveType.BeingHit;
+
             HitDef.Set(hitdef);
             Attacker = attacker;
             Blocked = blocked;
-            HitCount = (m_character.MoveType == MoveType.BeingHit) ? HitCount + 1 : 1;
             HitStateType = m_character.StateType;
 
             m_character.DrawOrder = HitDef.P2SpritePriority;
@@ -93,6 +94,7 @@ namespace xnaMugen.Combat
             }
             else
             {
+				HitCount = beinghit ? HitCount + 1 : 1;
                 HitShakeTime = HitDef.ShakeTime;
                 m_character.BasePlayer.Power += HitDef.P2HitPowerAdjustment;
 

@@ -641,7 +641,7 @@ namespace xnaMugen.Combat
 				Character target = entity as Character;
 				if (target == null || target == attacker) continue;
 
-				if (CanBlock(attacker, target, attacker.OffensiveInfo.HitDef, true) == true)
+				if (attacker.Assertions.UnGuardable == false && CanBlock(attacker, target, attacker.OffensiveInfo.HitDef, true) == true)
 				{
 					m_attacks.Add(new Contact(attacker, target, attacker.OffensiveInfo.HitDef, ContactType.Block));
 				}

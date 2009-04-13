@@ -198,11 +198,22 @@ namespace xnaMugen.Combat
             Team otherteam = m_team.OtherTeam;
             Int32 hitcount = 0;
 
-            if (otherteam.MainPlayer != null && otherteam.MainPlayer.MoveType == MoveType.BeingHit) hitcount += otherteam.MainPlayer.DefensiveInfo.HitCount;
-            if (otherteam.TeamMate != null && otherteam.TeamMate.MoveType == MoveType.BeingHit) hitcount += otherteam.TeamMate.DefensiveInfo.HitCount;
+			hitcount += GetHits(otherteam.MainPlayer);
+			if (otherteam.TeamMate != null) hitcount += GetHits(otherteam.TeamMate);
 
-            return hitcount + m_hitbonus;
+			if (hitcount > 0) hitcount += m_hitbonus;
+			return hitcount;
         }
+
+		Int32 GetHits(Character target)
+		{
+			if (target == null) throw new ArgumentNullException("target");
+
+			if (target.MoveType != MoveType.BeingHit) return 0;
+			if (target.DefensiveInfo.Blocked == true) return 0;
+
+			return target.DefensiveInfo.HitCount;
+		}
 
         State CounterState
         {
