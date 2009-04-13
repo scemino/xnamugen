@@ -6,7 +6,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("AnimElemTime")]
 	class AnimElemTime : Function
 	{
-		public AnimElemTime(List<CallBack> children, List<Object> arguments)
+		public AnimElemTime(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}
@@ -18,7 +18,7 @@ namespace xnaMugen.Evaluation.Triggers
 			Combat.Character character = state as Combat.Character;
 			if (character == null) return new Number();
 
-			Number r1 = Children[0](state);
+			Number r1 = Children[0].Evaluate(state);
 			if (r1.NumberType == NumberType.None) return new Number();
 
 			Animations.Animation animation = character.AnimationManager.CurrentAnimation;

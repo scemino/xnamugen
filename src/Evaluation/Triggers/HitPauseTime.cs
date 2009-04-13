@@ -6,7 +6,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("HitPauseTime")]
 	class HitPauseTime : Function
 	{
-		public HitPauseTime(List<CallBack> children, List<Object> arguments)
+		public HitPauseTime(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}

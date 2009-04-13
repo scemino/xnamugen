@@ -6,7 +6,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("P2Life")]
 	class P2Life : Function
 	{
-		public P2Life(List<CallBack> children, List<Object> arguments)
+		public P2Life(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}

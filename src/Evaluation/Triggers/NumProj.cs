@@ -6,7 +6,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("NumProj")]
 	class NumProj : Function
 	{
-		public NumProj(List<CallBack> children, List<Object> arguments)
+		public NumProj(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}

@@ -6,7 +6,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("LifeMax")]
 	class LifeMax : Function
 	{
-		public LifeMax(List<CallBack> children, List<Object> arguments)
+		public LifeMax(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}

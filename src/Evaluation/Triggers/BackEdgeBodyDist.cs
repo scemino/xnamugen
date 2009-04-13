@@ -7,7 +7,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("BackEdgeBodyDist")]
 	class BackEdgeBodyDist : Function
 	{
-		public BackEdgeBodyDist(List<CallBack> children, List<Object> arguments)
+		public BackEdgeBodyDist(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}

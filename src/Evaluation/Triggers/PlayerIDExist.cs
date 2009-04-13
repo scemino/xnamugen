@@ -6,7 +6,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("PlayerIDExist")]
 	class PlayerIDExist : Function
 	{
-		public PlayerIDExist(List<CallBack> children, List<Object> arguments)
+		public PlayerIDExist(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}
@@ -16,7 +16,7 @@ namespace xnaMugen.Evaluation.Triggers
 			Combat.Character character = state as Combat.Character;
 			if (character == null || Children.Count != 1) return new Number();
 
-			Number id = Children[0](state);
+			Number id = Children[0].Evaluate(state);
 			if (id.NumberType != NumberType.Int) return new Number();
 
 			foreach (Combat.Entity entity in character.Engine.Entities)

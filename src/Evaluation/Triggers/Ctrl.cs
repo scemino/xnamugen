@@ -6,7 +6,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("Ctrl")]
 	class Ctrl : Function
 	{
-		public Ctrl(List<CallBack> children, List<Object> arguments)
+		public Ctrl(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}

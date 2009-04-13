@@ -6,7 +6,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("IsHelper")]
 	class IsHelper : Function
 	{
-		public IsHelper(List<CallBack> children, List<Object> arguments)
+		public IsHelper(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}
@@ -25,7 +25,7 @@ namespace xnaMugen.Evaluation.Triggers
 			}
 			else if (Children.Count == 1)
 			{
-				Number helperid = Children[0](state);
+				Number helperid = Children[0].Evaluate(state);
 				if (helperid.NumberType != NumberType.Int) return new Number();
 
 				return new Number(helper.Data.HelperId == helperid.IntValue);

@@ -6,7 +6,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("UniqHitCount")]
 	class UniqHitCount : Function
 	{
-		public UniqHitCount(List<CallBack> children, List<Object> arguments)
+		public UniqHitCount(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}

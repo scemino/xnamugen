@@ -6,7 +6,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("Facing")]
 	class Facing : Function
 	{
-		public Facing(List<CallBack> children, List<Object> arguments)
+		public Facing(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}

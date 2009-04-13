@@ -6,7 +6,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("GameTime")]
 	class GameTime : Function
 	{
-		public GameTime(List<CallBack> children, List<Object> arguments)
+		public GameTime(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}

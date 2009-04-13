@@ -6,7 +6,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("RoundState")]
 	class RoundState : Function
 	{
-		public RoundState(List<CallBack> children, List<Object> arguments)
+		public RoundState(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}

@@ -6,7 +6,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("NumProjID")]
 	class NumProjID : Function
 	{
-		public NumProjID(List<CallBack> children, List<Object> arguments)
+		public NumProjID(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}
@@ -16,7 +16,7 @@ namespace xnaMugen.Evaluation.Triggers
 			Combat.Character character = state as Combat.Character;
 			if (character == null || Children.Count != 1) return new Number();
 
-			Number r1 = Children[0](state);
+			Number r1 = Children[0].Evaluate(state);
 			if (r1.NumberType != NumberType.Int) return new Number();
 
 			Int32? projectile_id = r1.IntValue > 0 ? r1.IntValue : (Int32?)null;

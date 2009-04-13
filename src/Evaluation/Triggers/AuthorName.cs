@@ -6,7 +6,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("AuthorName")]
 	class AuthorName : Function
 	{
-		public AuthorName(List<CallBack> children, List<Object> arguments)
+		public AuthorName(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}

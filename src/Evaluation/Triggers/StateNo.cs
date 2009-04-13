@@ -6,7 +6,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("StateNo")]
 	class StateNo : Function
 	{
-		public StateNo(List<CallBack> children, List<Object> arguments)
+		public StateNo(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}

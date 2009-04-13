@@ -7,7 +7,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("FrontEdgeDist")]
 	class FrontEdgeDist : Function
 	{
-		public FrontEdgeDist(List<CallBack> children, List<Object> arguments)
+		public FrontEdgeDist(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}

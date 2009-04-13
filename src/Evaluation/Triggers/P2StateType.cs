@@ -6,7 +6,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("P2StateType")]
 	class P2StateType : Function
 	{
-		public P2StateType(List<CallBack> children, List<Object> arguments)
+		public P2StateType(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}

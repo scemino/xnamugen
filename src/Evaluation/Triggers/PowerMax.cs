@@ -6,7 +6,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("PowerMax")]
 	class PowerMax : Function
 	{
-		public PowerMax(List<CallBack> children, List<Object> arguments)
+		public PowerMax(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}

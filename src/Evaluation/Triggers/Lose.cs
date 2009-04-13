@@ -6,7 +6,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("Lose")]
 	class Lose : Function
 	{
-		public Lose(List<CallBack> children, List<Object> arguments)
+		public Lose(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}
@@ -28,7 +28,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("LoseKO")]
 	class LoseKO : Function
 	{
-		public LoseKO(List<CallBack> children, List<Object> arguments)
+		public LoseKO(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}
@@ -50,7 +50,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("LoseTime")]
 	class LoseTime : Function
 	{
-		public LoseTime(List<CallBack> children, List<Object> arguments)
+		public LoseTime(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}

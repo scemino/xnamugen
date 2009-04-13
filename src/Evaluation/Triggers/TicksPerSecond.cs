@@ -6,7 +6,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("TicksPerSecond")]
 	class TicksPerSecond : Function
 	{
-		public TicksPerSecond(List<CallBack> children, List<Object> arguments)
+		public TicksPerSecond(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}

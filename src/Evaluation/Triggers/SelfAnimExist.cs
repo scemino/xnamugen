@@ -6,7 +6,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("SelfAnimExist")]
 	class SelfAnimExist : Function
 	{
-		public SelfAnimExist(List<CallBack> children, List<Object> arguments)
+		public SelfAnimExist(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}
@@ -16,7 +16,7 @@ namespace xnaMugen.Evaluation.Triggers
 			Combat.Character character = state as Combat.Character;
 			if (character == null || Children.Count != 1) return new Number();
 
-			Number animationnumber = Children[0](state);
+			Number animationnumber = Children[0].Evaluate(state);
 			if (animationnumber.NumberType != NumberType.Int) return new Number();
 
 			return new Number(character.AnimationManager.HasAnimation(animationnumber.IntValue));

@@ -6,7 +6,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("NumEnemy")]
 	class NumEnemy : Function
 	{
-		public NumEnemy(List<CallBack> children, List<Object> arguments)
+		public NumEnemy(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}

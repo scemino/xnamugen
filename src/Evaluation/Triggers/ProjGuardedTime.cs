@@ -6,7 +6,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("ProjGuardedTime")]
 	class ProjGuardedTime : Function
 	{
-		public ProjGuardedTime(List<CallBack> children, List<Object> arguments)
+		public ProjGuardedTime(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}
@@ -16,7 +16,7 @@ namespace xnaMugen.Evaluation.Triggers
 			Combat.Character character = state as Combat.Character;
 			if (character == null || Children.Count != 1) return new Number();
 
-			Number projectile_id = Children[0](state);
+			Number projectile_id = Children[0].Evaluate(state);
 			if (projectile_id.NumberType != NumberType.Int) return new Number();
 
 			Combat.ProjectileInfo projinfo = character.OffensiveInfo.ProjectileInfo;

@@ -6,7 +6,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("Assertion")]
 	class Assertion : Function
 	{
-		public Assertion(List<CallBack> children, List<Object> arguments)
+		public Assertion(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}

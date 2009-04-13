@@ -6,7 +6,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("ID")]
 	class ID : Function
 	{
-		public ID(List<CallBack> children, List<Object> arguments)
+		public ID(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}

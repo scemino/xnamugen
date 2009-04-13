@@ -6,7 +6,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("P2Dist")]
 	class P2Dist : Function
 	{
-		public P2Dist(List<CallBack> children, List<Object> arguments)
+		public P2Dist(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}

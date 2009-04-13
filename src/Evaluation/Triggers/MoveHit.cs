@@ -6,7 +6,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("MoveHit")]
 	class MoveHit : Function
 	{
-		public MoveHit(List<CallBack> children, List<Object> arguments)
+		public MoveHit(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}

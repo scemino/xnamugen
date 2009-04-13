@@ -6,7 +6,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("HitCount")]
 	class HitCount : Function
 	{
-		public HitCount(List<CallBack> children, List<Object> arguments)
+		public HitCount(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}

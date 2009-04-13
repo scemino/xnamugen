@@ -6,7 +6,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("Abs")]
 	class Abs : Function
 	{
-		public Abs(List<CallBack> children, List<Object> arguments)
+		public Abs(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}
@@ -15,7 +15,7 @@ namespace xnaMugen.Evaluation.Triggers
 		{
 			if (Children.Count != 1) return new Number();
 
-			Number number = Children[0](state);
+			Number number = Children[0].Evaluate(state);
 
 			if (number.NumberType == NumberType.Int) return new Number(number.IntValue > 0 ? number.IntValue : -number.IntValue);
 			if (number.NumberType == NumberType.Float) return new Number(number.FloatValue > 0 ? number.FloatValue : -number.FloatValue);

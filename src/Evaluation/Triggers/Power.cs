@@ -6,7 +6,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("Power")]
 	class Power : Function
 	{
-		public Power(List<CallBack> children, List<Object> arguments)
+		public Power(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}

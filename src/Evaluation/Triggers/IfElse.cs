@@ -6,7 +6,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("IfElse")]
 	class IfElse : Function
 	{
-		public IfElse(List<CallBack> children, List<Object> arguments)
+		public IfElse(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}
@@ -16,9 +16,9 @@ namespace xnaMugen.Evaluation.Triggers
 			if (Children.Count != 3) return new Number();
 
 
-			Number r1 = Children[0](state);
-			Number r2 = Children[1](state);
-			Number r3 = Children[2](state);
+			Number r1 = Children[0].Evaluate(state);
+			Number r2 = Children[1].Evaluate(state);
+			Number r3 = Children[2].Evaluate(state);
 
 			if (r1.NumberType == NumberType.None || r2.NumberType == NumberType.None || r3.NumberType == NumberType.None) return new Number();
 

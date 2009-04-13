@@ -6,7 +6,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("ProjCancelTime")]
 	class ProjCancelTime : Function
 	{
-		public ProjCancelTime(List<CallBack> children, List<Object> arguments)
+		public ProjCancelTime(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}
@@ -16,7 +16,7 @@ namespace xnaMugen.Evaluation.Triggers
 			Combat.Character character = state as Combat.Character;
 			if (character == null || Children.Count != 1) return new Number();
 
-			Number projectile_id = Children[0](state);
+			Number projectile_id = Children[0].Evaluate(state);
 			if (projectile_id.NumberType != NumberType.Int) return new Number();
 
 			Combat.ProjectileInfo projinfo = character.OffensiveInfo.ProjectileInfo;

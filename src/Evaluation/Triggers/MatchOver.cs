@@ -6,7 +6,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("MatchOver")]
 	class MatchOver : Function
 	{
-		public MatchOver(List<CallBack> children, List<Object> arguments)
+		public MatchOver(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}

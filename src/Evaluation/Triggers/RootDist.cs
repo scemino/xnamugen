@@ -6,7 +6,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("RootDist")]
 	class RootDist : Function
 	{
-		public RootDist(List<CallBack> children, List<Object> arguments)
+		public RootDist(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}

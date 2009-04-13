@@ -7,7 +7,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("AnimElem")]
 	class AnimElem : Function
 	{
-		public AnimElem(List<CallBack> children, List<Object> arguments)
+		public AnimElem(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}
@@ -17,7 +17,7 @@ namespace xnaMugen.Evaluation.Triggers
 			Combat.Character character = state as Combat.Character;
 			if (character == null) return new Number();
 
-			Number r1 = Children[0](state);
+			Number r1 = Children[0].Evaluate(state);
 			if (r1.NumberType == NumberType.None) return new Number();
 
 			Animations.Animation animation = character.AnimationManager.CurrentAnimation;
@@ -52,8 +52,8 @@ namespace xnaMugen.Evaluation.Triggers
 
 			if ((compare_type == Operator.Equals || compare_type == Operator.NotEquals) && Arguments.Count == 3)
 			{
-				Number pre = Children[1](character);
-				Number post = Children[2](character);
+				Number pre = Children[1].Evaluate(character);
+				Number post = Children[2].Evaluate(character);
 
 				Symbol pre_check = (Symbol)Arguments[1];
 				Symbol post_check = (Symbol)Arguments[2];
@@ -62,7 +62,7 @@ namespace xnaMugen.Evaluation.Triggers
 			}
 			else
 			{
-				Number rhs = Children[1](character);
+				Number rhs = Children[1].Evaluate(character);
 
 				Number result = Number.BinaryOperation(compare_type, lhs, rhs);
 				if (compare_type == Operator.Equals) return new Number(result.BooleanValue && character.UpdatedAnimation);

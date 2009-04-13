@@ -6,7 +6,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("Alive")]
 	class Alive : Function
 	{
-		public Alive(List<CallBack> children, List<Object> arguments)
+		public Alive(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}

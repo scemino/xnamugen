@@ -6,7 +6,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("MoveType")]
 	class MoveType : Function
 	{
-		public MoveType(List<CallBack> children, List<Object> arguments)
+		public MoveType(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}

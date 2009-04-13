@@ -6,7 +6,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("Pi")]
 	class Pi : Function
 	{
-		public Pi(List<CallBack> children, List<Object> arguments)
+		public Pi(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}

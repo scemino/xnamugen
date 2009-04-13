@@ -6,7 +6,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("Command")]
 	class Command : Function
 	{
-		public Command(List<CallBack> children, List<Object> arguments)
+		public Command(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}

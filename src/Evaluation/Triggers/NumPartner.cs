@@ -6,7 +6,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("NumPartner")]
 	class NumPartner : Function
 	{
-		public NumPartner(List<CallBack> children, List<Object> arguments)
+		public NumPartner(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}

@@ -6,7 +6,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("InGuardDist")]
 	class InGuardDist : Function
 	{
-		public InGuardDist(List<CallBack> children, List<Object> arguments)
+		public InGuardDist(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}

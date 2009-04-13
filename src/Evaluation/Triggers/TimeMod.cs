@@ -6,7 +6,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("TimeMod")]
 	class TimeMod : Function
 	{
-		public TimeMod(List<CallBack> children, List<Object> arguments)
+		public TimeMod(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}
@@ -16,8 +16,8 @@ namespace xnaMugen.Evaluation.Triggers
 			Combat.Character character = state as Combat.Character;
 			if (character == null || Children.Count != 2) return new Number();
 
-			Number r1 = Children[0](state);
-			Number r2 = Children[1](state);
+			Number r1 = Children[0].Evaluate(state);
+			Number r2 = Children[1].Evaluate(state);
 			if (r1.NumberType != NumberType.Int || r2.NumberType != NumberType.Int) return new Number();
 
 			Int32 statetime_remander = character.StateManager.StateTime % r1.IntValue;

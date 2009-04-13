@@ -6,7 +6,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("GetHitVar")]
 	class GetHitVar : Function
 	{
-		public GetHitVar(List<CallBack> children, List<Object> arguments)
+		public GetHitVar(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}

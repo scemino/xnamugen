@@ -6,7 +6,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("Time")]
 	class Time : Function
 	{
-		public Time(List<CallBack> children, List<Object> arguments)
+		public Time(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}
@@ -31,7 +31,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("StateTime")]
 	class StateTime : Function
 	{
-		public StateTime(List<CallBack> children, List<Object> arguments)
+		public StateTime(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}

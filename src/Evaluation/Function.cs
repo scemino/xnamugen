@@ -4,9 +4,9 @@ using System.Collections.Generic;
 
 namespace xnaMugen.Evaluation
 {
-	abstract class Function
+	abstract class Function : IFunction
 	{
-		protected Function(List<CallBack> children, List<Object> arguments)
+		protected Function(List<IFunction> children, List<Object> arguments)
 		{
 			if (children == null) throw new ArgumentNullException("children");
 			if (arguments == null) throw new ArgumentNullException("arguments");
@@ -17,7 +17,7 @@ namespace xnaMugen.Evaluation
 
 		public abstract Number Evaluate(Object state);
 
-		public List<CallBack> Children
+		public List<IFunction> Children
 		{
 			get { return m_children; }
 		}
@@ -30,7 +30,7 @@ namespace xnaMugen.Evaluation
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly List<CallBack> m_children;
+		readonly List<IFunction> m_children;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		readonly List<Object> m_arguments;

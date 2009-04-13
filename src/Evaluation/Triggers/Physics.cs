@@ -6,7 +6,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("Physics")]
 	class Physics : Function
 	{
-		public Physics(List<CallBack> children, List<Object> arguments)
+		public Physics(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}

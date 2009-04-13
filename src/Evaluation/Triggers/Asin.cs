@@ -6,7 +6,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("Asin")]
 	class Asin : Function
 	{
-		public Asin(List<CallBack> children, List<Object> arguments)
+		public Asin(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}
@@ -15,7 +15,7 @@ namespace xnaMugen.Evaluation.Triggers
 		{
 			if (Children.Count != 1) return new Number();
 
-			Number number = Children[0](state);
+			Number number = Children[0].Evaluate(state);
 			if (number.NumberType == NumberType.None) return new Number();
 
 			return new Number(Math.Asin(number.FloatValue));

@@ -6,7 +6,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("P2BodyDist")]
 	class P2BodyDist : Function
 	{
-		public P2BodyDist(List<CallBack> children, List<Object> arguments)
+		public P2BodyDist(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}

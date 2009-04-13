@@ -6,7 +6,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("RoundNo")]
 	class RoundNo : Function
 	{
-		public RoundNo(List<CallBack> children, List<Object> arguments)
+		public RoundNo(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}

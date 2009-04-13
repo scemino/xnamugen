@@ -3,7 +3,7 @@ using System.Diagnostics;
 
 namespace xnaMugen.Evaluation
 {
-	class NumberReturn
+	class NumberReturn : IFunction
 	{
 		public NumberReturn(Number number)
 		{

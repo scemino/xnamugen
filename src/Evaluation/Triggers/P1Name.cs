@@ -6,7 +6,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("P1Name")]
 	class P1Name : Function
 	{
-		public P1Name(List<CallBack> children, List<Object> arguments)
+		public P1Name(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}

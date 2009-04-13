@@ -6,7 +6,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("RoundsExisted")]
 	class RoundsExisted : Function
 	{
-		public RoundsExisted(List<CallBack> children, List<Object> arguments)
+		public RoundsExisted(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}

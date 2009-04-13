@@ -6,7 +6,7 @@ namespace xnaMugen.Evaluation.Triggers.Redirection
 	[CustomFunction("Parent")]
 	class Parent : Function
 	{
-		public Parent(List<CallBack> children, List<Object> arguments)
+		public Parent(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}
@@ -19,7 +19,7 @@ namespace xnaMugen.Evaluation.Triggers.Redirection
 			Combat.Helper helper = character as Combat.Helper;
 			if (helper == null) return new Number();
 
-			return Children[0](helper.Parent);
+			return Children[0].Evaluate(helper.Parent);
 		}
 
 		public static Node Parse(ParseState parsestate)
@@ -38,7 +38,7 @@ namespace xnaMugen.Evaluation.Triggers.Redirection
 	[CustomFunction("Root")]
 	class Root : Function
 	{
-		public Root(List<CallBack> children, List<Object> arguments)
+		public Root(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}
@@ -51,7 +51,7 @@ namespace xnaMugen.Evaluation.Triggers.Redirection
 			Combat.Helper helper = character as Combat.Helper;
 			if (helper == null) return new Number();
 
-			return Children[0](helper.BasePlayer);
+			return Children[0].Evaluate(helper.BasePlayer);
 		}
 
 		public static Node Parse(ParseState parsestate)
@@ -70,7 +70,7 @@ namespace xnaMugen.Evaluation.Triggers.Redirection
 	[CustomFunction("Helper")]
 	class Helper : Function
 	{
-		public Helper(List<CallBack> children, List<Object> arguments)
+		public Helper(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}
@@ -80,7 +80,7 @@ namespace xnaMugen.Evaluation.Triggers.Redirection
 			Combat.Character character = state as Combat.Character;
 			if (character == null || Children.Count != 2) return new Number();
 
-			Number helper_id = Children[0](state);
+			Number helper_id = Children[0].Evaluate(state);
 			if (helper_id.NumberType != NumberType.Int) return new Number();
 
 			foreach (Combat.Entity entity in character.Engine.Entities)
@@ -88,7 +88,7 @@ namespace xnaMugen.Evaluation.Triggers.Redirection
 				Combat.Helper helper = character.FilterEntityAsHelper(entity, helper_id.IntValue);
 				if (helper == null) continue;
 
-				return Children[1](helper);
+				return Children[1].Evaluate(helper);
 			}
 
 			return new Number();
@@ -120,7 +120,7 @@ namespace xnaMugen.Evaluation.Triggers.Redirection
 	[CustomFunction("Target")]
 	class Target : Function
 	{
-		public Target(List<CallBack> children, List<Object> arguments)
+		public Target(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}
@@ -130,7 +130,7 @@ namespace xnaMugen.Evaluation.Triggers.Redirection
 			Combat.Character character = state as Combat.Character;
 			if (character == null || Children.Count != 2) return new Number();
 
-			Number target_id = Children[0](state);
+			Number target_id = Children[0].Evaluate(state);
 			if (target_id.NumberType != NumberType.Int) return new Number();
 
 			foreach (Combat.Entity entity in character.Engine.Entities)
@@ -138,7 +138,7 @@ namespace xnaMugen.Evaluation.Triggers.Redirection
 				Combat.Character target = character.FilterEntityAsTarget(entity, target_id.IntValue);
 				if (target == null) continue;
 
-				return Children[1](target);
+				return Children[1].Evaluate(target);
 			}
 
 			return new Number();
@@ -170,7 +170,7 @@ namespace xnaMugen.Evaluation.Triggers.Redirection
 	[CustomFunction("Partner")]
 	class Partner : Function
 	{
-		public Partner(List<CallBack> children, List<Object> arguments)
+		public Partner(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}
@@ -183,7 +183,7 @@ namespace xnaMugen.Evaluation.Triggers.Redirection
 			Combat.Player partner = GetTeamMate(character);
 			if (partner == null) return new Number();
 
-			return Children[0](partner);
+			return Children[0].Evaluate(partner);
 		}
 
 		Combat.Player GetTeamMate(Combat.Character character)
@@ -216,7 +216,7 @@ namespace xnaMugen.Evaluation.Triggers.Redirection
 	[CustomFunction("Enemy")]
 	class Enemy : Function
 	{
-		public Enemy(List<CallBack> children, List<Object> arguments)
+		public Enemy(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}
@@ -226,7 +226,7 @@ namespace xnaMugen.Evaluation.Triggers.Redirection
 			Combat.Character character = state as Combat.Character;
 			if (character == null || Children.Count != 2) return new Number();
 
-			Number nth = Children[0](state);
+			Number nth = Children[0].Evaluate(state);
 			if (nth.NumberType == NumberType.None) return new Number();
 
 			Int32 count = 0;
@@ -244,7 +244,7 @@ namespace xnaMugen.Evaluation.Triggers.Redirection
 					continue;
 				}
 
-				return Children[1](enemy);
+				return Children[1].Evaluate(enemy);
 			}
 
 			return new Number();
@@ -282,7 +282,7 @@ namespace xnaMugen.Evaluation.Triggers.Redirection
 			s_playerlist = new List<Combat.Player>();
 		}
 
-		public EnemyNear(List<CallBack> children, List<Object> arguments)
+		public EnemyNear(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}
@@ -292,7 +292,7 @@ namespace xnaMugen.Evaluation.Triggers.Redirection
 			Combat.Character character = state as Combat.Character;
 			if (character == null || Children.Count != 2) return new Number();
 
-			Number nth = Children[0](state);
+			Number nth = Children[0].Evaluate(state);
 			if (nth.NumberType == NumberType.None) return new Number();
 
 			BuildPlayerList(character);
@@ -302,7 +302,7 @@ namespace xnaMugen.Evaluation.Triggers.Redirection
 			if (nth.IntValue >= s_playerlist.Count) return new Number();
 
 			Combat.Player enemy = s_playerlist[nth.IntValue];
-			return Children[1](enemy);
+			return Children[1].Evaluate(enemy);
 		}
 
 		void SortPlayerList(Combat.Character character)
@@ -359,7 +359,7 @@ namespace xnaMugen.Evaluation.Triggers.Redirection
 	[CustomFunction("PlayerID")]
 	class PlayerID : Function
 	{
-		public PlayerID(List<CallBack> children, List<Object> arguments)
+		public PlayerID(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}
@@ -369,7 +369,7 @@ namespace xnaMugen.Evaluation.Triggers.Redirection
 			Combat.Character character = state as Combat.Character;
 			if (character == null || Children.Count != 2) return new Number();
 
-			Number character_id = Children[0](state);
+			Number character_id = Children[0].Evaluate(state);
 			if (character_id.NumberType != NumberType.Int) return new Number();
 
 			foreach (Combat.Entity entity in character.Engine.Entities)
@@ -377,7 +377,7 @@ namespace xnaMugen.Evaluation.Triggers.Redirection
 				Combat.Character character2 = entity as Combat.Character;
 				if (character2 == null || character2.Id != character_id.IntValue) continue;
 
-				return Children[1](character2);
+				return Children[1].Evaluate(character2);
 			}
 
 			return new Number();

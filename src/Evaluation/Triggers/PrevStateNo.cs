@@ -6,7 +6,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("PrevStateNo")]
 	class PrevStateNo : Function
 	{
-		public PrevStateNo(List<CallBack> children, List<Object> arguments)
+		public PrevStateNo(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}

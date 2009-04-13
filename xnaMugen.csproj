@@ -183,6 +183,7 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
@@ -311,6 +312,7 @@
     <Compile Include="src\Evaluation\Expression.cs" />
     <Compile Include="src\Evaluation\Function.cs" />
     <Compile Include="src\Evaluation\IExpression.cs" />
+    <Compile Include="src\Evaluation\IFunction.cs" />
     <Compile Include="src\Evaluation\Node.cs" />
     <Compile Include="src\Evaluation\Number.cs" />
     <Compile Include="src\Evaluation\NumberReturn.cs" />

@@ -6,7 +6,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("AnimTime")]
 	class AnimTime : Function
 	{
-		public AnimTime(List<CallBack> children, List<Object> arguments)
+		public AnimTime(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}

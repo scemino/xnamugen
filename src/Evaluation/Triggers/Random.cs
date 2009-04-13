@@ -6,7 +6,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("Random")]
 	class Random : Function
 	{
-		public Random(List<CallBack> children, List<Object> arguments)
+		public Random(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}

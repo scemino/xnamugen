@@ -6,7 +6,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("Life")]
 	class Life : Function
 	{
-		public Life(List<CallBack> children, List<Object> arguments)
+		public Life(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}

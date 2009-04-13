@@ -6,7 +6,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("TeamSide")]
 	class TeamSide : Function
 	{
-		public TeamSide(List<CallBack> children, List<Object> arguments)
+		public TeamSide(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}

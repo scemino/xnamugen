@@ -6,7 +6,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("NumTarget")]
 	class NumTarget : Function
 	{
-		public NumTarget(List<CallBack> children, List<Object> arguments)
+		public NumTarget(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}
@@ -24,7 +24,7 @@ namespace xnaMugen.Evaluation.Triggers
 			}
 			else if (Children.Count == 1)
 			{
-				Number number = Children[0](state);
+				Number number = Children[0].Evaluate(state);
 				if (number.NumberType != NumberType.Int) return new Number();
 
 				target_id = number.IntValue;

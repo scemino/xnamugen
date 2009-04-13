@@ -6,7 +6,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("Anim")]
 	class Anim : Function
 	{
-		public Anim(List<CallBack> children, List<Object> arguments)
+		public Anim(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}

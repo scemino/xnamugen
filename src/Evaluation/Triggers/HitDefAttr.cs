@@ -7,7 +7,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("HitDefAttr")]
 	class HitDefAttr : Function
 	{
-		public HitDefAttr(List<CallBack> children, List<Object> arguments)
+		public HitDefAttr(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}

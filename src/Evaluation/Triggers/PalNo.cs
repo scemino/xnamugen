@@ -6,7 +6,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("PalNo")]
 	class PalNo : Function
 	{
-		public PalNo(List<CallBack> children, List<Object> arguments)
+		public PalNo(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}

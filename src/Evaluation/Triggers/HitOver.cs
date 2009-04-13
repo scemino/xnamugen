@@ -6,7 +6,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("HitOver")]
 	class HitOver : Function
 	{
-		public HitOver(List<CallBack> children, List<Object> arguments)
+		public HitOver(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}

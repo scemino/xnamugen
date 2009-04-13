@@ -7,7 +7,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("ScreenPos")]
 	class ScreenPos : Function
 	{
-		public ScreenPos(List<CallBack> children, List<Object> arguments)
+		public ScreenPos(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}

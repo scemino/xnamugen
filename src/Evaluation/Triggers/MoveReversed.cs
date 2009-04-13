@@ -6,7 +6,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("MoveReversed")]
 	class MoveReversed : Function
 	{
-		public MoveReversed(List<CallBack> children, List<Object> arguments)
+		public MoveReversed(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}

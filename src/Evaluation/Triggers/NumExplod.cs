@@ -6,7 +6,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("NumExplod")]
 	class NumExplod : Function
 	{
-		public NumExplod(List<CallBack> children, List<Object> arguments)
+		public NumExplod(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}
@@ -24,7 +24,7 @@ namespace xnaMugen.Evaluation.Triggers
 			}
 			else if (Children.Count == 1)
 			{
-				Number number = Children[0](state);
+				Number number = Children[0].Evaluate(state);
 				if (number.NumberType != NumberType.Int) return new Number();
 
 				explod_id = number.IntValue;

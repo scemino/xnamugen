@@ -6,7 +6,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("ParentDist")]
 	class ParentDist : Function
 	{
-		public ParentDist(List<CallBack> children, List<Object> arguments)
+		public ParentDist(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}

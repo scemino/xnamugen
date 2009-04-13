@@ -6,7 +6,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("IsHomeTeam")]
 	class IsHomeTeam : Function
 	{
-		public IsHomeTeam(List<CallBack> children, List<Object> arguments)
+		public IsHomeTeam(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}

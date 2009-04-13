@@ -6,7 +6,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("CanRecover")]
 	class CanRecover : Function
 	{
-		public CanRecover(List<CallBack> children, List<Object> arguments)
+		public CanRecover(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}

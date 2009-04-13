@@ -6,7 +6,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("E")]
 	class E : Function
 	{
-		public E(List<CallBack> children, List<Object> arguments)
+		public E(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}

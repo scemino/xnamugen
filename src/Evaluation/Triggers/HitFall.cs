@@ -6,7 +6,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("HitFall")]
 	class HitFall : Function
 	{
-		public HitFall(List<CallBack> children, List<Object> arguments)
+		public HitFall(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}

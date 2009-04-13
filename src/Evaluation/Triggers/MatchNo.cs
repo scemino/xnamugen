@@ -6,7 +6,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("MatchNo")]
 	class MatchNo : Function
 	{
-		public MatchNo(List<CallBack> children, List<Object> arguments)
+		public MatchNo(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}

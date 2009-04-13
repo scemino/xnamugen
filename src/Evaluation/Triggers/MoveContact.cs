@@ -6,7 +6,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("MoveContact")]
 	class MoveContact : Function
 	{
-		public MoveContact(List<CallBack> children, List<Object> arguments)
+		public MoveContact(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}

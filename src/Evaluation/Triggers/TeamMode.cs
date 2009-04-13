@@ -6,7 +6,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("TeamMode")]
 	class TeamMode : Function
 	{
-		public TeamMode(List<CallBack> children, List<Object> arguments)
+		public TeamMode(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}

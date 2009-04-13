@@ -83,18 +83,20 @@ namespace xnaMugen.Evaluation
 					}
 				}
 
-				Node rhs = ParseNode(tokens, ref tokenindex);
+				Node rhs = ParseEndNode(tokens, ref tokenindex);
 				if (rhs == null) return null;
 
-				if(SwitchOrder(operatornode, rhs) == true)
+				if (SwitchOrder(lhs, operatornode) == true)
 				{
-					lhs = BreakTree(lhs, operatornode, rhs);
+					operatornode.Children.Add(lhs.Children[1]);
+					operatornode.Children.Add(rhs);
+
+					lhs.Children[1] = operatornode;
 				}
 				else
 				{
 					operatornode.Children.Add(lhs);
 					operatornode.Children.Add(rhs);
-
 					lhs = operatornode;
 				}
 			}
@@ -229,26 +231,6 @@ namespace xnaMugen.Evaluation
 			return null;
 		}
 
-		static Node BreakTree(Node lhs, Node operatornode, Node rhs)
-		{
-			if (lhs == null) throw new ArgumentNullException("lhs");
-			if (operatornode == null) throw new ArgumentNullException("operatornode");
-			if (rhs == null) throw new ArgumentNullException("rhs");
-
-			operatornode.Children.Add(lhs);
-
-			Node newbase = rhs;
-			while (newbase.Children.Count != 0 && newbase.Children[0].Children.Count != 0 && newbase.Children[0].PrecedenceOverride == false && SwitchOrder(operatornode, newbase.Children[0]) == true)
-			{
-				newbase = newbase.Children[0];
-			}
-
-			operatornode.Children.Add(newbase.Children[0]);
-			newbase.Children[0] = operatornode;
-
-			return rhs;
-		}
-
 		static Token GetToken(List<Token> tokens, Int32 index)
 		{
 			if (tokens == null) throw new ArgumentNullException("tokens");
@@ -261,15 +243,15 @@ namespace xnaMugen.Evaluation
 			if (lhs == null) throw new ArgumentNullException("lhs");
 			if (rhs == null) throw new ArgumentNullException("rhs");
 
-			if (rhs.PrecedenceOverride == true) return false;
+			if (lhs.PrecedenceOverride == true) return false;
 
 			Tokenizing.BinaryOperatorData lhsdata = lhs.Token.Data as Tokenizing.BinaryOperatorData;
 			Tokenizing.BinaryOperatorData rhsdata = rhs.Token.Data as Tokenizing.BinaryOperatorData;
 
 			if (lhsdata == null || lhs.Children.Count != 2) return false;
-			if (rhsdata == null || rhs.Children.Count != 2) return false;
+			if (rhsdata == null) return false;
 
-			return lhsdata.Precedence >= rhsdata.Precedence;
+			return lhsdata.Precedence < rhsdata.Precedence;
 		}
 
 		#region Fields

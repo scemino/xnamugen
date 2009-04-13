@@ -6,7 +6,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("Ceil")]
 	class Ceil : Function
 	{
-		public Ceil(List<CallBack> children, List<Object> arguments)
+		public Ceil(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}
@@ -15,7 +15,7 @@ namespace xnaMugen.Evaluation.Triggers
 		{
 			if (Children.Count != 1) return new Number();
 
-			Number number = Children[0](state);
+			Number number = Children[0].Evaluate(state);
 
 			switch (number.NumberType)
 			{

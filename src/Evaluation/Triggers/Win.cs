@@ -6,7 +6,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("Win")]
 	class Win : Function
 	{
-		public Win(List<CallBack> children, List<Object> arguments)
+		public Win(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}
@@ -28,7 +28,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("WinKO")]
 	class WinKO : Function
 	{
-		public WinKO(List<CallBack> children, List<Object> arguments)
+		public WinKO(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}
@@ -50,7 +50,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("WinTime")]
 	class WinTime : Function
 	{
-		public WinTime(List<CallBack> children, List<Object> arguments)
+		public WinTime(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}
@@ -72,7 +72,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("WinPerfect")]
 	class WinPerfect : Function
 	{
-		public WinPerfect(List<CallBack> children, List<Object> arguments)
+		public WinPerfect(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}

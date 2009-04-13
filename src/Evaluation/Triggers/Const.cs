@@ -162,7 +162,7 @@ namespace xnaMugen.Evaluation.Triggers
 			s_helpermap["movement.crouch.friction"] = x => new Number(x.BasePlayer.Constants.Crouchfriction);
 		}
 
-		public Const(List<CallBack> children, List<Object> arguments)
+		public Const(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}

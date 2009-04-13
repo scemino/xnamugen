@@ -7,7 +7,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("Pos")]
 	class Pos : Function
 	{
-		public Pos(List<CallBack> children, List<Object> arguments)
+		public Pos(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}

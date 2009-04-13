@@ -6,7 +6,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("HitVel")]
 	class HitVel : Function
 	{
-		public HitVel(List<CallBack> children, List<Object> arguments)
+		public HitVel(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}

@@ -6,7 +6,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("ProjContact")]
 	class ProjContact : Function
 	{
-		public ProjContact(List<CallBack> children, List<Object> arguments)
+		public ProjContact(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}
@@ -16,8 +16,8 @@ namespace xnaMugen.Evaluation.Triggers
 			Combat.Character character = state as Combat.Character;
 			if (character == null) return new Number();
 
-			Number r1 = Children[0](state);
-			Number r2 = Children[1](state);
+			Number r1 = Children[0].Evaluate(state);
+			Number r2 = Children[1].Evaluate(state);
 			if (r1.NumberType != NumberType.Int || r2.NumberType != NumberType.Int) return new Number();
 
 			Boolean lookingfor = r2.IntValue > 0;
@@ -43,8 +43,8 @@ namespace xnaMugen.Evaluation.Triggers
 
 			if ((compare_type == Operator.Equals || compare_type == Operator.NotEquals) && Arguments.Count == 3)
 			{
-				Number pre = Children[1](character);
-				Number post = Children[2](character);
+				Number pre = Children[1].Evaluate(character);
+				Number post = Children[2].Evaluate(character);
 
 				Symbol pre_check = (Symbol)Arguments[1];
 				Symbol post_check = (Symbol)Arguments[2];
@@ -53,7 +53,7 @@ namespace xnaMugen.Evaluation.Triggers
 			}
 			else
 			{
-				Number rhs = Children[1](character);
+				Number rhs = Children[1].Evaluate(character);
 				return Number.BinaryOperation(compare_type, lhs, rhs);
 			}
 		}

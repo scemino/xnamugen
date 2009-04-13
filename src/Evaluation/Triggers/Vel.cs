@@ -6,7 +6,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("Vel")]
 	class Vel : Function
 	{
-		public Vel(List<CallBack> children, List<Object> arguments)
+		public Vel(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}

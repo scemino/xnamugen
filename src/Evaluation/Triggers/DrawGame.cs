@@ -6,7 +6,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("DrawGame")]
 	class DrawGame : Function
 	{
-		public DrawGame(List<CallBack> children, List<Object> arguments)
+		public DrawGame(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}

@@ -6,7 +6,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("P2MoveType")]
 	class P2MoveType : Function
 	{
-		public P2MoveType(List<CallBack> children, List<Object> arguments)
+		public P2MoveType(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}

@@ -6,7 +6,7 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("MoveGuarded")]
 	class MoveGuarded : Function
 	{
-		public MoveGuarded(List<CallBack> children, List<Object> arguments)
+		public MoveGuarded(List<IFunction> children, List<Object> arguments)
 			: base(children, arguments)
 		{
 		}
