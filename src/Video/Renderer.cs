@@ -31,6 +31,13 @@ namespace xnaMugen.Video
 			m_parameters = new KeyedCollection<String, EffectParameter>(x => x.Name);
 			m_nullpixels = m_videosystem.CreatePixelTexture(new Point(1, 1));
 			m_nullpalette = m_videosystem.CreatePaletteTexture();
+
+			m_nullpixels.SetData<Single>(new Single[] { 1 });
+
+			Color[] pal = new Color[256];
+			for (Int32 i = 0; i != 256; ++i) pal[i] = Color.White;
+
+			m_nullpalette.SetData<Color>(pal);
 		}
 
 		public void OnDeviceReset(Object sender, EventArgs args)
