@@ -545,7 +545,7 @@ namespace xnaMugen.Combat
 			if (target == null) throw new ArgumentNullException("target");
 
 			ExplodData data = new ExplodData();
-            data.IsHitSpark = true;
+			data.Type = ExplodType.Hitspark;
 			data.CommonAnimation = playeranimation == false;
 			data.PositionType = PositionType.P1;
 			data.AnimationNumber = animationnumber;
@@ -567,7 +567,7 @@ namespace xnaMugen.Combat
 			if (target == null) throw new ArgumentNullException("target");
 
 			ExplodData data = new ExplodData();
-            data.IsHitSpark = true;
+			data.Type = ExplodType.Hitspark;
             data.CommonAnimation = playeranimation == false;
 			data.PositionType = PositionType.P1;
 			data.AnimationNumber = animationnumber;

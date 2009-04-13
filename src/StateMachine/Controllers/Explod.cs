@@ -65,7 +65,7 @@ namespace xnaMugen.StateMachine.Controllers
 			Point location = EvaluationHelper.AsPoint(character, Position, new Point(0, 0));
 			Int32 horizfacing = EvaluationHelper.AsInt32(character, Facing, 1);
 			Int32 vertfacing = EvaluationHelper.AsInt32(character, VerticalFacing, 1);
-			Int32 bindtime = EvaluationHelper.AsInt32(character, BindTime, 0);
+			Int32 bindtime = EvaluationHelper.AsInt32(character, BindTime, 1);
 			Vector2 velocity = EvaluationHelper.AsVector2(character, Velocity, new Vector2(0, 0));
 			Vector2 acceleration = EvaluationHelper.AsVector2(character, Acceleration, new Vector2(0, 0));
 			Point randomdisplacement = EvaluationHelper.AsPoint(character, RandomDisplacement, new Point(0, 0));

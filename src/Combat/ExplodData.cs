@@ -10,7 +10,14 @@ namespace xnaMugen.Combat
 	[DebuggerDisplay("Id #{Id} - {CommonAnimation}, {AnimationNumber}")]
 	class ExplodData
 	{
-        public Boolean IsHitSpark { get; set; }
+		public ExplodData()
+		{
+			Type = ExplodType.None;
+
+			BindTime = 1;
+		}
+
+		public ExplodType Type { get; set; }
 
 		public Boolean CommonAnimation { get; set; }
 		public Int32 AnimationNumber { get; set; }

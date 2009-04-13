@@ -25,6 +25,7 @@ namespace xnaMugen.StateMachine.Controllers
 			Int32 randomdisplacement = EvaluationHelper.AsInt32(character, RandomDisplacement, 0);
 
 			Combat.ExplodData data = new xnaMugen.Combat.ExplodData();
+			data.Type = ExplodType.GameAnim;
 			data.Scale = Vector2.One;
 			data.AnimationNumber = animationnumber;
 			data.CommonAnimation = true;
@@ -38,6 +39,7 @@ namespace xnaMugen.StateMachine.Controllers
 			data.Transparency = new Blending();
 			data.Creator = character;
 			data.Offseter = character;
+			data.BindTime = 0;
 
 			Combat.Explod explod = new Combat.Explod(character.Engine, data);
 			if (explod.IsValid == true) explod.Engine.Entities.Add(explod);
