@@ -11,84 +11,26 @@ namespace xnaMugen.Backgrounds
 {
 	class Parallax : Base
 	{
-		public Parallax(TextSection textsection, Drawing.SpriteManager spritemanager)
-			: base(textsection)
+		public Parallax(TextSection textsection, Drawing.SpriteManager spritemanager, Animations.AnimationManager animationmanager)
+			: base(textsection, spritemanager, animationmanager)
 		{
-			if (spritemanager == null) throw new ArgumentNullException("spritemanager");
-
-			m_spritemanager = spritemanager;
 			m_spriteid = textsection.GetAttribute<SpriteId>("spriteno", SpriteId.Invalid);
-			m_sprite = SpriteManager.GetSprite(SpriteId);
 		}
 
-		public override void Update()
+		public override Point Tiling
 		{
-			Movement();
+			get { return new Point(base.Tiling.X, 0); }
 		}
 
-		public override void Draw(Combat.PaletteFx palettefx)
-		{
-            Video.DrawState drawstate = SpriteManager.SetupDrawing(SpriteId, null, Vector2.Zero, Vector2.One, SpriteEffects.None);
-            drawstate.Blending = Transparency;
-            drawstate.ScissorRectangle = DrawRect;
-
-            Point tilestart;
-            Point tileend;
-            GetTileLength(Sprite.Size, out tilestart, out tileend);
-
-            for (Int32 x = tilestart.X; x != tileend.X; ++x)
-            {
-                Vector2 adjustment = (Vector2)Sprite.Size * new Vector2(x, 0);
-                Vector2 location = CurrentLocation + adjustment;
-
-                drawstate.AddData(location, null);
-            }
-
-            if (palettefx != null) palettefx.SetShader(drawstate.ShaderParameters);
-
-            drawstate.Use();
-		}
-
-		void Movement()
-		{
-			Vector2 location = CurrentLocation + Velocity;
-
-			if (Sprite != null)
-			{
-				Point size = Sprite.Size;
-
-				if (location.X >= StartLocation.X + size.X || location.X <= StartLocation.X - size.X) location.X = StartLocation.X;
-				if (location.Y >= StartLocation.Y + size.Y || location.Y <= StartLocation.Y - size.Y) location.Y = StartLocation.Y;
-			}
-
-			CurrentLocation = location;
-		}
-
-		public Drawing.SpriteManager SpriteManager
-		{
-			get { return m_spritemanager; }
-		}
-
-		public SpriteId SpriteId
+		protected override SpriteId DrawSpriteId
 		{
 			get { return m_spriteid; }
-		}
-
-		public Drawing.Sprite Sprite
-		{
-			get { return m_sprite; }
 		}
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Drawing.SpriteManager m_spritemanager;
-
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		readonly SpriteId m_spriteid;
-
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Drawing.Sprite m_sprite;
 
 		#endregion
 	}

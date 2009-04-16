@@ -77,7 +77,7 @@ namespace xnaMugen.Combat
 	{
 		static Stage()
 		{
-			s_bgtitleregex = new Regex(@"bg[^(def)]", RegexOptions.IgnoreCase);
+			s_bgtitleregex = new Regex(@"^bg[^(def)]", RegexOptions.IgnoreCase);
 		}
 
 		public Stage(FightEngine engine, StageProfile profile)
@@ -157,6 +157,8 @@ namespace xnaMugen.Combat
 			m_spritefile = bgdefsection.GetAttribute<String>("spr");
 			m_debug = bgdefsection.GetAttribute<Boolean>("debugbg", false);
 
+			if (m_spritefile.StartsWith("stages/", StringComparison.OrdinalIgnoreCase) == false) m_spritefile = "stages/" + m_spritefile;
+
 			Drawing.SpriteManager spritemanager = Engine.GetSubSystem<Drawing.SpriteSystem>().CreateManager(SpritePath);
 			Animations.AnimationManager animationmanager = Engine.GetSubSystem<Animations.AnimationSystem>().CreateManager(Profile.Filepath);
 			m_backgrounds = new Backgrounds.Collection(spritemanager, animationmanager);
@@ -195,13 +197,21 @@ namespace xnaMugen.Combat
 
 		public void Draw(BackgroundLayer layer)
 		{
-			Point shift = new Point(Mugen.ScreenSize.X / 2 - Engine.Camera.Location.X, 0 - Engine.Camera.Location.Y);
+			Video.VideoSystem videosystem = Engine.GetSubSystem<Video.VideoSystem>();
+			Point savedcameralocation = videosystem.CameraShift;
+			Point initialposition = videosystem.CameraShift + new Point(Mugen.ScreenSize.X / 2, 0);
+			Vector2 cameralocation = (Vector2)Engine.Camera.Location;
 
-			Engine.GetSubSystem<Video.VideoSystem>().CameraShift += shift;
+			foreach (Backgrounds.Base background in Backgrounds)
+			{
+				if (background.IsVisible == false || background.Layer != layer) continue;
 
-			Backgrounds.Draw(layer, PaletteFx);
+				videosystem.CameraShift = initialposition - (Point)(cameralocation * background.CameraDelta);
 
-			Engine.GetSubSystem<Video.VideoSystem>().CameraShift -= shift;
+				background.Draw(PaletteFx);
+			}
+
+			videosystem.CameraShift = savedcameralocation;
 		}
 
 		public StageProfile Profile

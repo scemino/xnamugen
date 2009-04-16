@@ -27,7 +27,7 @@ namespace xnaMugen.Video
 				m_effect = new Effect(Device, compiled.GetEffectCode(), CompilerOptions.NotCloneable, null);
 			}
 
-			m_drawbuffer = new Vertex[500];
+			m_drawbuffer = new Vertex[60];
 			m_parameters = new KeyedCollection<String, EffectParameter>(x => x.Name);
 			m_nullpixels = m_videosystem.CreatePixelTexture(new Point(1, 1));
 			m_nullpalette = m_videosystem.CreatePaletteTexture();
@@ -144,9 +144,10 @@ namespace xnaMugen.Video
 			}
 		}
 
-		Int32 DefaultDrawSetup(DrawState drawstate, Point pixelsize)
+		void DefaultDrawSetup(DrawState drawstate, Point pixelsize, PrimitiveType drawtype, Int32 countmuliplier)
 		{
 			if (drawstate == null) throw new ArgumentNullException("drawstate");
+			if (countmuliplier <= 0) throw new ArgumentOutOfRangeException("countmultiplier");
 
 			Int32 count = 0;
 			foreach (DrawData data in drawstate)
@@ -174,9 +175,15 @@ namespace xnaMugen.Video
 				Renderer.SetColor(m_drawbuffer, count * 6, Misc.BlendColors(Tint, data.Tint));
 
 				++count;
+
+				if (count * 6 >= m_drawbuffer.Length)
+				{
+					FinishDrawing(drawtype, count * countmuliplier);
+					count = 0;
+				}
 			}
 
-			return count;
+			if (count > 0) FinishDrawing(drawtype, count * countmuliplier);
 		}
 
 		void NormalDraw(DrawState drawstate)
@@ -186,8 +193,7 @@ namespace xnaMugen.Video
 
 			m_effect.CurrentTechnique = (UseOldShader == true) ? m_effect.Techniques["DrawOLD"] : m_effect.Techniques["Draw"];
 
-			Int32 count = DefaultDrawSetup(drawstate, new Point(drawstate.Pixels.Width, drawstate.Pixels.Height));
-			if (count > 0) FinishDrawing(PrimitiveType.TriangleList, count * 2);
+			DefaultDrawSetup(drawstate, new Point(drawstate.Pixels.Width, drawstate.Pixels.Height), PrimitiveType.TriangleList, 2);
 		}
 
 		void FontDraw(DrawState drawstate)
@@ -197,8 +203,7 @@ namespace xnaMugen.Video
 
 			m_effect.CurrentTechnique = m_effect.Techniques["FontDraw"];
 
-			Int32 count = DefaultDrawSetup(drawstate, new Point(drawstate.Pixels.Width, drawstate.Pixels.Height));
-			if (count > 0) FinishDrawing(PrimitiveType.TriangleList, count * 2);
+			DefaultDrawSetup(drawstate, new Point(drawstate.Pixels.Width, drawstate.Pixels.Height), PrimitiveType.TriangleList, 2);
 		}
 
 		void OutlinedRectangleDraw(DrawState drawstate)
@@ -228,6 +233,12 @@ namespace xnaMugen.Video
 					for (Int32 i = 0; i != 8; ++i) m_drawbuffer[(count * 8) + i].Tint = data.Tint;
 
 					++count;
+
+					if (count * 4 >= m_drawbuffer.Length)
+					{
+						FinishDrawing(PrimitiveType.LineList, count * 4);
+						count = 0;
+					}
 				}
 			}
 
@@ -241,8 +252,7 @@ namespace xnaMugen.Video
 
 			m_effect.CurrentTechnique = (UseOldShader == true) ? m_effect.Techniques["DrawOLD"] : m_effect.Techniques["Draw"];
 
-			Int32 count = DefaultDrawSetup(drawstate, new Point(drawstate.Pixels.Width, drawstate.Pixels.Height));
-			if (count > 0) FinishDrawing(PrimitiveType.TriangleList, count * 2);
+			DefaultDrawSetup(drawstate, new Point(drawstate.Pixels.Width, drawstate.Pixels.Height), PrimitiveType.TriangleList, 2);
 		}
 
 		void LineDraw(DrawState drawstate)

@@ -30,20 +30,6 @@ namespace xnaMugen.Backgrounds
 		}
 
 		/// <summary>
-		/// Determines whether a background can be created from the given xnaMugen.IO.TextSection.
-		/// </summary>
-		/// <param name="section">A xnaMugen.IO.TextSection.</param>
-		/// <returns>true if a background can be created; false otherwise.</returns>
-		public Boolean CanCreateBackground(TextSection section)
-		{
-			if (section == null) throw new ArgumentNullException("section");
-
-			BackgroundType bgtype = section.GetAttribute<BackgroundType>("type");
-
-			return bgtype != BackgroundType.None;
-		}
-
-		/// <summary>
 		/// Creates a new background as per of the collection, initializes from the given xnaMugen.IO.TextSection.
 		/// </summary>
 		/// <param name="section">The text section used to create and initialize the created background.</param>
@@ -58,11 +44,11 @@ namespace xnaMugen.Backgrounds
 			switch (bgtype)
 			{
 				case BackgroundType.Static:
-					background = new Static(section, m_spritemanager.Clone());
+					background = new Static(section, m_spritemanager.Clone(), m_animationmanager.Clone());
 					break;
 
 				case BackgroundType.Parallax:
-					background = new Parallax(section, m_spritemanager.Clone());
+					background = new Parallax(section, m_spritemanager.Clone(), m_animationmanager.Clone());
 					break;
 
 				case BackgroundType.Animated:
@@ -106,19 +92,6 @@ namespace xnaMugen.Backgrounds
 			foreach (Base background in this)
 			{
 				if (background.IsVisible == true) background.Draw(null);
-			}
-		}
-
-		/// <summary>
-		/// Draws all visible backgrounds in a given layer that are a part of this collection using the given palette information.
-		/// </summary>
-		/// <param name="layer">The layer of backgrounds to draw.</param>
-		/// <param name="palettefx">The palette information used in drawing.</param>
-		public void Draw(BackgroundLayer layer, Combat.PaletteFx palettefx)
-		{
-			foreach (Backgrounds.Base background in this)
-			{
-				if (background.Layer == layer && background.IsVisible == true) background.Draw(palettefx);
 			}
 		}
 

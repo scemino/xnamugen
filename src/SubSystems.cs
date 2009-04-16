@@ -89,9 +89,22 @@ namespace xnaMugen
 		{
 			if (disposing == true)
 			{
+				if (m_mainsystems != null)
+				{
+					foreach (MainSystem system in m_mainsystems.Values)
+					{
+						if (system != null) system.Dispose();
+					}
+
+					m_mainsystems.Clear();
+				}
+
 				if (m_subsystems != null)
 				{
-					foreach (SubSystem subsystem in m_subsystems.Values) subsystem.Dispose();
+					foreach (SubSystem system in m_subsystems.Values)
+					{
+						if (system != null) system.Dispose();
+					}
 
 					m_subsystems.Clear();
 				}
