@@ -33,7 +33,6 @@ namespace xnaMugen.Combat
 			m_team = team;
 
 			SpriteManager.UseOverride = true;
-            SpriteManager.OverridePalette = Palettes[PaletteNumber];
 
 			if (Engine.GetSubSystem<InitializationSettings>().PreloadCharacterSprites == true)
 			{
@@ -153,7 +152,12 @@ namespace xnaMugen.Combat
 		{
 			get { return m_palettenumber; }
 
-			set { m_palettenumber = value; }
+			set 
+			{ 
+				m_palettenumber = value;
+
+				SpriteManager.OverridePalette = Palettes[m_palettenumber];
+			}
 		}
 
 		public Int32 Power
