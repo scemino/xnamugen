@@ -13,7 +13,16 @@ namespace xnaMugen.Diagnostics
             m_form = new DiagnosticForm();
             m_formthread = new Thread(StartFormThread);
             m_lock = new Object();
+
+			m_form.Closing += new System.ComponentModel.CancelEventHandler(m_form_Closing);
         }
+
+		void m_form_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+		{
+			e.Cancel = true;
+
+			m_form.Hide();
+		}
 
         public override void Initialize()
         {
