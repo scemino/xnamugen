@@ -69,19 +69,50 @@ namespace xnaMugen.Combat
 			Drawing.Sprite sprite = SpriteManager.GetSprite(currentelement.SpriteId);
 			if (sprite == null) return;
 
-			Vector2 drawlocation = GetDrawLocation() - new Vector2(0, CurrentLocation.Y * 2);
+			Vector2 drawlocation = GetDrawLocation();
 			Vector2 drawoffset = Misc.GetOffset(Vector2.Zero, CurrentFacing, currentelement.Offset) + new Vector2(0, BasePlayer.Constants.Shadowoffset);
 			Vector2 drawscale = CurrentScale * DrawScale;
+			SpriteEffects flip = GetDrawFlip() | SpriteEffects.FlipVertically;
 
-			Video.DrawState drawstate = SpriteManager.SetupDrawing(currentelement.SpriteId, drawlocation, drawoffset, drawscale, GetDrawFlip() | SpriteEffects.FlipVertically);
+			if (Engine.Stage.ShadowScale < 0.0f)
+			{
+				drawlocation.Y -= CurrentLocation.Y * Math.Abs(Engine.Stage.ShadowScale);
+				flip ^= SpriteEffects.FlipVertically;
+			}
+			else
+			{
+				drawlocation -= new Vector2(0, CurrentLocation.Y * 2);
+			}
 
-			if (Engine.Stage.ShadowScale < 0.0f) drawstate.Flip ^= SpriteEffects.FlipVertically;
-
+			Video.DrawState drawstate = SpriteManager.SetupDrawing(currentelement.SpriteId, drawlocation, drawoffset, drawscale, flip);
 			drawstate.Mode = DrawMode.Shadow;
-			drawstate.ShaderParameters.ShadowColor = Engine.Stage.ShadowColor;
 			drawstate.Blending = new Blending(BlendType.Subtract, 255, 255);
 			drawstate.Rotation = (AngleDraw == true) ? Misc.FaceScalar(CurrentFacing, -DrawingAngle) : 0;
 			drawstate.Stretch = new Vector2(1.0f, Math.Abs(Engine.Stage.ShadowScale));
+
+			if (Engine.Stage.ShadowFade == null)
+			{
+				drawstate.ShaderParameters.ShadowColor = Engine.Stage.ShadowColor;
+			}
+			else
+			{
+				if (CurrentLocation.Y <= Engine.Stage.ShadowFade.Value.X)
+				{
+					drawstate.ShaderParameters.ShadowColor = Vector4.Zero;
+				}
+				else if (CurrentLocation.Y >= Engine.Stage.ShadowFade.Value.Y)
+				{
+					drawstate.ShaderParameters.ShadowColor = Engine.Stage.ShadowColor;
+				}
+				else
+				{
+					Single bottom = Engine.Stage.ShadowFade.Value.X;
+					Single top = Engine.Stage.ShadowFade.Value.Y;
+					Single percentage = (CurrentLocation.Y - bottom) / (top - bottom);
+
+					drawstate.ShaderParameters.ShadowColor = Engine.Stage.ShadowColor * percentage;
+				}
+			}
 
 			drawstate.Use();
 		}
@@ -183,13 +214,13 @@ namespace xnaMugen.Combat
 			}
 		}
 
-        public override void UpdateAfterImages()
-        {
-            if (InHitPause == false)
-            {
-                base.UpdateAfterImages();
-            }
-        }
+		public override void UpdateAfterImages()
+		{
+			if (InHitPause == false)
+			{
+				base.UpdateAfterImages();
+			}
+		}
 
 		public override void UpdateState()
 		{
@@ -652,10 +683,10 @@ namespace xnaMugen.Combat
 		{
 			get { return m_statetype; }
 
-			set 
+			set
 			{
 				if (value == StateType.None || value == StateType.Unchanged) throw new ArgumentOutOfRangeException("value");
-				m_statetype = value; 
+				m_statetype = value;
 			}
 		}
 
