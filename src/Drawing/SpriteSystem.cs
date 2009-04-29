@@ -50,7 +50,7 @@ namespace xnaMugen.Drawing
 				textfile = GetSubSystem<IO.FileSystem>().BuildTextFile(file);
 			}
 
-			Sprite sprite = new Sprite(size, new Point(0, 0), pixels, palette, false);
+			Sprite sprite = new Sprite(size, new Point(0, 0), true, pixels, true, palette, false);
 
 			IO.TextSection data = textfile.GetSection("Def");
 			IO.TextSection textmap = textfile.GetSection("Map");

@@ -11,14 +11,16 @@ namespace xnaMugen.Drawing
 {
 	class Sprite : Resource
 	{
-		public Sprite(Point size, Point axis, Texture2D pixels, Texture2D palette, Boolean paletteoverride)
+		public Sprite(Point size, Point axis, Boolean ownpixels, Texture2D pixels, Boolean ownpalette, Texture2D palette, Boolean paletteoverride)
 		{
 			if (pixels == null) throw new ArgumentNullException("pixels");
 			if (palette == null) throw new ArgumentNullException("palette");
 
 			m_size = size;
 			m_axis = axis;
+			m_ownpixels = ownpixels;
 			m_pixels = pixels;
+			m_ownpalette = ownpalette;
 			m_palette = palette;
 			m_paletteoverride = paletteoverride;
 		}
@@ -27,9 +29,9 @@ namespace xnaMugen.Drawing
 		{
 			if (disposing == true)
 			{
-				if (m_pixels != null) m_pixels.Dispose();
+				if (m_pixels != null && m_ownpixels == true) m_pixels.Dispose();
 
-				if (m_palette != null) m_palette.Dispose();
+				if (m_palette != null && m_ownpalette == true) m_palette.Dispose();
 			}
 
 			base.Dispose(disposing);
@@ -69,7 +71,13 @@ namespace xnaMugen.Drawing
 		readonly Point m_axis;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+		readonly Boolean m_ownpixels;
+
+		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		readonly Texture2D m_pixels;
+
+		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+		readonly Boolean m_ownpalette;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		readonly Texture2D m_palette;
