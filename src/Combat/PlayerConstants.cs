@@ -212,7 +212,7 @@ namespace xnaMugen.Combat
 			get { return m_midposition; }
 		}
 
-		public Int32 Shadowoffset
+		public Int32 ShadowOffset
 		{
 			get { return m_shadowoffset; }
 		}

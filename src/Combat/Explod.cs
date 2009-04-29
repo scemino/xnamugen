@@ -276,6 +276,33 @@ namespace xnaMugen.Combat
 			return flip;
 		}
 
+		public override Vector4 GetShadowColor()
+		{
+			if (Engine.Stage.ShadowFade == null)
+			{
+				return Data.ShadowColor;
+			}
+			else
+			{
+				if (CurrentLocation.Y <= Engine.Stage.ShadowFade.Value.X)
+				{
+					return Vector4.Zero;
+				}
+				else if (CurrentLocation.Y >= Engine.Stage.ShadowFade.Value.Y)
+				{
+					return Data.ShadowColor;
+				}
+				else
+				{
+					Single bottom = Engine.Stage.ShadowFade.Value.X;
+					Single top = Engine.Stage.ShadowFade.Value.Y;
+					Single percentage = (CurrentLocation.Y - bottom) / (top - bottom);
+
+					return Data.ShadowColor * percentage;
+				}
+			}
+		}
+
 		public void Kill()
 		{
 			m_forceremove = true;
@@ -386,6 +413,11 @@ namespace xnaMugen.Combat
 			if (modifydata.Flip != null)
 			{
 				CurrentFacing = GetStartFacing();
+			}
+
+			if (modifydata.ShadowColor != null)
+			{
+				Data.ShadowColor = modifydata.ShadowColor.Value;
 			}
 
 			/*

@@ -112,38 +112,6 @@ namespace xnaMugen.Video
             return texture;
         }
 
-        public Texture2D CreateTexture(Drawing.Pixels pixels, Drawing.Palette palette)
-        {
-            if (pixels == null) throw new ArgumentNullException("pixels");
-            if (palette == null) throw new ArgumentNullException("palette");
-
-            Texture2D texture = new Texture2D(Device, pixels.Size.X, pixels.Size.Y, 1, TextureUsage.None, SurfaceFormat.Color);
-
-            SharedBuffer sharedbuffer = GetSubSystem<SharedBuffer>();
-            lock (sharedbuffer)
-            {
-                sharedbuffer.EnsureSize(pixels.Size.X * pixels.Size.Y * 4);
-                Byte[] buffer = sharedbuffer.Buffer;
-
-				Int32 imagelength = pixels.Size.X * pixels.Size.Y;
-				for (Int32 i = 0; i != imagelength; ++i)
-				{
-					Int32 colorindex = pixels.Buffer[i];
-					Color color = palette.Buffer[colorindex];
-					Int32 bufferindex = i * 4;
-
-					buffer[bufferindex + 0] = color.B;
-					buffer[bufferindex + 1] = color.G;
-					buffer[bufferindex + 2] = color.R;
-					buffer[bufferindex + 3] = (colorindex != 0) ? color.A : (Byte)0;
-				}
-
-                texture.SetData<Byte>(buffer, 0, pixels.Size.X * pixels.Size.Y * 4, SetDataOptions.None);
-            }
-
-            return texture;
-        }
-
         protected override void Dispose(Boolean disposing)
         {
             base.Dispose(disposing);

@@ -89,7 +89,7 @@ namespace xnaMugen.Evaluation.Triggers
 			s_playermap["size.mid.pos.y"] = x => new Number((Int32)x.Constants.Midposition.Y);
 			s_helpermap["size.mid.pos.y"] = x => new Number((Int32)x.Data.MidPosition.Y);
 
-			s_playermap["size.shadowoffset"] = x => new Number(x.Constants.Shadowoffset);
+			s_playermap["size.shadowoffset"] = x => new Number(x.Constants.ShadowOffset);
 			s_helpermap["size.shadowoffset"] = x => new Number(x.Data.ShadowOffset);
 
 			s_playermap["size.draw.offset.x"] = x => new Number(x.Constants.DrawOffset.X);

@@ -125,6 +125,33 @@ namespace xnaMugen.Combat
             if (Data.RemoveOnHit == true && m_totalhits >= Data.HitsBeforeRemoval) StartHitRemoval();
         }
 
+		public override Vector4 GetShadowColor()
+		{
+			if (Engine.Stage.ShadowFade == null)
+			{
+				return Data.ShadowColor;
+			}
+			else
+			{
+				if (CurrentLocation.Y <= Engine.Stage.ShadowFade.Value.X)
+				{
+					return Vector4.Zero;
+				}
+				else if (CurrentLocation.Y >= Engine.Stage.ShadowFade.Value.Y)
+				{
+					return Data.ShadowColor;
+				}
+				else
+				{
+					Single bottom = Engine.Stage.ShadowFade.Value.X;
+					Single top = Engine.Stage.ShadowFade.Value.Y;
+					Single percentage = (CurrentLocation.Y - bottom) / (top - bottom);
+
+					return Data.ShadowColor * percentage;
+				}
+			}
+		}
+
         Boolean BoundCheck()
         {
             Rectangle camera_rect = Engine.Camera.ScreenBounds;

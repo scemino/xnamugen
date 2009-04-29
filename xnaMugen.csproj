@@ -286,9 +286,7 @@
     </Compile>
     <Compile Include="src\Drawing\Font.cs" />
     <Compile Include="src\Drawing\FontMap.cs" />
-    <Compile Include="src\Drawing\Palette.cs" />
     <Compile Include="src\Drawing\PcxLoader.cs" />
-    <Compile Include="src\Drawing\Pixels.cs" />
     <Compile Include="src\Drawing\PrintData.cs" />
     <Compile Include="src\Drawing\Sprite.cs" />
     <Compile Include="src\Drawing\SpriteFile.cs" />

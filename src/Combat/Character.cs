@@ -63,62 +63,21 @@ namespace xnaMugen.Combat
 
 		public override void ShadowDraw()
 		{
-			Animations.AnimationElement currentelement = AnimationManager.CurrentElement;
-			if (currentelement == null) return;
+			if (Assertions.NoShadow == true) return;
 
-			Drawing.Sprite sprite = SpriteManager.GetSprite(currentelement.SpriteId);
-			if (sprite == null) return;
+			Vector2 scale = CurrentScale;
 
-			Vector2 drawlocation = GetDrawLocation();
-			Vector2 drawoffset = Misc.GetOffset(Vector2.Zero, CurrentFacing, currentelement.Offset) + new Vector2(0, BasePlayer.Constants.Shadowoffset);
-			Vector2 drawscale = CurrentScale * DrawScale;
-			SpriteEffects flip = GetDrawFlip() | SpriteEffects.FlipVertically;
+			CurrentScale *= DrawScale;
 
-			if (Engine.Stage.ShadowScale < 0.0f)
-			{
-				drawlocation.Y -= CurrentLocation.Y * Math.Abs(Engine.Stage.ShadowScale);
-				flip ^= SpriteEffects.FlipVertically;
-			}
-			else
-			{
-				drawlocation -= new Vector2(0, CurrentLocation.Y * 2);
-			}
+			base.ShadowDraw();
 
-			Video.DrawState drawstate = SpriteManager.SetupDrawing(currentelement.SpriteId, drawlocation, drawoffset, drawscale, flip);
-			drawstate.Mode = DrawMode.Shadow;
-			drawstate.Blending = new Blending(BlendType.Subtract, 255, 255);
-			drawstate.Rotation = (AngleDraw == true) ? Misc.FaceScalar(CurrentFacing, -DrawingAngle) : 0;
-			drawstate.Stretch = new Vector2(1.0f, Math.Abs(Engine.Stage.ShadowScale));
-
-			if (Engine.Stage.ShadowFade == null)
-			{
-				drawstate.ShaderParameters.ShadowColor = Engine.Stage.ShadowColor;
-			}
-			else
-			{
-				if (CurrentLocation.Y <= Engine.Stage.ShadowFade.Value.X)
-				{
-					drawstate.ShaderParameters.ShadowColor = Vector4.Zero;
-				}
-				else if (CurrentLocation.Y >= Engine.Stage.ShadowFade.Value.Y)
-				{
-					drawstate.ShaderParameters.ShadowColor = Engine.Stage.ShadowColor;
-				}
-				else
-				{
-					Single bottom = Engine.Stage.ShadowFade.Value.X;
-					Single top = Engine.Stage.ShadowFade.Value.Y;
-					Single percentage = (CurrentLocation.Y - bottom) / (top - bottom);
-
-					drawstate.ShaderParameters.ShadowColor = Engine.Stage.ShadowColor * percentage;
-				}
-			}
-
-			drawstate.Use();
+			CurrentScale = scale;
 		}
 
 		public override void ReflectionDraw()
 		{
+			if (Assertions.NoShadow == true) return;
+
 			Animations.AnimationElement currentelement = AnimationManager.CurrentElement;
 			if (currentelement == null) return;
 
@@ -126,13 +85,12 @@ namespace xnaMugen.Combat
 			if (sprite == null) return;
 
 			Vector2 drawlocation = GetDrawLocation() - new Vector2(0, CurrentLocation.Y * 2);
-			Vector2 drawoffset = Misc.GetOffset(Vector2.Zero, CurrentFacing, currentelement.Offset) + new Vector2(0, BasePlayer.Constants.Shadowoffset);
+			Vector2 drawoffset = Misc.GetOffset(Vector2.Zero, CurrentFacing, currentelement.Offset) + new Vector2(0, BasePlayer.Constants.ShadowOffset);
 			Vector2 drawscale = CurrentScale * DrawScale;
 
 			Video.DrawState drawstate = SpriteManager.SetupDrawing(currentelement.SpriteId, drawlocation, drawoffset, drawscale, GetDrawFlip() | SpriteEffects.FlipVertically);
 			drawstate.Blending = new Blending(BlendType.Add, (Byte)255, 255 - Engine.Stage.ReflectionIntensity);
 			drawstate.Rotation = (AngleDraw == true) ? Misc.FaceScalar(CurrentFacing, -DrawingAngle) : 0;
-
 			drawstate.Use();
 		}
 

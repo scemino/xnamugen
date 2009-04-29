@@ -148,6 +148,34 @@ namespace xnaMugen.Combat
 
 		public virtual void ShadowDraw()
 		{
+			Animations.AnimationElement currentelement = AnimationManager.CurrentElement;
+			if (currentelement == null) return;
+
+			Drawing.Sprite sprite = SpriteManager.GetSprite(currentelement.SpriteId);
+			if (sprite == null) return;
+
+			Vector2 drawlocation = GetDrawLocation();
+			Vector2 drawoffset = Misc.GetOffset(Vector2.Zero, CurrentFacing, currentelement.Offset) + new Vector2(0, BasePlayer.Constants.ShadowOffset);
+			Vector2 drawscale = CurrentScale;
+			SpriteEffects flip = GetDrawFlip() | SpriteEffects.FlipVertically;
+
+			if (Engine.Stage.ShadowScale < 0.0f)
+			{
+				drawlocation.Y -= CurrentLocation.Y * Math.Abs(Engine.Stage.ShadowScale);
+				flip ^= SpriteEffects.FlipVertically;
+			}
+			else
+			{
+				drawlocation -= new Vector2(0, CurrentLocation.Y * 2);
+			}
+
+			Video.DrawState drawstate = SpriteManager.SetupDrawing(currentelement.SpriteId, drawlocation, drawoffset, drawscale, flip);
+			drawstate.Mode = DrawMode.Shadow;
+			drawstate.Blending = new Blending(BlendType.Subtract, 255, 255);
+			drawstate.Rotation = (AngleDraw == true) ? Misc.FaceScalar(CurrentFacing, -DrawingAngle) : 0;
+			drawstate.Stretch = new Vector2(1.0f, Math.Abs(Engine.Stage.ShadowScale));
+			drawstate.ShaderParameters.ShadowColor = GetShadowColor();
+			drawstate.Use();
 		}
 
 		public virtual void ReflectionDraw()
@@ -189,6 +217,33 @@ namespace xnaMugen.Combat
 			//DrawSpriteBox(location, currentelement);
 			DrawClsnBoxes(location, currentelement);
 			DrawOriginCross(location, 3);
+		}
+
+		public virtual Vector4 GetShadowColor()
+		{
+			if (Engine.Stage.ShadowFade == null)
+			{
+				return Engine.Stage.ShadowColor;
+			}
+			else
+			{
+				if (CurrentLocation.Y <= Engine.Stage.ShadowFade.Value.X)
+				{
+					return Vector4.Zero;
+				}
+				else if (CurrentLocation.Y >= Engine.Stage.ShadowFade.Value.Y)
+				{
+					return Engine.Stage.ShadowColor;
+				}
+				else
+				{
+					Single bottom = Engine.Stage.ShadowFade.Value.X;
+					Single top = Engine.Stage.ShadowFade.Value.Y;
+					Single percentage = (CurrentLocation.Y - bottom) / (top - bottom);
+
+					return Engine.Stage.ShadowColor * percentage;
+				}
+			}
 		}
 
 		void DrawSpriteBox(Vector2 location, Animations.AnimationElement element)

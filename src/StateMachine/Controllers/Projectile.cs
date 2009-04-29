@@ -87,7 +87,10 @@ namespace xnaMugen.StateMachine.Controllers
 
 			data.CreationOffset = (Vector2)EvaluationHelper.AsPoint(character, ProjectileCreationOffset, new Point(0, 0));
 			data.PositionType = ProjectileCreationPositionType;
-			data.ShadowColor = new Color(EvaluationHelper.AsVector3(character, ProjectileShadow, Vector3.Zero));
+
+			data.ShadowColor = EvaluationHelper.AsVector4(character, ProjectileShadow, Vector4.Zero);
+			if (data.ShadowColor.X == -1) data.ShadowColor = character.Engine.Stage.ShadowColor;
+
 			data.SuperPauseMoveTime = EvaluationHelper.AsInt32(character, ProjectileSuperPauseTime, 0);
 			data.PauseMoveTime = EvaluationHelper.AsInt32(character, ProjectilePauseTime, 0);
 			data.AfterImageTime = EvaluationHelper.AsInt32(character, ProjectileAfterImageTime, 1);

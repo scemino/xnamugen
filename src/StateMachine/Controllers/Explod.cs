@@ -80,8 +80,11 @@ namespace xnaMugen.StateMachine.Controllers
 			Boolean removeongethit = EvaluationHelper.AsBoolean(character, RemoveOnGetHit, false);
 			Boolean ignorehitpause = EvaluationHelper.AsBoolean(character, ExplodIgnoreHitPause, true);
 			Point? alpha = EvaluationHelper.AsPoint(character, Alpha, null);
+			Vector4 shadowcolor = EvaluationHelper.AsVector4(character, Shadow, Vector4.Zero);
 
 			if (animationnumber == null) return null;
+
+			if (shadowcolor.X == -1) shadowcolor = character.Engine.Stage.ShadowColor;
 
 			SpriteEffects flip = SpriteEffects.None;
 			if (horizfacing == -1) flip ^= SpriteEffects.FlipHorizontally;
@@ -122,6 +125,7 @@ namespace xnaMugen.StateMachine.Controllers
 			data.RemoveOnGetHit = removeongethit;
 			data.IgnoreHitPause = ignorehitpause;
 			data.Transparency = transparency;
+			data.ShadowColor = shadowcolor;
 
 			return data;
 		}

@@ -40,6 +40,7 @@ namespace xnaMugen.Combat
 		public Boolean RemoveOnGetHit { get; set; }
 		public Boolean IgnoreHitPause { get; set; }
 		public Blending Transparency { get; set; }
+		public Vector4 ShadowColor { get; set; }
 
 		public Entity Creator { get; set; }
 		public Entity Offseter { get; set; }
@@ -69,5 +70,6 @@ namespace xnaMugen.Combat
 		public Boolean? RemoveOnGetHit { get; set; }
 		public Boolean? IgnoreHitPause { get; set; }
 		public Blending? Transparency { get; set; }
+		public Vector4? ShadowColor { get; set; }
 	}
 }
