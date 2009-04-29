@@ -19,12 +19,13 @@ namespace xnaMugen.Video
 			m_palette = null;
 			m_scissorrect = Rectangle.Empty;
 			m_blending = new Blending();
-			m_drawdata = new List<DrawData>(10);
+			m_drawdata = new List<DrawData>();
 			m_scale = Vector2.One;
 			m_axis = Vector2.Zero;
 			m_flip = SpriteEffects.None;
 			m_rotation = 0;
 			m_offset = Vector2.Zero;
+			m_stretch = Vector2.One;
 			m_parameters = new ShaderParameters();
 		}
 
@@ -46,6 +47,8 @@ namespace xnaMugen.Video
 			m_flip = SpriteEffects.None;
 			m_rotation = 0;
 			m_offset = Vector2.Zero;
+			m_stretch = Vector2.One;
+
 			m_parameters.Reset();
 		}
 
@@ -156,6 +159,13 @@ namespace xnaMugen.Video
 			set { m_rotation = value; }
 		}
 
+		public Vector2 Stretch
+		{
+			get { return m_stretch; }
+
+			set { m_stretch = value; }
+		}
+
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
@@ -196,6 +206,9 @@ namespace xnaMugen.Video
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		Single m_rotation;
+
+		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+		Vector2 m_stretch;
 
 		#endregion
 	}

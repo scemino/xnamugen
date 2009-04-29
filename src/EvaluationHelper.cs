@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using Microsoft.Xna.Framework;
 using xnaMugen.Evaluation;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace xnaMugen
 {
@@ -305,6 +306,52 @@ namespace xnaMugen
 			if (result.IsValid(0) == true && result.IsValid(1) == true && result.IsValid(2) == true && result.IsValid(3) == true)
 			{
 				return new Rectangle(result[0].IntValue, result[1].IntValue, result[2].IntValue - result[0].IntValue, result[3].IntValue - result[1].IntValue);
+			}
+
+			return failover;
+		}
+
+		public static Color AsColor(Object state, IExpression expression, Color failover)
+		{
+			Evaluation.Result result = Evaluate(state, expression);
+			if (result == null) return failover;
+
+			if (result.IsValid(0) == true && result.IsValid(1) == true && result.IsValid(2) == true)
+			{
+				return new Color(result[0].FloatValue / 255.0f, result[1].FloatValue / 255.0f, result[2].FloatValue / 255.0f);
+			}
+
+			if (result.IsValid(0) == true && result.IsValid(1) == true)
+			{
+				return new Color(result[0].FloatValue / 255.0f, result[1].FloatValue / 255.0f, 0);
+			}
+
+			if (result.IsValid(0) == true)
+			{
+				return new Color(result[0].FloatValue / 255.0f, 0, 0);
+			}
+
+			return failover;
+		}
+
+		public static Color? AsColor(Object state, IExpression expression, Color? failover)
+		{
+			Evaluation.Result result = Evaluate(state, expression);
+			if (result == null) return failover;
+
+			if (result.IsValid(0) == true && result.IsValid(1) == true && result.IsValid(2) == true)
+			{
+				return new Color(result[0].FloatValue / 255.0f, result[1].FloatValue / 255.0f, result[2].FloatValue / 255.0f);
+			}
+
+			if (result.IsValid(0) == true && result.IsValid(1) == true)
+			{
+				return new Color(result[0].FloatValue / 255.0f, result[1].FloatValue / 255.0f, 0);
+			}
+
+			if (result.IsValid(0) == true)
+			{
+				return new Color(result[0].FloatValue / 255.0f, 0, 0);
 			}
 
 			return failover;

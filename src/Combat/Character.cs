@@ -61,6 +61,50 @@ namespace xnaMugen.Combat
 			m_updatedanimation = false;
 		}
 
+		public override void ShadowDraw()
+		{
+			Animations.AnimationElement currentelement = AnimationManager.CurrentElement;
+			if (currentelement == null) return;
+
+			Drawing.Sprite sprite = SpriteManager.GetSprite(currentelement.SpriteId);
+			if (sprite == null) return;
+
+			Vector2 drawlocation = GetDrawLocation() - new Vector2(0, CurrentLocation.Y * 2);
+			Vector2 drawoffset = Misc.GetOffset(Vector2.Zero, CurrentFacing, currentelement.Offset) + new Vector2(0, BasePlayer.Constants.Shadowoffset);
+			Vector2 drawscale = CurrentScale * DrawScale;
+
+			Video.DrawState drawstate = SpriteManager.SetupDrawing(currentelement.SpriteId, drawlocation, drawoffset, drawscale, GetDrawFlip() | SpriteEffects.FlipVertically);
+
+			if (Engine.Stage.ShadowScale < 0.0f) drawstate.Flip ^= SpriteEffects.FlipVertically;
+
+			drawstate.Mode = DrawMode.Shadow;
+			drawstate.ShaderParameters.ShadowColor = Engine.Stage.ShadowColor;
+			drawstate.Blending = new Blending(BlendType.Subtract, 255, 255);
+			drawstate.Rotation = (AngleDraw == true) ? Misc.FaceScalar(CurrentFacing, -DrawingAngle) : 0;
+			drawstate.Stretch = new Vector2(1.0f, Math.Abs(Engine.Stage.ShadowScale));
+
+			drawstate.Use();
+		}
+
+		public override void ReflectionDraw()
+		{
+			Animations.AnimationElement currentelement = AnimationManager.CurrentElement;
+			if (currentelement == null) return;
+
+			Drawing.Sprite sprite = SpriteManager.GetSprite(currentelement.SpriteId);
+			if (sprite == null) return;
+
+			Vector2 drawlocation = GetDrawLocation() - new Vector2(0, CurrentLocation.Y * 2);
+			Vector2 drawoffset = Misc.GetOffset(Vector2.Zero, CurrentFacing, currentelement.Offset) + new Vector2(0, BasePlayer.Constants.Shadowoffset);
+			Vector2 drawscale = CurrentScale * DrawScale;
+
+			Video.DrawState drawstate = SpriteManager.SetupDrawing(currentelement.SpriteId, drawlocation, drawoffset, drawscale, GetDrawFlip() | SpriteEffects.FlipVertically);
+			drawstate.Blending = new Blending(BlendType.Add, (Byte)255, 255 - Engine.Stage.ReflectionIntensity);
+			drawstate.Rotation = (AngleDraw == true) ? Misc.FaceScalar(CurrentFacing, -DrawingAngle) : 0;
+
+			drawstate.Use();
+		}
+
 		public override void Draw()
 		{
 			if (Assertions.Invisible == false)

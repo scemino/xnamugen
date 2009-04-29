@@ -146,6 +146,14 @@ namespace xnaMugen.Combat
 			return new Vector2();
 		}
 
+		public virtual void ShadowDraw()
+		{
+		}
+
+		public virtual void ReflectionDraw()
+		{
+		}
+
 		public virtual void Draw()
 		{
 			AfterImages.Draw();
@@ -163,7 +171,6 @@ namespace xnaMugen.Combat
 			if (this is Character) drawscale *= (this as Character).DrawScale;
 
 			Video.DrawState drawstate = SpriteManager.SetupDrawing(currentelement.SpriteId, drawlocation, drawoffset, drawscale, GetDrawFlip());
-
 			drawstate.Blending = Transparency == new Blending() ? currentelement.Blending : Transparency;
 			drawstate.Rotation = (AngleDraw == true) ? Misc.FaceScalar(CurrentFacing, -DrawingAngle) : 0;
 
@@ -210,7 +217,7 @@ namespace xnaMugen.Combat
 
 			Video.DrawState drawstate = SpriteManager.DrawState;
 
-			Vector2 spritelocation = Video.Renderer.GetDrawLocation(sprite.Size, location, (Vector2)sprite.Axis - drawoffset, CurrentScale, flip);
+			Vector2 spritelocation = Video.Renderer.GetDrawLocation(sprite.Size, location, (Vector2)sprite.Axis - drawoffset, CurrentScale, Vector2.One, flip);
 			drawstate.Reset();
 			drawstate.Mode = DrawMode.OutlinedRectangle;
 			drawstate.AddData(spritelocation, new Rectangle(0, 0, (Int32)(sprite.Size.X * CurrentScale.X), (Int32)(sprite.Size.Y * CurrentScale.Y)), Color.Gray);

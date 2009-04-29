@@ -72,7 +72,7 @@ namespace xnaMugen
 			Drawing.Sprite sprite = m_sprites.GetSprite(element.SpriteId);
 			if (sprite != null)
 			{
-				Vector2 spritelocation = Video.Renderer.GetDrawLocation(sprite.Size, location, (Vector2)sprite.Axis - element.Offset, scale, SpriteEffects.None);
+				Vector2 spritelocation = Video.Renderer.GetDrawLocation(sprite.Size, location, (Vector2)sprite.Axis - element.Offset, scale, Vector2.One, SpriteEffects.None);
 				drawstate.Reset();
 				drawstate.Mode = DrawMode.OutlinedRectangle;
 				drawstate.AddData(spritelocation, new Rectangle(0, 0, sprite.Size.X, sprite.Size.Y), Color.Gray);

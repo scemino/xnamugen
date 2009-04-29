@@ -644,6 +644,18 @@ namespace xnaMugen
 			return Failure;
 		}
 
+		[StringConversion(typeof(Color))]
+		Object ToColor(String s)
+		{
+			Evaluation.Expression expression;
+			if (TryConvert<Evaluation.Expression>(s, out expression) == false) return Failure;
+
+			Color? color = EvaluationHelper.AsColor(null, expression, null);
+			if (color == null) return Failure;
+
+			return color.Value;
+		}
+
 		Object Failure
 		{
 			get { return m_failure; }

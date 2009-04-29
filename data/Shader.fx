@@ -29,6 +29,8 @@ float4 xAI_paladd;
 float4 xAI_palmul;
 int xAI_number;
 
+float4 xShadowColor;
+
 float4 BaseColor(float4 inputcolor, float base)
 {
 	if(base == 0.0f)
@@ -155,6 +157,20 @@ float4 FontPixelShader(float4 color : COLOR, float2 texCoord : TEXCOORD) : COLOR
 	}
 }
 
+float4 ShadowPixelShader(float4 color : COLOR, float2 texCoord : TEXCOORD) : COLOR
+{
+	float color_index = tex2D(xPixelsSampler, texCoord).r;	
+	
+	if(color_index == 0.0f)
+	{
+		return float4(0, 0, 0, 0);
+	}
+	else
+	{
+		return float4(xShadowColor.rgb, xBlendWeight);
+	}
+}
+
 technique Draw
 {
 	pass Pass0
@@ -179,5 +195,14 @@ technique FontDraw
 	{
 		VertexShader = compile vs_1_1 VertexShader();
 		PixelShader = compile ps_2_0 FontPixelShader();
+	}
+}
+
+technique ShadowDraw
+{
+	pass Pass0
+	{
+		VertexShader = compile vs_1_1 VertexShader();
+		PixelShader = compile ps_2_0 ShadowPixelShader();
 	}
 }

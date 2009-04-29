@@ -36,6 +36,8 @@ namespace xnaMugen.Video
 			m_palfxmul = Vector3.Zero;
 			m_palfxsinadd = Vector4.Zero;
 			m_palfxtime = 0;
+
+			m_shadowcolor = Vector4.Zero;
 		}
 
 		public Int32 FontColorIndex
@@ -164,6 +166,13 @@ namespace xnaMugen.Video
 			set { m_palfxcolor = value; }
 		}
 
+		public Vector4 ShadowColor
+		{
+			get { return m_shadowcolor; }
+
+			set { m_shadowcolor = value; }
+		}
+
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
@@ -219,6 +228,9 @@ namespace xnaMugen.Video
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		Single m_palfxcolor;
+
+		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+		Vector4 m_shadowcolor;
 
 		#endregion
 	}

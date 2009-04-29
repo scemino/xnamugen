@@ -36,7 +36,6 @@ namespace xnaMugen.Combat
 		public void Draw()
 		{
 			m_drawstate.Reset();
-			m_drawstate.Mode = DrawMode.FilledRectangle;
 			m_drawstate.AddData(Vector2.Zero, new Rectangle(0, 0, Mugen.ScreenSize.X, Mugen.ScreenSize.Y), new Color(Color));
 			m_drawstate.Use();
 		}
