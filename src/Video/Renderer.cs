@@ -217,7 +217,7 @@ namespace xnaMugen.Video
 
 					++count;
 
-					if (count * 4 >= m_drawbuffer.Length)
+					if (count * 8 >= m_drawbuffer.Length)
 					{
 						FinishDrawing(PrimitiveType.LineList, count * 4);
 						count = 0;
