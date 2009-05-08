@@ -402,13 +402,16 @@ namespace xnaMugen
 		[StringConversion(typeof(StateType))]
 		Object ToStateType(String s)
 		{
-			StringComparer sc = StringComparer.OrdinalIgnoreCase;
+			if (s.Length > 0)
+			{
+				Char key = Char.ToUpperInvariant(s[0]);
 
-			if (sc.Equals(s, "a") == true) return StateType.Airborne;
-			if (sc.Equals(s, "c") == true) return StateType.Crouching;
-			if (sc.Equals(s, "s") == true) return StateType.Standing;
-			if (sc.Equals(s, "l") == true) return StateType.Prone;
-			if (sc.Equals(s, "u") == true) return StateType.Unchanged;
+				if (key == 'A') return StateType.Airborne;
+				if (key == 'C') return StateType.Crouching;
+				if (key == 'S') return StateType.Standing;
+				if (key == 'L') return StateType.Prone;
+				if (key == 'U') return StateType.Unchanged;
+			}
 
 			return Failure;
 		}
@@ -430,12 +433,15 @@ namespace xnaMugen
 		[StringConversion(typeof(MoveType))]
 		Object ToMoveType(String s)
 		{
-			StringComparer sc = StringComparer.OrdinalIgnoreCase;
+			if (s.Length > 0)
+			{
+				Char key = Char.ToUpperInvariant(s[0]);
 
-			if (sc.Equals(s, "a") == true) return MoveType.Attack;
-			if (sc.Equals(s, "i") == true) return MoveType.Idle;
-			if (sc.Equals(s, "h") == true) return MoveType.BeingHit;
-			if (sc.Equals(s, "u") == true) return MoveType.Unchanged;
+				if (key == 'A') return MoveType.Attack;
+				if (key == 'I') return MoveType.Idle;
+				if (key == 'H') return MoveType.BeingHit;
+				if (key == 'U') return MoveType.Unchanged;
+			}
 
 			return Failure;
 		}
@@ -443,13 +449,16 @@ namespace xnaMugen
 		[StringConversion(typeof(Physics))]
 		Object ToPhsyics(String s)
 		{
-			StringComparer sc = StringComparer.OrdinalIgnoreCase;
+			if (s.Length > 0)
+			{
+				Char key = Char.ToUpperInvariant(s[0]);
 
-			if (sc.Equals(s, "s") == true) return Physics.Standing;
-			if (sc.Equals(s, "c") == true) return Physics.Crouching;
-			if (sc.Equals(s, "a") == true) return Physics.Airborne;
-			if (sc.Equals(s, "n") == true) return Physics.None;
-			if (sc.Equals(s, "u") == true) return Physics.Unchanged;
+				if (key == 'S') return Physics.Standing;
+				if (key == 'C') return Physics.Crouching;
+				if (key == 'A') return Physics.Airborne;
+				if (key == 'N') return Physics.None;
+				if (key == 'U') return Physics.Unchanged;
+			}
 
 			return Failure;
 		}
