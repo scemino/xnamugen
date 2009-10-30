@@ -1,26 +1,17 @@
 using System;
-using System.Collections.Generic;
 
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("P2StateType")]
-	class P2StateType : Function
+	static class P2StateType
 	{
-		public P2StateType(List<IFunction> children, List<Object> arguments)
-			: base(children, arguments)
-		{
-		}
-
-		public override Number Evaluate(Object state)
+		public static Number Evaluate(Object state, Operator @operator, xnaMugen.StateType statetype)
 		{
 			Combat.Character character = state as Combat.Character;
-			if (character == null || Arguments.Count != 2) return new Number();
+			if (character == null) return new Number();
 
 			Combat.Player opponent = character.GetOpponent();
 			if (opponent == null) return new Number();
-
-			Operator @operator = (Operator)Arguments[0];
-			xnaMugen.StateType statetype = (xnaMugen.StateType)Arguments[1];
 
 			if (statetype == xnaMugen.StateType.Unchanged || statetype == xnaMugen.StateType.None) return new Number();
 

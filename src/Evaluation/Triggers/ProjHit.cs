@@ -1,23 +1,15 @@
 using System;
-using System.Collections.Generic;
 
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("ProjHit")]
-	class ProjHit : Function
+	static class ProjHit
 	{
-		public ProjHit(List<IFunction> children, List<Object> arguments)
-			: base(children, arguments)
-		{
-		}
-
-		public override Number Evaluate(Object state)
+		public static Number Evaluate(Object state, Number r1, Number r2, Number rhs, Operator compare_type)
 		{
 			Combat.Character character = state as Combat.Character;
 			if (character == null) return new Number();
 
-			Number r1 = Children[0].Evaluate(state);
-			Number r2 = Children[1].Evaluate(state);
 			if (r1.NumberType != NumberType.Int || r2.NumberType != NumberType.Int) return new Number();
 
 			Boolean lookingfor = r2.IntValue > 0;
@@ -25,37 +17,9 @@ namespace xnaMugen.Evaluation.Triggers
 			Combat.ProjectileInfo projinfo = character.OffensiveInfo.ProjectileInfo;
 
 			Boolean found = projinfo.Type == ProjectileDataType.Hit && (r1.IntValue <= 0 || r1.IntValue == projinfo.ProjectileId);
-			if (found == true)
-			{
-				found = Comparsion(character, new Number(projinfo.Time)).BooleanValue;
-			}
+			if (found == true) found = Number.BinaryOperation(compare_type, new Number(projinfo.Time), rhs).BooleanValue;
 
 			return new Number(lookingfor == found);
-		}
-
-		public Number Comparsion(Combat.Character character, Number lhs)
-		{
-			if (character == null) throw new ArgumentNullException("character");
-
-			if (lhs.NumberType == NumberType.None) return new Number();
-
-			Operator compare_type = (Operator)Arguments[0];
-
-			if ((compare_type == Operator.Equals || compare_type == Operator.NotEquals) && Arguments.Count == 3)
-			{
-				Number pre = Children[1].Evaluate(character);
-				Number post = Children[2].Evaluate(character);
-
-				Symbol pre_check = (Symbol)Arguments[1];
-				Symbol post_check = (Symbol)Arguments[2];
-
-				return Number.Range(lhs, pre, post, compare_type, pre_check, post_check);
-			}
-			else
-			{
-				Number rhs = Children[1].Evaluate(character);
-				return Number.BinaryOperation(compare_type, lhs, rhs);
-			}
 		}
 
 		public static Node Parse(ParseState parsestate)
@@ -64,7 +28,7 @@ namespace xnaMugen.Evaluation.Triggers
 			if (node == null)
 			{
 #warning Hack
-				parsestate.BaseNode.Children.Add(new Node(new Token("0", new Tokenizing.IntData())));
+				parsestate.BaseNode.Children.Add(Node.ZeroNode);
 
 				node = parsestate.BaseNode;
 			}
@@ -80,7 +44,7 @@ namespace xnaMugen.Evaluation.Triggers
 			if (parsestate.CurrentSymbol != Symbol.Comma)
 			{
 #warning Hack
-				parsestate.BaseNode.Children.Add(new Node(new Token("0", new Tokenizing.IntData())));
+				parsestate.BaseNode.Children.Add(Node.ZeroNode);
 				parsestate.BaseNode.Arguments.Add(Operator.Equals);
 
 				return parsestate.BaseNode;
@@ -96,10 +60,15 @@ namespace xnaMugen.Evaluation.Triggers
 				Node rangenode = parsestate.BuildRangeNode();
 				if (rangenode != null)
 				{
-					rangenode.Children[0] = arg1;
-					rangenode.Arguments[0] = @operator;
+					Node newnode = new Node(new Token("ProjHit", new Tokenizing.CustomFunctionData("ProjHit", "ProjHit_", typeof(ProjHit_))));
+					newnode.Children.Add(arg1);
+					newnode.Children.Add(rangenode.Children[1]);
+					newnode.Children.Add(rangenode.Children[2]);
+					newnode.Arguments.Add(@operator);
+					newnode.Arguments.Add(rangenode.Arguments[1]);
+					newnode.Arguments.Add(rangenode.Arguments[2]);
 
-					return rangenode;
+					return newnode;
 				}
 
 				--parsestate.TokenIndex;
@@ -129,5 +98,29 @@ namespace xnaMugen.Evaluation.Triggers
 			return parsestate.BaseNode;
 		}
 	}
-}
 
+	static class ProjHit_
+	{
+		public static Number Evaluate(Object state, Number r1, Number r2, Number pre, Number post, Operator compare_type, Symbol pre_check, Symbol post_check)
+		{
+			Combat.Character character = state as Combat.Character;
+			if (character == null) return new Number();
+
+			if (r1.NumberType != NumberType.Int || r2.NumberType != NumberType.Int) return new Number();
+
+			Boolean lookingfor = r2.IntValue > 0;
+
+			Combat.ProjectileInfo projinfo = character.OffensiveInfo.ProjectileInfo;
+
+			Boolean found = projinfo.Type == ProjectileDataType.Hit && (r1.IntValue <= 0 || r1.IntValue == projinfo.ProjectileId);
+			if (found == true) found = Number.Range(new Number(projinfo.Time), pre, post, compare_type, pre_check, post_check).BooleanValue;
+
+			return new Number(lookingfor == found);
+		}
+
+		public static Node Parse(ParseState state)
+		{
+			return null;
+		}
+	}
+}

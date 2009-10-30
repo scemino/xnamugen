@@ -1,23 +1,14 @@
 using System;
-using System.Collections.Generic;
 
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("ProjCancelTime")]
-	class ProjCancelTime : Function
+	static class ProjCancelTime
 	{
-		public ProjCancelTime(List<IFunction> children, List<Object> arguments)
-			: base(children, arguments)
-		{
-		}
-
-		public override Number Evaluate(Object state)
+		public static Number Evaluate(Object state, Number projectile_id)
 		{
 			Combat.Character character = state as Combat.Character;
-			if (character == null || Children.Count != 1) return new Number();
-
-			Number projectile_id = Children[0].Evaluate(state);
-			if (projectile_id.NumberType != NumberType.Int) return new Number();
+			if (character == null) return new Number();
 
 			Combat.ProjectileInfo projinfo = character.OffensiveInfo.ProjectileInfo;
 			if (projinfo.Type == ProjectileDataType.Cancel && (projectile_id.IntValue <= 0 || projectile_id.IntValue == projinfo.ProjectileId))

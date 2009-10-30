@@ -5,14 +5,9 @@ using Microsoft.Xna.Framework;
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("FrontEdgeDist")]
-	class FrontEdgeDist : Function
+	static class FrontEdgeDist
 	{
-		public FrontEdgeDist(List<IFunction> children, List<Object> arguments)
-			: base(children, arguments)
-		{
-		}
-
-		public override Number Evaluate(Object state)
+		public static Number Evaluate(Object state)
 		{
 			Combat.Character character = state as Combat.Character;
 			if (character == null) return new Number();
@@ -27,7 +22,7 @@ namespace xnaMugen.Evaluation.Triggers
 			}
 			else if (character.CurrentFacing == xnaMugen.Facing.Left)
 			{
-				Int32 value = character.GetLeftEdgePosition(false) -camerarect.Left;
+				Int32 value = character.GetLeftEdgePosition(false) - camerarect.Left;
 				return new Number(value);
 			}
 			else
@@ -36,9 +31,9 @@ namespace xnaMugen.Evaluation.Triggers
 			}
 		}
 
-		public static Node Parse(ParseState parsestate)
+		public static Node Parse(ParseState state)
 		{
-			return parsestate.BaseNode;
+			return state.BaseNode;
 		}
 	}
 }

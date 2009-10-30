@@ -4,15 +4,12 @@ using System.Collections.Generic;
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("Const")]
-	class Const : Function
+	static class Const
 	{
 		static Const()
 		{
 			s_playermap = new Dictionary<String, Converter<Combat.Player, Number>>(StringComparer.OrdinalIgnoreCase);
 			s_helpermap = new Dictionary<String, Converter<Combat.Helper, Number>>(StringComparer.OrdinalIgnoreCase);
-
-			s_playermap["data.power"] = x => new Number(x.Constants.MaximumPower);
-			s_helpermap["data.power"] = x => new Number(x.BasePlayer.Constants.MaximumPower);
 
 			s_playermap["data.life"] = x => new Number(x.Constants.MaximumLife);
 			s_helpermap["data.life"] = x => new Number(x.BasePlayer.Constants.MaximumLife);
@@ -89,14 +86,14 @@ namespace xnaMugen.Evaluation.Triggers
 			s_playermap["size.mid.pos.y"] = x => new Number((Int32)x.Constants.Midposition.Y);
 			s_helpermap["size.mid.pos.y"] = x => new Number((Int32)x.Data.MidPosition.Y);
 
-			s_playermap["size.shadowoffset"] = x => new Number(x.Constants.ShadowOffset);
+			s_playermap["size.shadowoffset"] = x => new Number(x.Constants.Shadowoffset);
 			s_helpermap["size.shadowoffset"] = x => new Number(x.Data.ShadowOffset);
 
-			s_playermap["size.draw.offset.x"] = x => new Number(x.Constants.DrawOffset.X);
-			s_helpermap["size.draw.offset.x"] = x => new Number(x.BasePlayer.Constants.DrawOffset.X);
+			s_playermap["size.draw.offset.x"] = x => new Number(x.Constants.Drawoffset.X);
+			s_helpermap["size.draw.offset.x"] = x => new Number(x.BasePlayer.Constants.Drawoffset.X);
 
-			s_playermap["size.draw.offset.y"] = x => new Number(x.Constants.DrawOffset.Y);
-			s_helpermap["size.draw.offset.y"] = x => new Number(x.BasePlayer.Constants.DrawOffset.Y);
+			s_playermap["size.draw.offset.y"] = x => new Number(x.Constants.Drawoffset.Y);
+			s_helpermap["size.draw.offset.y"] = x => new Number(x.BasePlayer.Constants.Drawoffset.Y);
 
 			s_playermap["velocity.walk.fwd.x"] = x => new Number(x.Constants.Walk_forward);
 			s_helpermap["velocity.walk.fwd.x"] = x => new Number(x.BasePlayer.Constants.Walk_forward);
@@ -162,16 +159,8 @@ namespace xnaMugen.Evaluation.Triggers
 			s_helpermap["movement.crouch.friction"] = x => new Number(x.BasePlayer.Constants.Crouchfriction);
 		}
 
-		public Const(List<IFunction> children, List<Object> arguments)
-			: base(children, arguments)
+		public static Number Evaluate(Object state, String consttype)
 		{
-		}
-
-		public override Number Evaluate(Object state)
-		{
-			if (Arguments.Count != 1) return new Number();
-			String consttype = (String)Arguments[0];
-
 			Combat.Player player = state as Combat.Player;
 			if (player != null && s_playermap.ContainsKey(consttype) == true) return s_playermap[consttype](player);
 
@@ -195,21 +184,21 @@ namespace xnaMugen.Evaluation.Triggers
 			return EvaluationHelper.AsInt32(character, character.BasePlayer.Constants.DefaultGuardSparkNumber, -1);
 		}
 
-		public static Node Parse(ParseState parsestate)
+		public static Node Parse(ParseState state)
 		{
-			if (parsestate.CurrentSymbol != Symbol.LeftParen) return null;
-			++parsestate.TokenIndex;
+			if (state.CurrentSymbol != Symbol.LeftParen) return null;
+			++state.TokenIndex;
 
-			String constant = parsestate.CurrentUnknown;
+			String constant = state.CurrentUnknown;
 			if (constant == null) return null;
 
-			parsestate.BaseNode.Arguments.Add(constant);
-			++parsestate.TokenIndex;
+			state.BaseNode.Arguments.Add(constant);
+			++state.TokenIndex;
 
-			if (parsestate.CurrentSymbol != Symbol.RightParen) return null;
-			++parsestate.TokenIndex;
+			if (state.CurrentSymbol != Symbol.RightParen) return null;
+			++state.TokenIndex;
 
-			return parsestate.BaseNode;
+			return state.BaseNode;
 		}
 
 		#region Fields
@@ -219,5 +208,6 @@ namespace xnaMugen.Evaluation.Triggers
 		readonly static Dictionary<String, Converter<Combat.Helper, Number>> s_helpermap;
 
 		#endregion
+
 	}
 }

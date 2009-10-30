@@ -1,25 +1,17 @@
 using System;
-using System.Collections.Generic;
 
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("P2BodyDist")]
-	class P2BodyDist : Function
+	static class P2BodyDist
 	{
-		public P2BodyDist(List<IFunction> children, List<Object> arguments)
-			: base(children, arguments)
-		{
-		}
-
-		public override Number Evaluate(Object state)
+		public static Number Evaluate(Object state, Axis axis)
 		{
 			Combat.Character character = state as Combat.Character;
-			if (character == null || Arguments.Count != 1) return new Number();
+			if (character == null) return new Number();
 
 			Combat.Player opponent = character.GetOpponent();
 			if (opponent == null) return new Number();
-
-			Axis axis = (Axis)Arguments[0];
 
 			switch (axis)
 			{

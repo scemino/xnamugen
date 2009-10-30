@@ -4,22 +4,15 @@ using System.Collections.Generic;
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("FVar")]
-	class FVar : Function
+	static class FVar
 	{
-		public FVar(List<IFunction> children, List<Object> arguments)
-			: base(children, arguments)
-		{
-		}
-		public override Number Evaluate(Object state)
+		public static Number Evaluate(Object state, Number value)
 		{
 			Combat.Character character = state as Combat.Character;
-			if (character == null || Children.Count != 1) return new Number();
-
-			Number r1 = Children[0].Evaluate(state);
-			if (r1.NumberType == NumberType.None) return new Number();
+			if (character == null) return new Number();
 
 			Single result;
-			if (character.Variables.GetFloat(r1.IntValue, false, out result) == true)
+			if (character.Variables.GetFloat(value.IntValue, false, out result) == true)
 			{
 				return new Number(result);
 			}
@@ -29,9 +22,9 @@ namespace xnaMugen.Evaluation.Triggers
 			}
 		}
 
-		public static Node Parse(ParseState parsestate)
+		public static Node Parse(ParseState state)
 		{
-			return parsestate.BuildParenNumberNode(true);
+			return state.BuildParenNumberNode(true);
 		}
 	}
 }

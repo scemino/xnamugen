@@ -1,17 +1,11 @@
 using System;
-using System.Collections.Generic;
 
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("InGuardDist")]
-	class InGuardDist : Function
+	static class InGuardDist
 	{
-		public InGuardDist(List<IFunction> children, List<Object> arguments)
-			: base(children, arguments)
-		{
-		}
-
-		public override Number Evaluate(Object state)
+		public static Number Evaluate(Object state)
 		{
 			Combat.Character character = state as Combat.Character;
 			if (character == null) return new Number();
@@ -34,7 +28,7 @@ namespace xnaMugen.Evaluation.Triggers
 			return new Number(false);
 		}
 
-		Boolean InGuardDistance(Combat.HitDefinition hitdef, Combat.Entity attacker, Combat.Character target)
+		static Boolean InGuardDistance(Combat.HitDefinition hitdef, Combat.Entity attacker, Combat.Character target)
 		{
 			if (attacker == null) throw new ArgumentNullException("attacker");
 			if (target == null) throw new ArgumentNullException("target");

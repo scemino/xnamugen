@@ -1,29 +1,26 @@
 using System;
-using System.Collections.Generic;
 
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("Exp")]
-	class Exp : Function
+	static class Exp
 	{
-		public Exp(List<IFunction> children, List<Object> arguments)
-			: base(children, arguments)
+		public static Number Evaluate(Object state, Number value)
 		{
+			switch (value.NumberType)
+			{
+				case NumberType.Int:
+				case NumberType.Float:
+					return new Number(Math.Exp(value.FloatValue));
+
+				default:
+					return new Number();
+			}
 		}
 
-		public override Number Evaluate(Object state)
+		public static Node Parse(ParseState state)
 		{
-			if (Children.Count != 1) return new Number();
-
-			Number number = Children[0].Evaluate(state);
-			if (number.NumberType == NumberType.None) return new Number();
-
-			return new Number(Math.Exp(number.FloatValue));
-		}
-
-		public static Node Parse(ParseState parsestate)
-		{
-			return parsestate.BuildParenNumberNode(true);
+			return state.BuildParenNumberNode(true);
 		}
 	}
 }

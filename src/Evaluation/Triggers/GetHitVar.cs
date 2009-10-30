@@ -4,13 +4,8 @@ using System.Collections.Generic;
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("GetHitVar")]
-	class GetHitVar : Function
+	static class GetHitVar
 	{
-		public GetHitVar(List<IFunction> children, List<Object> arguments)
-			: base(children, arguments)
-		{
-		}
-
 		static GetHitVar()
 		{
 			HitVarMap = new Dictionary<String, Converter<Combat.Character, Number>>(StringComparer.OrdinalIgnoreCase);
@@ -51,12 +46,10 @@ namespace xnaMugen.Evaluation.Triggers
 			HitVarMap["fall.envshake.phase"] = x => new Number(x.DefensiveInfo.HitDef.EnvShakeFallPhase);
 		}
 
-		public override Number Evaluate(Object state)
+		public static Number Evaluate(Object state, String consttype)
 		{
 			Combat.Character character = state as Combat.Character;
 			if (character == null) return new Number();
-
-			String consttype = (String)Arguments[0];
 
 			if (HitVarMap.ContainsKey(consttype) == true) return HitVarMap[consttype](character);
 			return new Number();
@@ -71,12 +64,15 @@ namespace xnaMugen.Evaluation.Triggers
 		{
 			if (axis == Axis.X)
 			{
-                return new Number(character.DefensiveInfo.HitVelocity.X);
+				Single result = character.DefensiveInfo.GetHitVelocity().X;
+				//if (character.CurrentFacing == xnaMugen.Facing.Left) result = -result;
+
+				return new Number(result);
 			}
 
 			if (axis == Axis.Y)
 			{
-                return new Number(character.DefensiveInfo.HitVelocity.Y);
+				return new Number(character.DefensiveInfo.GetHitVelocity().Y);
 			}
 
 			return new Number();

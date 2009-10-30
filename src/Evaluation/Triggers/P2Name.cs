@@ -1,24 +1,16 @@
 using System;
-using System.Collections.Generic;
 
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("P2Name")]
-	class P2Name : Function
+	static class P2Name
 	{
-		public P2Name(List<IFunction> children, List<Object> arguments)
-			: base(children, arguments)
-		{
-		}
-
-		public override Number Evaluate(Object state)
+		public static Number Evaluate(Object state, Operator @operator, String text)
 		{
 			Combat.Character character = state as Combat.Character;
-			if (character == null || Arguments.Count != 2) return new Number();
+			if (character == null) return new Number();
 
 			Combat.Player p2 = character.Team.OtherTeam.MainPlayer;
-			Operator @operator = (Operator)Arguments[0];
-			String text = (String)Arguments[1];
 
 			switch (@operator)
 			{

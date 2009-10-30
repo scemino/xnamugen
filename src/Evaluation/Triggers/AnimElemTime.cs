@@ -4,29 +4,21 @@ using System.Collections.Generic;
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("AnimElemTime")]
-	class AnimElemTime : Function
+	static class AnimElemTime
 	{
-		public AnimElemTime(List<IFunction> children, List<Object> arguments)
-			: base(children, arguments)
+		public static Number Evaluate(Object state, Number value)
 		{
-		}
-
-		public override Number Evaluate(Object state)
-		{
-			if (Children.Count != 1) return new Number();
-
 			Combat.Character character = state as Combat.Character;
 			if (character == null) return new Number();
 
-			Number r1 = Children[0].Evaluate(state);
-			if (r1.NumberType == NumberType.None) return new Number();
+			if (value.NumberType == NumberType.None) return new Number();
 
 			Animations.Animation animation = character.AnimationManager.CurrentAnimation;
 			if (animation == null) return new Number();
 
 			//Document states that if element == null, SFalse should be return. Testing seems to show that 0 is returned instead.
 
-			Int32 element_index = r1.IntValue - 1;
+			Int32 element_index = value.IntValue - 1;
 			if (animation.Elements.Count <= element_index) return new Number(0);
 
 			Int32 animation_time = character.AnimationManager.TimeInAnimation;
@@ -38,9 +30,9 @@ namespace xnaMugen.Evaluation.Triggers
 			return new Number(result);
 		}
 
-		public static Node Parse(ParseState parsestate)
+		public static Node Parse(ParseState state)
 		{
-			return parsestate.BuildParenNumberNode(true);
+			return state.BuildParenNumberNode(true);
 		}
 	}
 }

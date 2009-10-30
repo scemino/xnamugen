@@ -1,26 +1,21 @@
 using System;
-using System.Collections.Generic;
 
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("Cos")]
-	class Cos : Function
+	static class Cos
 	{
-		public Cos(List<IFunction> children, List<Object> arguments)
-			: base(children, arguments)
+		public static Number Evaluate(Object state, Number value)
 		{
-		}
+			switch (value.NumberType)
+			{
+				case NumberType.Int:
+				case NumberType.Float:
+					return new Number(Math.Cos(value.FloatValue));
 
-		public override Number Evaluate(Object state)
-		{
-			if (Children.Count != 1) return new Number();
-
-			Number number = Children[0].Evaluate(state);
-
-			if (number.NumberType == NumberType.Int) return new Number((Single)Math.Cos(number.IntValue));
-			if (number.NumberType == NumberType.Float) return new Number((Single)Math.Cos(number.FloatValue));
-
-			return new Number();
+				default:
+					return new Number();
+			}
 		}
 
 		public static Node Parse(ParseState state)

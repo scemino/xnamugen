@@ -1,24 +1,21 @@
 using System;
-using System.Collections.Generic;
 
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("Acos")]
-	class Acos : Function
+	static class Acos
 	{
-		public Acos(List<IFunction> children, List<Object> arguments)
-			: base(children, arguments)
+		public static Number Evaluate(Object state, Number value)
 		{
-		}
+			switch (value.NumberType)
+			{
+				case NumberType.Int:
+				case NumberType.Float:
+					return new Number(Math.Acos(value.FloatValue));
 
-		public override Number Evaluate(Object state)
-		{
-			if (Children.Count != 1) return new Number();
-
-			Number number = Children[0].Evaluate(state);
-			if (number.NumberType == NumberType.None) return new Number();
-
-			return new Number(Math.Acos(number.FloatValue));
+				default:
+					return new Number();
+			}
 		}
 
 		public static Node Parse(ParseState state)

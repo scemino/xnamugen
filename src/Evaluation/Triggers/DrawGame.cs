@@ -1,16 +1,11 @@
 using System;
-using System.Collections.Generic;
 
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("DrawGame")]
-	class DrawGame : Function
+	static class DrawGame
 	{
-		public DrawGame(List<IFunction> children, List<Object> arguments)
-			: base(children, arguments)
-		{
-		}
-		public override Number Evaluate(Object state)
+		public static Number Evaluate(Object state)
 		{
 			Combat.Character character = state as Combat.Character;
 			if (character == null) return new Number();
@@ -18,9 +13,9 @@ namespace xnaMugen.Evaluation.Triggers
 			return new Number(character.Engine.Team1.VictoryStatus.Lose && character.Engine.Team2.VictoryStatus.Lose);
 		}
 
-		public static Node Parse(ParseState parsestate)
+		public static Node Parse(ParseState state)
 		{
-			return parsestate.BaseNode;
+			return state.BaseNode;
 		}
 	}
 }

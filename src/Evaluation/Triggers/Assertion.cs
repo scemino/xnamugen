@@ -1,22 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("Assertion")]
-	class Assertion : Function
+	static class Assertion
 	{
-		public Assertion(List<IFunction> children, List<Object> arguments)
-			: base(children, arguments)
-		{
-		}
-
-		public override Number Evaluate(Object state)
+		public static Number Evaluate(Object state, xnaMugen.Assertion assertion)
 		{
 			Combat.Character character = state as Combat.Character;
-			if (character == null || Arguments.Count != 1) return new Number();
+			if (character == null) return new Number();
 
-			switch ((xnaMugen.Assertion)Arguments[0])
+			switch (assertion)
 			{
 				case xnaMugen.Assertion.Intro:
 					return new Number(character.Engine.Assertions.Intro);
@@ -81,21 +75,21 @@ namespace xnaMugen.Evaluation.Triggers
 			}
 		}
 
-		public static Node Parse(ParseState parsestate)
+		public static Node Parse(ParseState state)
 		{
-			if (parsestate.CurrentSymbol != Symbol.LeftParen) return null;
-			++parsestate.TokenIndex;
+			if (state.CurrentSymbol != Symbol.LeftParen) return null;
+			++state.TokenIndex;
 
-			if (parsestate.CurrentUnknown == null) return null;
-			xnaMugen.Assertion assert = parsestate.ConvertCurrentToken<xnaMugen.Assertion>();
+			if (state.CurrentUnknown == null) return null;
+			xnaMugen.Assertion assert = state.ConvertCurrentToken<xnaMugen.Assertion>();
 
-			parsestate.BaseNode.Arguments.Add(assert);
-			++parsestate.TokenIndex;
+			state.BaseNode.Arguments.Add(assert);
+			++state.TokenIndex;
 
-			if (parsestate.CurrentSymbol != Symbol.RightParen) return null;
-			++parsestate.TokenIndex;
+			if (state.CurrentSymbol != Symbol.RightParen) return null;
+			++state.TokenIndex;
 
-			return parsestate.BaseNode;
+			return state.BaseNode;
 		}
 	}
 }

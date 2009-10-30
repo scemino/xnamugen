@@ -1,26 +1,17 @@
 using System;
-using System.Collections.Generic;
 
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("TeamMode")]
-	class TeamMode : Function
+	static class TeamMode
 	{
-		public TeamMode(List<IFunction> children, List<Object> arguments)
-			: base(children, arguments)
-		{
-		}
-
-		public override Number Evaluate(Object state)
+		public static Number Evaluate(Object state, Operator @operator, String text)
 		{
 			Combat.Character character = state as Combat.Character;
-			if (character == null || Arguments.Count != 2) return new Number();
-
-			Operator @operator = (Operator)Arguments[0];
-			String text = (String)Arguments[1];
+			if (character == null) return new Number();
 
 #warning Hack
-			Boolean match = String.Equals(text, "single", StringComparison.OrdinalIgnoreCase);
+			Boolean match = String.Equals(text, "versus", StringComparison.OrdinalIgnoreCase);
 
 			switch (@operator)
 			{

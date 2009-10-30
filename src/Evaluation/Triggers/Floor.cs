@@ -1,38 +1,28 @@
 using System;
-using System.Collections.Generic;
 
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("Floor")]
-	class Floor : Function
+	static class Floor
 	{
-		public Floor(List<IFunction> children, List<Object> arguments)
-			: base(children, arguments)
+		public static Number Evaluate(Object state, Number value)
 		{
-		}
-
-		public override Number Evaluate(Object state)
-		{
-			if (Children.Count != 1) return new Number();
-
-			Number number = Children[0].Evaluate(state);
-
-			switch (number.NumberType)
+			switch (value.NumberType)
 			{
 				case NumberType.Int:
-					return new Number((Int32)Math.Floor(number.FloatValue));
+					return new Number((Int32)Math.Floor(value.FloatValue));
 
 				case NumberType.Float:
-					return new Number(Math.Floor(number.FloatValue));
+					return new Number(Math.Floor(value.FloatValue));
 
 				default:
 					return new Number();
 			}
 		}
 
-		public static Node Parse(ParseState parsestate)
+		public static Node Parse(ParseState state)
 		{
-			return parsestate.BuildParenNumberNode(true);
+			return state.BuildParenNumberNode(true);
 		}
 	}
 }

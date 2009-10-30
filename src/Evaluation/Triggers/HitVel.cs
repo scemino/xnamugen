@@ -1,40 +1,22 @@
 using System;
-using System.Collections.Generic;
 
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("HitVel")]
-	class HitVel : Function
+	static class HitVel
 	{
-		public HitVel(List<IFunction> children, List<Object> arguments)
-			: base(children, arguments)
-		{
-		}
-
-		public override Number Evaluate(Object state)
+		public static Number Evaluate(Object state, Axis axis)
 		{
 			Combat.Character character = state as Combat.Character;
-			if (character == null || Arguments.Count != 1) return new Number();
-
-			Axis axis = (Axis)Arguments[0];
+			if (character == null) return new Number();
 
 			switch (axis)
 			{
 				case Axis.X:
-                    switch (character.CurrentFacing)
-                    {
-                        case xnaMugen.Facing.Right:
-                            return new Number(character.DefensiveInfo.HitVelocity.X);
-
-                        case xnaMugen.Facing.Left:
-                            return new Number(-character.DefensiveInfo.HitVelocity.X);
-
-                        default:
-                            return new Number();
-                    }
+					return new Number(character.DefensiveInfo.GetHitVelocity().X);
 
 				case Axis.Y:
-					return new Number(character.DefensiveInfo.HitVelocity.Y);
+					return new Number(character.DefensiveInfo.GetHitVelocity().Y);
 
 				default:
 					return new Number();

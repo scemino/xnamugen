@@ -1,17 +1,11 @@
 using System;
-using System.Collections.Generic;
 
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("IsHelper")]
-	class IsHelper : Function
+	static class IsHelper
 	{
-		public IsHelper(List<IFunction> children, List<Object> arguments)
-			: base(children, arguments)
-		{
-		}
-
-		public override Number Evaluate(Object state)
+		public static Number Evaluate(Object state, Number helperid)
 		{
 			Combat.Character character = state as Combat.Character;
 			if (character == null) return new Number();
@@ -19,19 +13,15 @@ namespace xnaMugen.Evaluation.Triggers
 			Combat.Helper helper = character as Combat.Helper;
 			if (helper == null) return new Number(false);
 
-			if (Children.Count == 0)
+			switch (helperid.NumberType)
 			{
-				return new Number(true);
-			}
-			else if (Children.Count == 1)
-			{
-				Number helperid = Children[0].Evaluate(state);
-				if (helperid.NumberType != NumberType.Int) return new Number();
+				case NumberType.Int:
+				case NumberType.Float:
+					return new Number(helper.Data.HelperId == helperid.IntValue);
 
-				return new Number(helper.Data.HelperId == helperid.IntValue);
+				default:
+					return new Number(true);
 			}
-
-			return new Number();
 		}
 
 		public static Node Parse(ParseState parsestate)
@@ -43,6 +33,7 @@ namespace xnaMugen.Evaluation.Triggers
 			}
 			else
 			{
+				parsestate.BaseNode.Children.Add(Node.EmptyNode);
 				return parsestate.BaseNode;
 			}
 		}

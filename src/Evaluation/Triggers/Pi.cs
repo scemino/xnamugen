@@ -1,24 +1,18 @@
 using System;
-using System.Collections.Generic;
 
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("Pi")]
-	class Pi : Function
+	static class Pi
 	{
-		public Pi(List<IFunction> children, List<Object> arguments)
-			: base(children, arguments)
-		{
-		}
-
-		public override Number Evaluate(Object state)
+		public static Number Evaluate(Object state)
 		{
 			return new Number(Math.PI);
 		}
 
-		public static Node Parse(ParseState parsestate)
+		public static Node Parse(ParseState state)
 		{
-			return parsestate.BaseNode;
+			return state.BaseNode;
 		}
 	}
 }

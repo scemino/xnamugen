@@ -1,17 +1,11 @@
 using System;
-using System.Collections.Generic;
 
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("P2Life")]
-	class P2Life : Function
+	static class P2Life
 	{
-		public P2Life(List<IFunction> children, List<Object> arguments)
-			: base(children, arguments)
-		{
-		}
-
-		public override Number Evaluate(Object state)
+		public static Number Evaluate(Object state)
 		{
 			Combat.Character character = state as Combat.Character;
 			if (character == null) return new Number();

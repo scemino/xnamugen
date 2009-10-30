@@ -1,25 +1,12 @@
 using System;
-using System.Collections.Generic;
 
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("IfElse")]
-	class IfElse : Function
+	static class IfElse
 	{
-		public IfElse(List<IFunction> children, List<Object> arguments)
-			: base(children, arguments)
+		public static Number Evaluate(Object state, Number r1, Number r2, Number r3)
 		{
-		}
-
-		public override Number Evaluate(Object state)
-		{
-			if (Children.Count != 3) return new Number();
-
-
-			Number r1 = Children[0].Evaluate(state);
-			Number r2 = Children[1].Evaluate(state);
-			Number r3 = Children[2].Evaluate(state);
-
 			if (r1.NumberType == NumberType.None || r2.NumberType == NumberType.None || r3.NumberType == NumberType.None) return new Number();
 
 			return r1.BooleanValue ? r2 : r3;

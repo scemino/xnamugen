@@ -1,22 +1,15 @@
 using System;
-using System.Collections.Generic;
 
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("PlayerIDExist")]
-	class PlayerIDExist : Function
+	static class PlayerIDExist
 	{
-		public PlayerIDExist(List<IFunction> children, List<Object> arguments)
-			: base(children, arguments)
-		{
-		}
-
-		public override Number Evaluate(Object state)
+		public static Number Evaluate(Object state, Number id)
 		{
 			Combat.Character character = state as Combat.Character;
-			if (character == null || Children.Count != 1) return new Number();
+			if (character == null) return new Number();
 
-			Number id = Children[0].Evaluate(state);
 			if (id.NumberType != NumberType.Int) return new Number();
 
 			foreach (Combat.Entity entity in character.Engine.Entities)

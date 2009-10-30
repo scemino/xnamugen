@@ -1,22 +1,14 @@
 using System;
-using System.Collections.Generic;
 
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("Vel")]
-	class Vel : Function
+	static class Vel
 	{
-		public Vel(List<IFunction> children, List<Object> arguments)
-			: base(children, arguments)
-		{
-		}
-
-		public override Number Evaluate(Object state)
+		public static Number Evaluate(Object state, Axis axis)
 		{
 			Combat.Character character = state as Combat.Character;
-			if (character == null || Arguments.Count != 1) return new Number();
-
-			Axis axis = (Axis)Arguments[0];
+			if (character == null) return new Number();
 
 			switch (axis)
 			{

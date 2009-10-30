@@ -1,23 +1,14 @@
 using System;
-using System.Collections.Generic;
 
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("MoveType")]
-	class MoveType : Function
+	static class MoveType
 	{
-		public MoveType(List<IFunction> children, List<Object> arguments)
-			: base(children, arguments)
-		{
-		}
-
-		public override Number Evaluate(Object state)
+		public static Number Evaluate(Object state, Operator @operator, xnaMugen.MoveType movetype)
 		{
 			Combat.Character character = state as Combat.Character;
-			if (character == null || Arguments.Count != 2) return new Number();
-
-			Operator @operator = (Operator)Arguments[0];
-			xnaMugen.MoveType movetype = (xnaMugen.MoveType)Arguments[1];
+			if (character == null) return new Number();
 
 			if (movetype == xnaMugen.MoveType.Unchanged || movetype == xnaMugen.MoveType.None) return new Number();
 

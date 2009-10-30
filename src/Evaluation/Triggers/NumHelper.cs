@@ -1,37 +1,25 @@
 using System;
-using System.Collections.Generic;
 
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("NumHelper")]
-	class NumHelper : Function
+	static class NumHelper
 	{
-		public NumHelper(List<IFunction> children, List<Object> arguments)
-			: base(children, arguments)
-		{
-		}
-
-		public override Number Evaluate(Object state)
+		public static Number Evaluate(Object state, Number number)
 		{
 			Combat.Character character = state as Combat.Character;
 			if (character == null) return new Number();
 
 			Int32? helper_id;
 
-			if (Children.Count == 0)
+			switch (number.NumberType)
 			{
-				helper_id = null;
-			}
-			else if (Children.Count == 1)
-			{
-				Number number = Children[0].Evaluate(state);
-				if (number.NumberType != NumberType.Int) return new Number();
+				case NumberType.Int:
+					helper_id = number.IntValue;
+					break;
 
-				helper_id = number.IntValue;
-			}
-			else
-			{
-				return new Number();
+				default:
+					return new Number();
 			}
 
 			Int32 count = 0;
@@ -55,6 +43,7 @@ namespace xnaMugen.Evaluation.Triggers
 			}
 			else
 			{
+				parsestate.BaseNode.Children.Add(Node.NegativeOneNode);
 				return parsestate.BaseNode;
 			}
 		}

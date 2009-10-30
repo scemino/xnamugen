@@ -1,23 +1,14 @@
 using System;
-using System.Collections.Generic;
 
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("NumProjID")]
-	class NumProjID : Function
+	static class NumProjID
 	{
-		public NumProjID(List<IFunction> children, List<Object> arguments)
-			: base(children, arguments)
-		{
-		}
-
-		public override Number Evaluate(Object state)
+		public static Number Evaluate(Object state, Number r1)
 		{
 			Combat.Character character = state as Combat.Character;
-			if (character == null || Children.Count != 1) return new Number();
-
-			Number r1 = Children[0].Evaluate(state);
-			if (r1.NumberType != NumberType.Int) return new Number();
+			if (character == null) return new Number();
 
 			Int32? projectile_id = r1.IntValue > 0 ? r1.IntValue : (Int32?)null;
 

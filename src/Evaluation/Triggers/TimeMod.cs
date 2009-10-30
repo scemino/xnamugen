@@ -1,23 +1,15 @@
 using System;
-using System.Collections.Generic;
 
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("TimeMod")]
-	class TimeMod : Function
+	static class TimeMod
 	{
-		public TimeMod(List<IFunction> children, List<Object> arguments)
-			: base(children, arguments)
-		{
-		}
-
-		public override Number Evaluate(Object state)
+		public static Number Evaluate(Object state, Number r1, Number r2)
 		{
 			Combat.Character character = state as Combat.Character;
-			if (character == null || Children.Count != 2) return new Number();
+			if (character == null) return new Number();
 
-			Number r1 = Children[0].Evaluate(state);
-			Number r2 = Children[1].Evaluate(state);
 			if (r1.NumberType != NumberType.Int || r2.NumberType != NumberType.Int) return new Number();
 
 			Int32 statetime_remander = character.StateManager.StateTime % r1.IntValue;

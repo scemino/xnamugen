@@ -5,31 +5,22 @@ using System.Text;
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("HitDefAttr")]
-	class HitDefAttr : Function
+	static class HitDefAttr
 	{
-		public HitDefAttr(List<IFunction> children, List<Object> arguments)
-			: base(children, arguments)
-		{
-		}
-
-		public override Number Evaluate(Object state)
+		public static Number Evaluate(Object state, Operator @operator, AttackStateType ast, List<Combat.HitType> hittypes)
 		{
 			Combat.Character character = state as Combat.Character;
-			if (character == null || Arguments.Count <= 2) return new Number();
+			if (character == null) return new Number();
 
 			if (character.MoveType != xnaMugen.MoveType.Attack) return new Number(false);
 
 			Combat.HitAttribute attr = character.OffensiveInfo.HitDef.HitAttribute;
 
-			Operator @operator = (Operator)Arguments[0];
-			AttackStateType ast = (AttackStateType)Arguments[1];
-
 			Boolean heightmatch = (attr.AttackHeight & ast) != AttackStateType.None;
 
 			Boolean datamatch = false;
-			for (Int32 i = 2; i != Arguments.Count; ++i)
+			foreach (Combat.HitType hittype in hittypes)
 			{
-				Combat.HitType hittype = (Combat.HitType)Arguments[i];
 				if (attr.HasData(hittype) == false) continue;
 
 				datamatch = true;

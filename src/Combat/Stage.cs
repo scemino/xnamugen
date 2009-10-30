@@ -77,7 +77,7 @@ namespace xnaMugen.Combat
 	{
 		static Stage()
 		{
-			s_bgtitleregex = new Regex(@"^bg[^(def)]", RegexOptions.IgnoreCase);
+			s_bgtitleregex = new Regex(@"bg[^(def)]", RegexOptions.IgnoreCase);
 		}
 
 		public Stage(FightEngine engine, StageProfile profile)
@@ -95,7 +95,6 @@ namespace xnaMugen.Combat
 			TextSection infosection = textfile.GetSection("Info");
 			TextSection camerasection = textfile.GetSection("Camera");
 			TextSection playerinfosection = textfile.GetSection("PlayerInfo");
-			TextSection scalingsection = textfile.GetSection("Scaling");
 			TextSection boundsection = textfile.GetSection("Bound");
 			TextSection stageinfosection = textfile.GetSection("StageInfo");
 			TextSection shadowsection = textfile.GetSection("Shadow");
@@ -103,21 +102,17 @@ namespace xnaMugen.Combat
 			TextSection musicsection = textfile.GetSection("Music");
 			TextSection bgdefsection = textfile.GetSection("BGDef");
 
+			if (infosection == null) throw new InvalidOperationException("Stage textfile '" + Profile.Filepath + "' is missing 'Info' section");
 			if (camerasection == null) throw new InvalidOperationException("Stage textfile '" + Profile.Filepath + "' is missing 'Camera' section");
 			if (playerinfosection == null) throw new InvalidOperationException("Stage textfile '" + Profile.Filepath + "' is missing 'PlayerInfo' section");
-			if (scalingsection == null) throw new InvalidOperationException("Stage textfile '" + Profile.Filepath + "' is missing 'Scaling' section");
 			if (boundsection == null) throw new InvalidOperationException("Stage textfile '" + Profile.Filepath + "' is missing 'Bound' section");
 			if (stageinfosection == null) throw new InvalidOperationException("Stage textfile '" + Profile.Filepath + "' is missing 'StageInfo' section");
+			if (shadowsection == null) throw new InvalidOperationException("Stage textfile '" + Profile.Filepath + "' is missing 'Shadow' section");
+			//if (reflectionsection == null) throw new InvalidOperationException("Stage textfile '" + Profile.Filepath + "' is missing 'Reflection' section");
+			if (musicsection == null) throw new InvalidOperationException("Stage textfile '" + Profile.Filepath + "' is missing 'Music' section");
 			if (bgdefsection == null) throw new InvalidOperationException("Stage textfile '" + Profile.Filepath + "' is missing 'BGDef' section");
 
-			if (infosection != null)
-			{
-				m_name = infosection.GetAttribute<String>("name");
-			}
-			else
-			{
-				m_name = Profile.Filepath;
-			}
+			m_name = infosection.GetAttribute<String>("name");
 
 			m_camerastartlocation.X = camerasection.GetAttribute<Int32>("startx");
 			m_camerastartlocation.Y = camerasection.GetAttribute<Int32>("starty");
@@ -140,52 +135,32 @@ namespace xnaMugen.Combat
 			m_zoffset = stageinfosection.GetAttribute<Int32>("zoffset");
 			m_zoffsetlink = stageinfosection.GetAttribute<Int32?>("zoffsetlink", null);
 			m_autoturn = stageinfosection.GetAttribute<Boolean>("autoturn");
-			m_resetbg = stageinfosection.GetAttribute<Boolean>("resetBG", true);
+			m_resetbg = stageinfosection.GetAttribute<Boolean>("resetBG");
 
-			if (shadowsection != null)
-			{
-				m_shadowcolor = shadowsection.GetAttribute<Color>("color", new Color(127, 127, 127)).ToVector4();
-
-				if (shadowsection.HasAttribute("intensity") == true)
-				{
-					Byte colorbyte = (Byte)Misc.Clamp(shadowsection.GetAttribute<Int32>("intensity", 127), 0, 255);
-					m_shadowcolor = new Color(colorbyte, colorbyte, colorbyte).ToVector4();
-				}
-
-				m_shadowscale = shadowsection.GetAttribute<Single>("yscale", 0.4f);
-				m_shadowfade = shadowsection.GetAttribute<Point?>("fade.range", null);
-			}
-			else
-			{
-				m_shadowcolor = new Vector4(0.5f, 0.5f, 0.5f, 1);
-				m_shadowscale = 0.4f;
-				m_shadowfade = null;
-			}
+			m_shadowintensity = stageinfosection.GetAttribute<Byte>("intensity", 128);
+			m_shadowcolor = stageinfosection.GetAttribute<Color>("color", Color.TransparentBlack);
+			m_shadowscale = stageinfosection.GetAttribute<Single>("yscale", 0.4f);
+			m_shadowfade = stageinfosection.GetAttribute<Point?>("fade.range", null);
 
 			if (reflectionsection != null)
 			{
-				m_reflectionintensity = (Byte)Misc.Clamp(reflectionsection.GetAttribute<Int32>("intensity", 0), 0, 255);
+				m_shadowreflection = reflectionsection.GetAttribute<Boolean>("reflect", false);
 			}
 			else
 			{
-				m_reflectionintensity = 0;
+				m_shadowreflection = false;
 			}
 
-			if (musicsection != null)
-			{
-				m_musicfile = musicsection.GetAttribute<String>("bgmusic", String.Empty);
-				m_volumeoffset = musicsection.GetAttribute<Int32>("bgvolume", 0);
-			}
-			else
-			{
-				m_musicfile = String.Empty;
-				m_volumeoffset = 0;
-			}
+			m_musicfile = musicsection.GetAttribute<String>("bgmusic", String.Empty);
+			m_volumeoffset = musicsection.GetAttribute<Int32>("bgvolume", 0);
 
 			m_spritefile = bgdefsection.GetAttribute<String>("spr");
 			m_debug = bgdefsection.GetAttribute<Boolean>("debugbg", false);
 
-			if (m_spritefile.StartsWith("stages/", StringComparison.OrdinalIgnoreCase) == false) m_spritefile = "stages/" + m_spritefile;
+			if (Engine.GetSubSystem<IO.FileSystem>().DoesFileExist(m_spritefile) == false)
+			{
+				m_spritefile = Engine.GetSubSystem<IO.FileSystem>().CombinePaths("stages", m_spritefile);
+			}
 
 			Drawing.SpriteManager spritemanager = Engine.GetSubSystem<Drawing.SpriteSystem>().CreateManager(SpritePath);
 			Animations.AnimationManager animationmanager = Engine.GetSubSystem<Animations.AnimationSystem>().CreateManager(Profile.Filepath);
@@ -225,21 +200,13 @@ namespace xnaMugen.Combat
 
 		public void Draw(BackgroundLayer layer)
 		{
-			Video.VideoSystem videosystem = Engine.GetSubSystem<Video.VideoSystem>();
-			Point savedcameralocation = videosystem.CameraShift;
-			Point initialposition = videosystem.CameraShift + new Point(Mugen.ScreenSize.X / 2, 0);
-			Vector2 cameralocation = (Vector2)Engine.Camera.Location;
+			Point shift = new Point(Mugen.ScreenSize.X / 2 - Engine.Camera.Location.X, 0 - Engine.Camera.Location.Y);
 
-			foreach (Backgrounds.Base background in Backgrounds)
-			{
-				if (background.IsVisible == false || background.Layer != layer) continue;
+			Engine.GetSubSystem<Video.VideoSystem>().CameraShift += shift;
 
-				videosystem.CameraShift = initialposition - (Point)(cameralocation * background.CameraDelta);
+			Backgrounds.Draw(layer, PaletteFx);
 
-				background.Draw(PaletteFx);
-			}
-
-			videosystem.CameraShift = savedcameralocation;
+			Engine.GetSubSystem<Video.VideoSystem>().CameraShift -= shift;
 		}
 
 		public StageProfile Profile
@@ -277,7 +244,12 @@ namespace xnaMugen.Combat
 			get { return m_volumeoffset; }
 		}
 
-		public Vector4 ShadowColor
+		public Byte ShadowIntensity
+		{
+			get { return m_shadowintensity; }
+		}
+
+		public Color ShadowColor
 		{
 			get { return m_shadowcolor; }
 		}
@@ -292,9 +264,9 @@ namespace xnaMugen.Combat
 			get { return m_shadowfade; }
 		}
 
-		public Byte ReflectionIntensity
+		public Boolean ShadowReflection
 		{
-			get { return m_reflectionintensity; }
+			get { return m_shadowreflection; }
 		}
 
 		public Int32 ZOffset
@@ -409,7 +381,10 @@ namespace xnaMugen.Combat
 		readonly Int32 m_volumeoffset;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Vector4 m_shadowcolor;
+		readonly Byte m_shadowintensity;
+
+		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+		readonly Color m_shadowcolor;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		readonly Single m_shadowscale;
@@ -418,7 +393,7 @@ namespace xnaMugen.Combat
 		readonly Point? m_shadowfade;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Byte m_reflectionintensity;
+		readonly Boolean m_shadowreflection;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		readonly Int32 m_zoffset;

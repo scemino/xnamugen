@@ -1,23 +1,14 @@
 using System;
-using System.Collections.Generic;
 
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("Command")]
-	class Command : Function
+	static class Command
 	{
-		public Command(List<IFunction> children, List<Object> arguments)
-			: base(children, arguments)
-		{
-		}
-
-		public override Number Evaluate(Object state)
+		public static Number Evaluate(Object state, Operator @operator, String text)
 		{
 			Combat.Character character = state as Combat.Character;
-			if (character == null || Arguments.Count != 2) return new Number();
-
-			Operator @operator = (Operator)Arguments[0];
-			String text = (String)Arguments[1];
+			if (character == null) return new Number();
 
 			Boolean active = character.CommandManager.IsActive(text);
 
@@ -34,19 +25,19 @@ namespace xnaMugen.Evaluation.Triggers
 			}
 		}
 
-		public static Node Parse(ParseState parsestate)
+		public static Node Parse(ParseState state)
 		{
-			Operator @operator = parsestate.CurrentOperator;
+			Operator @operator = state.CurrentOperator;
 			if (@operator != Operator.Equals && @operator != Operator.NotEquals) return null;
-			++parsestate.TokenIndex;
+			++state.TokenIndex;
 
-			String text = parsestate.CurrentText;
+			String text = state.CurrentText;
 			if (text == null) return null;
-			++parsestate.TokenIndex;
+			++state.TokenIndex;
 
-			parsestate.BaseNode.Arguments.Add(@operator);
-			parsestate.BaseNode.Arguments.Add(text);
-			return parsestate.BaseNode;
+			state.BaseNode.Arguments.Add(@operator);
+			state.BaseNode.Arguments.Add(text);
+			return state.BaseNode;
 		}
 	}
 }

@@ -4,22 +4,17 @@ using System.Collections.Generic;
 namespace xnaMugen.Evaluation.Triggers.Redirection
 {
 	[CustomFunction("Parent")]
-	class Parent : Function
+	static class Parent
 	{
-		public Parent(List<IFunction> children, List<Object> arguments)
-			: base(children, arguments)
-		{
-		}
-
-		public override Number Evaluate(Object state)
+		public static Number RedirectState(Object state, EvaluationCallback callback)
 		{
 			Combat.Character character = state as Combat.Character;
-			if (character == null || Children.Count != 1) return new Number();
+			if (character == null) return new Number();
 
 			Combat.Helper helper = character as Combat.Helper;
 			if (helper == null) return new Number();
 
-			return Children[0].Evaluate(helper.Parent);
+			return callback(helper.Parent);
 		}
 
 		public static Node Parse(ParseState parsestate)
@@ -36,22 +31,17 @@ namespace xnaMugen.Evaluation.Triggers.Redirection
 	}
 
 	[CustomFunction("Root")]
-	class Root : Function
+	static class Root
 	{
-		public Root(List<IFunction> children, List<Object> arguments)
-			: base(children, arguments)
-		{
-		}
-
-		public override Number Evaluate(Object state)
+		public static Number RedirectState(Object state, EvaluationCallback callback)
 		{
 			Combat.Character character = state as Combat.Character;
-			if (character == null || Children.Count != 1) return new Number();
+			if (character == null) return new Number();
 
 			Combat.Helper helper = character as Combat.Helper;
 			if (helper == null) return new Number();
 
-			return Children[0].Evaluate(helper.BasePlayer);
+			return callback(helper.BasePlayer);
 		}
 
 		public static Node Parse(ParseState parsestate)
@@ -68,19 +58,14 @@ namespace xnaMugen.Evaluation.Triggers.Redirection
 	}
 
 	[CustomFunction("Helper")]
-	class Helper : Function
+	static class Helper
 	{
-		public Helper(List<IFunction> children, List<Object> arguments)
-			: base(children, arguments)
-		{
-		}
-
-		public override Number Evaluate(Object state)
+		public static Number RedirectState(Object state, EvaluationCallback id, EvaluationCallback callback)
 		{
 			Combat.Character character = state as Combat.Character;
-			if (character == null || Children.Count != 2) return new Number();
+			if (character == null) return new Number();
 
-			Number helper_id = Children[0].Evaluate(state);
+			Number helper_id = id(state);
 			if (helper_id.NumberType != NumberType.Int) return new Number();
 
 			foreach (Combat.Entity entity in character.Engine.Entities)
@@ -88,7 +73,7 @@ namespace xnaMugen.Evaluation.Triggers.Redirection
 				Combat.Helper helper = character.FilterEntityAsHelper(entity, helper_id.IntValue);
 				if (helper == null) continue;
 
-				return Children[1].Evaluate(helper);
+				return callback(helper);
 			}
 
 			return new Number();
@@ -118,19 +103,14 @@ namespace xnaMugen.Evaluation.Triggers.Redirection
 	}
 
 	[CustomFunction("Target")]
-	class Target : Function
+	static class Target
 	{
-		public Target(List<IFunction> children, List<Object> arguments)
-			: base(children, arguments)
-		{
-		}
-
-		public override Number Evaluate(Object state)
+		public static Number RedirectState(Object state, EvaluationCallback id, EvaluationCallback callback)
 		{
 			Combat.Character character = state as Combat.Character;
-			if (character == null || Children.Count != 2) return new Number();
+			if (character == null) return new Number();
 
-			Number target_id = Children[0].Evaluate(state);
+			Number target_id = id(state);
 			if (target_id.NumberType != NumberType.Int) return new Number();
 
 			foreach (Combat.Entity entity in character.Engine.Entities)
@@ -138,7 +118,7 @@ namespace xnaMugen.Evaluation.Triggers.Redirection
 				Combat.Character target = character.FilterEntityAsTarget(entity, target_id.IntValue);
 				if (target == null) continue;
 
-				return Children[1].Evaluate(target);
+				return callback(target);
 			}
 
 			return new Number();
@@ -168,25 +148,20 @@ namespace xnaMugen.Evaluation.Triggers.Redirection
 	}
 
 	[CustomFunction("Partner")]
-	class Partner : Function
+	static class Partner
 	{
-		public Partner(List<IFunction> children, List<Object> arguments)
-			: base(children, arguments)
-		{
-		}
-
-		public override Number Evaluate(Object state)
+		public static Number RedirectState(Object state, EvaluationCallback callback)
 		{
 			Combat.Character character = state as Combat.Character;
-			if (character == null || Children.Count != 1) return new Number();
+			if (character == null) return new Number();
 
 			Combat.Player partner = GetTeamMate(character);
 			if (partner == null) return new Number();
 
-			return Children[0].Evaluate(partner);
+			return callback(partner);
 		}
 
-		Combat.Player GetTeamMate(Combat.Character character)
+		static Combat.Player GetTeamMate(Combat.Character character)
 		{
 			if (character == null) throw new ArgumentNullException("character");
 
@@ -214,19 +189,14 @@ namespace xnaMugen.Evaluation.Triggers.Redirection
 	}
 
 	[CustomFunction("Enemy")]
-	class Enemy : Function
+	static class Enemy
 	{
-		public Enemy(List<IFunction> children, List<Object> arguments)
-			: base(children, arguments)
-		{
-		}
-
-		public override Number Evaluate(Object state)
+		public static Number RedirectState(Object state, EvaluationCallback id, EvaluationCallback callback)
 		{
 			Combat.Character character = state as Combat.Character;
-			if (character == null || Children.Count != 2) return new Number();
+			if (character == null) return new Number();
 
-			Number nth = Children[0].Evaluate(state);
+			Number nth = id(state);
 			if (nth.NumberType == NumberType.None) return new Number();
 
 			Int32 count = 0;
@@ -236,7 +206,7 @@ namespace xnaMugen.Evaluation.Triggers.Redirection
 				if (enemy == null) continue;
 
 				Combat.Player enemyplayer = enemy as Combat.Player;
-				if(enemyplayer == null) continue;
+				if (enemyplayer == null) continue;
 
 				if (count != nth.IntValue)
 				{
@@ -244,7 +214,7 @@ namespace xnaMugen.Evaluation.Triggers.Redirection
 					continue;
 				}
 
-				return Children[1].Evaluate(enemy);
+				return callback(enemy);
 			}
 
 			return new Number();
@@ -258,7 +228,7 @@ namespace xnaMugen.Evaluation.Triggers.Redirection
 				node = parsestate.BaseNode;
 
 #warning Hack
-				node.Children.Add(new Node(new Token("0", new Tokenizing.IntData())));
+				node.Children.Add(Node.ZeroNode);
 			}
 
 			if (parsestate.CurrentSymbol != Symbol.Comma) return null;
@@ -275,24 +245,19 @@ namespace xnaMugen.Evaluation.Triggers.Redirection
 
 #warning Not threadsafe
 	[CustomFunction("EnemyNear")]
-	class EnemyNear : Function
+	static class EnemyNear
 	{
 		static EnemyNear()
 		{
 			s_playerlist = new List<Combat.Player>();
 		}
 
-		public EnemyNear(List<IFunction> children, List<Object> arguments)
-			: base(children, arguments)
-		{
-		}
-
-		public override Number Evaluate(Object state)
+		public static Number RedirectState(Object state, EvaluationCallback id, EvaluationCallback callback)
 		{
 			Combat.Character character = state as Combat.Character;
-			if (character == null || Children.Count != 2) return new Number();
+			if (character == null) return new Number();
 
-			Number nth = Children[0].Evaluate(state);
+			Number nth = id(state);
 			if (nth.NumberType == NumberType.None) return new Number();
 
 			BuildPlayerList(character);
@@ -302,14 +267,14 @@ namespace xnaMugen.Evaluation.Triggers.Redirection
 			if (nth.IntValue >= s_playerlist.Count) return new Number();
 
 			Combat.Player enemy = s_playerlist[nth.IntValue];
-			return Children[1].Evaluate(enemy);
+			return callback(enemy);
 		}
 
-		void SortPlayerList(Combat.Character character)
+		static void SortPlayerList(Combat.Character character)
 		{
 		}
 
-		void BuildPlayerList(Combat.Character character)
+		static void BuildPlayerList(Combat.Character character)
 		{
 			if (character == null) throw new ArgumentNullException("character");
 
@@ -335,7 +300,7 @@ namespace xnaMugen.Evaluation.Triggers.Redirection
 				node = parsestate.BaseNode;
 
 #warning Hack
-				node.Children.Add(new Node(new Token("0", new Tokenizing.IntData())));
+				node.Children.Add(Node.ZeroNode);
 			}
 
 			if (parsestate.CurrentSymbol != Symbol.Comma) return null;
@@ -357,19 +322,14 @@ namespace xnaMugen.Evaluation.Triggers.Redirection
 	}
 
 	[CustomFunction("PlayerID")]
-	class PlayerID : Function
+	static class PlayerID
 	{
-		public PlayerID(List<IFunction> children, List<Object> arguments)
-			: base(children, arguments)
-		{
-		}
-
-		public override Number Evaluate(Object state)
+		public static Number RedirectState(Object state, EvaluationCallback id, EvaluationCallback callback)
 		{
 			Combat.Character character = state as Combat.Character;
-			if (character == null || Children.Count != 2) return new Number();
+			if (character == null) return new Number();
 
-			Number character_id = Children[0].Evaluate(state);
+			Number character_id = id(state);
 			if (character_id.NumberType != NumberType.Int) return new Number();
 
 			foreach (Combat.Entity entity in character.Engine.Entities)
@@ -377,7 +337,7 @@ namespace xnaMugen.Evaluation.Triggers.Redirection
 				Combat.Character character2 = entity as Combat.Character;
 				if (character2 == null || character2.Id != character_id.IntValue) continue;
 
-				return Children[1].Evaluate(character2);
+				return callback(character2);
 			}
 
 			return new Number();

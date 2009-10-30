@@ -1,26 +1,17 @@
 using System;
-using System.Collections.Generic;
 
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("P2MoveType")]
-	class P2MoveType : Function
+	static class P2MoveType
 	{
-		public P2MoveType(List<IFunction> children, List<Object> arguments)
-			: base(children, arguments)
-		{
-		}
-
-		public override Number Evaluate(Object state)
+		public static Number Evaluate(Object state, Operator @operator, xnaMugen.MoveType movetype)
 		{
 			Combat.Character character = state as Combat.Character;
-			if (character == null || Arguments.Count != 2) return new Number();
+			if (character == null) return new Number();
 
 			Combat.Player opponent = character.GetOpponent();
 			if (opponent == null) return new Number();
-
-			Operator @operator = (Operator)Arguments[0];
-			xnaMugen.MoveType movetype = (xnaMugen.MoveType)Arguments[1];
 
 			if (movetype == xnaMugen.MoveType.Unchanged || movetype == xnaMugen.MoveType.None) return new Number();
 

@@ -1,17 +1,11 @@
 using System;
-using System.Collections.Generic;
 
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("Win")]
-	class Win : Function
+	static class Win
 	{
-		public Win(List<IFunction> children, List<Object> arguments)
-			: base(children, arguments)
-		{
-		}
-
-		public override Number Evaluate(Object state)
+		public static Number Evaluate(Object state)
 		{
 			Combat.Character character = state as Combat.Character;
 			if (character == null) return new Number();
@@ -26,14 +20,9 @@ namespace xnaMugen.Evaluation.Triggers
 	}
 
 	[CustomFunction("WinKO")]
-	class WinKO : Function
+	static class WinKO
 	{
-		public WinKO(List<IFunction> children, List<Object> arguments)
-			: base(children, arguments)
-		{
-		}
-
-		public override Number Evaluate(Object state)
+		public static Number Evaluate(Object state)
 		{
 			Combat.Character character = state as Combat.Character;
 			if (character == null) return new Number();
@@ -48,14 +37,9 @@ namespace xnaMugen.Evaluation.Triggers
 	}
 
 	[CustomFunction("WinTime")]
-	class WinTime : Function
+	static class WinTime
 	{
-		public WinTime(List<IFunction> children, List<Object> arguments)
-			: base(children, arguments)
-		{
-		}
-
-		public override Number Evaluate(Object state)
+		public static Number Evaluate(Object state)
 		{
 			Combat.Character character = state as Combat.Character;
 			if (character == null) return new Number();
@@ -70,14 +54,9 @@ namespace xnaMugen.Evaluation.Triggers
 	}
 
 	[CustomFunction("WinPerfect")]
-	class WinPerfect : Function
+	static class WinPerfect
 	{
-		public WinPerfect(List<IFunction> children, List<Object> arguments)
-			: base(children, arguments)
-		{
-		}
-
-		public override Number Evaluate(Object state)
+		public static Number Evaluate(Object state)
 		{
 			Combat.Character character = state as Combat.Character;
 			if (character == null) return new Number();

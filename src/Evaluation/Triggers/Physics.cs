@@ -1,23 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("Physics")]
-	class Physics : Function
+	static class Physics 
 	{
-		public Physics(List<IFunction> children, List<Object> arguments)
-			: base(children, arguments)
-		{
-		}
-
-		public override Number Evaluate(Object state)
+		public static Number Evaluate(Object state, Operator @operator, xnaMugen.Physics physics)
 		{
 			Combat.Character character = state as Combat.Character;
-			if (character == null || Arguments.Count != 2) return new Number();
-
-			Operator @operator = (Operator)Arguments[0];
-			xnaMugen.Physics physics = (xnaMugen.Physics)Arguments[1];
+			if (character == null) return new Number();
 
 			if (physics == xnaMugen.Physics.Unchanged || physics == xnaMugen.Physics.None) return new Number();
 

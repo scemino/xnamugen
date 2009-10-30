@@ -4,23 +4,17 @@ using System.Collections.Generic;
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("AnimElemNo")]
-	class AnimElemNo : Function
+	static class AnimElemNo
 	{
-		public AnimElemNo(List<IFunction> children, List<Object> arguments)
-			: base(children, arguments)
-		{
-		}
-
-		public override Number Evaluate(Object state)
+		public static Number Evaluate(Object state, Number value)
 		{
 			Combat.Character character = state as Combat.Character;
-			if (character == null || Children.Count != 1) return new Number();
+			if (character == null) return new Number();
 
-			Number r1 = Children[0].Evaluate(state);
-			if (r1.NumberType == NumberType.None) return new Number();
+			if (value.NumberType == NumberType.None) return new Number();
 
 			Animations.Animation animation = character.AnimationManager.CurrentAnimation;
-			Int32 timeoffset = r1.IntValue;
+			Int32 timeoffset = value.IntValue;
 			Int32 animtime = character.AnimationManager.TimeInAnimation;
 
 			Int32 checktime = animtime + timeoffset;

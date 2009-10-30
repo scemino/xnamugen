@@ -9,7 +9,7 @@ namespace xnaMugen.Evaluation
 {
 	class Expression : IExpression
 	{
-		public Expression(String expression, List<IFunction> functions)
+		public Expression(String expression, List<EvaluationCallback> functions)
 		{
 			if (expression == null) throw new ArgumentNullException("expression");
 			if (functions == null) throw new ArgumentNullException("functions");
@@ -23,10 +23,12 @@ namespace xnaMugen.Evaluation
 		{
 			if (m_functions.Count == 0) return false;
 
-			foreach (IFunction fucntion in m_functions)
+			/*
+			foreach (EvaluationCallback EvaluationCallback in m_functions)
 			{
-				if (fucntion is Operations.Null) return false;
+				if(EvaluationCallback.Target is Operations.Null) return false;
 			}
+			*/
 
 			return true;
 		}
@@ -46,9 +48,9 @@ namespace xnaMugen.Evaluation
 
 			result.Clear();
 
-			foreach (IFunction fucntion in m_functions)
+			foreach (EvaluationCallback func in m_functions)
 			{
-				result.Add(fucntion.Evaluate(state));
+				result.Add(func(state));
 			}
 		}
 
@@ -62,9 +64,9 @@ namespace xnaMugen.Evaluation
 			get { return m_isvalid; }
 		}
 
-		ListIterator<IFunction> CallBacks
+		ListIterator<EvaluationCallback> EvaluationCallbacks
 		{
-			get { return new ListIterator<IFunction>(m_functions); }
+			get { return new ListIterator<EvaluationCallback>(m_functions); }
 		}
 
 		#region Fields
@@ -73,7 +75,7 @@ namespace xnaMugen.Evaluation
 		readonly String m_expression;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly List<IFunction> m_functions;
+		readonly List<EvaluationCallback> m_functions;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		readonly Boolean m_isvalid;

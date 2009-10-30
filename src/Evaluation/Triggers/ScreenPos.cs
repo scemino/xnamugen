@@ -1,23 +1,16 @@
 using System;
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("ScreenPos")]
-	class ScreenPos : Function
+	static class ScreenPos
 	{
-		public ScreenPos(List<IFunction> children, List<Object> arguments)
-			: base(children, arguments)
-		{
-		}
-
-		public override Number Evaluate(Object state)
+		public static Number Evaluate(Object state, Axis axis)
 		{
 			Combat.Character character = state as Combat.Character;
-			if (character == null || Arguments.Count != 1) return new Number();
+			if (character == null) return new Number();
 
-			Axis axis = (Axis)Arguments[0];
 			Vector2 drawlocation = character.GetDrawLocation() - (Vector2)character.Engine.Camera.Location;
 
 			switch (axis)

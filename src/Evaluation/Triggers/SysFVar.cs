@@ -1,21 +1,15 @@
 using System;
-using System.Collections.Generic;
 
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("SysFVar")]
-	class SysFVar : Function
+	static class SysFVar
 	{
-		public SysFVar(List<IFunction> children, List<Object> arguments)
-			: base(children, arguments)
-		{
-		}
-		public override Number Evaluate(Object state)
+		public static Number Evaluate(Object state, Number r1)
 		{
 			Combat.Character character = state as Combat.Character;
-			if (character == null || Children.Count != 1) return new Number();
+			if (character == null) return new Number();
 
-			Number r1 = Children[0].Evaluate(state);
 			if (r1.NumberType == NumberType.None) return new Number();
 
 			Single result;
