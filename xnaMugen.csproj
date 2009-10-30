@@ -586,10 +586,6 @@
   <ItemGroup>
     <EmbeddedResource Include="data\Shader.fx" />
   </ItemGroup>
-  <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
-  </PropertyGroup>
   <ItemGroup>
     <EmbeddedResource Include="data\Internal.cmd" />
   </ItemGroup>
@@ -597,8 +593,5 @@
     <None Include="xnaMugen.ini">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Properties\" />
   </ItemGroup>
 </Project>

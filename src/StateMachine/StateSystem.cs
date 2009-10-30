@@ -109,11 +109,6 @@ namespace xnaMugen.StateMachine
 			return new StateManager(this, character, new ReadOnlyKeyedCollection<Int32, State>(states));
 		}
 
-        public State GetInternalState(Int32 statenumber)
-        {
-            return (m_internalstates.Contains(statenumber) == true) ? m_internalstates[statenumber] : null;
-        }
-
 		ReadOnlyKeyedCollection<Int32, State> GetStates(String filepath)
 		{
 			if (filepath == null) throw new ArgumentNullException("filepath");

@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using xnaMugen.IO;
 using Microsoft.Xna.Framework;
 using xnaMugen.Collections;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace xnaMugen.Backgrounds
 {
@@ -17,14 +16,9 @@ namespace xnaMugen.Backgrounds
 			s_titleregex = new Regex(".*BG\\s*(\\S.*)", RegexOptions.IgnoreCase);
 		}
 
-		protected Base(TextSection textsection, Drawing.SpriteManager spritemanager, Animations.AnimationManager animationmanager)
+		protected Base(TextSection textsection)
 		{
 			if (textsection == null) throw new ArgumentNullException("textsection");
-			if (spritemanager == null) throw new ArgumentNullException("spritemanager");
-			if (animationmanager == null) throw new ArgumentNullException("animationmanager");
-
-			m_spritemanager = spritemanager;
-			m_animationmanager = animationmanager;
 
 			m_name = GetBackgroundName(textsection);
 			m_id = textsection.GetAttribute<Int32>("id", 0);
@@ -55,144 +49,58 @@ namespace xnaMugen.Backgrounds
 			m_currentlocation = m_startlocation;
 		}
 
-		public virtual void Update()
+		public abstract void Update();
+
+		public abstract void Draw(Combat.PaletteFx palettefx);
+
+		protected void GetTileLength(Point size, out Point start, out Point end)
 		{
-			AnimationManager.Update();
-			DoMovement();
-		}
-
-		public void Draw(Combat.PaletteFx palettefx)
-		{
-			if (CurrentSprite == null) return;
-
-			Video.DrawState drawstate = SpriteManager.SetupDrawing(DrawSpriteId, null, Vector2.Zero, Vector2.One, SpriteEffects.None);
-			drawstate.Blending = Transparency;
-			drawstate.ScissorRectangle = DrawRect;
-
-			SetTiling(drawstate);
-
-			if (palettefx != null) palettefx.SetShader(drawstate.ShaderParameters);
-
-			drawstate.Use();
-		}
-
-		void SetTiling(Video.DrawState drawstate)
-		{
-			if (drawstate == null) throw new ArgumentNullException("drawstate");
-
-			Point size = CurrentSprite.Size;
-
-			Int32 startx, starty, endx, endy;
-			if (this is Animated)
+			if (Tiling == new Point(0, 0))
 			{
-				GetTileLength(TilingSpacing, Axis.X, out startx, out endx);
-				GetTileLength(TilingSpacing, Axis.Y, out starty, out endy);
+				start = new Point(0, 0);
+				end = new Point(1, 1);
+
+				return;
+			}
+
+			Point t = new Point();
+			t.X = 1 + (Mugen.ScreenSize.X / size.X);
+			t.Y = 1 + (Mugen.ScreenSize.Y / size.Y);
+
+			start = new Point();
+			end = new Point();
+
+			if (Tiling.X == 0)
+			{
+				start.X = 0;
+				end.X = 1;
+			}
+			else if (Tiling.X == 1)
+			{
+				start.X = -Math.Max(3, t.X);
+				end.X = +Math.Max(3, t.X);
 			}
 			else
 			{
-				GetTileLength(size, Axis.X, out startx, out endx);
-				GetTileLength(size, Axis.Y, out starty, out endy);
+				start.X = 0;
+				end.X = Tiling.X;
 			}
 
-			for (Int32 y = starty; y != endy; ++y)
+			if (Tiling.Y == 0)
 			{
-				for (Int32 x = startx; x != endx; ++x)
-				{
-					Vector2 adjustment;
-
-					if (this is Animated)
-					{
-						adjustment = (Vector2)TilingSpacing * new Vector2(x, y);
-					}
-					else
-					{
-						adjustment = (Vector2)(size + TilingSpacing) * new Vector2(x, y);
-					}
-
-					Vector2 drawlocation = CurrentLocation + adjustment;
-
-					drawstate.AddData(drawlocation, null);
-				}
+				start.Y = 0;
+				end.Y = 1;
 			}
-		}
-
-		void GetTileLength(Point tilesize, Axis axis, out Int32 start, out Int32 end)
-		{
-			start = 0;
-			end = 0;
-
-			Int32 tile;
-			Int32 sizeval;
-
-			switch (axis)
+			else if (Tiling.Y == 1)
 			{
-				case Axis.X:
-					tile = Tiling.X;
-					sizeval = (tilesize.X != 0) ? 1 + (Mugen.ScreenSize.X / tilesize.X) : 1;
-					break;
-
-				case Axis.Y:
-					tile = Tiling.Y;
-					sizeval = (tilesize.Y != 0) ? 1 + (Mugen.ScreenSize.Y / tilesize.Y) : 1;
-					break;
-
-				default:
-					return;
-			}
-
-			if (tile == 0)
-			{
-				start = 0;
-				end = 1;
-			}
-			else if (tile == 1)
-			{
-				start = -Math.Max(3, sizeval);
-				end = Math.Max(3, sizeval);
-			}
-			else if (tile > 1)
-			{
-				start = 0;
-				end = tile;
+				start.Y = -Math.Max(3, t.Y);
+				end.Y = +Math.Max(3, t.Y);
 			}
 			else
 			{
-				start = 0;
-				end = 0;
+				start.Y = 0;
+				end.Y = Tiling.Y;
 			}
-		}
-
-		void DoMovement()
-		{
-			Vector2 location = CurrentLocation + Velocity;
-
-			if (CurrentSprite != null)
-			{
-				Point size;
-				if (this is Animated)
-				{
-					size = TilingSpacing;
-				}
-				else
-				{
-					size = CurrentSprite.Size;
-				}
-
-				if (location.X >= StartLocation.X + size.X || location.X <= StartLocation.X - size.X) location.X = StartLocation.X;
-				if (location.Y >= StartLocation.Y + size.Y || location.Y <= StartLocation.Y - size.Y) location.Y = StartLocation.Y;
-			}
-
-			CurrentLocation = location;
-		}
-
-		public Drawing.SpriteManager SpriteManager
-		{
-			get { return m_spritemanager; }
-		}
-
-		public Animations.AnimationManager AnimationManager
-		{
-			get { return m_animationmanager; }
 		}
 
 		public String Name
@@ -222,12 +130,12 @@ namespace xnaMugen.Backgrounds
 			get { return m_delta; }
 		}
 
-		public virtual Point Tiling
+		public Point Tiling
 		{
 			get { return m_tiling; }
 		}
 
-		public virtual Point TilingSpacing
+		public Point TilingSpacing
 		{
 			get { return m_tilingspacing; }
 		}
@@ -269,13 +177,6 @@ namespace xnaMugen.Backgrounds
 			get { return m_visible; }
 
 			set { m_visible = value; }
-		}
-
-		protected abstract SpriteId DrawSpriteId { get; }
-
-		protected Drawing.Sprite CurrentSprite
-		{
-			get { return SpriteManager.GetSprite(DrawSpriteId); }
 		}
 
 		#region Fields
@@ -324,12 +225,6 @@ namespace xnaMugen.Backgrounds
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		Boolean m_visible;
-
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Drawing.SpriteManager m_spritemanager;
-
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Animations.AnimationManager m_animationmanager;
 
 		#endregion
 	}

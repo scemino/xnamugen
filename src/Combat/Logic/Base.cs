@@ -39,7 +39,6 @@ namespace xnaMugen.Combat.Logic
 		protected virtual void OnFirstTick()
 		{
 			m_element = GetElement();
-			if(m_element != null) m_element.Reset();
 		}
 
 		protected abstract Elements.Base GetElement();
@@ -50,7 +49,7 @@ namespace xnaMugen.Combat.Logic
 		{
 			if (m_element == null) return;
 
-			//m_element.Update();
+			m_element.Update();
 
 			if (TickCount == m_element.DataMap.SoundTime)
 			{

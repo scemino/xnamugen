@@ -50,7 +50,7 @@ namespace xnaMugen.Drawing
 
 		public Sprite GetSprite(SpriteId id)
 		{
-			if (id == SpriteId.Invalid) return null;
+			if (id == SpriteId.Invalid) return null;			
 
 			if (m_cachedsprites.ContainsKey(id) == true) return m_cachedsprites[id];
 
@@ -61,8 +61,6 @@ namespace xnaMugen.Drawing
 			Point size;
 			Texture2D pixels;
 			Texture2D palette;
-			Boolean ownpixels;
-			Boolean ownpalette;
 			Boolean paletteoverride = false;
 
 			if (data.PcxSize > 0)
@@ -75,9 +73,6 @@ namespace xnaMugen.Drawing
 					data.IsValid = false;
 					return null;
 				}
-
-				ownpixels = true;
-				ownpalette = true;
 			}
 			else
 			{
@@ -89,10 +84,8 @@ namespace xnaMugen.Drawing
 
 				size = shared_sprite.Size;
 				paletteoverride = shared_sprite.PaletteOverride;
-				pixels = shared_sprite.Pixels;
-				palette = shared_sprite.Palette;
-				ownpixels = false;
-				ownpalette = false;
+				pixels = m_spritesystem.GetSubSystem<Video.VideoSystem>().CloneTexture(shared_sprite.Pixels);
+				palette = m_spritesystem.GetSubSystem<Video.VideoSystem>().CloneTexture(shared_sprite.Palette);
 			}
 
 			if (data.CopyLastPalette == true && dataindex != 0)
@@ -103,16 +96,15 @@ namespace xnaMugen.Drawing
 					Sprite previoussprite = GetSprite(previousdata.Id);
 					if (previoussprite != null)
 					{
-						ownpalette = false;
 						paletteoverride = previoussprite.PaletteOverride;
-						palette = previoussprite.Palette;
+						m_spritesystem.GetSubSystem<Video.VideoSystem>().CopyTexture(previoussprite.Palette, palette);
 					}
 				}
 			}
 
 			if (id == new SpriteId(0, 0) || id == SpriteId.SmallPortrait) paletteoverride = true;
 
-			Sprite sprite = new Sprite(size, data.Axis, ownpixels, pixels, ownpalette, palette, paletteoverride);
+			Sprite sprite = new Sprite(size, data.Axis, pixels, palette, paletteoverride);
 			m_cachedsprites.Add(id, sprite);
 
 			return sprite;

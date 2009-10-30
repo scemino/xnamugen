@@ -61,7 +61,7 @@ namespace xnaMugen.Combat
 		public void Set(Int32 totaltime, Vector3 add, Vector3 mul, Vector4 sinadd, Boolean invert, Single basecolor)
 		{
 			m_totaltime = totaltime;
-			m_time = 1;
+			m_time = 0;
 			m_add = Clamp(add);
 			m_mul = Clamp(mul);
 			m_sinadd = new Vector4(Clamp(new Vector3(sinadd.X, sinadd.Y, sinadd.Z)), sinadd.W);

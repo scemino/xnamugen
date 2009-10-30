@@ -18,7 +18,6 @@ namespace xnaMugen.Combat
 			m_data = data;
 			m_tickcount = 0;
 			m_forceremove = false;
-			m_postype = PositionType.Left;
 
 			if (m_data.CommonAnimation == false)
 			{
@@ -33,7 +32,9 @@ namespace xnaMugen.Combat
 
 			m_creationfacing = Data.Offseter.CurrentFacing;
 
+			CurrentPalette = Creator.CurrentPalette;
 			CurrentFacing = GetStartFacing();
+			CurrentLocation = GetStartLocation();
 			CurrentVelocity = m_data.Velocity;
 			CurrentAcceleration = m_data.Acceleration;
 			CurrentFlip = SpriteEffects.None;
@@ -57,56 +58,39 @@ namespace xnaMugen.Combat
 			{
 				m_valid = false;
 			}
-
-			SetStartLocation();
 		}
 
-		void SetStartLocation()
+		Vector2 GetStartLocation()
 		{
-			Rectangle camerabounds = Engine.Camera.ScreenBounds;
-
-			if (IsBound == false && Data.Type != ExplodType.GameAnim)
-			{
-				CurrentLocation = new Vector2(camerabounds.Left, camerabounds.Top);
-				m_postype = PositionType.Left;
-
-				return;
-			}
-
 			Vector2 offset = Data.Location + m_random;
 			Vector2 location;
+			Rectangle camerabounds = Engine.Camera.ScreenBounds;
 
 			switch (Data.PositionType)
 			{
 				case PositionType.P1:
 				case PositionType.P2:
-					location =  Misc.GetOffset(Data.Offseter.CurrentLocation, m_creationfacing, offset);
-					break;
+					return Misc.GetOffset(Data.Offseter.CurrentLocation, m_creationfacing, offset);
 
 				case PositionType.Left:
-					location = Misc.GetOffset(new Vector2(camerabounds.Left, 0), Facing.Right, offset);
-					break;
+					return Misc.GetOffset(new Vector2(camerabounds.Left, 0), Facing.Right, offset);
 
 				case PositionType.Right:
-					location = Misc.GetOffset(new Vector2(camerabounds.Right, 0), Facing.Right, offset);
-					break;
+					return Misc.GetOffset(new Vector2(camerabounds.Right, 0), Facing.Right, offset);
 
 				case PositionType.Back:
 					location = Misc.GetOffset(Vector2.Zero, m_creationfacing, offset);
 					location.X += (m_creationfacing == Facing.Right) ? camerabounds.Left : camerabounds.Right;
-					break;
+					return location;
 
 				case PositionType.Front:
 					location = Misc.GetOffset(Vector2.Zero, m_creationfacing, offset);
 					location.X += (m_creationfacing == Facing.Left) ? camerabounds.Left : camerabounds.Right;
-					break;
+					return location;
 
 				default:
 					throw new ArgumentOutOfRangeException("postype");
 			}
-
-			CurrentLocation = location;
-			m_postype = Data.PositionType;
 		}
 
 		Facing GetStartFacing()
@@ -143,11 +127,11 @@ namespace xnaMugen.Combat
 
 			if (pause.IsActive == false) return false;
 
-			if (Data.Type == ExplodType.Hitspark) return false;
+            if (Data.IsHitSpark == true) return false;
 
 			if (pause.IsSuperPause == true)
 			{
-				if (Data.SuperMove == true || Data.SuperMoveTime == -1 || pause.ElapsedTime <= Data.SuperMoveTime) return false;
+				if (Data.SuperMove == true || pause.ElapsedTime <= Data.SuperMoveTime) return false;
 			}
 			else
 			{
@@ -157,28 +141,25 @@ namespace xnaMugen.Combat
 			return true;
 		}
 
-		public override Vector2 Move(Vector2 offset)
+		public override Vector2 Move(Vector2 p)
 		{
 			if (IsBound == true) return new Vector2();
-
-			Boolean xflip = ((Data.Flip & SpriteEffects.FlipHorizontally) == SpriteEffects.FlipHorizontally);
-			Vector2 flipoffset = offset * new Vector2(-1, 1);
 
 			switch (m_data.PositionType)
 			{
 				case PositionType.P1:
 				case PositionType.P2:
-					return base.Move(offset);
-
 				case PositionType.Front:
 				case PositionType.Back:
-					return (xflip == false) ? base.Move(offset) : base.Move(flipoffset);
+					return base.Move(p);
 
 				case PositionType.Left:
-					return base.Move(flipoffset);
+					return base.Move(new Vector2(-p.X, p.Y));
+				//return MoveRight(p);
 
 				case PositionType.Right:
-					return base.Move(offset);
+					return base.Move(new Vector2(p.X, p.Y));
+				//return MoveLeft(p);
 
 				default:
 					return new Vector2();
@@ -190,10 +171,6 @@ namespace xnaMugen.Combat
 			if (IsBound == false)
 			{
 				base.UpdatePhsyics();
-			}
-			else
-			{
-				SetStartLocation();
 			}
 		}
 
@@ -207,6 +184,11 @@ namespace xnaMugen.Combat
 
 		public override void UpdateState()
 		{
+			if (m_tickcount == 0)
+			{
+				CurrentLocation = GetStartLocation();
+			}
+
 			++m_tickcount;
 		}
 
@@ -240,14 +222,14 @@ namespace xnaMugen.Combat
 
 		public override Vector2 GetDrawLocation()
 		{
-			Vector2 drawlocation = CurrentLocation;
+			Vector2 drawlocation = (IsBound == true) ? GetStartLocation() : CurrentLocation;
 			Rectangle screenrect = Engine.Camera.ScreenBounds;
 
-			switch (m_postype)
+			switch (Data.PositionType)
 			{
 				case PositionType.P1:
 				case PositionType.P2:
-					drawlocation += new Vector2(Mugen.ScreenSize.X / 2, Engine.Stage.ZOffset) + Misc.GetOffset(Vector2.Zero, CurrentFacing, BasePlayer.Constants.DrawOffset);
+					drawlocation += new Vector2(Mugen.ScreenSize.X / 2, Engine.Stage.ZOffset);
 					break;
 
 				case PositionType.Front:
@@ -262,45 +244,6 @@ namespace xnaMugen.Combat
 			}
 
 			return drawlocation;
-		}
-
-		public override SpriteEffects GetDrawFlip()
-		{
-			SpriteEffects flip = base.GetDrawFlip();
-
-			if ((Data.Flip & SpriteEffects.FlipVertically) == SpriteEffects.FlipVertically)
-			{
-				flip |= SpriteEffects.FlipVertically;
-			}
-
-			return flip;
-		}
-
-		public override Vector4 GetShadowColor()
-		{
-			if (Engine.Stage.ShadowFade == null)
-			{
-				return Data.ShadowColor;
-			}
-			else
-			{
-				if (CurrentLocation.Y <= Engine.Stage.ShadowFade.Value.X)
-				{
-					return Vector4.Zero;
-				}
-				else if (CurrentLocation.Y >= Engine.Stage.ShadowFade.Value.Y)
-				{
-					return Data.ShadowColor;
-				}
-				else
-				{
-					Single bottom = Engine.Stage.ShadowFade.Value.X;
-					Single top = Engine.Stage.ShadowFade.Value.Y;
-					Single percentage = (CurrentLocation.Y - bottom) / (top - bottom);
-
-					return Data.ShadowColor * percentage;
-				}
-			}
 		}
 
 		public void Kill()
@@ -407,17 +350,12 @@ namespace xnaMugen.Combat
 
 			if (modifydata.PositionType != null || modifydata.Location != null)
 			{
-				SetStartLocation();
+				CurrentLocation = GetStartLocation();
 			}
 
 			if (modifydata.Flip != null)
 			{
 				CurrentFacing = GetStartFacing();
-			}
-
-			if (modifydata.ShadowColor != null)
-			{
-				Data.ShadowColor = modifydata.ShadowColor.Value;
 			}
 
 			/*
@@ -506,9 +444,6 @@ namespace xnaMugen.Combat
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		Boolean m_forceremove;
-
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		PositionType m_postype;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		readonly Facing m_creationfacing;

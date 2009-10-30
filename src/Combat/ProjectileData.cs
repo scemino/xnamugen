@@ -36,7 +36,7 @@ namespace xnaMugen.Combat
 		public Int32 HeightUpperBound { get; set; }
 		public Vector2 CreationOffset { get; set; }
 		public PositionType PositionType { get; set; }
-		public Vector4 ShadowColor { get; set; }
+		public Color ShadowColor { get; set; }
 		public Int32 SuperPauseMoveTime { get; set; }
 		public Int32 PauseMoveTime { get; set; }
 		public Int32 AfterImageTime { get; set; }

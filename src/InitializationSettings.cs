@@ -167,11 +167,6 @@ namespace xnaMugen
 			get { return m_roundlength; }
 		}
 
-		public Int32 SoundChannels
-		{
-			get { return m_soundchannels; }
-		}
-
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]

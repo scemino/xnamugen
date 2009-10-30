@@ -30,14 +30,15 @@ namespace xnaMugen.Video
 			m_drawbuffer = new Vertex[500];
 			m_parameters = new KeyedCollection<String, EffectParameter>(x => x.Name);
 
-			m_nullpixels = m_videosystem.CreatePixelTexture(new Point(1, 1));
+			m_nullpixels = m_videosystem.CreatePixelTexture(new Point(2, 2));
 			m_nullpalette = m_videosystem.CreatePaletteTexture();
 
-			Byte[] pixels = new Byte[] { 1 };
+			Byte[] pixels = new Byte[] { 1, 2, 1, 2 };
 			m_nullpixels.SetData<Byte>(pixels);
 
 			Color[] paldata = new Color[256];
 			paldata[1] = Color.White;
+			paldata[2] = Color.Red;
 			m_nullpalette.SetData<Color>(paldata);
 		}
 

@@ -63,48 +63,51 @@ namespace xnaMugen.Drawing
 
 		Texture2D LoadPixels(Point size, Int32 bytesperline, ref Int32 readoffset)
 		{
-			if (m_pixelbuffer == null || m_pixelbuffer.Length < size.X * size.Y) m_pixelbuffer = new Single[size.X * size.Y];
-
-			readoffset = IO.FileHeaders.PCX.HeaderSize;
-
-			for (Int32 y = 0; y != size.Y; ++y)
+			SharedBuffer sharedbuffer = m_system.GetSubSystem<SharedBuffer>();
+			lock (sharedbuffer.LockObject)
 			{
-				Int32 offset = y * size.X;
+				readoffset = IO.FileHeaders.PCX.HeaderSize;
 
-				for (Int32 x = 0; x < bytesperline; )
+				sharedbuffer.EnsureSize(size.X * size.Y);
+				Byte[] buffer = sharedbuffer.Buffer;
+
+				for (Int32 y = 0; y != size.Y; ++y)
 				{
-					Byte data = m_filebuffer[readoffset++];
-					if (data > 192)
-					{
-						data -= 192;
-						Byte color = m_filebuffer[readoffset++];
+					Int32 offset = y * size.X;
 
-						if (x <= size.X)
+					for (Int32 x = 0; x < bytesperline; )
+					{
+						Byte data = m_filebuffer[readoffset++];
+						if (data > 192)
 						{
-							for (Byte repeat = 0; repeat < data; ++repeat)
+							data -= 192;
+							Byte color = m_filebuffer[readoffset++];
+
+							if (x <= size.X)
 							{
-								m_pixelbuffer[offset++] = color / 255.0f;
-								++x;
+								for (Byte repeat = 0; repeat < data; ++repeat)
+								{
+									buffer[offset++] = color;
+									++x;
+								}
+							}
+							else
+							{
+								x += data;
 							}
 						}
 						else
 						{
-							x += data;
+							if (x <= size.X) buffer[offset++] = data;
+							++x;
 						}
-					}
-					else
-					{
-						if (x <= size.X) m_pixelbuffer[offset++] = data / 255.0f;
-						++x;
 					}
 				}
 
-
+				Texture2D texture = m_system.GetSubSystem<Video.VideoSystem>().CreatePixelTexture(size);
+				texture.SetData<Byte>(buffer, 0, size.X * size.Y, SetDataOptions.None);
+				return texture;
 			}
-
-			Texture2D texture = m_system.GetSubSystem<Video.VideoSystem>().CreatePixelTexture(size);
-			texture.SetData<Single>(m_pixelbuffer, 0, size.X * size.Y, SetDataOptions.None);
-			return texture;
 		}
 
 		Texture2D LoadPalette(Int32 pcxsize, IO.FileHeaders.PCX header, ref Int32 readoffset)
@@ -137,9 +140,6 @@ namespace xnaMugen.Drawing
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		Byte[] m_filebuffer;
-
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Single[] m_pixelbuffer;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		readonly SpriteSystem m_system;

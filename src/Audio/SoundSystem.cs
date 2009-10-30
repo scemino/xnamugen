@@ -20,29 +20,19 @@ namespace xnaMugen.Audio
 			: base(subsystems)
 		{
 			m_soundcache = new Dictionary<String, ReadOnlyDictionary<SoundId, SecondaryBuffer>>(StringComparer.OrdinalIgnoreCase);
-			m_sounddevice = new Device();
-			m_volume = 0;
-			m_channels = new List<Channel>();
 
-			SetNumberOfChannels(1);
+			m_sounddevice = new Device();
+
+			m_volume = 0;
+
+			m_channels = new List<Channel>(10);
+			for (Int32 i = 0; i != m_channels.Capacity; ++i) m_channels.Add(new Channel());
 		}
 
 		public override void Initialize()
 		{
 			m_sounddevice.SetCooperativeLevel(SubSystems.Game.Window.Handle, CooperativeLevel.Priority);
-
-			SetNumberOfChannels(GetSubSystem<InitializationSettings>().SoundChannels);
 		}
-
-        void SetNumberOfChannels(Int32 number)
-        {
-            if (number < 0) throw new ArgumentNullException("number");
-
-			StopAllSounds();
-
-			m_channels.Clear();
-			for (Int32 i = 0; i != number; ++i) m_channels.Add(new Channel());
-        }
 
 		/// <summary>
 		/// Creates a new SoundManager from a SND file.

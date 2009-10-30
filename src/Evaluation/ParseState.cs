@@ -78,7 +78,7 @@ namespace xnaMugen.Evaluation
 
 		public T ConvertCurrentToken<T>()
 		{
-            return (CurrentUnknown != null) ? m_system.GetSubSystem<StringConverter>().Convert<T>(CurrentUnknown) : default(T);
+			return m_system.GetSubSystem<StringConverter>().Convert<T>(CurrentUnknown);
 		}
 
 		public Node BaseNode

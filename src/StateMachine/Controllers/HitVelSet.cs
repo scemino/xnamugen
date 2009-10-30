@@ -20,8 +20,12 @@ namespace xnaMugen.StateMachine.Controllers
 			Boolean velx = EvaluationHelper.AsBoolean(character, XVelocity, true);
 			Boolean vely = EvaluationHelper.AsBoolean(character, YVelocity, true);
 
-            Vector2 vel = character.DefensiveInfo.HitVelocity;
-            if (character.CurrentFacing == Facing.Left) vel.X = -vel.X;
+			Vector2 vel = character.DefensiveInfo.GetHitVelocity();
+
+			if (character.DefensiveInfo.Attacker.CurrentFacing == character.CurrentFacing)
+			{
+				vel *= new Vector2(-1, 1);
+			}
 
 			if (velx == false) vel.X = character.CurrentVelocity.X;
 			if (vely == false) vel.Y = character.CurrentVelocity.Y;

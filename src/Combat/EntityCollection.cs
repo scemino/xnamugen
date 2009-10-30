@@ -265,7 +265,7 @@ namespace xnaMugen.Combat
 
 			foreach (Entity entity in entities) entity.UpdateState();
 
-			foreach (Entity entity in entities) entity.UpdateAfterImages();
+            foreach (Entity entity in entities) entity.UpdateAfterImages();
 
 			foreach (Entity entity in entities) entity.UpdatePhsyics();
 
@@ -287,15 +287,7 @@ namespace xnaMugen.Combat
 
 			Engine.GetSubSystem<Video.VideoSystem>().CameraShift = Engine.Camera.Location * -1;
 
-			if (Engine.Assertions.NoGlobalShadow == false)
-			{
-				if (Engine.Stage.ShadowColor != Vector4.Zero) foreach (Entity entity in m_tempqueue) entity.ShadowDraw();
-
-				if (Engine.Stage.ReflectionIntensity != 0.0f) foreach (Entity entity in m_tempqueue) entity.ReflectionDraw();
-			}
-
 			foreach (Entity entity in m_tempqueue) entity.Draw();
-
 			if (debug == true) foreach (Entity entity in m_tempqueue) entity.DebugDraw();
 
 			Engine.GetSubSystem<Video.VideoSystem>().CameraShift = savedcamerashift;

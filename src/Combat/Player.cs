@@ -32,19 +32,17 @@ namespace xnaMugen.Combat
 			m_palfx = new PaletteFx();
 			m_team = team;
 
-			SpriteManager.UseOverride = true;
-
 			if (Engine.GetSubSystem<InitializationSettings>().PreloadCharacterSprites == true)
 			{
 				SpriteManager.LoadAllSprites();
 			}
 
+			SpriteManager.UseOverride = true;
+
 			SetLocalAnimation(0, 0);
 
 			CurrentScale = Constants.Scale;
 			PushFlag = true;
-            Life = Constants.MaximumLife;
-            Power = 0;
 		}
 
 		public override void Reset()
@@ -91,7 +89,8 @@ namespace xnaMugen.Combat
 				String filepath = Profile.PaletteFiles[i];
 				if (String.Equals(filepath, String.Empty) == true)
 				{
-					palettes.Add(Engine.GetSubSystem<Video.VideoSystem>().CreatePaletteTexture());
+					Texture2D palette = Engine.GetSubSystem<Video.VideoSystem>().CreatePaletteTexture();
+					palettes.Add(palette);
 				}
 				else
 				{
@@ -155,8 +154,7 @@ namespace xnaMugen.Combat
 			set 
 			{ 
 				m_palettenumber = value;
-
-				SpriteManager.OverridePalette = Palettes[m_palettenumber];
+				CurrentPalette = Palettes[m_palettenumber];
 			}
 		}
 

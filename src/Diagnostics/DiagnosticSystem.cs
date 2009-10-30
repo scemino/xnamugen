@@ -13,16 +13,7 @@ namespace xnaMugen.Diagnostics
             m_form = new DiagnosticForm();
             m_formthread = new Thread(StartFormThread);
             m_lock = new Object();
-
-			m_form.Closing += new System.ComponentModel.CancelEventHandler(m_form_Closing);
         }
-
-		void m_form_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-		{
-			e.Cancel = true;
-
-			m_form.Hide();
-		}
 
         public override void Initialize()
         {
@@ -69,14 +60,16 @@ namespace xnaMugen.Diagnostics
             }
         }
 
-        public void Update()
+        public void Update(Combat.FightEngine engine)
         {
+            if (engine == null) throw new ArgumentNullException("engine");
+
             lock (m_lock)
             {
                 if (m_formthread.IsAlive == true)
                 {
-                    ThreadStart func = UpdateForm;
-                    m_form.Invoke(func);
+                    Action<Combat.FightEngine> func = UpdateForm;
+                    m_form.Invoke(func, engine);
                 }
             }
         }
@@ -91,9 +84,11 @@ namespace xnaMugen.Diagnostics
             Application.ExitThread();
         }
 
-        void UpdateForm()
+        void UpdateForm(Combat.FightEngine engine)
         {
-            m_form.Set(GetMainSystem<Combat.FightEngine>());
+            if (engine == null) throw new ArgumentNullException("engine");
+
+            m_form.Set(engine);
         }
 
         #region Fields

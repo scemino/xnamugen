@@ -61,39 +61,6 @@ namespace xnaMugen.Combat
 			m_updatedanimation = false;
 		}
 
-		public override void ShadowDraw()
-		{
-			if (Assertions.NoShadow == true) return;
-
-			Vector2 scale = CurrentScale;
-
-			CurrentScale *= DrawScale;
-
-			base.ShadowDraw();
-
-			CurrentScale = scale;
-		}
-
-		public override void ReflectionDraw()
-		{
-			if (Assertions.NoShadow == true) return;
-
-			Animations.AnimationElement currentelement = AnimationManager.CurrentElement;
-			if (currentelement == null) return;
-
-			Drawing.Sprite sprite = SpriteManager.GetSprite(currentelement.SpriteId);
-			if (sprite == null) return;
-
-			Vector2 drawlocation = GetDrawLocation() - new Vector2(0, CurrentLocation.Y * 2);
-			Vector2 drawoffset = Misc.GetOffset(Vector2.Zero, CurrentFacing, currentelement.Offset) + new Vector2(0, BasePlayer.Constants.ShadowOffset);
-			Vector2 drawscale = CurrentScale * DrawScale;
-
-			Video.DrawState drawstate = SpriteManager.SetupDrawing(currentelement.SpriteId, drawlocation, drawoffset, drawscale, GetDrawFlip() | SpriteEffects.FlipVertically);
-			drawstate.Blending = new Blending(BlendType.Add, (Byte)255, 255 - Engine.Stage.ReflectionIntensity);
-			drawstate.Rotation = (AngleDraw == true) ? Misc.FaceScalar(CurrentFacing, -DrawingAngle) : 0;
-			drawstate.Use();
-		}
-
 		public override void Draw()
 		{
 			if (Assertions.Invisible == false)
@@ -172,13 +139,13 @@ namespace xnaMugen.Combat
 			}
 		}
 
-		public override void UpdateAfterImages()
-		{
-			if (InHitPause == false)
-			{
-				base.UpdateAfterImages();
-			}
-		}
+        public override void UpdateAfterImages()
+        {
+            if (InHitPause == false)
+            {
+                base.UpdateAfterImages();
+            }
+        }
 
 		public override void UpdateState()
 		{
@@ -195,7 +162,7 @@ namespace xnaMugen.Combat
 
 		public override void UpdatePhsyics()
 		{
-			if (InHitPause == true) return;
+			if (InHitPause == true || DefensiveInfo.HitShakeTime > 0) return;
 
 			CurrentVelocity += CurrentAcceleration;
 
@@ -388,7 +355,7 @@ namespace xnaMugen.Combat
 
 		public override Vector2 GetDrawLocation()
 		{
-			return CurrentLocation + Misc.GetOffset(Vector2.Zero, CurrentFacing, DrawOffset + BasePlayer.Constants.DrawOffset) + new Vector2(Mugen.ScreenSize.X / 2, Engine.Stage.ZOffset);
+			return CurrentLocation + Misc.GetOffset(Vector2.Zero, CurrentFacing, DrawOffset) + new Vector2(Mugen.ScreenSize.X / 2, Engine.Stage.ZOffset);
 		}
 
 		public Player GetOpponent()
@@ -641,10 +608,10 @@ namespace xnaMugen.Combat
 		{
 			get { return m_statetype; }
 
-			set
+			set 
 			{
 				if (value == StateType.None || value == StateType.Unchanged) throw new ArgumentOutOfRangeException("value");
-				m_statetype = value;
+				m_statetype = value; 
 			}
 		}
 

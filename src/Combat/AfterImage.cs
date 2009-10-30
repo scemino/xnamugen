@@ -85,7 +85,6 @@ namespace xnaMugen.Combat
 		#endregion
 	}
 
-#warning AfterImages seem to reevaluate the setting every tick. 
 	class AfterImage
 	{
 		public AfterImage(Entity entity)

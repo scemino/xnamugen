@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
-using System.Text.RegularExpressions;
 
 namespace xnaMugen.Evaluation
 {
@@ -10,8 +9,6 @@ namespace xnaMugen.Evaluation
 	{
 		public Tokenizer()
 		{
-            m_hackregex = new Regex(@"(ProjContact|ProjGuarded|ProjHit)(\d+)", RegexOptions.IgnoreCase);
-            m_hackmatchevaluator = m => m.Groups[1].Value + "(" + m.Groups[2].Value + ")";
 			m_intdata = new Tokenizing.IntData();
 			m_floatdata = new Tokenizing.FloatData();
 			m_textdata = new Tokenizing.TextData();
@@ -68,8 +65,6 @@ namespace xnaMugen.Evaluation
 		public List<Token> Tokenize(String input)
 		{
 			if (input == null) throw new ArgumentNullException("input");
-
-            input = m_hackregex.Replace(input, m_hackmatchevaluator);
 
 			List<Token> output = new List<Token>();
 			Int32 index = 0;
@@ -188,12 +183,6 @@ namespace xnaMugen.Evaluation
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		readonly TokenData m_unknowndata;
-
-        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        readonly Regex m_hackregex;
-
-        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        readonly MatchEvaluator m_hackmatchevaluator;
 
 		#endregion
 	}

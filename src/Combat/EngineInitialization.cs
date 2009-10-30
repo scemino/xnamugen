@@ -18,11 +18,6 @@ namespace xnaMugen.Combat
 			m_p1 = new PlayerCreation(p1, p1.GetValidPaletteIndex(p1palette));
 			m_p2 = new PlayerCreation(p2, p2.GetValidPaletteIndex(p2palette));
 			m_stage = stage;
-
-			if (P1.Profile == P2.Profile && P1.PaletteIndex == P2.PaletteIndex)
-			{
-				m_p2 = new PlayerCreation(p2, p2.GetValidPaletteIndex(p2palette + 1));
-			}
 		}
 
 		public CombatMode Mode

@@ -227,7 +227,7 @@ namespace xnaMugen.Combat
             Drawing.Sprite sprite = element.SpriteManager.GetSprite(element.DataMap.SpriteId);
             if (sprite == null) return new Rectangle();
 
-            Point drawlocation = (Point)Video.Renderer.GetDrawLocation(sprite.Size, location, (Vector2)sprite.Axis, element.DataMap.Scale, Vector2.One, element.DataMap.Flip);
+            Point drawlocation = (Point)Video.Renderer.GetDrawLocation(sprite.Size, (Vector2)location, (Vector2)sprite.Axis, element.DataMap.Scale, element.DataMap.Flip);
 
             Rectangle rectangle = new Rectangle();
             rectangle.X = (Int32)element.DataMap.Offset.X + drawlocation.X + 1;

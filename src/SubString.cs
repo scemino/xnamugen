@@ -23,7 +23,10 @@ namespace xnaMugen
 			if (basestring == null) throw new ArgumentNullException("basestring");
 			if (startindex < 0 || startindex >= basestring.Length) throw new ArgumentOutOfRangeException("startindex", "StartIndex must be greater than zero and less than the length of the basestring.");
 
-			for (Int32 i = startindex; i < basestring.Length; ++i) if (basestring[i] == '\n') return i;
+			for (Int32 i = startindex; i < basestring.Length; ++i)
+			{
+				if (basestring[i] == '\r' && i < basestring.Length - 1 && basestring[i + 1] == '\n') return i;
+			}
 
 			return basestring.Length - 1;
 		}

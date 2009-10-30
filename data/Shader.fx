@@ -101,14 +101,14 @@ VS_Output VertexShader(float4 inPos : POSITION, float2 inTexCoords: TEXCOORD, fl
 
 float4 DefaultPixelShader(float4 color : COLOR, float2 texCoord : TEXCOORD) : COLOR
 {
-	float color_index = tex2D(xPixelsSampler, texCoord).r;
+	float color_index = tex2D(xPixelsSampler, texCoord).a;
 	float4 output_color = tex1D(xPaletteSampler, color_index);
 	
 	if(xPalFx_Use == true) output_color = PalFx(output_color);
 	if(xAI_Use == true) output_color = AfterImage(output_color);
 	
 	output_color *= color;
-	
+			
 	if(color_index == 0.0f)
 	{
 		return float4(0, 0, 0, 0);
@@ -121,7 +121,7 @@ float4 DefaultPixelShader(float4 color : COLOR, float2 texCoord : TEXCOORD) : CO
 
 float4 PixelShaderOLD(float4 color : COLOR, float2 texCoord : TEXCOORD) : COLOR
 {
-	float color_index = tex2D(xPixelsSampler, texCoord).r;
+	float color_index = tex2D(xPixelsSampler, texCoord).a;
 	float4 output_color = tex1D(xPaletteSampler, color_index);
 	
 	if(xPalFx_Use == true) output_color = PalFx(output_color);
@@ -141,7 +141,7 @@ float4 PixelShaderOLD(float4 color : COLOR, float2 texCoord : TEXCOORD) : COLOR
 
 float4 FontPixelShader(float4 color : COLOR, float2 texCoord : TEXCOORD) : COLOR
 {
-	float color_index = tex2D(xPixelsSampler, texCoord).r;
+	float color_index = tex2D(xPixelsSampler, texCoord).a;
 	float per = 1.0 - float(xFontColorIndex) / float(xFontTotalColors);
 	float4 output_color = tex1D(xPaletteSampler, color_index * per - 1.0/255.0);
 	
@@ -159,7 +159,7 @@ float4 FontPixelShader(float4 color : COLOR, float2 texCoord : TEXCOORD) : COLOR
 
 float4 ShadowPixelShader(float4 color : COLOR, float2 texCoord : TEXCOORD) : COLOR
 {
-	float color_index = tex2D(xPixelsSampler, texCoord).r;	
+	float color_index = tex2D(xPixelsSampler, texCoord).a;	
 	
 	if(color_index == 0.0f)
 	{

@@ -53,7 +53,7 @@ namespace xnaMugen.IO
 			if (key == null) throw new ArgumentNullException("key");
 
 			String value = GetValue(key);
-			if (value == null)
+			if (value == "")
 			{
 				Log.Write(LogLevel.Error, LogSystem.FileSystem, "Section {0} is missing key '{1}'", Title, key);
 				throw new ArgumentException("key");

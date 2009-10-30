@@ -56,7 +56,7 @@ namespace xnaMugen.StateMachine.Controllers
 			Boolean projectilescaling = EvaluationHelper.AsBoolean(character, ProjectileScaling, character.BasePlayer.Constants.ProjectileScaling);
 			Vector2 headposition = (Vector2)EvaluationHelper.AsPoint(character, HeadPosition, (Point)character.BasePlayer.Constants.Headposition);
 			Vector2 midposition = (Vector2)EvaluationHelper.AsPoint(character, MiddlePosition, (Point)character.BasePlayer.Constants.Midposition);
-			Int32 shadowoffset = EvaluationHelper.AsInt32(character, ShadowOffset, character.BasePlayer.Constants.ShadowOffset);
+			Int32 shadowoffset = EvaluationHelper.AsInt32(character, ShadowOffset, character.BasePlayer.Constants.Shadowoffset);
 
 			Combat.HelperData data = new Combat.HelperData();
 			data.Name = helper_name;

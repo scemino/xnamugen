@@ -31,6 +31,7 @@ namespace xnaMugen.Combat
 			m_dimensions = new CharacterDimensions(Data.GroundFront, Data.GroundBack, Data.AirFront, Data.AirBack, Data.Height);
 			m_palfx = (Data.OwnPaletteFx == true) ? new PaletteFx() : Parent.PaletteFx;
 
+			CurrentPalette = Parent.CurrentPalette;
 			CurrentFacing = GetFacing(Data.PositionType, m_offsetcharacter.CurrentFacing, Data.FacingFlag < 0);
 			CurrentLocation = GetStartLocation();
 			CurrentScale = Data.Scale;
@@ -38,8 +39,6 @@ namespace xnaMugen.Combat
 			SetLocalAnimation(0, 0);
 
 			StateManager.ChangeState(Data.InitialStateNumber);
-
-            Life = BasePlayer.Constants.MaximumLife;
 		}
 
 		Vector2 GetStartLocation()
@@ -141,11 +140,8 @@ namespace xnaMugen.Combat
 
 		public void Remove()
 		{
-			if (m_remove == false)
-			{
-				m_remove = true;
-				Engine.Entities.Remove(this);
-			}
+			m_remove = true;
+			Engine.Entities.Remove(this);
 		}
 
 		public override Boolean RemoveCheck()

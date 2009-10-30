@@ -33,16 +33,13 @@ namespace xnaMugen.StateMachine.Controllers
 			Int32 basecolor = EvaluationHelper.AsInt32(character, PaletteColor, 255);
 			Boolean invert = EvaluationHelper.AsBoolean(character, PaletteColorInversion, false);
 			Vector3 palpreadd = EvaluationHelper.AsVector3(character, PaletteColorBrightness, new Vector3(30, 30, 30));
-			Vector3 palcontrast = EvaluationHelper.AsVector3(character, PaletteColorContrast, new Vector3(120, 120, 220));
+			Vector3 palcontrast = EvaluationHelper.AsVector3(character, PaletteColorContrast, new Vector3(255, 255, 255));
 			Vector3 palpostadd = EvaluationHelper.AsVector3(character, PalettePostBrightness, new Vector3(0, 0, 0));
 			Vector3 paladd = EvaluationHelper.AsVector3(character, PaletteColorAdd, new Vector3(10, 10, 25));
 			Vector3 palmul = EvaluationHelper.AsVector3(character, PaletteColorMultiply, new Vector3(.65f, .65f, .75f));
 			Int32 timegap = EvaluationHelper.AsInt32(character, TimeGap, 1);
 			Int32 framegap = EvaluationHelper.AsInt32(character, FrameGap, 4);
 			Point alpha = EvaluationHelper.AsPoint(character, Alpha, new Point(255, 0));
-
-			//Hack for undocumentated palette change
-			palcontrast.X += 38;
 
 			Blending? trans = Transparency;
 			if (trans != null && trans.Value.BlendType == BlendType.Add && trans.Value.SourceFactor == 0 && trans.Value.DestinationFactor == 0) trans = new Blending(BlendType.Add, alpha.X, alpha.Y);
@@ -53,11 +50,11 @@ namespace xnaMugen.StateMachine.Controllers
 			afterimages.NumberOfFrames = numberofframes;
 			afterimages.BaseColor = basecolor / 255.0f;
 			afterimages.InvertColor = invert;
-			afterimages.ColorPreAdd = palpreadd / 255.0f;
-			afterimages.ColorContrast = palcontrast / 255.0f;
-			afterimages.ColorPostAdd = palpostadd / 255.0f;
-			afterimages.ColorPaletteAdd = paladd / 255.0f;
-			afterimages.ColorPaletteMultiply = palmul;
+			afterimages.ColorPreAdd = Vector3.Clamp(palpreadd / 255.0f, Vector3.Zero, Vector3.One);
+			afterimages.ColorContrast = Vector3.Clamp(palcontrast / 255.0f, Vector3.Zero, new Vector3(Single.MaxValue));
+			afterimages.ColorPostAdd = Vector3.Clamp(palpostadd / 255.0f, Vector3.Zero, Vector3.One);
+			afterimages.ColorPaletteAdd = Vector3.Clamp(paladd / 255.0f, Vector3.Zero, Vector3.One);
+			afterimages.ColorPaletteMultiply = Vector3.Clamp(palmul, Vector3.Zero, new Vector3(Single.MaxValue));
 			afterimages.TimeGap = timegap;
 			afterimages.FrameGap = framegap;
 			afterimages.Transparency = trans;

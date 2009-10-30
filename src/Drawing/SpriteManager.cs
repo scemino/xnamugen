@@ -54,7 +54,7 @@ namespace xnaMugen.Drawing
 			SetupDrawing(id, location, offset, scale, flip).Use();
 		}
 
-		public Video.DrawState SetupDrawing(SpriteId id, Vector2? location, Vector2 offset, Vector2 scale, SpriteEffects flip)
+		public Video.DrawState SetupDrawing(SpriteId id, Vector2 location, Vector2 offset, Vector2 scale, SpriteEffects flip)
 		{
 			Sprite sprite = GetSprite(id);
 
@@ -64,10 +64,9 @@ namespace xnaMugen.Drawing
 			m_drawstate.Reset();
 			m_drawstate.Set(sprite);
 			m_drawstate.Offset = offset;
+			m_drawstate.AddData(location, null);
 			m_drawstate.Flip = flip;
 			m_drawstate.Scale = scale;
-
-			if (location != null) m_drawstate.AddData(location.Value, null);
 
 			if (UseOverride == true && sprite != null && sprite.PaletteOverride == true)
 			{

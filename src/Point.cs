@@ -7,7 +7,7 @@ namespace xnaMugen
 	/// <summary>
 	/// Defines a point in two dimensional space with whole numbers.
 	/// </summary>
-	public struct Point : IEquatable<Point>
+	public struct Point: IEquatable<Point>
 	{
 		/// <summary>
 		/// Initialize an instance of this class using the supplied coordinates.
@@ -15,8 +15,7 @@ namespace xnaMugen
 		/// <param name="x">X coordinate of point.</param>
 		/// <param name="y">Y coordinate of point.</param>
 		[DebuggerStepThrough]
-		public Point(Int32 x, Int32 y)
-			: this()
+		public Point(Int32 x, Int32 y): this()
 		{
 			X = x;
 			Y = y;

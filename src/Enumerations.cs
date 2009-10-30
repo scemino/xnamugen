@@ -2,8 +2,6 @@ using System;
 
 namespace xnaMugen
 {
-	enum ExplodType { None, Hitspark, GameAnim }
-
 	enum Axis { None, X, Y }
 
 	enum ScreenShotFormat { None, Jpg, Bmp, Png }

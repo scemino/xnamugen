@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace xnaMugen.Combat
 {
@@ -92,7 +91,7 @@ namespace xnaMugen.Combat
 					if (projectile.CanAttack() == false) break;
 
 					Character character = subentity as Character;
-					if (character != null && character != projectile.BasePlayer)
+					if (character != null)
 					{
 						ProjectileAttack(projectile, character);
 					}
@@ -283,8 +282,6 @@ namespace xnaMugen.Combat
 
 			hitdef = target.DefensiveInfo.HitDef;
 
-            attacker.OffensiveInfo.AddToTargetList(target);
-
 			projectile.TotalHits += 1;
 			projectile.HitCountdown = projectile.Data.TimeBetweenHits;
 
@@ -313,7 +310,7 @@ namespace xnaMugen.Combat
 			HitOverride hitoverride = target.DefensiveInfo.GetOverride(hitdef);
 			if (hitoverride != null)
 			{
-				if (hitoverride.ForceAir == true) target.DefensiveInfo.IsFalling = true;
+				if (hitoverride.ForceAir == true) hitdef.Fall = true;
 
 				target.StateManager.ForeignManager = null;
 				target.StateManager.ChangeState(hitoverride.StateNumber);
@@ -360,7 +357,7 @@ namespace xnaMugen.Combat
 			HitOverride hitoverride = target.DefensiveInfo.GetOverride(myhitdef);
 			if (hitoverride != null)
 			{
-				if (hitoverride.ForceAir == true) target.DefensiveInfo.IsFalling = true;
+				if (hitoverride.ForceAir == true) myhitdef.Fall = true;
 
 				target.StateManager.ForeignManager = null;
 				target.StateManager.ChangeState(hitoverride.StateNumber);
@@ -417,7 +414,7 @@ namespace xnaMugen.Combat
 			if (target.Life == 0)
 			{
 				target.DefensiveInfo.Killed = true;
-				target.DefensiveInfo.IsFalling = true;
+				hitdef.Fall = true;
 			}
 
 			switch (target.DefensiveInfo.HitStateType)
@@ -545,7 +542,7 @@ namespace xnaMugen.Combat
 			if (target == null) throw new ArgumentNullException("target");
 
 			ExplodData data = new ExplodData();
-			data.Type = ExplodType.Hitspark;
+            data.IsHitSpark = true;
 			data.CommonAnimation = playeranimation == false;
 			data.PositionType = PositionType.P1;
 			data.AnimationNumber = animationnumber;
@@ -567,7 +564,7 @@ namespace xnaMugen.Combat
 			if (target == null) throw new ArgumentNullException("target");
 
 			ExplodData data = new ExplodData();
-			data.Type = ExplodType.Hitspark;
+            data.IsHitSpark = true;
             data.CommonAnimation = playeranimation == false;
 			data.PositionType = PositionType.P1;
 			data.AnimationNumber = animationnumber;
@@ -578,7 +575,6 @@ namespace xnaMugen.Combat
 			data.Location = GetSparkLocation(attacker, target, sparklocation);
 			data.Creator = attacker;
 			data.Offseter = target;
-			data.Flip = SpriteEffects.FlipHorizontally;
 
 			Explod explod = new Explod(attacker.Engine, data);
 			if (explod.IsValid == true) explod.Engine.Entities.Add(explod);
@@ -639,9 +635,9 @@ namespace xnaMugen.Combat
 			foreach (Entity entity in Engine.Entities)
 			{
 				Character target = entity as Character;
-				if (target == null || target == attacker) continue;
+				if (target == null) continue;
 
-				if (attacker.Assertions.UnGuardable == false && CanBlock(attacker, target, attacker.OffensiveInfo.HitDef, true) == true)
+				if (CanBlock(attacker, target, attacker.OffensiveInfo.HitDef, true) == true)
 				{
 					m_attacks.Add(new Contact(attacker, target, attacker.OffensiveInfo.HitDef, ContactType.Block));
 				}
@@ -649,7 +645,7 @@ namespace xnaMugen.Combat
 				{
 					m_attacks.Add(new Contact(attacker, target, attacker.OffensiveInfo.HitDef, ContactType.Hit));
 				}
-				else if (CanBlock(attacker, target, attacker.OffensiveInfo.HitDef, false) == true && target is Player)
+				else if (CanBlock(attacker, target, attacker.OffensiveInfo.HitDef, false) == true)
 				{
 					m_attacks.Add(new Contact(attacker, target, attacker.OffensiveInfo.HitDef, ContactType.MissBlock));
 				}

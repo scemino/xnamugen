@@ -10,14 +10,7 @@ namespace xnaMugen.Combat
 	[DebuggerDisplay("Id #{Id} - {CommonAnimation}, {AnimationNumber}")]
 	class ExplodData
 	{
-		public ExplodData()
-		{
-			Type = ExplodType.None;
-
-			BindTime = 1;
-		}
-
-		public ExplodType Type { get; set; }
+        public Boolean IsHitSpark { get; set; }
 
 		public Boolean CommonAnimation { get; set; }
 		public Int32 AnimationNumber { get; set; }
@@ -40,7 +33,6 @@ namespace xnaMugen.Combat
 		public Boolean RemoveOnGetHit { get; set; }
 		public Boolean IgnoreHitPause { get; set; }
 		public Blending Transparency { get; set; }
-		public Vector4 ShadowColor { get; set; }
 
 		public Entity Creator { get; set; }
 		public Entity Offseter { get; set; }
@@ -70,6 +62,5 @@ namespace xnaMugen.Combat
 		public Boolean? RemoveOnGetHit { get; set; }
 		public Boolean? IgnoreHitPause { get; set; }
 		public Blending? Transparency { get; set; }
-		public Vector4? ShadowColor { get; set; }
 	}
 }
