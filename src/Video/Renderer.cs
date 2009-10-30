@@ -27,17 +27,18 @@ namespace xnaMugen.Video
 				m_effect = new Effect(Device, compiled.GetEffectCode(), CompilerOptions.NotCloneable, null);
 			}
 
-			m_drawbuffer = new Vertex[60];
+			m_drawbuffer = new Vertex[500];
 			m_parameters = new KeyedCollection<String, EffectParameter>(x => x.Name);
+
 			m_nullpixels = m_videosystem.CreatePixelTexture(new Point(1, 1));
 			m_nullpalette = m_videosystem.CreatePaletteTexture();
 
-			m_nullpixels.SetData<Single>(new Single[] { 1 });
+			Byte[] pixels = new Byte[] { 1 };
+			m_nullpixels.SetData<Byte>(pixels);
 
-			Color[] pal = new Color[256];
-			for (Int32 i = 0; i != 256; ++i) pal[i] = Color.White;
-
-			m_nullpalette.SetData<Color>(pal);
+			Color[] paldata = new Color[256];
+			paldata[1] = Color.White;
+			m_nullpalette.SetData<Color>(paldata);
 		}
 
 		public void OnDeviceReset(Object sender, EventArgs args)
@@ -65,31 +66,27 @@ namespace xnaMugen.Video
 
 			SetBlending(drawstate.Blending);
 			SetScissorTest(drawstate.ScissorRectangle);
-			SetShaderParameters(drawstate.ShaderParameters, drawstate.Pixels, drawstate.Palette);
 
 			switch (drawstate.Mode)
 			{
 				case DrawMode.Normal:
-					m_effect.CurrentTechnique = (UseOldShader == true) ? m_effect.Techniques["DrawOLD"] : m_effect.Techniques["Draw"];
-					DefaultDraw(drawstate, new Point(drawstate.Pixels.Width, drawstate.Pixels.Height), PrimitiveType.TriangleList, 2);
+					NormalDraw(drawstate);
 					break;
 
 				case DrawMode.Font:
-					m_effect.CurrentTechnique = m_effect.Techniques["FontDraw"];
-					DefaultDraw(drawstate, new Point(drawstate.Pixels.Width, drawstate.Pixels.Height), PrimitiveType.TriangleList, 2);
+					FontDraw(drawstate);
 					break;
 
 				case DrawMode.OutlinedRectangle:
 					OutlinedRectangleDraw(drawstate);
 					break;
 
-				case DrawMode.Lines:
-					LineDraw(drawstate);
+				case DrawMode.FilledRectangle:
+					FilledRectangleDraw(drawstate);
 					break;
 
-				case DrawMode.Shadow:
-					m_effect.CurrentTechnique = m_effect.Techniques["ShadowDraw"];
-					DefaultDraw(drawstate, new Point(drawstate.Pixels.Width, drawstate.Pixels.Height), PrimitiveType.TriangleList, 2);
+				case DrawMode.Lines:
+					LineDraw(drawstate);
 					break;
 			}
 		}
@@ -147,12 +144,12 @@ namespace xnaMugen.Video
 			}
 		}
 
-		void DefaultDraw(DrawState drawstate, Point pixelsize, PrimitiveType drawtype, Int32 countmuliplier)
+		Int32 DefaultDrawSetup(DrawState drawstate, Point pixelsize)
 		{
 			if (drawstate == null) throw new ArgumentNullException("drawstate");
-			if (countmuliplier <= 0) throw new ArgumentOutOfRangeException("countmultiplier");
 
 			Int32 count = 0;
+			Vector2 camerashift = CameraShift;
 			foreach (DrawData data in drawstate)
 			{
 				Point drawsize = new Point();
@@ -170,23 +167,42 @@ namespace xnaMugen.Video
 					Renderer.SetTextureCoords(m_drawbuffer, count * 6, drawstate.Flip);
 				}
 
-				FRect frect = Renderer.MakeVertRect(drawsize, data.Location, CameraShift, drawstate.Scale, drawstate.Stretch, drawstate.Axis - drawstate.Offset, drawstate.Flip);
-
-				Vector2 rotationaxis = data.Location + CameraShift + drawstate.Offset;
+				FRect frect = Renderer.MakeVertRect(drawsize, data.Location, camerashift, drawstate.Scale, drawstate.Axis - drawstate.Offset, drawstate.Flip);
+				Vector2 rotationaxis = data.Location + camerashift + drawstate.Offset;
 
 				Renderer.SetPosition(m_drawbuffer, count * 6, frect, MathHelper.ToRadians(drawstate.Rotation), rotationaxis);
 				Renderer.SetColor(m_drawbuffer, count * 6, Misc.BlendColors(Tint, data.Tint));
 
 				++count;
-
-				if (count * 6 >= m_drawbuffer.Length)
-				{
-					FinishDrawing(drawtype, count * countmuliplier);
-					count = 0;
-				}
 			}
 
-			if (count > 0) FinishDrawing(drawtype, count * countmuliplier);
+			return count;
+		}
+
+		void NormalDraw(DrawState drawstate)
+		{
+			if (drawstate == null) throw new ArgumentNullException("drawstate");
+			if (drawstate.Mode != DrawMode.Normal) throw new ArgumentException("Incorrect drawstate");
+
+			m_effect.CurrentTechnique = (UseOldShader == true) ? m_effect.Techniques["DrawOLD"] : m_effect.Techniques["Draw"];
+
+			SetShaderParameters(drawstate.ShaderParameters, drawstate.Pixels, drawstate.Palette);
+
+			Int32 count = DefaultDrawSetup(drawstate, new Point(drawstate.Pixels.Width, drawstate.Pixels.Height));
+			if (count > 0) FinishDrawing(PrimitiveType.TriangleList, count * 2);
+		}
+
+		void FontDraw(DrawState drawstate)
+		{
+			if (drawstate == null) throw new ArgumentNullException("drawstate");
+			if (drawstate.Mode != DrawMode.Font) throw new ArgumentException("Incorrect drawstate");
+
+			m_effect.CurrentTechnique = m_effect.Techniques["FontDraw"];
+
+			SetShaderParameters(drawstate.ShaderParameters, drawstate.Pixels, drawstate.Palette);
+
+			Int32 count = DefaultDrawSetup(drawstate, new Point(drawstate.Pixels.Width, drawstate.Pixels.Height));
+			if (count > 0) FinishDrawing(PrimitiveType.TriangleList, count * 2);
 		}
 
 		void OutlinedRectangleDraw(DrawState drawstate)
@@ -196,13 +212,15 @@ namespace xnaMugen.Video
 
 			m_effect.CurrentTechnique = (UseOldShader == true) ? m_effect.Techniques["DrawOLD"] : m_effect.Techniques["Draw"];
 
+			SetShaderParameters(drawstate.ShaderParameters, drawstate.Pixels, drawstate.Palette);
+
 			Int32 count = 0;
 			foreach (DrawData data in drawstate)
 			{
 				if (data.DrawRect != null)
 				{
 					Point drawsize = new Point(data.DrawRect.Value.Width, data.DrawRect.Value.Height);
-					FRect frect = Renderer.MakeVertRect(drawsize, data.Location, CameraShift, drawstate.Scale, drawstate.Stretch, drawstate.Axis - drawstate.Offset, drawstate.Flip);
+					FRect frect = Renderer.MakeVertRect(drawsize, data.Location, CameraShift, drawstate.Scale, drawstate.Axis - drawstate.Offset, drawstate.Flip);
 
 					m_drawbuffer[(count * 8) + 0].Position = new Vector2(frect.Left, frect.Top);
 					m_drawbuffer[(count * 8) + 1].Position = new Vector2(frect.Left, frect.Bottom);
@@ -216,16 +234,23 @@ namespace xnaMugen.Video
 					for (Int32 i = 0; i != 8; ++i) m_drawbuffer[(count * 8) + i].Tint = data.Tint;
 
 					++count;
-
-					if (count * 8 >= m_drawbuffer.Length)
-					{
-						FinishDrawing(PrimitiveType.LineList, count * 4);
-						count = 0;
-					}
 				}
 			}
 
 			if (count > 0) FinishDrawing(PrimitiveType.LineList, count * 4);
+		}
+
+		void FilledRectangleDraw(DrawState drawstate)
+		{
+			if (drawstate == null) throw new ArgumentNullException("drawstate");
+			if (drawstate.Mode != DrawMode.FilledRectangle) throw new ArgumentException("Incorrect drawstate");
+
+			m_effect.CurrentTechnique = (UseOldShader == true) ? m_effect.Techniques["DrawOLD"] : m_effect.Techniques["Draw"];
+
+			SetShaderParameters(drawstate.ShaderParameters, drawstate.Pixels, drawstate.Palette);
+
+			Int32 count = DefaultDrawSetup(drawstate, new Point(drawstate.Pixels.Width, drawstate.Pixels.Height));
+			if (count > 0) FinishDrawing(PrimitiveType.TriangleList, count * 2);
 		}
 
 		void LineDraw(DrawState drawstate)
@@ -234,6 +259,8 @@ namespace xnaMugen.Video
 			if (drawstate.Mode != DrawMode.Lines) throw new ArgumentException("Incorrect drawstate");
 
 			m_effect.CurrentTechnique = (UseOldShader == true) ? m_effect.Techniques["DrawOLD"] : m_effect.Techniques["Draw"];
+
+			SetShaderParameters(drawstate.ShaderParameters, drawstate.Pixels, drawstate.Palette);
 
 			Int32 count = 0;
 			Boolean point = false;
@@ -320,8 +347,6 @@ namespace xnaMugen.Video
 			{
 				GetShaderParameter("xAI_Use").SetValue(false);
 			}
-
-			GetShaderParameter("xShadowColor").SetValue(parameters.ShadowColor);
 		}
 
 		EffectParameter GetShaderParameter(String name)
@@ -471,23 +496,16 @@ namespace xnaMugen.Video
 
 		static void SetPosition(Vertex[] buffer, Int32 offset, FRect r, Single rotation, Vector2 axis)
 		{
-			Vector2 p1 = new Vector2(r.Left, r.Top);
-			Vector2 p2 = new Vector2(r.Right, r.Top);
-			Vector2 p3 = new Vector2(r.Right, r.Bottom);
-			Vector2 p4 = new Vector2(r.Left, r.Bottom);
+			Vector2 v1 = RotatePoint(new Vector2(r.Left, r.Top), rotation, axis);
+			Vector2 v2 = RotatePoint(new Vector2(r.Right, r.Bottom), rotation, axis);
 
-			p1 = RotatePoint(p1, rotation, axis);
-			p2 = RotatePoint(p2, rotation, axis);
-			p3 = RotatePoint(p3, rotation, axis);
-			p4 = RotatePoint(p4, rotation, axis);
+			buffer[offset + 0].Position = new Vector2(v1.X, v1.Y);
+			buffer[offset + 1].Position = new Vector2(v2.X, v1.Y);
+			buffer[offset + 2].Position = new Vector2(v2.X, v2.Y);
 
-			buffer[offset + 0].Position = p1;
-			buffer[offset + 1].Position = p2;
-			buffer[offset + 2].Position = p3;
-
-			buffer[offset + 3].Position = p1;
-			buffer[offset + 4].Position = p3;
-			buffer[offset + 5].Position = p4;
+			buffer[offset + 3].Position = new Vector2(v1.X, v1.Y);
+			buffer[offset + 4].Position = new Vector2(v2.X, v2.Y);
+			buffer[offset + 5].Position = new Vector2(v1.X, v2.Y);
 		}
 
 		static Vector2 RotatePoint(Vector2 point, Single radians, Vector2 axis)
@@ -544,39 +562,39 @@ namespace xnaMugen.Video
 			buffer[offset + 5].Tint = c;
 		}
 
-		static FRect MakeVertRect(Point drawsize, Vector2 location, Vector2 offset, Vector2 scale, Vector2 stretch, Vector2 axis, SpriteEffects flip)
+		static FRect MakeVertRect(Point drawsize, Vector2 location, Vector2 offset, Vector2 scale, Vector2 axis, SpriteEffects flip)
 		{
 			FRect r = new FRect();
 
-			Vector2 vloc = GetDrawLocation(drawsize, location, axis, scale, stretch, flip) + offset;
+			Vector2 vloc = GetDrawLocation(drawsize, location, axis, scale, flip) + offset;
 			r.X = vloc.X;
 			r.Y = vloc.Y;
-			r.Width = drawsize.X * scale.X * stretch.X;
-			r.Height = drawsize.Y * scale.Y * stretch.Y;
+			r.Width = drawsize.X * scale.X;
+			r.Height = drawsize.Y * scale.Y;
 
 			return r;
 		}
 
-		public static Vector2 GetDrawLocation(Point drawsize, Vector2 location, Vector2 axis, Vector2 scale, Vector2 stretch, SpriteEffects flip)
+		public static Vector2 GetDrawLocation(Point drawsize, Vector2 location, Vector2 axis, Vector2 scale, SpriteEffects flip)
 		{
 			Vector2 drawlocation = location - new Vector2(0.5f, 0.5f);
 
 			if ((flip & SpriteEffects.FlipHorizontally) != 0)
 			{
-				drawlocation.X -= (drawsize.X - axis.X - 1) * scale.X * stretch.X;
+				drawlocation.X -= (drawsize.X - axis.X - 1) * scale.X;
 			}
 			else
 			{
-				drawlocation.X -= axis.X * scale.X * stretch.X;
+				drawlocation.X -= axis.X * scale.X;
 			}
 
 			if ((flip & SpriteEffects.FlipVertically) != 0)
 			{
-				drawlocation.Y -= (drawsize.Y - axis.Y - 1) * scale.Y * stretch.Y;
+				drawlocation.Y -= (drawsize.Y - axis.Y - 1) * scale.Y;
 			}
 			else
 			{
-				drawlocation.Y -= axis.Y * scale.Y * stretch.Y;
+				drawlocation.Y -= axis.Y * scale.Y;
 			}
 
 			return drawlocation;

@@ -6,67 +6,67 @@ namespace xnaMugen.Evaluation
 	{
 		None,
 
-		[BinaryOperatorMapping("||", typeof(Operations.LogicOr), 0)]
-		LogicOr,
+		[BinaryOperatorMapping("||", "LogicalOr", 0)]
+		LogicalOr,
 
-		[BinaryOperatorMapping("^^", typeof(Operations.LogicXor), 1)]
-		LogicXor,
+		[BinaryOperatorMapping("^^", "LogicalXor", 1)]
+		LogicalXor,
 
-		[BinaryOperatorMapping("&&", typeof(Operations.LogicAnd), 2)]
-		LogicAnd,
+		[BinaryOperatorMapping("&&", "LogicalAnd", 2)]
+		LogicalAnd,
 
-		[BinaryOperatorMapping("|", typeof(Operations.BitOr), 3)]
-		BitOr,
+		[BinaryOperatorMapping("|", "BinaryOr", 3)]
+		BinaryOr,
 
-		[BinaryOperatorMapping("^", typeof(Operations.BitXor), 4)]
-		BitXor,
+		[BinaryOperatorMapping("^", "BinaryXor", 4)]
+		BinaryXor,
 
-		[BinaryOperatorMapping("&", typeof(Operations.BitAnd), 5)]
-		BitAnd,
+		[BinaryOperatorMapping("&", "BinaryAnd", 5)]
+		BinaryAnd,
 
-		[BinaryOperatorMapping("=", typeof(Operations.Equality), 6)]
+		[BinaryOperatorMapping("=", "op_Equality", 6)]
 		Equals,
 
-		[BinaryOperatorMapping("!=", typeof(Operations.Inequality), 6)]
+		[BinaryOperatorMapping("!=", "op_Inequality", 6)]
 		NotEquals,
 
-		[BinaryOperatorMapping("<", typeof(Operations.LesserThan), 7)]
+		[BinaryOperatorMapping("<", "op_LessThan", 7)]
 		Lesser,
 
-		[BinaryOperatorMapping("<=", typeof(Operations.LesserEquals), 7)]
+		[BinaryOperatorMapping("<=", "op_LessThanOrEqual", 7)]
 		LesserEquals,
 
-		[BinaryOperatorMapping(">", typeof(Operations.GreaterThan), 7)]
+		[BinaryOperatorMapping(">", "op_GreaterThan", 7)]
 		Greater,
 
-		[BinaryOperatorMapping(">=", typeof(Operations.GreaterEquals), 7)]
+		[BinaryOperatorMapping(">=", "op_GreaterThanOrEqual", 7)]
 		GreaterEquals,
 
-		[BinaryOperatorMapping("+", typeof(Operations.Addition), 8)]
+		[BinaryOperatorMapping("+", "op_Addition", 8)]
 		Plus,
 
-		[BinaryOperatorMapping("-", typeof(Operations.Substraction), 8)]
+		[BinaryOperatorMapping("-", "op_Subtraction", 8)]
 		Minus,
 
-		[BinaryOperatorMapping("/", typeof(Operations.Division), 9)]
+		[BinaryOperatorMapping("/", "op_Division", 9)]
 		Divide,
 
-		[BinaryOperatorMapping("*", typeof(Operations.Multiplication), 9)]
+		[BinaryOperatorMapping("*", "op_Multiply", 9)]
 		Multiply,
 
-		[BinaryOperatorMapping("%", typeof(Operations.Modulus), 9)]
+		[BinaryOperatorMapping("%", "op_Modulus", 9)]
 		Modulus,
 
-		[BinaryOperatorMapping("**", typeof(Operations.Exponent), 10)]
+		[BinaryOperatorMapping("**", "Power", 10)]
 		Exponent,
 
-		[BinaryOperatorMapping(":=", typeof(Operations.Assignment), 11)]
+		[BinaryOperatorMapping(":=", "_Assignment", 11)]
 		Assignment,
 
-		[FunctionMapping("!", typeof(Operations.LogicNot))]
-		LogicNot,
+		[UnaryOperatorMappingAttribute("!", "LogicalNot")]
+		LogicalNot,
 
-		[FunctionMapping("~", typeof(Operations.BitNot))]
+		[UnaryOperatorMappingAttribute("~", "BinaryNot")]
 		BitNot
 	}
 }

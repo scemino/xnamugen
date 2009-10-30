@@ -29,9 +29,7 @@ namespace xnaMugen.IO
 		public override void Initialize()
 		{
 #if FRANTZX
-			if (Environment.UserDomainName == "OmegaPlus") Directory.SetCurrentDirectory(@"D:\WinMugen");
-
-            if (Environment.UserDomainName == "Omega7") Directory.SetCurrentDirectory(@"D:\WinMugen");
+            Directory.SetCurrentDirectory(@"D:\WinMugen");
 #endif
 
 			Log.Write(LogLevel.Normal, LogSystem.FileSystem, "Base Directory: {0}", Directory.GetCurrentDirectory());

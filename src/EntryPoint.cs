@@ -1,6 +1,8 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("Assembly")]
+
 namespace xnaMugen
 {
 	/// <summary>

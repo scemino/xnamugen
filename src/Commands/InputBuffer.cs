@@ -43,18 +43,12 @@ namespace xnaMugen.Commands
 			m_buffer.Add(new InputElement(array, facing));
 		}
 
-		public InputElement Get(Int32 index)
-		{
-			return m_buffer.ReverseGet(index);
-		}
-
 		public ButtonState GetState(Int32 index, CommandElement element)
 		{
 			if (index < 0 || index >= Size) throw new ArgumentNullException("index");
 
-#if true
-			InputElement current = Get(index);
-			InputElement previous = (index != Size - 1) ? Get(index + 1) : new InputElement();
+			InputElement current = m_buffer.ReverseGet(index);
+			InputElement previous = (index != Size - 1) ? m_buffer.ReverseGet(index + 1) : new InputElement();
 
 			Boolean current_state = GetCommandButtonState(current, element.Buttons) && GetCommandDirectionState(current, element.Direction);
 			Boolean previous_state = GetCommandButtonState(previous, element.Buttons) && GetCommandDirectionState(previous, element.Direction);
@@ -63,17 +57,6 @@ namespace xnaMugen.Commands
 			else if (current_state == false && previous_state == true) return ButtonState.Released;
 			else if (current_state == true && previous_state == false) return ButtonState.Pressed;
 			return ButtonState.Down;
-
-#else
-			if (element.Direction == CommandDirection.None)
-			{
-				return GetButtonState(index, element.Buttons);
-			}
-			else
-			{
-				return GetButtonState(index, element.Direction);
-			}
-#endif
 		}
 
 		public Boolean AreIdentical(Int32 start, Int32 end)
@@ -81,44 +64,10 @@ namespace xnaMugen.Commands
 			if (start < 0 || start >= Size) throw new ArgumentOutOfRangeException("start");
 			if (end < 0 || end >= Size) throw new ArgumentOutOfRangeException("end");
 
-			InputElement match = Get(start);
-			for (Int32 i = start + 1; i < end; ++i) if (match != Get(i)) return false;
+			InputElement match = m_buffer.ReverseGet(start);
+			for (Int32 i = start + 1; i < end; ++i) if (match != m_buffer.ReverseGet(i)) return false;
 
 			return true;
-		}
-
-		ButtonState GetButtonState(Int32 index, CommandButton button)
-		{
-			if (index < 0 || index >= Size) throw new ArgumentOutOfRangeException("index");
-			if (button == CommandButton.None) throw new ArgumentException("button");
-
-			InputElement current = Get(index);
-			InputElement previous = (index != Size - 1) ? Get(index + 1) : new InputElement();
-
-			Boolean current_state = GetCommandButtonState(current, button);
-			Boolean previous_state = GetCommandButtonState(previous, button);
-
-			if (current_state == false && previous_state == false) return ButtonState.Up;
-			else if (current_state == false && previous_state == true) return ButtonState.Released;
-			else if (current_state == true && previous_state == false) return ButtonState.Pressed;
-			return ButtonState.Down;
-		}
-
-		ButtonState GetButtonState(Int32 index, CommandDirection direction)
-		{
-			if (index < 0 || index >= Size) throw new ArgumentOutOfRangeException("index");
-			if (direction == CommandDirection.None) throw new ArgumentException("direction");
-
-			InputElement current = Get(index);
-			InputElement previous = (index != Size - 1) ? Get(index + 1) : new InputElement();
-
-			Boolean current_state = GetCommandDirectionState(current, direction);
-			Boolean previous_state = GetCommandDirectionState(previous, direction);
-
-			if (current_state == false && previous_state == false) return ButtonState.Up;
-			else if (current_state == false && previous_state == true) return ButtonState.Released;
-			else if (current_state == true && previous_state == false) return ButtonState.Pressed;
-			return ButtonState.Down;
 		}
 
 		Boolean GetCommandButtonState(InputElement element, CommandButton button)

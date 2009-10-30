@@ -33,59 +33,58 @@ namespace xnaMugen.Collections
 			if (capacity <= 0) throw new ArgumentOutOfRangeException("Capacity must be greater than zero");
 
 			m_capacity = capacity;
-			Data = new T[Capacity];
+			m_data = new T[m_capacity];
 
 			Clear();
 		}
 
 		public void Clear()
 		{
-			Size = 0;
-			WritePosition = 0;
-			ReadPosition = 0;
-			WrapAround = false;
+			m_size = 0;
+			m_writeposition = 0;
+			m_readposition = 0;
+			m_wraparound = false;
 		}
 
 		public void Add(T obj)
 		{
-			Data[WritePosition] = obj;
-			++WritePosition;
+			m_data[m_writeposition] = obj;
+			++m_writeposition;
 
-			if (WrapAround == false)
+			if (m_wraparound == false)
 			{
-				++Size;
+				++m_size;
 			}
 			else
 			{
-				++ReadPosition;
-				if (ReadPosition == Capacity) ReadPosition = 0;
+				++m_readposition;
+				if (m_readposition == m_capacity) m_readposition = 0;
 			}
 
-			if (WritePosition == Capacity)
+			if (m_writeposition == m_capacity)
 			{
-				WritePosition = 0;
-				WrapAround = true;
+				m_writeposition = 0;
+				m_wraparound = true;
 			}
 		}
 
 		public T Get(Int32 index)
 		{
-			if (index < 0 || index >= Size) throw new ArgumentOutOfRangeException();
+			if (index < 0 || index >= m_size) throw new ArgumentOutOfRangeException();
 
-			return Data[(index + ReadPosition) % Capacity];
+			return m_data[(index + m_readposition) % m_capacity];
 		}
 
 		public T ReverseGet(Int32 index)
 		{
-			if (index < 0 || index >= Size) throw new ArgumentOutOfRangeException();
+			if (index < 0 || index >= m_size) throw new ArgumentOutOfRangeException();
 
-			index = Size - index - 1;
-			return Data[(index + ReadPosition) % Capacity];
+			return m_data[(m_size - index - 1 + m_readposition) % m_capacity];
 		}
 
 		public IEnumerator<T> GetEnumerator()
 		{
-			for (Int32 i = 0; i != Size; ++i)
+			for (Int32 i = 0; i != m_size; ++i)
 			{
 				yield return Get(i);
 			}
@@ -93,7 +92,7 @@ namespace xnaMugen.Collections
 
 		public IEnumerator<T> ReverseOrder()
 		{
-			for (Int32 i = 0; i != Size; ++i)
+			for (Int32 i = 0; i != m_size; ++i)
 			{
 				yield return ReverseGet(i);
 			}
@@ -101,41 +100,51 @@ namespace xnaMugen.Collections
 
 		public T[] GetCurrentBuffer()
 		{
-			T[] buffer = new T[Size];
+			T[] buffer = new T[m_size];
 
-			for (Int32 i = 0; i != Size; ++i) buffer[i] = Get(i);
+			for (Int32 i = 0; i != m_size; ++i) buffer[i] = Get(i);
 
 			return buffer;
 		}
 
 		public T[] GetCurrentReversedBuffer()
 		{
-			T[] buffer = new T[Size];
+			T[] buffer = new T[m_size];
 
-			for (Int32 i = 0; i != Size; ++i) buffer[i] = ReverseGet(i);
+			for (Int32 i = 0; i != m_size; ++i) buffer[i] = ReverseGet(i);
 
 			return buffer;
 		}
 
-		public Int32 Size { get; private set; }
+		public Int32 Size
+		{
+			get { return m_size; }
+		}
 
 		public Int32 Capacity
 		{
 			get { return m_capacity; }
 		}
 
-		Int32 WritePosition { get; set; }
-
-		Int32 ReadPosition { get; set; }
-
-		Boolean WrapAround { get; set; }
-
-		T[] Data { get; set; }
-
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		readonly Int32 m_capacity;
+
+		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+		T[] m_data;
+
+		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+		Boolean m_wraparound;
+
+		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+		Int32 m_readposition;
+
+		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+		Int32 m_writeposition;
+
+		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+		Int32 m_size;
 
 		#endregion
 	}

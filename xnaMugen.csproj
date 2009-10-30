@@ -307,13 +307,9 @@
     <Compile Include="src\Evaluation\Attributes.cs" />
     <Compile Include="src\Evaluation\EvaluationSystem.cs" />
     <Compile Include="src\Evaluation\Expression.cs" />
-    <Compile Include="src\Evaluation\Function.cs" />
     <Compile Include="src\Evaluation\IExpression.cs" />
-    <Compile Include="src\Evaluation\IFunction.cs" />
     <Compile Include="src\Evaluation\Node.cs" />
     <Compile Include="src\Evaluation\Number.cs" />
-    <Compile Include="src\Evaluation\NumberReturn.cs" />
-    <Compile Include="src\Evaluation\Operations.cs" />
     <Compile Include="src\Evaluation\Operators.cs" />
     <Compile Include="src\Evaluation\ParseState.cs" />
     <Compile Include="src\Evaluation\PrefixedExpression.cs" />
@@ -323,6 +319,7 @@
     <Compile Include="src\Evaluation\Tokenizer.cs" />
     <Compile Include="src\Evaluation\TokenizerData.cs" />
     <Compile Include="src\Evaluation\TreeBuilder.cs" />
+    <Compile Include="src\Evaluation\TreeCompiler.cs" />
     <Compile Include="src\Evaluation\Triggers\Abs.cs" />
     <Compile Include="src\Evaluation\Triggers\Acos.cs" />
     <Compile Include="src\Evaluation\Triggers\Alive.cs" />
@@ -435,6 +432,7 @@
     <Compile Include="src\Evaluation\Triggers\Var.cs" />
     <Compile Include="src\Evaluation\Triggers\Vel.cs" />
     <Compile Include="src\Evaluation\Triggers\Win.cs" />
+    <Compile Include="src\Evaluation\Triggers\_Assignment.cs" />
     <Compile Include="src\Events\Base.cs" />
     <Compile Include="src\Events\FadeScreen.cs" />
     <Compile Include="src\Events\SetupCombat.cs" />
@@ -599,5 +597,8 @@
     <None Include="xnaMugen.ini">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
   </ItemGroup>
 </Project>

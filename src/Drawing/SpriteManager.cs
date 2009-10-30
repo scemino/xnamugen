@@ -46,8 +46,6 @@ namespace xnaMugen.Drawing
 
 		public Sprite GetSprite(SpriteId spriteid)
 		{
-			if (m_spritefile.ContainsSprite(spriteid) == false) return null;
-
 			return m_spritefile.GetSprite(spriteid);
 		}
 

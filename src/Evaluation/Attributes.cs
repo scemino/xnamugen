@@ -3,16 +3,14 @@ using System.Diagnostics;
 
 namespace xnaMugen.Evaluation
 {
-	class TokenMappingAttribute : Attribute
+	class TagAttribute : Attribute
 	{
-		public TokenMappingAttribute(String text)
+		public TagAttribute(String text)
 		{
-			if (text == null) throw new ArgumentNullException("text");
-
 			m_text = text;
 		}
 
-		public String Text
+		public String Value
 		{
 			get { return m_text; }
 		}
@@ -25,36 +23,48 @@ namespace xnaMugen.Evaluation
 		#endregion
 	}
 
-	class FunctionMappingAttribute : TokenMappingAttribute
+	class TokenMappingAttribute : TagAttribute
 	{
-		public FunctionMappingAttribute(String text, Type type)
+		public TokenMappingAttribute(String text)
 			: base(text)
 		{
-			if (type == null) throw new ArgumentNullException("type");
+		}
+	}
 
-			m_type = type;
+	abstract class FunctionMappingAttribute : TokenMappingAttribute
+	{
+		protected FunctionMappingAttribute(String text, String name)
+			: base(text)
+		{
+			m_name = name;
 		}
 
-		public Type Type
+		public String Name
 		{
-			get { return m_type; }
+			get { return m_name; }
 		}
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Type m_type;
+		readonly String m_name;
 
 		#endregion
 	}
 
+	class UnaryOperatorMappingAttribute : FunctionMappingAttribute
+	{
+		public UnaryOperatorMappingAttribute(String text, String name)
+			: base(text, name)
+		{
+		}
+	}
+
 	class BinaryOperatorMappingAttribute : FunctionMappingAttribute
 	{
-		public BinaryOperatorMappingAttribute(String text, Type type, Int32 precedence)
-			: base(text, type)
+		public BinaryOperatorMappingAttribute(String text, String name, Int32 precedence)
+			: base(text, name)
 		{
-			if (precedence < 0) throw new ArgumentOutOfRangeException("precedence");
-
 			m_precedence = precedence;
 		}
 
@@ -71,25 +81,11 @@ namespace xnaMugen.Evaluation
 		#endregion
 	}
 
-	class CustomFunctionAttribute : Attribute
+	class CustomFunctionAttribute : FunctionMappingAttribute
 	{
 		public CustomFunctionAttribute(String text)
+			: base(text, text)
 		{
-			if (text == null) throw new ArgumentNullException("text");
-
-			m_text = text;
 		}
-
-		public String Text
-		{
-			get { return m_text; }
-		}
-
-		#region Fields
-
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly String m_text;
-
-		#endregion
 	}
 }

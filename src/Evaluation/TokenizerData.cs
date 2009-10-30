@@ -228,7 +228,7 @@ namespace xnaMugen.Evaluation.Tokenizing
 
 	class BinaryOperatorData : OperatorData
 	{
-		public BinaryOperatorData(Operator @operator, String text, Int32 precedence, String functionname)
+		public BinaryOperatorData(Operator @operator, String text, String functionname, Int32 precedence)
 			: base(@operator, text, functionname)
 		{
 			if (precedence < 0) throw new ArgumentOutOfRangeException("precedence");
@@ -251,29 +251,33 @@ namespace xnaMugen.Evaluation.Tokenizing
 
 	class CustomFunctionData : NodeData
 	{
-		public CustomFunctionData(String text, String functionname)
-			: base(text, functionname)
+		public CustomFunctionData(String text, String name, Type type)
+			: base(text, name)
 		{
-			var methodinfo = Type.GetType(functionname).GetMethod("Parse");
-
-			m_function = (NodeParse)Delegate.CreateDelegate(typeof(NodeParse), methodinfo);
+			m_type = type;
+			m_parse = (NodeParse)Delegate.CreateDelegate(typeof(NodeParse), type.GetMethod("Parse", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public));
 		}
 
-		public Node Parse(ParseState state)
+		public Type Type
 		{
-			if (state == null) throw new ArgumentNullException("state");
+			get { return m_type; }
+		}
 
-			return m_function(state);
+		public NodeParse Parse
+		{
+			get { return m_parse; }
 		}
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly NodeParse m_function;
+		readonly Type m_type;
+
+		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+		readonly NodeParse m_parse;
 
 		#endregion
 	}
-
 
 	class RangeData : TokenData
 	{

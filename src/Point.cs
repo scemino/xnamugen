@@ -159,32 +159,12 @@ namespace xnaMugen
 		/// The X coordinate of the location this instance represents in space.
 		/// </summary>
 		/// <returns>The X coordinate.</returns>
-		public Int32 X
-		{
-			get { return m_x; }
-
-			set { m_x = value; }
-		}
+		public Int32 X;
 
 		/// <summary>
 		/// The Y coordinate of the location this instance represents in space.
 		/// </summary>
 		/// <returns>The Y coordinate.</returns>
-		public Int32 Y
-		{
-			get { return m_y; }
-
-			set { m_y = value; }
-		}
-
-		#region Fields
-
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Int32 m_x;
-
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Int32 m_y;
-
-		#endregion
+		public Int32 Y;
 	}
 }

@@ -9,10 +9,10 @@ namespace xnaMugen.Video
 {
 	struct FRect
 	{
-		public Single X { get; set; }
-		public Single Y { get; set; }
-		public Single Width { get; set; }
-		public Single Height { get; set; }
+		public Single X;
+		public Single Y;
+		public Single Width;
+		public Single Height;
 
 		public Single Left { get { return X; } }
 		public Single Right { get { return X + Width; } }

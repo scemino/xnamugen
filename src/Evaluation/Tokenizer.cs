@@ -19,7 +19,7 @@ namespace xnaMugen.Evaluation
 			m_tokenmap = BuildTokenMapping();
 		}
 
-		static public Dictionary<String, TokenData> BuildTokenMapping()
+		Dictionary<String, TokenData> BuildTokenMapping()
 		{
 			Dictionary<String, TokenData> mapping = new Dictionary<String, TokenData>(StringComparer.OrdinalIgnoreCase);
 
@@ -29,15 +29,15 @@ namespace xnaMugen.Evaluation
 				if (bom_attrib != null)
 				{
 					Operator @operator = (Operator)field.GetValue(null);
-					mapping.Add(bom_attrib.Text, new Tokenizing.BinaryOperatorData(@operator, bom_attrib.Text, bom_attrib.Precedence, bom_attrib.Type.FullName));
+					mapping.Add(bom_attrib.Value, new Tokenizing.BinaryOperatorData(@operator, bom_attrib.Value, bom_attrib.Name, bom_attrib.Precedence));
 				}
 				else
 				{
-					FunctionMappingAttribute fm_attr = (FunctionMappingAttribute)Attribute.GetCustomAttribute(field, typeof(FunctionMappingAttribute));
+					UnaryOperatorMappingAttribute fm_attr = (UnaryOperatorMappingAttribute)Attribute.GetCustomAttribute(field, typeof(UnaryOperatorMappingAttribute));
 					if (fm_attr != null)
 					{
 						Operator @operator = (Operator)field.GetValue(null);
-						mapping.Add(fm_attr.Text, new Tokenizing.UnaryOperatorData(@operator, fm_attr.Text, fm_attr.Type.FullName));
+						mapping.Add(fm_attr.Value, new Tokenizing.UnaryOperatorData(@operator, fm_attr.Value, fm_attr.Name));
 					}
 				}
 			}
@@ -48,18 +48,18 @@ namespace xnaMugen.Evaluation
 				if (attr != null)
 				{
 					Symbol symbol = (Symbol)field.GetValue(null);
-					mapping.Add(attr.Text, new Tokenizing.SymbolData(symbol, attr.Text));
+					mapping.Add(attr.Value, new Tokenizing.SymbolData(symbol, attr.Value));
 				}
 			}
 
 			foreach (Type type in Assembly.GetExecutingAssembly().GetTypes())
 			{
-				if (type.IsAbstract == true || type.IsClass == false || type.IsInterface == true) continue;
+				if (type.IsAbstract == false || type.IsClass == false) continue;
 
 				CustomFunctionAttribute attr = (CustomFunctionAttribute)Attribute.GetCustomAttribute(type, typeof(CustomFunctionAttribute));
 				if (attr == null) continue;
 
-				mapping.Add(attr.Text, new Tokenizing.CustomFunctionData(attr.Text, type.FullName));
+				mapping.Add(attr.Value, new Tokenizing.CustomFunctionData(attr.Value, attr.Value, type));
 			}
 
 			return mapping;

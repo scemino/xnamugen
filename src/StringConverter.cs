@@ -463,15 +463,6 @@ namespace xnaMugen
 			return Failure;
 		}
 
-		[StringConversion(typeof(PlayerControl))]
-		Object ToPlayerControl(String s)
-		{
-			Int32 intvalue;
-			if (TryConvert<Int32>(s, out intvalue) == false) return Failure;
-
-			return (intvalue > 0) ? PlayerControl.InControl : PlayerControl.NoControl;
-		}
-
 		[StringConversion(typeof(Combat.HitFlag))]
 		Object ToHitFlag(String s)
 		{

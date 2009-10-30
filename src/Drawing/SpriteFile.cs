@@ -30,13 +30,6 @@ namespace xnaMugen.Drawing
 			return Filepath;
 		}
 
-		public Boolean ContainsSprite(SpriteId id)
-		{
-			if (id == SpriteId.Invalid) return false;
-
-			return m_collection.GetData(id) != null;
-		}
-
 		Boolean TryGetSpriteData(SpriteId id, out SpriteFileData data, out Int32 dataindex)
 		{
 			data = null;
@@ -63,7 +56,7 @@ namespace xnaMugen.Drawing
 
 			SpriteFileData data;
 			Int32 dataindex;
-			if (TryGetSpriteData(id, out data, out dataindex) == false || data.Killbit == true) return null;
+			if (TryGetSpriteData(id, out data, out dataindex) == false) return null;
 
 			Point size;
 			Texture2D pixels;
@@ -79,7 +72,7 @@ namespace xnaMugen.Drawing
 				{
 					Log.Write(LogLevel.Warning, LogSystem.SpriteSystem, "Cannot load PCX image data from '{0}' for sprite #{1}", Filepath, id);
 
-					data.Killbit = true;
+					data.IsValid = false;
 					return null;
 				}
 

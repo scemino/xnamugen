@@ -16,6 +16,9 @@ namespace xnaMugen.Menus
 		public SelectScreen(MenuSystem screensystem, TextSection textsection, String spritepath, String animationpath, String soundpath)
 			: base(screensystem, textsection, spritepath, animationpath, soundpath)
 		{
+			m_selectmap = new Dictionary<Point, PlayerSelect>();
+			m_selectmovemap = new Dictionary<Point, PlayerSelect>();
+
 			m_gridsize = new Point();
 			m_gridsize.X = textsection.GetAttribute<Int32>("columns");
 			m_gridsize.Y = textsection.GetAttribute<Int32>("rows");
@@ -47,7 +50,7 @@ namespace xnaMugen.Menus
 			m_isdone = false;
 			m_stagedisplaybuilder = new StringBuilder();
 
-			#warning Hack for now
+#warning Hack for now
 			VersusMode = "Versus Mode";
 		}
 
@@ -357,16 +360,31 @@ namespace xnaMugen.Menus
 		{
 			if (location.X < 0 || location.X >= m_gridsize.X || location.Y < 0 || location.Y >= m_gridsize.Y) return null;
 
+			PlayerSelect select = null;
+			Dictionary<Point, PlayerSelect> map = movement ? m_selectmovemap : m_selectmap;
+
+			if (map.TryGetValue(location, out select) == true) return select;
+
 			Int32 index = 0;
+			ListIterator<PlayerSelect> profiles = PlayerProfiles;
+
 			for (Int32 y = 0; y != m_gridsize.Y; ++y)
 			{
 				for (Int32 x = 0; x != m_gridsize.X; ++x)
 				{
-					PlayerSelect selection = (index < PlayerProfiles.Count) ? PlayerProfiles[index] : null;
+					PlayerSelect selection = (index < profiles.Count) ? profiles[index] : null;
 					++index;
 
-					if (selection == null && (movement == true && m_moveoveremptyboxes == false)) continue;
-					if (location == new Point(x, y)) return selection;
+					if (location == new Point(x, y))
+					{
+						if (selection == null && movement == true && m_moveoveremptyboxes == false) return null;
+
+						map[location] = selection;
+						return selection;
+					}
+
+					//if (selection == null && movement == true && m_moveoveremptyboxes == false) continue;
+					//if (location == new Point(x, y)) return selection;
 				}
 			}
 
@@ -480,6 +498,12 @@ namespace xnaMugen.Menus
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		Boolean m_isdone;
+
+		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+		readonly Dictionary<Point, PlayerSelect> m_selectmap;
+
+		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+		readonly Dictionary<Point, PlayerSelect> m_selectmovemap;
 
 		#endregion
 	}

@@ -14,7 +14,7 @@ namespace xnaMugen.Drawing
 			m_id = id;
 			m_sharedindex = sharedindex;
 			m_copylastpalette = copylastpalette;
-			m_killbit = false;
+			m_isvalid = null;
 		}
 
 		public Int32 FileOffset
@@ -47,11 +47,11 @@ namespace xnaMugen.Drawing
 			get { return m_copylastpalette; }
 		}
 
-		public Boolean Killbit
+		public Boolean? IsValid
 		{
-			get { return m_killbit; }
+			get { return m_isvalid; }
 
-			set { m_killbit = value; }
+			set { m_isvalid = value; }
 		}
 
 		#region Fields
@@ -75,7 +75,7 @@ namespace xnaMugen.Drawing
 		readonly Boolean m_copylastpalette;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Boolean m_killbit;
+		Boolean? m_isvalid;
 
 		#endregion
 	}

@@ -16,8 +16,8 @@ namespace xnaMugen
 		[DebuggerStepThrough]
 		public SpriteId(Int32 group, Int32 image)
 		{
-			m_group = group;
-			m_image = image;
+			Group = group;
+			Image = image;
 		}
 
 		/// <summary>
@@ -118,28 +118,12 @@ namespace xnaMugen
 		/// The Group number of this instance.
 		/// </summary>
 		/// <returns>The Group number.</returns>
-		public Int32 Group
-		{
-			get { return m_group; }
-		}
+		public readonly Int32 Group;
 
 		/// <summary>
 		/// The Image number of this instance.
 		/// </summary>
 		/// <returns>The Image number.</returns>
-		public Int32 Image
-		{
-			get { return m_image; }
-		}
-
-		#region Fields
-
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Int32 m_group;
-
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Int32 m_image;
-
-		#endregion
+		public readonly Int32 Image;
 	}
 }

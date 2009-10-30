@@ -49,8 +49,10 @@ namespace xnaMugen.StateMachine
 
 			if (state.Physics != Physics.Unchanged) Character.Physics = state.Physics;
 			if (state.StateType != StateType.Unchanged) Character.StateType = state.StateType;
-			if (state.PlayerControl != PlayerControl.Unchanged) Character.PlayerControl = state.PlayerControl;
 			if (state.MoveType != MoveType.Unchanged) Character.MoveType = state.MoveType;
+
+			Int32? playercontrol = EvaluationHelper.AsInt32(m_character, state.PlayerControl, null);
+			if (playercontrol != null) Character.PlayerControl = (playercontrol > 0) ? PlayerControl.InControl : PlayerControl.NoControl;
 
 			Int32? animationnumber = EvaluationHelper.AsInt32(m_character, state.AnimationNumber, null);
 			if (animationnumber != null) Character.SetLocalAnimation(animationnumber.Value, 0);
