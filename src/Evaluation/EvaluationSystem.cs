@@ -119,9 +119,4 @@ namespace xnaMugen.Evaluation
 
 		#endregion
 	}
-
-	interface IFunction
-	{
-		Number Evaluate(Object state);
-	}
 }

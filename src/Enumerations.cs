@@ -20,7 +20,7 @@ namespace xnaMugen
 
 	enum GameSpeed { Normal, Slow }
 
-	enum DrawMode { None, Normal, Font, OutlinedRectangle, Lines, Shadow }
+	enum DrawMode { None, Normal, Font, OutlinedRectangle, FilledRectangle, Lines }
 
 	enum CollisionType { None, PlayerPush, CharacterHit, ProjectileHit, ProjectileCollision }
 

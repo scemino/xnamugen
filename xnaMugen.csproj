@@ -308,6 +308,7 @@
     <Compile Include="src\Evaluation\EvaluationSystem.cs" />
     <Compile Include="src\Evaluation\Expression.cs" />
     <Compile Include="src\Evaluation\IExpression.cs" />
+    <Compile Include="src\Evaluation\IFunction.cs" />
     <Compile Include="src\Evaluation\Node.cs" />
     <Compile Include="src\Evaluation\Number.cs" />
     <Compile Include="src\Evaluation\Operators.cs" />

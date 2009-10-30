@@ -72,22 +72,12 @@ namespace xnaMugen.Combat
 			if (hitdef == null) throw new ArgumentNullException("hitdef");
 			if (attacker == null) throw new ArgumentNullException("attacker");
 
-<<<<<<< .mine
 			Boolean alreadyfalling = IsFalling;
-=======
-			Boolean beinghit = m_character.MoveType == MoveType.BeingHit;
-
-            HitDef.Set(hitdef);
-            Attacker = attacker;
-            Blocked = blocked;
-            HitStateType = m_character.StateType;
->>>>>>> .r55
 
 			HitDef.Set(hitdef);
 			Attacker = attacker;
 			Blocked = blocked;
 
-<<<<<<< .mine
 			if (alreadyfalling == true)
 			{
 				HitDef.Fall = true;
@@ -96,18 +86,6 @@ namespace xnaMugen.Combat
 			{
 				m_character.JugglePoints = m_character.BasePlayer.Constants.AirJuggle;
 			}
-=======
-            if (blocked == true)
-            {
-                HitShakeTime = HitDef.GuardShakeTime;
-                m_character.BasePlayer.Power += HitDef.P2GuardPowerAdjustment;
-            }
-            else
-            {
-				HitCount = beinghit ? HitCount + 1 : 1;
-                HitShakeTime = HitDef.ShakeTime;
-                m_character.BasePlayer.Power += HitDef.P2HitPowerAdjustment;
->>>>>>> .r55
 
 			HitCount = (m_character.MoveType == MoveType.BeingHit) ? HitCount + 1 : 1;
 			HitStateType = m_character.StateType;
