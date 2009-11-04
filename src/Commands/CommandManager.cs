@@ -20,14 +20,15 @@ namespace xnaMugen.Commands
 			m_commandsystem = commandsystem;
 			m_filepath = filepath;
 			m_commands = commands;
-			m_activecommands = new Dictionary<String, BufferCount>(StringComparer.Ordinal);
+			m_commandcount = new Dictionary<String, BufferCount>(StringComparer.Ordinal);
 			m_inputbuffer = new InputBuffer();
+			m_activecommands = new List<String>();
 
 			foreach (Command command in Commands)
 			{
-				if (m_activecommands.ContainsKey(command.Name) == true) continue;
+				if (m_commandcount.ContainsKey(command.Name) == true) continue;
 
-				m_activecommands.Add(command.Name, new BufferCount());
+				m_commandcount.Add(command.Name, new BufferCount());
 			}
 		}
 
@@ -40,15 +41,17 @@ namespace xnaMugen.Commands
 		{
 			m_activecommands.Clear();
 			m_inputbuffer.Reset();
+
+			foreach (var data in m_commandcount) data.Value.Reset();
 		}
 
-		public void Update(ButtonArray input, Facing facing, Boolean paused)
+		public void Update(PlayerButton input, Facing facing, Boolean paused)
 		{
 			m_inputbuffer.Add(input, facing);
 
 			if (paused == false)
 			{
-				foreach (BufferCount count in m_activecommands.Values) count.Tick();
+				foreach (BufferCount count in m_commandcount.Values) count.Tick();
 			}
 
 			foreach (Command command in Commands)
@@ -60,19 +63,19 @@ namespace xnaMugen.Commands
 					Int32 time = command.BufferTime;
 					if (paused == true) ++time;
 
-					m_activecommands[command.Name].Set(time);
+					m_commandcount[command.Name].Set(time);
 				}
 			}
+
+			m_activecommands.Clear();
+			foreach (var data in m_commandcount) if (data.Value.IsActive == true) m_activecommands.Add(data.Key);
 		}
 
 		public Boolean IsActive(String commandname)
 		{
 			if (commandname == null) throw new ArgumentNullException("commandname");
 
-			if (m_activecommands.ContainsKey(commandname) == false) return false;
-
-			Boolean active = m_activecommands[commandname].IsActive;
-			return active;
+			return m_activecommands.Contains(commandname);
 		}
 
 		ReadOnlyList<Command> Commands
@@ -96,8 +99,11 @@ namespace xnaMugen.Commands
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		readonly ReadOnlyList<Command> m_commands;
 
-		//[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Dictionary<String, BufferCount> m_activecommands;
+		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+		readonly Dictionary<String, BufferCount> m_commandcount;
+
+		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+		readonly List<String> m_activecommands;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		readonly InputBuffer m_inputbuffer;

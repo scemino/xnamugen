@@ -28,7 +28,7 @@ namespace xnaMugen.Combat
 			m_jugglepoints = 0;
 			m_variables = new CharacterVariables();
 			m_clipboard = new StringBuilder();
-			m_buttonarray = new Commands.ButtonArray();
+			m_currentinput = PlayerButton.None;
 			m_pushflag = false;
 			m_drawscale = Vector2.One;
 			m_offensiveinfo = new OffensiveInfo(this);
@@ -53,7 +53,7 @@ namespace xnaMugen.Combat
 			m_jugglepoints = 0;
 			m_variables.Reset();
 			m_clipboard.Length = 0;
-			m_buttonarray = new Commands.ButtonArray();
+			m_currentinput = PlayerButton.None;
 			m_pushflag = false;
 			m_drawscale = Vector2.One;
 			m_offensiveinfo.Reset();
@@ -188,12 +188,19 @@ namespace xnaMugen.Combat
 
 		public override void UpdateInput()
 		{
-			CommandManager.Update(m_buttonarray, CurrentFacing, InHitPause);
+			CommandManager.Update(m_currentinput, CurrentFacing, InHitPause);
 		}
 
 		public virtual void RecieveInput(PlayerButton button, Boolean pressed)
 		{
-			m_buttonarray[button] = pressed;
+			if (pressed)
+			{
+				m_currentinput |= button;
+			}
+			else
+			{
+				m_currentinput &= ~button;
+			}
 		}
 
 		void DoFriction()
@@ -741,7 +748,7 @@ namespace xnaMugen.Combat
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Commands.ButtonArray m_buttonarray;
+		PlayerButton m_currentinput;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		Physics m_physics;

@@ -21,17 +21,29 @@ namespace xnaMugen.StateMachine
 			m_character = character;
 			m_states = states;
 			m_persistencemap = new Dictionary<StateController, Int32>();
-			m_stateorder = new CircularBuffer<State>(10);
 			m_foreignmanager = null;
 			m_statetime = 0;
+
+#if DEBUG
+			m_stateorder = new CircularBuffer<State>(10);
+#else
+			m_currentstate = null;
+			m_previousstate = null;
+#endif
 		}
 
 		public void Clear()
 		{
 			m_foreignmanager = null;
 			m_persistencemap.Clear();
-			m_stateorder.Clear();
 			m_statetime = 0;
+
+#if DEBUG
+			m_stateorder.Clear();
+#else
+			m_currentstate = null;
+			m_previousstate = null;
+#endif
 		}
 
 		public StateManager Clone(Combat.Character character)
@@ -101,13 +113,12 @@ namespace xnaMugen.StateMachine
 				return false;
 			}
 
-			if (CurrentState != null && CurrentState.Number == 5100 && state.Number == 1996)
-			{ }
-
-			if (state.Number == 1998)
-			{ }
-
+#if DEBUG
 			m_stateorder.Add(state);
+#else
+			m_previousstate = m_currentstate;
+			m_currentstate = state;
+#endif
 			m_statetime = -1;
 			return true;
 		}
@@ -237,18 +248,34 @@ namespace xnaMugen.StateMachine
 
 		public State CurrentState
 		{
-			get { return (StateOrder.Size > 0) ? StateOrder.ReverseGet(0) : null; }
+			get 
+			{
+#if DEBUG
+				return (StateOrder.Size > 0) ? StateOrder.ReverseGet(0) : null; 
+#else
+				return m_currentstate;
+#endif
+			}
 		}
 
 		public State PreviousState
 		{
-			get { return (StateOrder.Size > 1) ? StateOrder.ReverseGet(1) : null; }
+			get
+			{
+#if DEBUG
+				return (StateOrder.Size > 1) ? StateOrder.ReverseGet(1) : null; 
+#else
+				return m_previousstate;
+#endif
+			}
 		}
 
+#if DEBUG
 		CircularBuffer<State> StateOrder
 		{
 			get { return m_stateorder; }
 		}
+#endif
 
 		public StateManager ForeignManager
 		{
@@ -271,8 +298,16 @@ namespace xnaMugen.StateMachine
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		readonly Dictionary<StateController, Int32> m_persistencemap;
 
+#if DEBUG
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		readonly CircularBuffer<State> m_stateorder;
+#else
+		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+		State m_currentstate;
+
+		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+		State m_previousstate;
+#endif
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		StateManager m_foreignmanager;

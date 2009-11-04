@@ -33,7 +33,7 @@ namespace xnaMugen.Evaluation
 		[DebuggerStepThrough]
 		public Boolean IsValid(Int32 index)
 		{
-			if (index < 0 || index >= Count || this[index].NumberType == NumberType.None) return false;
+			if (index < 0 || index >= m_data.Count || this[index].NumberType == NumberType.None) return false;
 			return true;
 		}
 

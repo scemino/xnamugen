@@ -7,8 +7,19 @@ namespace xnaMugen.Evaluation
 	{
 		[DebuggerStepThrough]
 		public Number(Boolean value)
-			: this(value ? 1 : 0)
 		{
+			NumberType = NumberType.Int;
+
+			if (value)
+			{
+				IntValue = 1;
+				FloatValue = 1;
+			}
+			else
+			{
+				IntValue = 0;
+				FloatValue = 0;
+			}
 		}
 
 		[DebuggerStepThrough]

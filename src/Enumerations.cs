@@ -58,7 +58,8 @@ namespace xnaMugen
 
 	enum PrintJustification { Left, Right, Center }
 
-	enum PlayerButton { None = 0, A, B, C, X, Y, Z, Up, Down, Left, Right, Taunt, Pause }
+	[Flags]
+	enum PlayerButton { None = 0, Up = 1, Down = 2, Left = 4, Right = 8, A = 16, B = 32, C = 64, X = 128, Y = 256, Z = 512, Taunt = 1024, Pause = 2048 }
 
 	enum SystemButton { None, Pause, PauseStep, Quit, DebugDraw, FullLifeAndPower, TestCheat, TakeScreenshot }
 

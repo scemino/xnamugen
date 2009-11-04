@@ -22,7 +22,6 @@ namespace xnaMugen.Commands
 			if (command == null) throw new ArgumentNullException("command");
 			if (input == null) throw new ArgumentNullException("input");
 
-			Int32 startmatch = Int32.MinValue;
 			Int32 element_index = command.Elements.Count - 1;
 
 			for (Int32 input_index = 0; input_index != input.Size; ++input_index)
@@ -30,12 +29,19 @@ namespace xnaMugen.Commands
 				Int32 match_index = ScanForMatch(command, element_index, input, input_index);
 				if (match_index == Int32.MinValue) return false;
 
-				if (element_index == 0) startmatch = match_index;
+				if (element_index > 0)
+				{
+					if (match_index > command.Time) return false;
 
-				if (element_index > 0) --element_index;
+					--element_index;
+				}
+				else if (element_index == 0)
+				{
+					return match_index <= command.Time;
+				}
 				else
 				{
-					return startmatch != Int32.MinValue && startmatch <= command.Time;
+					return false;
 				}
 
 				input_index = match_index;
@@ -51,7 +57,9 @@ namespace xnaMugen.Commands
 
 			CommandElement element = command.Elements[element_index];
 
-			for (Int32 i = input_index; i != input.Size; ++i)
+			Int32 scanlength = Math.Min(input.Size, command.Time);
+
+			for (Int32 i = input_index; i < scanlength; ++i)
 			{
 				//Only check for the last element at the top of the input buffer
 				if (element_index == command.Elements.Count - 1)
@@ -72,11 +80,7 @@ namespace xnaMugen.Commands
 					if (element_index < command.Elements.Count - 1)
 					{
 						CommandElement nextelement = command.Elements[element_index + 1];
-						if (nextelement.NothingElse == true)
-						{
-							Boolean scan = input.AreIdentical(input_index, i);
-							if (scan == false) continue;
-						}
+						if (nextelement.NothingElse == true && input.AreIdentical(input_index, i) == false) continue;
 					}
 
 					return i;
@@ -92,24 +96,35 @@ namespace xnaMugen.Commands
 
 			if (element.HeldDown == true)
 			{
-				return state == ButtonState.Down || state == ButtonState.Pressed;
+				Boolean result = (state == ButtonState.Down || state == ButtonState.Pressed);
+				return result;
 			}
 			else if (element.TriggerOnRelease != null)
 			{
-				if (input_index >= input.Size) return false;
-				if (input_index == 0 || input.GetState(input_index - 1, element) != ButtonState.Released) return false;
-
-				Int32 holdcount = 1;
-				for (Int32 i = input_index + 1; i < input.Size; ++i, ++holdcount)
+				if (input_index >= input.Size)
 				{
-					if (input.GetState(i, element) != ButtonState.Down) break;
+					return false;
 				}
 
-				if (holdcount < element.TriggerOnRelease.Value) return false;
+				if (input_index == 0 || input.GetState(input_index - 1, element) != ButtonState.Released)
+				{
+					return false;
+				}
+
+				Int32 holdcount = 1;
+				for (Int32 i = input_index + 1; i < input.Size; ++i, ++holdcount) if (input.GetState(i, element) != ButtonState.Down) break;
+
+				if (holdcount < element.TriggerOnRelease.Value)
+				{
+					return false;
+				}
 			}
 			else
 			{
-				if (state != ButtonState.Pressed) return false;
+				if (state != ButtonState.Pressed)
+				{
+					return false;
+				}
 			}
 
 			return true;

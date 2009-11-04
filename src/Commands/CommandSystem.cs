@@ -23,22 +23,23 @@ namespace xnaMugen.Commands
 
 		void Test()
 		{
-			Command command = BuildCommand("Attack", "~U", 1, 1);
+			Command command = BuildCommand("Attack", "~10$B, $F, x", 15, 1);
 
 			InputBuffer input = new InputBuffer();
-			input.Add(new ButtonArray() { Up = true }, Facing.Right);
-			input.Add(new ButtonArray() { Up = true, Right = true }, Facing.Right);
-			input.Add(new ButtonArray() { Up = true, Right = true }, Facing.Right);
-			input.Add(new ButtonArray() { Up = true }, Facing.Right);
-			input.Add(new ButtonArray() { Up = true }, Facing.Right);
-			input.Add(new ButtonArray() { Up = true, Right = true }, Facing.Right);
-			input.Add(new ButtonArray() { Up = true, Right = true }, Facing.Right);
-			input.Add(new ButtonArray() { Up = true }, Facing.Right);
-			input.Add(new ButtonArray() { Up = true }, Facing.Right);
-			input.Add(new ButtonArray() { Up = true }, Facing.Right);
-			input.Add(new ButtonArray() { Up = true, Right = true }, Facing.Right);
-			input.Add(new ButtonArray() { Up = true, Right = true }, Facing.Right);
-			input.Add(new ButtonArray() { Up = true }, Facing.Right);
+			input.Add(PlayerButton.Left, Facing.Right);
+			input.Add(PlayerButton.Left, Facing.Right);
+			input.Add(PlayerButton.Left, Facing.Right);
+			input.Add(PlayerButton.Left, Facing.Right);
+			input.Add(PlayerButton.Left, Facing.Right);
+			input.Add(PlayerButton.Left, Facing.Right);
+			input.Add(PlayerButton.Left, Facing.Right);
+			input.Add(PlayerButton.Left, Facing.Right);
+			input.Add(PlayerButton.Left, Facing.Right);
+			input.Add(PlayerButton.Left, Facing.Right);
+			input.Add(PlayerButton.Left, Facing.Right);
+			input.Add(PlayerButton.Left | PlayerButton.Right, Facing.Right);
+			input.Add(PlayerButton.Right, Facing.Right);
+			input.Add(PlayerButton.Right | PlayerButton.X, Facing.Right);
 
 			Boolean check = m_checker.Check(command, input);
 		}
@@ -113,7 +114,7 @@ namespace xnaMugen.Commands
 
 			List<CommandElement> elements = new List<CommandElement>();
 
-			CommandElement? lastelement = null;
+			CommandElement lastelement = null;
 			foreach (String token in text.Split(','))
 			{
 				if (String.IsNullOrEmpty(token) == true) continue;
@@ -164,7 +165,7 @@ namespace xnaMugen.Commands
 
 				CommandElement element = new CommandElement(dir, buttons, triggertime, helddown, nothingelse);
 
-				if (lastelement != null && SuccessiveDirectionCheck(lastelement.Value, element) == true)
+				if (lastelement != null && SuccessiveDirectionCheck(lastelement, element) == true)
 				{
 					CommandElement newelement1 = new CommandElement(element.Direction, CommandButton.None, 0, false, true);
 					CommandElement newelement2 = new CommandElement(element.Direction, CommandButton.None, null, false, true);

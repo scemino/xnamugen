@@ -8,15 +8,142 @@ using System.Text;
 
 namespace xnaMugen.Commands
 {
-	struct CommandElement: IEquatable<CommandElement>
+	class CommandElement : IEquatable<CommandElement>
 	{
 		public CommandElement(CommandDirection direction, CommandButton button, Int32? triggertime, Boolean helddown, Boolean nothingelse)
 		{
-			m_direction = direction;
-			m_button = button;
-			m_triggeronrelease = triggertime;
-			m_helddown = helddown;
-			m_nothingelse = nothingelse;
+			Direction = direction;
+			Buttons = button;
+			TriggerOnRelease = triggertime;
+			HeldDown = helddown;
+			NothingElse = nothingelse;
+			Hash = Direction.GetHashCode() ^ Buttons.GetHashCode() ^ TriggerOnRelease.GetValueOrDefault(0).GetHashCode() ^ HeldDown.GetHashCode() ^ NothingElse.GetHashCode();
+			MatchHash1 = BuildHash1();
+			MatchHash2 = BuildHash2();
+		}
+
+		PlayerButton BuildHash1()
+		{
+			PlayerButton hash = 0;
+
+			switch (Direction)
+			{
+				case CommandDirection.B4Way:
+				case CommandDirection.B:
+					hash |= PlayerButton.Left;
+					break;
+
+				case CommandDirection.DB:
+					hash |= PlayerButton.Down;
+					hash |= PlayerButton.Left;
+					break;
+
+				case CommandDirection.D4Way:
+				case CommandDirection.D:
+					hash |= PlayerButton.Down;
+					break;
+
+				case CommandDirection.DF:
+					hash |= PlayerButton.Down;
+					hash |= PlayerButton.Right;
+					break;
+
+				case CommandDirection.F4Way:
+				case CommandDirection.F:
+					hash |= PlayerButton.Right;
+					break;
+
+				case CommandDirection.UF:
+					hash |= PlayerButton.Up;
+					hash |= PlayerButton.Right;
+					break;
+
+				case CommandDirection.U4Way:
+				case CommandDirection.U:
+					hash |= PlayerButton.Up;
+					break;
+
+				case CommandDirection.UB:
+					hash |= PlayerButton.Up;
+					hash |= PlayerButton.Left;
+					break;
+
+				case CommandDirection.None:
+				default:
+					break;
+			}
+
+			if ((Buttons & CommandButton.A) == CommandButton.A) hash |= PlayerButton.A;
+			if ((Buttons & CommandButton.B) == CommandButton.B) hash |= PlayerButton.B;
+			if ((Buttons & CommandButton.C) == CommandButton.C) hash |= PlayerButton.C;
+			if ((Buttons & CommandButton.X) == CommandButton.X) hash |= PlayerButton.X;
+			if ((Buttons & CommandButton.Y) == CommandButton.Y) hash |= PlayerButton.Y;
+			if ((Buttons & CommandButton.Z) == CommandButton.Z) hash |= PlayerButton.Z;
+			if ((Buttons & CommandButton.Taunt) == CommandButton.Taunt) hash |= PlayerButton.Taunt;
+
+			return hash;
+		}
+
+		PlayerButton BuildHash2()
+		{
+			PlayerButton hash = 0;
+
+			switch (Direction)
+			{
+				case CommandDirection.B:
+					hash |= PlayerButton.Up;
+					hash |= PlayerButton.Down;
+					hash |= PlayerButton.Right;
+					break;
+
+				case CommandDirection.DB:
+					hash |= PlayerButton.Up;
+					hash |= PlayerButton.Right;
+					break;
+
+				case CommandDirection.D:
+					hash |= PlayerButton.Up;
+					hash |= PlayerButton.Left;
+					hash |= PlayerButton.Right;
+					break;
+
+				case CommandDirection.DF:
+					hash |= PlayerButton.Up;
+					hash |= PlayerButton.Left;
+					break;
+
+				case CommandDirection.F:
+					hash |= PlayerButton.Up;
+					hash |= PlayerButton.Down;
+					hash |= PlayerButton.Left;
+					break;
+
+				case CommandDirection.UF:
+					hash |= PlayerButton.Down;
+					hash |= PlayerButton.Left;
+					break;
+
+				case CommandDirection.U:
+					hash |= PlayerButton.Left;
+					hash |= PlayerButton.Down;
+					hash |= PlayerButton.Right;
+					break;
+
+				case CommandDirection.UB:
+					hash |= PlayerButton.Down;
+					hash |= PlayerButton.Right;
+					break;
+
+				case CommandDirection.B4Way:
+				case CommandDirection.U4Way:
+				case CommandDirection.F4Way:
+				case CommandDirection.D4Way:
+				case CommandDirection.None:
+				default:
+					break;
+			}
+
+			return hash;
 		}
 
 		static public Boolean Equals(CommandElement lhs, CommandElement rhs)
@@ -39,8 +166,11 @@ namespace xnaMugen.Commands
 
 		public static Boolean operator ==(CommandElement lhs, CommandElement rhs)
 		{
-			if (lhs == null && rhs == null) return true;
-			if ((lhs == null) != (rhs == null)) return false;
+			Boolean ll = Object.ReferenceEquals(lhs, null);
+			Boolean rr = Object.ReferenceEquals(rhs, null);
+
+			if (ll && rr) return true;
+			if (ll != rr) return false;
 
 			if (lhs.Direction != rhs.Direction) return false;
 			if (lhs.Buttons != rhs.Buttons) return false;
@@ -58,51 +188,26 @@ namespace xnaMugen.Commands
 
 		public override Int32 GetHashCode()
 		{
-			return Direction.GetHashCode() ^ Buttons.GetHashCode() ^ TriggerOnRelease.GetValueOrDefault(0).GetHashCode() ^ HeldDown.GetHashCode() ^ NothingElse.GetHashCode();
+			return Hash;
 		}
 
-		public CommandDirection Direction
-		{
-			get { return m_direction; }
-		}
+		public readonly CommandDirection Direction;
 
-		public CommandButton Buttons
-		{
-			get { return m_button; }
-		}
+		public readonly CommandButton Buttons;
 
-		public Int32? TriggerOnRelease
-		{
-			get { return m_triggeronrelease; }
-		}
+		public readonly Int32? TriggerOnRelease;
 
-		public Boolean HeldDown
-		{
-			get { return m_helddown; }
-		}
+		public readonly Boolean HeldDown;
 
-		public Boolean NothingElse
-		{
-			get { return m_nothingelse; }
-		}
-
-		#region Fields
+		public readonly Boolean NothingElse;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly CommandDirection m_direction;
+		public readonly PlayerButton MatchHash1;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly CommandButton m_button;
+		public readonly PlayerButton MatchHash2;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Int32? m_triggeronrelease;
-
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Boolean m_helddown;
-
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Boolean m_nothingelse;
-
-		#endregion
+		readonly Int32 Hash;
 	}
 }

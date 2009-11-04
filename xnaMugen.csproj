@@ -269,7 +269,6 @@
     <Compile Include="src\Combat\VictoryStatus.cs" />
     <Compile Include="src\Combat\Win.cs" />
     <Compile Include="src\Commands\BufferCount.cs" />
-    <Compile Include="src\Commands\ButtonArray.cs" />
     <Compile Include="src\Commands\Command.cs" />
     <Compile Include="src\Commands\CommandChecker.cs" />
     <Compile Include="src\Commands\CommandElement.cs" />
@@ -441,7 +440,6 @@
     <Compile Include="src\InitializationSettings.cs" />
     <Compile Include="src\Input\ButtonMap.cs" />
     <Compile Include="src\Input\ButtonWrapper.cs" />
-    <Compile Include="src\Input\InputElement.cs" />
     <Compile Include="src\Input\InputState.cs" />
     <Compile Include="src\Input\InputSystem.cs" />
     <Compile Include="src\Input\PlayerButtonDelegate.cs" />
