@@ -5,7 +5,12 @@ namespace xnaMugen.Combat
 {
 	class EngineInitialization
 	{
-		public EngineInitialization(CombatMode mode, PlayerProfile p1, Int32 p1palette, PlayerProfile p2, Int32 p2palette, StageProfile stage)
+		public EngineInitialization(CombatMode mode, PlayerProfile p1, Int32 p1palette, PlayerProfile p2, Int32 p2palette, StageProfile stage):
+			this(mode, p1, p1palette, p2, p2palette, stage, Environment.TickCount)
+		{
+		}
+
+		public EngineInitialization(CombatMode mode, PlayerProfile p1, Int32 p1palette, PlayerProfile p2, Int32 p2palette, StageProfile stage, Int32 seed)
 		{
 			if (mode == CombatMode.None) throw new ArgumentOutOfRangeException("mode");
 			if (p1 == null) throw new ArgumentNullException("p1");
@@ -18,6 +23,7 @@ namespace xnaMugen.Combat
 			m_p1 = new PlayerCreation(p1, p1.GetValidPaletteIndex(p1palette));
 			m_p2 = new PlayerCreation(p2, p2.GetValidPaletteIndex(p2palette));
 			m_stage = stage;
+			m_seed = seed;
 		}
 
 		public CombatMode Mode
@@ -40,6 +46,11 @@ namespace xnaMugen.Combat
 			get { return m_stage; }
 		}
 
+		public Int32 Seed
+		{
+			get { return m_seed; }
+		}
+
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
@@ -53,6 +64,9 @@ namespace xnaMugen.Combat
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		readonly StageProfile m_stage;
+
+		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+		readonly Int32 m_seed;
 
 		#endregion
 	}

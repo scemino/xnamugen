@@ -6,7 +6,7 @@ namespace xnaMugen
 
 	enum ScreenShotFormat { None, Jpg, Bmp, Png }
 
-	enum ScreenType { None, Title, Select, Versus, Combat }
+	enum ScreenType { None, Title, Select, Versus, Combat, Replay }
 
 	enum FadeDirection { None, In, Out }
 
@@ -61,7 +61,8 @@ namespace xnaMugen
 	[Flags]
 	enum PlayerButton { None = 0, Up = 1, Down = 2, Left = 4, Right = 8, A = 16, B = 32, C = 64, X = 128, Y = 256, Z = 512, Taunt = 1024, Pause = 2048 }
 
-	enum SystemButton { None, Pause, PauseStep, Quit, DebugDraw, FullLifeAndPower, TestCheat, TakeScreenshot }
+	[Flags]
+	enum SystemButton { None = 0, Pause = 1, PauseStep = 2, Quit = 4, DebugDraw = 8, FullLifeAndPower = 16, TestCheat = 32, TakeScreenshot = 64 }
 
 	enum RoundState { None, PreIntro, Intro, Fight, PreOver, Over }
 

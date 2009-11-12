@@ -47,7 +47,7 @@ namespace xnaMugen.Input
 		{
 			if (callback == null) throw new ArgumentNullException("callback");
 
-			m_buttonmap[(Int32)button] = callback;
+			Add((Int32)button, callback);
 		}
 
 		/// <summary>
@@ -59,7 +59,21 @@ namespace xnaMugen.Input
 		{
 			if (callback == null) throw new ArgumentNullException("callback");
 
-			m_buttonmap[(Int32)button] = callback;
+			Add((Int32)button, callback);
+		}
+
+		void Add(Int32 index, Action<Boolean> callback)
+		{
+			if (callback == null) throw new ArgumentNullException("callback");
+
+			if (m_buttonmap.ContainsKey(index) == true)
+			{
+				m_buttonmap[index] += callback;
+			}
+			else
+			{
+				m_buttonmap[index] = callback;
+			}
 		}
 
 		/// <summary>

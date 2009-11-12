@@ -14,7 +14,7 @@ namespace xnaMugen
 		public Random(SubSystems subsystems)
 			: base(subsystems)
 		{
-			m_random = new System.Random();
+			Seed(Environment.TickCount);
 		}
 
 		/// <summary>
@@ -23,6 +23,7 @@ namespace xnaMugen
 		/// <param name="seed">Number used to start generation of random numbers.</param>
 		public void Seed(Int32 seed)
 		{
+			m_seed = seed;
 			m_random = new System.Random(seed);
 		}
 
@@ -47,10 +48,18 @@ namespace xnaMugen
 			return (Single)m_random.NextDouble();
 		}
 
+		public Int32 CurrentSeed
+		{
+			get { return m_seed; }
+		}
+
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		System.Random m_random;
+
+		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+		Int32 m_seed;
 
 		#endregion
 	}

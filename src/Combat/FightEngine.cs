@@ -16,6 +16,7 @@ namespace xnaMugen.Combat
             IO.TextSection filesection = textfile.GetSection("Files");
             String basepath = GetSubSystem<IO.FileSystem>().GetDirectory(textfile.Filepath);
 
+			m_init = null;
             m_entities = new EntityCollection(this);
             m_roundnumber = 0;
             m_stage = null;
@@ -92,8 +93,7 @@ namespace xnaMugen.Combat
             FightSounds.Stop();
             CommonSounds.Stop();
 
-            Stage.Reset();
-            m_stage.Reset();
+			Stage.Reset();
             Camera.Reset();
             Pause.Reset();
             SuperPause.Reset();
@@ -102,7 +102,6 @@ namespace xnaMugen.Combat
             EnvironmentShake.Reset();
             //Team1.Clear();
             //Team2.Clear();
-
             Elements.Reset();
         }
 
@@ -122,14 +121,18 @@ namespace xnaMugen.Combat
             else return null;
         }
 
-        public void Set(EngineInitialization initialization)
+        public void Set(EngineInitialization init)
         {
-            if (initialization == null) throw new ArgumentNullException("initialization");
+			if (init == null) throw new ArgumentNullException("init");
 
-            m_stage = new Stage(this, initialization.Stage);
+			m_init = init;
 
-            Team1.CreatePlayers(initialization.P1, null);
-            Team2.CreatePlayers(initialization.P2, null);
+            m_stage = new Stage(this, init.Stage);
+
+            Team1.CreatePlayers(init.P1, null);
+            Team2.CreatePlayers(init.P2, null);
+
+			GetSubSystem<Random>().Seed(init.Seed);
 
             Reset();
         }
@@ -455,7 +458,15 @@ namespace xnaMugen.Combat
 			get { return m_clock; }
 		}
 
+		public EngineInitialization Initialization
+		{
+			get { return m_init; }
+		}
+
         #region Fields
+
+		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+		EngineInitialization m_init;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         readonly Audio.SoundManager m_fightsounds;

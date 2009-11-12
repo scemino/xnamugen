@@ -13,13 +13,13 @@ namespace xnaMugen
 		/// <summary>
 		/// Where the program starts. Starts logging if necessary and runs game loop.
 		/// </summary>
-		static void Main()
+		static void Main(String[] args)
 		{
 #if TEST
 			using (Game g = new MugenTest()) g.Run();
 #elif DEBUG
 			Log.Start(); 
-			using (Game g = new Mugen()) g.Run();
+			using (Game g = new Mugen(args)) g.Run();
 #else
 			try
 			{

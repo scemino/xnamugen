@@ -2,6 +2,8 @@ using System;
 using Microsoft.Xna.Framework;
 using System.Diagnostics;
 using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace xnaMugen
 {
@@ -13,8 +15,12 @@ namespace xnaMugen
 		/// <summary>
 		/// Initializes a new instance of this class. Sets game timing and default screen size.
 		/// </summary>
-		public Mugen()
+		public Mugen(String[] args)
 		{
+			if (args == null) throw new ArgumentNullException("args");
+
+			m_args = new List<String>(args);
+
 			IsFixedTimeStep = true;
 			TargetElapsedTime = TimeSpan.FromTicks(TimeSpan.TicksPerSecond / 60);
 			IsMouseVisible = true;
@@ -26,7 +32,6 @@ namespace xnaMugen
 			graphics.PreferredBackBufferHeight = Mugen.ScreenSize.Y;
 			graphics.ApplyChanges();
 
-			m_pause = PauseState.Unpaused;
 			m_debugdraw = false;
 			m_takescreeshot = false;
 		}
@@ -49,12 +54,69 @@ namespace xnaMugen
 
 			m_subsystems.LoadAllMainSystems();
 
-			m_subsystems.GetSubSystem<Input.InputSystem>().CurrentInput[0].Add(SystemButton.Pause, this.TogglePause);
-			m_subsystems.GetSubSystem<Input.InputSystem>().CurrentInput[0].Add(SystemButton.PauseStep, this.TogglePauseStep);
 			m_subsystems.GetSubSystem<Input.InputSystem>().CurrentInput[0].Add(SystemButton.DebugDraw, this.ToggleDebugDraw);
 			m_subsystems.GetSubSystem<Input.InputSystem>().CurrentInput[0].Add(SystemButton.TakeScreenshot, this.TakeScreenshot);
 
 			base.Initialize();
+		}
+
+		Replay.Recording BuildRecording(String filepath)
+		{
+			if (filepath == null) throw new ArgumentNullException("filepath");
+
+			ProfileLoader profiles = m_subsystems.GetSubSystem<ProfileLoader>();
+
+			if (m_subsystems.GetSubSystem<IO.FileSystem>().DoesFileExist(filepath) == false) return null;
+
+			IO.TextFile text = m_subsystems.GetSubSystem<IO.FileSystem>().OpenTextFile(filepath);
+			IO.TextSection header = text.GetSection("xnaMugen Replay Header");
+			IO.TextSection data = text.GetSection("xnaMugen Replay Data");
+
+			if (header == null || data == null) return null;
+
+			Int32 version = header.GetAttribute<Int32>("Version", 0);
+			CombatMode mode = header.GetAttribute<CombatMode>("Combat Mode", CombatMode.None);
+			String p1name = header.GetAttribute<String>("Player 1 Name", null);
+			String p1version = header.GetAttribute<String>("Player 1 Version", null);
+			Int32 p1palette = header.GetAttribute<Int32>("Player 1 Palette", Int32.MinValue);
+			String p2name = header.GetAttribute<String>("Player 2 Name", null);
+			String p2version = header.GetAttribute<String>("Player 2 Version", null);
+			Int32 p2palette = header.GetAttribute<Int32>("Player 2 Palette", Int32.MinValue);
+			String stagepath = header.GetAttribute<String>("Stage Path", null);
+			Int32 seed = header.GetAttribute<Int32>("Seed", Int32.MinValue);
+
+			if (version != 1 || mode == CombatMode.None || stagepath == null || seed == Int32.MinValue) return null;
+			if (p1name == null || p1version == null || p1palette == Int32.MinValue) return null;
+
+			PlayerProfile p1profile = profiles.FindPlayerProfile(p1name, p1version);
+			PlayerProfile p2profile = profiles.FindPlayerProfile(p2name, p2version);
+			StageProfile stageprofile = profiles.FindStageProfile(stagepath);
+
+			if (p1profile == null || p2profile == null || stageprofile == null) return null;
+
+			Combat.EngineInitialization initsettings = new Combat.EngineInitialization(mode, p1profile, p1palette, p2profile, p2palette, stageprofile);
+
+			List<Replay.RecordingData> replaydata = new List<Replay.RecordingData>();
+
+			Regex line_regex = new Regex(@"^(\d+),\s*(\d+),\s*(\d+),\s*(\d+),\s*(\d+)$", RegexOptions.IgnoreCase);
+			StringConverter converter = profiles.GetSubSystem<StringConverter>();
+			foreach (String dataline in data.Lines)
+			{
+				Match match = line_regex.Match(dataline);
+				if (match.Success == false) continue;
+
+				Replay.RecordingData inputdata = new Replay.RecordingData(
+					converter.Convert<Int32>(match.Groups[1].Value),
+					converter.Convert<Int32>(match.Groups[2].Value),
+					converter.Convert<Int32>(match.Groups[3].Value),
+					converter.Convert<Int32>(match.Groups[4].Value),
+					converter.Convert<Int32>(match.Groups[5].Value)
+					);
+
+				replaydata.Add(inputdata);
+			}
+
+			return new Replay.Recording(initsettings, replaydata);
 		}
 
 		/// <summary>
@@ -64,7 +126,18 @@ namespace xnaMugen
 		{
 			base.BeginRun();
 
-			m_subsystems.GetMainSystem<Menus.MenuSystem>().PostEvent(new Events.SwitchScreen(ScreenType.Title));
+			String recordingpath = (m_args.Count > 0) ? m_args[0] : String.Empty;
+
+			Replay.Recording recording = BuildRecording(recordingpath);
+			if (recording != null)
+			{
+				m_subsystems.GetMainSystem<Menus.MenuSystem>().PostEvent(new Events.LoadReplay(recording));
+				m_subsystems.GetMainSystem<Menus.MenuSystem>().PostEvent(new Events.SwitchScreen(ScreenType.Replay));
+			}
+			else
+			{
+				m_subsystems.GetMainSystem<Menus.MenuSystem>().PostEvent(new Events.SwitchScreen(ScreenType.Title));
+			}
 		}
 
 		protected override void EndRun()
@@ -84,13 +157,7 @@ namespace xnaMugen
 		protected override void Update(GameTime gameTime)
 		{
 			m_subsystems.GetSubSystem<Input.InputSystem>().Update();
-
-			if (Pause == PauseState.Unpaused || Pause == PauseState.PauseStep)
-			{
-				m_subsystems.GetMainSystem<Menus.MenuSystem>().Update(gameTime);
-			}
-
-			if (Pause == PauseState.PauseStep) m_pause = PauseState.Paused;
+			m_subsystems.GetMainSystem<Menus.MenuSystem>().Update(gameTime);
 		}
 
 		/// <summary>
@@ -139,39 +206,6 @@ namespace xnaMugen
 		}
 
 		/// <summary>
-		/// Input handler for toggling pause state.
-		/// </summary>
-		/// <param name="pressed">Whether the button is pressed or released.</param>
-		void TogglePause(Boolean pressed)
-		{
-			if (pressed == true)
-			{
-				if (Pause == PauseState.Paused || Pause == PauseState.PauseStep)
-				{
-					m_pause = PauseState.Unpaused;
-					m_subsystems.GetSubSystem<Audio.SoundSystem>().UnPauseSounds();
-				}
-				else
-				{
-					m_pause = PauseState.Paused;
-					m_subsystems.GetSubSystem<Audio.SoundSystem>().PauseSounds();
-				}
-			}
-		}
-
-		/// <summary>
-		/// Input handler for toggling pause step state.
-		/// </summary>
-		/// <param name="pressed">Whether the button is pressed or released.</param>
-		void TogglePauseStep(Boolean pressed)
-		{
-			if (pressed == true)
-			{
-				if (Pause == PauseState.Paused) m_pause = PauseState.PauseStep;
-			}
-		}
-
-		/// <summary>
 		/// Input handler for taking a screenshot.
 		/// </summary>
 		/// <param name="pressed">Whether the button is pressed or released.</param>
@@ -193,17 +227,6 @@ namespace xnaMugen
 		}
 
 		/// <summary>
-		/// Gets or set whether and how the game is paused.
-		/// </summary>
-		/// <returns>Unpaused if the game is not paused; Paused if the game is paused; PauseStep if the game is paused but will still run for one tick.</returns>
-		public PauseState Pause
-		{
-			get { return m_pause; }
-
-			set { m_pause = value; }
-		}
-
-		/// <summary>
 		/// Gets or sets whether debug information is drawn to screen.
 		/// </summary>
 		/// <returns>true if debug information is drawn; false otherwise.</returns>
@@ -217,10 +240,10 @@ namespace xnaMugen
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		SubSystems m_subsystems;
+		readonly List<String> m_args;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		PauseState m_pause;
+		SubSystems m_subsystems;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		Boolean m_debugdraw;

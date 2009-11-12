@@ -4,13 +4,19 @@ using Microsoft.Xna.Framework;
 
 namespace xnaMugen.Menus
 {
-	class CombatScreen : Screen
+	class RecordedCombatScreen : Screen
 	{
-		public CombatScreen(MenuSystem menusystem)
+		public RecordedCombatScreen(MenuSystem menusystem)
 			: base(menusystem)
 		{
 			m_pause = PauseState.Unpaused;
-			m_recorder = new Replay.Recorder(this);
+		}
+
+		public void SetReplay(Replay.Recording recording)
+		{
+			if (recording == null) throw new ArgumentNullException("recording");
+
+			m_recording = recording;
 		}
 
 		void CancelCombat(Boolean pressed)
@@ -19,7 +25,7 @@ namespace xnaMugen.Menus
 			{
 				Pause = PauseState.Unpaused;
 
-				MenuSystem.PostEvent(new Events.SwitchScreen(ScreenType.Title));
+				MenuSystem.PostEvent(new Events.FadeScreen(FadeDirection.Out));
 			}
 		}
 
@@ -28,41 +34,38 @@ namespace xnaMugen.Menus
 			base.FadingIn();
 		}
 
-        public override void FadeOutComplete()
-        {
-            base.FadeOutComplete();
+		public override void FadeOutComplete()
+		{
+			base.FadeOutComplete();
 
-			Recorder.EndRecording();
-
-            MenuSystem.GetSubSystem<Audio.SoundSystem>().StopAllSounds();
-        }
+			MenuSystem.SubSystems.Game.Exit();
+		}
 
 		public override void Reset()
 		{
 			base.Reset();
 
 			FightEngine.Reset();
-			Recorder.Reset();
 		}
 
 		public override void SetInput(Input.InputState inputstate)
 		{
 			base.SetInput(inputstate);
 
-			Recorder.SetInput(inputstate);
-
 			inputstate[0].Add(SystemButton.Quit, CancelCombat);
 			inputstate[0].Add(SystemButton.Pause, TogglePause);
 			inputstate[0].Add(SystemButton.PauseStep, TogglePauseStep);
 
-			FightEngine.SetInput(inputstate);
+			//FightEngine.SetInput(inputstate);
 		}
 
 		public override void Update(GameTime gametime)
 		{
 			base.Update(gametime);
 
-			Recorder.Update();
+			if (FightEngine.TickCount >= m_recording.Data.Count) return;
+
+			InjectRecordingInput();
 
 			if (Pause == PauseState.Unpaused || Pause == PauseState.PauseStep)
 			{
@@ -70,6 +73,40 @@ namespace xnaMugen.Menus
 			}
 
 			if (Pause == PauseState.PauseStep) m_pause = PauseState.Paused;
+		}
+
+		void InjectRecordingInput()
+		{
+			Replay.RecordingData data = m_recording.Data[FightEngine.TickCount];
+
+			Combat.Player p1 = FightEngine.Team1.MainPlayer;
+			Combat.Player p2 = FightEngine.Team2.MainPlayer;
+			Combat.Player p3 = FightEngine.Team1.TeamMate;
+			Combat.Player p4 = FightEngine.Team2.TeamMate;
+
+			if (p1 != null)
+			{
+				p1.RecieveInput((PlayerButton)Int32.MaxValue, false);
+				p1.RecieveInput(data.Player1Input, true);
+			}
+
+			if (p2 != null)
+			{
+				p2.RecieveInput((PlayerButton)Int32.MaxValue, false);
+				p2.RecieveInput(data.Player2Input, true);
+			}
+
+			if (p3 != null)
+			{
+				p3.RecieveInput((PlayerButton)Int32.MaxValue, false);
+				p3.RecieveInput(data.Player3Input, true);
+			}
+
+			if (p4 != null)
+			{
+				p4.RecieveInput((PlayerButton)Int32.MaxValue, false);
+				p4.RecieveInput(data.Player4Input, true);
+			}
 		}
 
 		public override void Draw(Boolean debugdraw)
@@ -127,11 +164,6 @@ namespace xnaMugen.Menus
 			get { return 20; }
 		}
 
-		public Replay.Recorder Recorder
-		{
-			get { return m_recorder; }
-		}
-
 		/// <summary>
 		/// Gets or set whether and how the game is paused.
 		/// </summary>
@@ -146,7 +178,7 @@ namespace xnaMugen.Menus
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Replay.Recorder m_recorder;
+		Replay.Recording m_recording;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		PauseState m_pause;

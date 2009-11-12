@@ -51,6 +51,7 @@ namespace xnaMugen.Menus
 			m_selectscreen.LoadBackgrounds("Select", textfile);
 
 			m_combatscreen = new CombatScreen(this);
+			m_replayscreen = new RecordedCombatScreen(this);
 
 			m_currentscreen = null;
 			m_newscreen = null;
@@ -90,9 +91,6 @@ namespace xnaMugen.Menus
 
 			screen.Reset();
 			screen.FadingIn();
-
-			GetSubSystem<Input.InputSystem>().SaveInputState();
-			screen.SetInput(GetSubSystem<Input.InputSystem>().CurrentInput);
 
 			m_fade = 0;
 			m_fadespeed = screen.FadeInTime;
@@ -141,7 +139,15 @@ namespace xnaMugen.Menus
 		{
 			while (m_eventqueue.Count > 0)
 			{
-				var e = m_eventqueue.Dequeue();
+				Events.Base e = m_eventqueue.Dequeue();
+
+				if (e is Events.LoadReplay)
+				{
+					var ee = e as Events.LoadReplay;
+
+					ReplayScreen.SetReplay(ee.Recording);
+					GetMainSystem<Combat.FightEngine>().Set(ee.Recording.InitializationSettings);
+				}
 
 				if (e is Events.SwitchScreen)
 				{
@@ -163,6 +169,10 @@ namespace xnaMugen.Menus
 
 						case ScreenType.Combat:
 							SetScreen(CombatScreen);
+							break;
+
+						case ScreenType.Replay:
+							SetScreen(ReplayScreen);
 							break;
 					}
 				}
@@ -290,6 +300,11 @@ namespace xnaMugen.Menus
 			get { return m_combatscreen; }
 		}
 
+		public RecordedCombatScreen ReplayScreen
+		{
+			get { return m_replayscreen; }
+		}
+
 		public Screen CurrentScreen
 		{
 			get { return m_currentscreen; }
@@ -317,6 +332,9 @@ namespace xnaMugen.Menus
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		readonly CombatScreen m_combatscreen;
+
+		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+		readonly RecordedCombatScreen m_replayscreen;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		Screen m_currentscreen;

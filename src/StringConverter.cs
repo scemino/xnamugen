@@ -117,6 +117,23 @@ namespace xnaMugen
 			return s;
 		}
 
+		[StringConversion(typeof(CombatMode))]
+		Object ToCombatMode(String s)
+		{
+			StringComparer sc = StringComparer.OrdinalIgnoreCase;
+
+			if (sc.Equals(s, "None") == true) return CombatMode.None;
+			if (sc.Equals(s, "Versus") == true) return CombatMode.Versus;
+			if (sc.Equals(s, "TeamArcade") == true) return CombatMode.TeamArcade;
+			if (sc.Equals(s, "TeamVersus") == true) return CombatMode.TeamVersus;
+			if (sc.Equals(s, "TeamCoop") == true) return CombatMode.TeamCoop;
+			if (sc.Equals(s, "Survival") == true) return CombatMode.Survival;
+			if (sc.Equals(s, "SurvivalCoop") == true) return CombatMode.SurvivalCoop;
+			if (sc.Equals(s, "Training") == true) return CombatMode.Training;
+
+			return Failure;
+		}
+
 		[StringConversion(typeof(Rectangle))]
 		Object ToRectangle(String s)
 		{

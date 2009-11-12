@@ -22,6 +22,34 @@ namespace xnaMugen
 			BuildPlayerProfiles();
 		}
 
+		public PlayerProfile FindPlayerProfile(String name, String version)
+		{
+			if (name == null) throw new ArgumentNullException("name");
+			if (version == null) throw new ArgumentNullException("version");
+
+			foreach (PlayerSelect select in PlayerProfiles)
+			{
+				if (select.SelectionType != PlayerSelectType.Profile) continue;
+
+				PlayerProfile profile = select.Profile;
+				if (profile.PlayerName == name && profile.Version == version) return profile;
+			}
+
+			return null;
+		}
+
+		public StageProfile FindStageProfile(String filepath)
+		{
+			if (filepath == null) throw new ArgumentNullException("filepath");
+
+			foreach (StageProfile profile in StageProfiles)
+			{
+				if (profile.Filepath == filepath) return profile;
+			}
+
+			return null;
+		}
+
 		void BuildStageProfiles()
 		{
 			m_stages.Clear();
@@ -120,7 +148,7 @@ namespace xnaMugen
 
 		public ListIterator<PlayerSelect> PlayerProfiles
 		{
-			get { return new ListIterator<PlayerSelect>( m_players); }
+			get { return new ListIterator<PlayerSelect>(m_players); }
 		}
 
 		#region Fields

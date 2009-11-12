@@ -22,10 +22,13 @@ namespace xnaMugen.Menus
 		public virtual void SetInput(Input.InputState inputstate)
 		{
 			if (inputstate == null) throw new ArgumentNullException("inputstate");
+
+			MenuSystem.GetSubSystem<Input.InputSystem>().SaveInputState();
 		}
 
 		public virtual void FadingIn()
 		{
+			SetInput(MenuSystem.GetSubSystem<Input.InputSystem>().CurrentInput);
 		}
 
 		public virtual void FadeInComplete()

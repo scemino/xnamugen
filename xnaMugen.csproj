@@ -435,6 +435,7 @@
     <Compile Include="src\Evaluation\Triggers\_Assignment.cs" />
     <Compile Include="src\Events\Base.cs" />
     <Compile Include="src\Events\FadeScreen.cs" />
+    <Compile Include="src\Events\LoadReplay.cs" />
     <Compile Include="src\Events\SetupCombat.cs" />
     <Compile Include="src\Events\SwitchScreen.cs" />
     <Compile Include="src\InitializationSettings.cs" />
@@ -456,6 +457,7 @@
     <Compile Include="src\Menus\CombatScreen.cs" />
     <Compile Include="src\Menus\MenuSystem.cs" />
     <Compile Include="src\Menus\NonCombatScreen.cs" />
+    <Compile Include="src\Menus\RecordedCombatScreen.cs" />
     <Compile Include="src\Menus\Screen.cs" />
     <Compile Include="src\Menus\SelectData.cs" />
     <Compile Include="src\Menus\SelectScreen.cs" />
@@ -466,6 +468,9 @@
     <Compile Include="src\PlayerCreation.cs" />
     <Compile Include="src\Point.cs" />
     <Compile Include="src\Profiles.cs" />
+    <Compile Include="src\Replay\Recorder.cs" />
+    <Compile Include="src\Replay\Recording.cs" />
+    <Compile Include="src\Replay\RecordingData.cs" />
     <Compile Include="src\Resource.cs" />
     <Compile Include="src\Random.cs" />
     <Compile Include="src\SharedBuffer.cs" />
