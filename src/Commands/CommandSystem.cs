@@ -15,7 +15,6 @@ namespace xnaMugen.Commands
 		{
 			m_commandcache = new Dictionary<String, ReadOnlyList<Command>>(StringComparer.OrdinalIgnoreCase);
 			m_numberregex = new Regex("(\\d+)", RegexOptions.IgnoreCase);
-			m_checker = new CommandChecker(this);
 			m_internalcommands = GetCommands("xnaMugen.data.Internal.cmd");
 
 			//Test();
@@ -41,15 +40,7 @@ namespace xnaMugen.Commands
 			input.Add(PlayerButton.Right, Facing.Right);
 			input.Add(PlayerButton.Right | PlayerButton.X, Facing.Right);
 
-			Boolean check = m_checker.Check(command, input);
-		}
-
-		public Boolean CheckCommand(Command command, InputBuffer input)
-		{
-			if (command == null) throw new ArgumentNullException("command");
-			if (input == null) throw new ArgumentNullException("input");
-
-			return m_checker.Check(command, input);
+			Boolean check = CommandChecker.Check(command, input);
 		}
 
 		public CommandManager CreateManager(String filepath)
@@ -200,9 +191,6 @@ namespace xnaMugen.Commands
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		readonly Regex m_numberregex;
-
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly CommandChecker m_checker;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		readonly ReadOnlyList<Command> m_internalcommands;

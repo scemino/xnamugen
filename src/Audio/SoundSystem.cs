@@ -20,18 +20,33 @@ namespace xnaMugen.Audio
 			: base(subsystems)
 		{
 			m_soundcache = new Dictionary<String, ReadOnlyDictionary<SoundId, SecondaryBuffer>>(StringComparer.OrdinalIgnoreCase);
-
 			m_sounddevice = new Device();
-
 			m_volume = 0;
+			m_channels = new List<Channel>();
 
-			m_channels = new List<Channel>(10);
-			for (Int32 i = 0; i != m_channels.Capacity; ++i) m_channels.Add(new Channel());
+			CreateSoundChannels(10);
 		}
 
 		public override void Initialize()
 		{
 			m_sounddevice.SetCooperativeLevel(SubSystems.Game.Window.Handle, CooperativeLevel.Priority);
+
+			InitializationSettings settings = GetSubSystem<InitializationSettings>();
+
+			CreateSoundChannels(settings.SoundChannels);
+		}
+
+		void CreateSoundChannels(Int32 count)
+		{
+			if (count <= 0) throw new ArgumentOutOfRangeException("count");
+
+			if (m_channels.Count != count)
+			{
+				foreach (Channel channel in m_channels) channel.Dispose();
+				m_channels.Clear();
+
+				for (Int32 i = 0; i != count; ++i) m_channels.Add(new Channel());
+			}
 		}
 
 		/// <summary>

@@ -10,6 +10,7 @@ namespace xnaMugen.Menus
 			: base(menusystem)
 		{
 			m_pause = PauseState.Unpaused;
+			m_over = false;
 		}
 
 		public void SetReplay(Replay.Recording recording)
@@ -45,6 +46,7 @@ namespace xnaMugen.Menus
 		{
 			base.Reset();
 
+			m_over = false;
 			FightEngine.Reset();
 		}
 
@@ -63,7 +65,18 @@ namespace xnaMugen.Menus
 		{
 			base.Update(gametime);
 
-			if (FightEngine.TickCount >= m_recording.Data.Count) return;
+			if (m_over == true) return;
+
+			if (FightEngine.TickCount >= m_recording.Data.Count)
+			{
+				if (MenuSystem.GetSubSystem<InitializationSettings>().QuitAfterReplay == true)
+				{
+					MenuSystem.PostEvent(new Events.FadeScreen(FadeDirection.Out));
+				}
+
+				m_over = true;
+				return;
+			}
 
 			InjectRecordingInput();
 
@@ -182,6 +195,9 @@ namespace xnaMugen.Menus
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		PauseState m_pause;
+
+		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+		Boolean m_over;
 
 		#endregion;
 	}

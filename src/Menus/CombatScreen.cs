@@ -26,16 +26,21 @@ namespace xnaMugen.Menus
 		public override void FadingIn()
 		{
 			base.FadingIn();
+
+			if (MenuSystem.GetSubSystem<InitializationSettings>().RecordReplay == true)
+			{
+				Recorder.StartRecording();
+			}
 		}
 
-        public override void FadeOutComplete()
-        {
-            base.FadeOutComplete();
+		public override void FadeOutComplete()
+		{
+			base.FadeOutComplete();
 
 			Recorder.EndRecording();
 
-            MenuSystem.GetSubSystem<Audio.SoundSystem>().StopAllSounds();
-        }
+			MenuSystem.GetSubSystem<Audio.SoundSystem>().StopAllSounds();
+		}
 
 		public override void Reset()
 		{
@@ -49,7 +54,7 @@ namespace xnaMugen.Menus
 		{
 			base.SetInput(inputstate);
 
-			Recorder.SetInput(inputstate);
+			if (Recorder.IsRecording == true) Recorder.SetInput(inputstate);
 
 			inputstate[0].Add(SystemButton.Quit, CancelCombat);
 			inputstate[0].Add(SystemButton.Pause, TogglePause);

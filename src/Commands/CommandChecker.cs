@@ -8,16 +8,9 @@ using System.Text;
 
 namespace xnaMugen.Commands
 {
-	class CommandChecker
+	static class CommandChecker
 	{
-		public CommandChecker(CommandSystem system)
-		{
-			if (system == null) throw new ArgumentNullException("system");
-
-			m_system = system;
-		}
-
-		public Boolean Check(Command command, InputBuffer input)
+		public static Boolean Check(Command command, InputBuffer input)
 		{
 			if (command == null) throw new ArgumentNullException("command");
 			if (input == null) throw new ArgumentNullException("input");
@@ -50,7 +43,7 @@ namespace xnaMugen.Commands
 			return false;
 		}
 
-		Int32 ScanForMatch(Command command, Int32 element_index, InputBuffer input, Int32 input_index)
+		static Int32 ScanForMatch(Command command, Int32 element_index, InputBuffer input, Int32 input_index)
 		{
 			if (command == null) throw new ArgumentNullException("command");
 			if (input == null) throw new ArgumentNullException("input");
@@ -90,7 +83,7 @@ namespace xnaMugen.Commands
 			return Int32.MinValue;
 		}
 
-		Boolean ElementMatch(CommandElement element, InputBuffer input, Int32 input_index)
+		static Boolean ElementMatch(CommandElement element, InputBuffer input, Int32 input_index)
 		{
 			ButtonState state = input.GetState(input_index, element);
 
@@ -129,12 +122,5 @@ namespace xnaMugen.Commands
 
 			return true;
 		}
-
-		#region Fields
-
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly CommandSystem m_system;
-
-		#endregion
 	}
 }

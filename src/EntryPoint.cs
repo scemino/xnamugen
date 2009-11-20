@@ -24,7 +24,7 @@ namespace xnaMugen
 			try
 			{
 				Log.Start();
-				using (Game g = new Mugen()) g.Run();
+				using (Game g = new Mugen(args)) g.Run();
 			}
 			catch (Exception e)
 			{

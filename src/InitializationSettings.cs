@@ -23,6 +23,8 @@ namespace xnaMugen
 			m_p2keys = new Dictionary<PlayerButton, Keys>();
 			m_roundlength = 99;
             m_soundchannels = 10;
+			m_recordreplay = false;
+			m_quitafterreplay = true;
 		}
 
 		public override void Initialize()
@@ -36,6 +38,13 @@ namespace xnaMugen
 				m_useoldshader = videosettings.GetAttribute<Boolean>("UseOldShader", m_useoldshader);
 				m_vsync = videosettings.GetAttribute<Boolean>("VSync", m_vsync);
 				m_screenshotformat = videosettings.GetAttribute<ScreenShotFormat>("ScreenShotFormat", m_screenshotformat);
+			}
+
+			IO.TextSection replaysettings = inifile.GetSection("Replay Settings");
+			if (replaysettings != null)
+			{
+				m_recordreplay = replaysettings.GetAttribute<Boolean>("RecordReplay", m_recordreplay);
+				m_quitafterreplay = replaysettings.GetAttribute<Boolean>("QuitAfterReplay", m_quitafterreplay);
 			}
 
 			IO.TextSection debugsettings = inifile.GetSection("Debug Settings");
@@ -167,6 +176,21 @@ namespace xnaMugen
 			get { return m_roundlength; }
 		}
 
+		public Int32 SoundChannels
+		{
+			get { return m_soundchannels; }
+		}
+
+		public Boolean RecordReplay
+		{
+			get { return m_recordreplay; }
+		}
+
+		public Boolean QuitAfterReplay
+		{
+			get { return m_quitafterreplay; }
+		}
+
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
@@ -204,6 +228,12 @@ namespace xnaMugen
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         Int32 m_soundchannels;
+
+		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+		Boolean m_recordreplay;
+
+		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+		Boolean m_quitafterreplay;
 
 		#endregion
 	}

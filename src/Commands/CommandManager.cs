@@ -58,7 +58,7 @@ namespace xnaMugen.Commands
 			{
 				if (command.IsValid == false) continue;
 
-				if (m_commandsystem.CheckCommand(command, m_inputbuffer) == true)
+				if (CommandChecker.Check(command, m_inputbuffer) == true)
 				{
 					Int32 time = command.BufferTime;
 					if (paused == true) ++time;

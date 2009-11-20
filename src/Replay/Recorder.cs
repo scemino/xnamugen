@@ -15,10 +15,12 @@ namespace xnaMugen.Replay
 			m_screen = screen;
 			m_data = new LinkedList<RecordingData>();
 			m_input = new Int32[5];
+			m_isrecording = false;
 		}
 
 		public void Reset()
 		{
+			m_isrecording = false;
 			m_initsettings = m_screen.FightEngine.Initialization;
 			m_data.Clear();
 			m_input.Initialize();
@@ -52,8 +54,17 @@ namespace xnaMugen.Replay
 			m_data.AddLast(data);
 		}
 
+		public void StartRecording()
+		{
+			IsRecording = true;
+		}
+
 		public void EndRecording()
 		{
+			if (IsRecording == false) return;
+
+			IsRecording = false;
+
 			String filename = String.Format("xnaMugen Replay - {0:u}.txt", DateTime.Now).Replace(':', '-');
 
 			using (StreamWriter writer = new StreamWriter(filename))
@@ -95,6 +106,13 @@ namespace xnaMugen.Replay
 			}
 		}
 
+		public Boolean IsRecording
+		{
+			get { return m_isrecording; }
+
+			private set { m_isrecording = value; }
+		}
+
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
@@ -108,6 +126,9 @@ namespace xnaMugen.Replay
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		Combat.EngineInitialization m_initsettings;
+
+		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+		Boolean m_isrecording;
 
 		#endregion
 	}
