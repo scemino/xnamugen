@@ -112,8 +112,9 @@ namespace xnaMugen
 		IO.TextFile LoadIniFile()
 		{
 #if FRANTZX
-			var dir = System.IO.Path.GetDirectoryName(Environment.CommandLine.Trim('"', ' '));
-			var inipath = System.IO.Path.Combine(dir, @"xnaMugen.ini");
+			String exepath = Environment.CommandLine.Substring(1, Environment.CommandLine.IndexOf("\"", 1) - 1);
+			String dir = System.IO.Path.GetDirectoryName(exepath);
+			String inipath = System.IO.Path.Combine(dir, @"xnaMugen.ini");
 			
 			return SubSystems.GetSubSystem<IO.FileSystem>().OpenTextFile(inipath);
 #else

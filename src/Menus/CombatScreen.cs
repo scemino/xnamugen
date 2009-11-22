@@ -25,12 +25,12 @@ namespace xnaMugen.Menus
 
 		public override void FadingIn()
 		{
-			base.FadingIn();
-
 			if (MenuSystem.GetSubSystem<InitializationSettings>().RecordReplay == true)
 			{
 				Recorder.StartRecording();
 			}
+
+			base.FadingIn();
 		}
 
 		public override void FadeOutComplete()
