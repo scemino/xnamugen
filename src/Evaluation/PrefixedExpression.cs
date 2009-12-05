@@ -22,16 +22,9 @@ namespace xnaMugen.Evaluation
 			return Common ?? failover;
 		}
 
-		public Result Evaluate(Object state)
+		public Number[] Evaluate(Object state)
 		{
 			return Expression.Evaluate(state);
-		}
-
-		public void Evaluate(Object state, Result result)
-		{
-			if (result == null) throw new ArgumentNullException("result");
-
-			Expression.Evaluate(state, result);
 		}
 
 		public Expression Expression

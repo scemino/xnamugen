@@ -484,7 +484,7 @@ namespace xnaMugen.Combat
 			return c;
 		}
 
-		public Character FilterEntityAsTarget(Entity entity, Int32? targetid)
+		public Character FilterEntityAsTarget(Entity entity, Int32 targetid)
 		{
 			if (entity == null) throw new ArgumentNullException("entity");
 
@@ -497,37 +497,37 @@ namespace xnaMugen.Combat
 			//if (c.AttackInfo.Attacker != this) return null;
 
 			if (OffensiveInfo.TargetList.Contains(c) == false) return null;
-			if (targetid != null && targetid.Value >= 0 && c.DefensiveInfo.HitDef.TargetId != targetid.Value) return null;
+			if (targetid >= 0 && c.DefensiveInfo.HitDef.TargetId != targetid) return null;
 
 			return c;
 		}
 
-		public Explod FilterEntityAsExplod(Entity entity, Int32? explodid)
+		public Explod FilterEntityAsExplod(Entity entity, Int32 explodid)
 		{
 			if (entity == null) throw new ArgumentNullException("entity");
 
 			Explod explod = entity as Explod;
-			if (explod == null || explod.Creator != this || (explodid != null && explodid.Value >= 0 && explod.Data.Id != explodid.Value)) return null;
+			if (explod == null || explod.Creator != this || (explodid >= 0 && explod.Data.Id != explodid)) return null;
 
 			return explod;
 		}
 
-		public Helper FilterEntityAsHelper(Entity entity, Int32? helperid)
+		public Helper FilterEntityAsHelper(Entity entity, Int32 helperid)
 		{
 			if (entity == null) throw new ArgumentNullException("entity");
 
 			Helper helper = entity as Helper;
-			if (helper == null || helper.BasePlayer != this.BasePlayer || (helperid != null && helperid.Value > 0 && helper.Data.HelperId != helperid.Value)) return null;
+			if (helper == null || helper.BasePlayer != this.BasePlayer || (helperid > 0 && helper.Data.HelperId != helperid)) return null;
 
 			return helper;
 		}
 
-		public Projectile FilterEntityAsProjectile(Entity entity, Int32? projid)
+		public Projectile FilterEntityAsProjectile(Entity entity, Int32 projid)
 		{
 			if (entity == null) throw new ArgumentNullException("entity");
 
 			Projectile proj = entity as Projectile;
-			if (proj == null || proj.BasePlayer != this || (projid != null && projid.Value > 0 && proj.Data.ProjectileId != projid.Value)) return null;
+			if (proj == null || proj.BasePlayer != this || (projid > 0 && proj.Data.ProjectileId != projid)) return null;
 
 			return proj;
 		}

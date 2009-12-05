@@ -18,6 +18,7 @@ namespace xnaMugen.Combat
 			m_data = data;
 			m_tickcount = 0;
 			m_forceremove = false;
+			m_creator = data.Creator;
 
 			if (m_data.CommonAnimation == false)
 			{
@@ -371,7 +372,7 @@ namespace xnaMugen.Combat
 
 		public Entity Creator
 		{
-			get { return Data.Creator; }
+			get { return m_creator; }
 		}
 
 		public ExplodData Data
@@ -447,6 +448,9 @@ namespace xnaMugen.Combat
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		readonly Facing m_creationfacing;
+
+		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+		readonly Entity m_creator;
 
 		#endregion
 	}

@@ -13,18 +13,14 @@ namespace xnaMugen.StateMachine.Controllers
 		{
 			m_formatstring = textsection.GetAttribute<String>("text", null);
 			m_params = textsection.GetAttribute<Evaluation.Expression>("params", null);
-
-			m_result = new Evaluation.Result();
 		}
 
 		public override void Run(Combat.Character character)
 		{
 			if (Parameters != null)
 			{
-				Parameters.Evaluate(character, m_result);
-
 				character.Clipboard.Length = 0;
-				character.Clipboard.Append(BuildString(m_result));
+				character.Clipboard.Append(BuildString(Parameters.Evaluate(character)));
 			}
 			else
 			{
@@ -33,7 +29,7 @@ namespace xnaMugen.StateMachine.Controllers
 			}
 		}
 
-		protected String BuildString(Evaluation.Result args)
+		protected String BuildString(Evaluation.Number[] args)
 		{
 			if (args == null) throw new ArgumentNullException("args");
 
@@ -66,9 +62,6 @@ namespace xnaMugen.StateMachine.Controllers
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		readonly Evaluation.Expression m_params;
-
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Result m_result;
 
 		#endregion
 	}

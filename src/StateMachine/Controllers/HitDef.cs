@@ -229,16 +229,48 @@ namespace xnaMugen.StateMachine.Controllers
 
 			if (P1PowerIncrease != null)
 			{
-				Evaluation.Result statepower = P1PowerIncrease.Evaluate(character);
-				hitdef.P1HitPowerAdjustment = (statepower.IsValid(0) == true) ? statepower[0].IntValue : (Int32)(hitdef.HitDamage * 0.7f);
-				hitdef.P1GuardPowerAdjustment = (statepower.IsValid(1) == true) ? statepower[1].IntValue : (Int32)(hitdef.P1HitPowerAdjustment * 0.5f);
+				Evaluation.Number[] statepower = P1PowerIncrease.Evaluate(character);
+
+				if (statepower.Length > 0 && statepower[0].NumberType != NumberType.None)
+				{
+					hitdef.P1HitPowerAdjustment = statepower[0].IntValue;
+				}
+				else
+				{
+					hitdef.P1HitPowerAdjustment = (Int32)(hitdef.HitDamage * 0.7f);
+				}
+
+				if (statepower.Length > 1 && statepower[1].NumberType != NumberType.None)
+				{
+					hitdef.P1GuardPowerAdjustment = statepower[1].IntValue;
+				}
+				else
+				{
+					hitdef.P1GuardPowerAdjustment = (Int32)(hitdef.P1HitPowerAdjustment * 0.5f);
+				}
 			}
 
 			if (P2PowerIncrease != null)
 			{
-				Evaluation.Result p2power = P2PowerIncrease.Evaluate(character);
-				hitdef.P2HitPowerAdjustment = (p2power.IsValid(0) == true) ? p2power[0].IntValue : (Int32)(hitdef.HitDamage * 0.6f);
-				hitdef.P2GuardPowerAdjustment = (p2power.IsValid(1) == true) ? p2power[1].IntValue : (Int32)(hitdef.P2HitPowerAdjustment * 0.5f);
+				Evaluation.Number[] p2power = P2PowerIncrease.Evaluate(character);
+
+				if (p2power.Length > 0 && p2power[0].NumberType != NumberType.None)
+				{
+					hitdef.P2HitPowerAdjustment = p2power[0].IntValue;
+				}
+				else
+				{
+					hitdef.P2HitPowerAdjustment = (Int32)(hitdef.HitDamage * 0.6f);
+				}
+
+				if (p2power.Length > 1 && p2power[1].NumberType != NumberType.None)
+				{
+					hitdef.P2GuardPowerAdjustment = p2power[1].IntValue;
+				}
+				else
+				{
+					hitdef.P2GuardPowerAdjustment = (Int32)(hitdef.P2HitPowerAdjustment * 0.5f);
+				}
 			}
 
 			hitdef.PalFxTime = EvaluationHelper.AsInt32(character, PaletteColorTime, 0);

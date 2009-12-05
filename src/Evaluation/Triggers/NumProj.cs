@@ -13,7 +13,7 @@ namespace xnaMugen.Evaluation.Triggers
 			Int32 count = 0;
 			foreach (Combat.Entity entity in character.Engine.Entities)
 			{
-				Combat.Projectile projectile = character.FilterEntityAsProjectile(entity, null);
+				Combat.Projectile projectile = character.FilterEntityAsProjectile(entity, Int32.MinValue);
 				if (projectile == null) continue;
 
 				++count;

@@ -313,7 +313,6 @@
     <Compile Include="src\Evaluation\Operators.cs" />
     <Compile Include="src\Evaluation\ParseState.cs" />
     <Compile Include="src\Evaluation\PrefixedExpression.cs" />
-    <Compile Include="src\Evaluation\Result.cs" />
     <Compile Include="src\Evaluation\Symbols.cs" />
     <Compile Include="src\Evaluation\Token.cs" />
     <Compile Include="src\Evaluation\Tokenizer.cs" />
@@ -448,10 +447,14 @@
     <Compile Include="src\Input\SystemButtonDelegate.cs" />
     <Compile Include="src\Input\SystemButtonMap.cs" />
     <Compile Include="src\IO\File.cs" />
-    <Compile Include="src\IO\FileHeaders\PCX.cs" />
+    <Compile Include="src\IO\FileHeaders\FontFileHeader.cs" />
+    <Compile Include="src\IO\FileHeaders\PcxFileHeader.cs" />
+    <Compile Include="src\IO\FileHeaders\SoundFileHeader.cs" />
+    <Compile Include="src\IO\FileHeaders\SoundFileSubHeader.cs" />
+    <Compile Include="src\IO\FileHeaders\SpriteFileHeader.cs" />
+    <Compile Include="src\IO\FileHeaders\SpriteFileSubHeader.cs" />
     <Compile Include="src\IO\FileSystem.cs" />
     <Compile Include="src\IO\TextFile.cs" />
-    <Compile Include="src\IO\TextFileBuilder.cs" />
     <Compile Include="src\IO\TextSection.cs" />
     <Compile Include="src\Log.cs" />
     <Compile Include="src\Menus\CombatScreen.cs" />
@@ -473,7 +476,6 @@
     <Compile Include="src\Replay\RecordingData.cs" />
     <Compile Include="src\Resource.cs" />
     <Compile Include="src\Random.cs" />
-    <Compile Include="src\SharedBuffer.cs" />
     <Compile Include="src\SoundId.cs" />
     <Compile Include="src\SpriteId.cs" />
     <Compile Include="src\StageProfile.cs" />
@@ -574,7 +576,6 @@
     <Compile Include="src\StateMachine\TriggerMap.cs" />
     <Compile Include="src\StringConverter.cs" />
     <Compile Include="src\StringFormatter.cs" />
-    <Compile Include="src\SubString.cs" />
     <Compile Include="src\SubSystems.cs" />
     <Compile Include="src\MugenTest.cs" />
     <Compile Include="src\Timer.cs" />

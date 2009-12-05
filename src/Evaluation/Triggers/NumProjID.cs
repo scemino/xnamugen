@@ -10,8 +10,7 @@ namespace xnaMugen.Evaluation.Triggers
 			Combat.Character character = state as Combat.Character;
 			if (character == null) return new Number();
 
-			Int32? projectile_id = r1.IntValue > 0 ? r1.IntValue : (Int32?)null;
-
+			Int32 projectile_id = r1.IntValue;
 			Int32 count = 0;
 			foreach (Combat.Entity entity in character.Engine.Entities)
 			{

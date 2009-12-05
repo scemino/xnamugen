@@ -243,15 +243,9 @@ namespace xnaMugen.Evaluation.Triggers.Redirection
 		}
 	}
 
-#warning Not threadsafe
 	[CustomFunction("EnemyNear")]
 	static class EnemyNear
 	{
-		static EnemyNear()
-		{
-			s_playerlist = new List<Combat.Player>();
-		}
-
 		public static Number RedirectState(Object state, EvaluationCallback id, EvaluationCallback callback)
 		{
 			Combat.Character character = state as Combat.Character;
@@ -260,13 +254,13 @@ namespace xnaMugen.Evaluation.Triggers.Redirection
 			Number nth = id(state);
 			if (nth.NumberType == NumberType.None) return new Number();
 
-			BuildPlayerList(character);
+			List<Combat.Player> playerlist = BuildPlayerList(character);
 
-			SortPlayerList(character);
+			//SortPlayerList(character);
 
-			if (nth.IntValue >= s_playerlist.Count) return new Number();
+			if (nth.IntValue >= playerlist.Count) return new Number();
 
-			Combat.Player enemy = s_playerlist[nth.IntValue];
+			Combat.Player enemy = playerlist[nth.IntValue];
 			return callback(enemy);
 		}
 
@@ -274,11 +268,11 @@ namespace xnaMugen.Evaluation.Triggers.Redirection
 		{
 		}
 
-		static void BuildPlayerList(Combat.Character character)
+		static List<Combat.Player> BuildPlayerList(Combat.Character character)
 		{
 			if (character == null) throw new ArgumentNullException("character");
 
-			s_playerlist.Clear();
+			List<Combat.Player> players = new List<Combat.Player>();
 
 			foreach (Combat.Entity entity in character.Engine.Entities)
 			{
@@ -288,8 +282,10 @@ namespace xnaMugen.Evaluation.Triggers.Redirection
 				Combat.Player enemy_player = enemy as Combat.Player;
 				if (enemy_player == null) continue;
 
-				s_playerlist.Add(enemy_player);
+				players.Add(enemy_player);
 			}
+
+			return players;
 		}
 
 		public static Node Parse(ParseState parsestate)
@@ -313,12 +309,6 @@ namespace xnaMugen.Evaluation.Triggers.Redirection
 
 			return node;
 		}
-
-		#region Fields
-
-		static List<Combat.Player> s_playerlist;
-
-		#endregion
 	}
 
 	[CustomFunction("PlayerID")]

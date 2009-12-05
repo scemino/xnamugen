@@ -26,6 +26,7 @@ namespace xnaMugen.Animations
 			m_animationtitleregex = new Regex(@"^\s*Begin action\s+(-?\d+)(,.+)?\s*$", RegexOptions.IgnoreCase);
 			m_clsnregex = new Regex(@"Clsn([12])(Default)?:\s*(\d+)", RegexOptions.IgnoreCase);
 			m_clsnlineregex = new Regex(@"Clsn([12])?\[(-?\d+)\]\s*=\s*(-?\d+)\s*,\s*(-?\d+)\s*,\s*(-?\d+)\s*,\s*(-?\d+)", RegexOptions.IgnoreCase);
+			m_elementregex = new Regex(@"\s*,\s*", RegexOptions.IgnoreCase);
 		}
 
 		/// <summary>
@@ -205,54 +206,6 @@ namespace xnaMugen.Animations
 		}
 
 		/// <summary>
-		/// Parsed a comma delimited line for the creation of a AnimationElement.
-		/// </summary>
-		/// <param name="line">A line to be parsed.</param>
-		/// <returns>A String array of 7 elements is the line can be parsed; null otherwise.</returns>
-		String[] ParseElementLine(String line)
-		{
-			if (line == null) throw new ArgumentNullException("line");
-
-			StringSubString groupnumber = new StringSubString(line, 0, 0);
-			while (groupnumber.EndIndex < line.Length && line[groupnumber.EndIndex] != ',') ++groupnumber.EndIndex;
-
-			StringSubString imagenumber = new StringSubString(line, groupnumber.EndIndex + 1, groupnumber.EndIndex + 1);
-			while (imagenumber.EndIndex < line.Length && line[imagenumber.EndIndex] != ',') ++imagenumber.EndIndex;
-
-			StringSubString offsetx = new StringSubString(line, imagenumber.EndIndex + 1, imagenumber.EndIndex + 1);
-			while (offsetx.EndIndex < line.Length && line[offsetx.EndIndex] != ',') ++offsetx.EndIndex;
-
-			StringSubString offsety = new StringSubString(line, offsetx.EndIndex + 1, offsetx.EndIndex + 1);
-			while (offsety.EndIndex < line.Length && line[offsety.EndIndex] != ',') ++offsety.EndIndex;
-
-			StringSubString ticks = new StringSubString(line, offsety.EndIndex + 1, offsety.EndIndex + 1);
-			while (ticks.EndIndex < line.Length && line[ticks.EndIndex] != ',') ++ticks.EndIndex;
-
-			StringSubString spriteflip = new StringSubString(line, ticks.EndIndex + 1, ticks.EndIndex + 1);
-			while (spriteflip.EndIndex < line.Length && line[spriteflip.EndIndex] != ',') ++spriteflip.EndIndex;
-
-			StringSubString blend = new StringSubString(line, spriteflip.EndIndex + 1, spriteflip.EndIndex + 1);
-			while (blend.EndIndex < line.Length && line[blend.EndIndex] != ',') ++blend.EndIndex;
-
-			groupnumber.TrimWhitespace();
-			imagenumber.TrimWhitespace();
-			offsetx.TrimWhitespace();
-			offsety.TrimWhitespace();
-			ticks.TrimWhitespace();
-			spriteflip.TrimWhitespace();
-			blend.TrimWhitespace();
-
-			if (groupnumber.Length == 0 || imagenumber.Length == 0 || offsetx.Length == 0 || offsety.Length == 0 || ticks.Length == 0)
-			{
-				return null;
-			}
-			else
-			{
-				return new String[] { groupnumber.ToString(), imagenumber.ToString(), offsetx.ToString(), offsety.ToString(), ticks.ToString(), spriteflip.ToString(), blend.ToString() };
-			}
-		}
-
-		/// <summary>
 		/// Creates a new AnimationElement initialized from a line of text.
 		/// </summary>
 		/// <param name="line"></param>
@@ -269,36 +222,43 @@ namespace xnaMugen.Animations
 			if (loading_type1 == null) throw new ArgumentNullException("loading_type1");
 			if (loading_type2 == null) throw new ArgumentNullException("loading_type2");
 
-			String[] elements = ParseElementLine(line);
+			String[] elements = m_elementregex.Split(line);
 			if (elements == null) return null;
 
-			try
-			{
-				Int32 gameticks = Int32.Parse(elements[4]);
-				SpriteId sprite_id = new SpriteId(Int32.Parse(elements[0]), Int32.Parse(elements[1]));
-				Point offset = new Point(Int32.Parse(elements[2]), Int32.Parse(elements[3]));
+			Int32 groupnumber;
+			if (Int32.TryParse(elements[0], out groupnumber) == false) return null;
 
-				SpriteEffects flip = SpriteEffects.None;
+			Int32 imagenumber;
+			if (Int32.TryParse(elements[1], out imagenumber) == false) return null;
+
+			Int32 offset_x;
+			if (Int32.TryParse(elements[2], out offset_x) == false) return null;
+
+			Int32 offset_y;
+			if (Int32.TryParse(elements[3], out offset_y) == false) return null;
+
+			Int32 gameticks;
+			if (Int32.TryParse(elements[4], out gameticks) == false) return null;
+
+			SpriteEffects flip = SpriteEffects.None;
+			if (elements.Length >= 6)
+			{
 				if (elements[5].IndexOf('H') != -1 || elements[5].IndexOf('h') != -1) flip |= SpriteEffects.FlipHorizontally;
 				if (elements[5].IndexOf('V') != -1 || elements[5].IndexOf('v') != -1) flip |= SpriteEffects.FlipVertically;
-
-				Blending blending = new Blending();
-				if (String.IsNullOrEmpty(elements[6]) == false)
-				{
-					blending = m_animationsystem.GetSubSystem<StringConverter>().Convert<Blending>(elements[6]);
-				}
-
-				List<Clsn> clsn = new List<Clsn>();
-				clsn.AddRange(loading_type1.Count != 0 ? loading_type1 : default_type1);
-				clsn.AddRange(loading_type2.Count != 0 ? loading_type2 : default_type2);
-
-				AnimationElement element = new AnimationElement(elementid, clsn, gameticks, sprite_id, offset, flip, blending);
-				return element;
 			}
-			catch(FormatException)
+
+			Blending blending = new Blending();
+			if (elements.Length >= 7)
 			{
-				return null;
+				blending = m_animationsystem.GetSubSystem<StringConverter>().Convert<Blending>(elements[6]);
 			}
+
+			List<Clsn> clsn = new List<Clsn>();
+			clsn.AddRange(loading_type1.Count != 0 ? loading_type1 : default_type1);
+			clsn.AddRange(loading_type2.Count != 0 ? loading_type2 : default_type2);
+
+			AnimationElement element = new AnimationElement(elementid, clsn, gameticks, new SpriteId(groupnumber, imagenumber), new Point(offset_x, offset_y), flip, blending);
+			return element;
 		}
 
 		#region Fields
@@ -314,6 +274,9 @@ namespace xnaMugen.Animations
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		readonly Regex m_clsnlineregex;
+
+		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+		readonly Regex m_elementregex;
 
 		#endregion
 	}

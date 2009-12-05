@@ -17,7 +17,7 @@ namespace xnaMugen.StateMachine.Controllers
 		public override void Run(Combat.Character character)
 		{
 			Int32? statenumber = EvaluationHelper.AsInt32(character, StateNumber, null);
-			Int32? target_id = EvaluationHelper.AsInt32(character, TargetId, null);
+			Int32 target_id = EvaluationHelper.AsInt32(character, TargetId, Int32.MinValue);
 
 			if (statenumber == null) return;
 

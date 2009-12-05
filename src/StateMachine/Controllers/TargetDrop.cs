@@ -22,7 +22,7 @@ namespace xnaMugen.StateMachine.Controllers
 			Boolean keptone = false;
 			foreach (Combat.Entity entity in character.Engine.Entities)
 			{
-				Combat.Character target = character.FilterEntityAsTarget(entity, null);
+				Combat.Character target = character.FilterEntityAsTarget(entity, Int32.MinValue);
 				if (target == null) continue;
 
 				if (exclude_id != -1 && target.DefensiveInfo.HitDef.TargetId == exclude_id) continue;

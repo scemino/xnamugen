@@ -109,16 +109,10 @@ namespace xnaMugen
 			Int32 comma_index = line.IndexOf(',');
 			if (comma_index != -1)
 			{
-				StringSubString player_substring = new StringSubString(line, 0, comma_index);
-				player_substring.TrimWhitespace();
-
-				String playername = player_substring.ToString();
+				String playername = line.Substring(0, comma_index).Trim();
 				playerpath = @"chars/" + playername + @"/" + playername + @".def";
 
-				StringSubString stage_substring = new StringSubString(line, comma_index + 1, line.Length);
-				stage_substring.TrimWhitespace();
-
-				stagepath = stage_substring.ToString();
+				stagepath = line.Substring(comma_index + 1).Trim();
 			}
 			else
 			{

@@ -31,16 +31,13 @@ namespace xnaMugen.StateMachine.Controllers
 				return;
 			}
 
-			StringSubString postype_str = new StringSubString(input, sep_index + 1, input.Length);
-			postype_str.TrimWhitespace();
+			String str_exp = input.Substring(0, sep_index).Trim();
+			String str_postype = input.Substring(sep_index + 1).Trim();
 
 			BindToTargetPostion bttp;
-			if (StateSystem.GetSubSystem<StringConverter>().TryConvert(postype_str.ToString(), out bttp) == true)
+			if (StateSystem.GetSubSystem<StringConverter>().TryConvert(str_postype, out bttp) == true)
 			{
-				StringSubString exp_str = new StringSubString(input, 0, sep_index);
-				exp_str.TrimWhitespace();
-
-				expression = StateSystem.GetSubSystem<Evaluation.EvaluationSystem>().CreateExpression(exp_str.ToString());
+				expression = StateSystem.GetSubSystem<Evaluation.EvaluationSystem>().CreateExpression(str_exp);
 				postype = bttp;
 			}
 			else
@@ -52,7 +49,7 @@ namespace xnaMugen.StateMachine.Controllers
 		public override void Run(Combat.Character character)
 		{
 			Int32 time = EvaluationHelper.AsInt32(character, Time, 1);
-			Int32? target_id = EvaluationHelper.AsInt32(character, TargetId, null);
+			Int32 target_id = EvaluationHelper.AsInt32(character, TargetId, Int32.MinValue);
 			Vector2 offset = EvaluationHelper.AsVector2(character, Position, new Vector2(0, 0));
 
 			foreach (Combat.Entity entity in character.Engine.Entities)

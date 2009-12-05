@@ -43,7 +43,7 @@ namespace xnaMugen
 			}
 		}
 
-		public String BuildString(String format, Evaluation.Result args)
+		public String BuildString(String format, Evaluation.Number[] args)
 		{
 			if (format == null) throw new ArgumentNullException("format");
 			if (args == null) throw new ArgumentNullException("args");
@@ -52,7 +52,7 @@ namespace xnaMugen
 			{
 				m_args.Clear();
 
-				for (Int32 i = 0; i != args.Count; ++i)
+				for (Int32 i = 0; i != args.Length; ++i)
 				{
 					if (args[i].NumberType == NumberType.Int) m_args.Add(args[i].IntValue);
 					else if (args[i].NumberType == NumberType.Float) m_args.Add(args[i].FloatValue);

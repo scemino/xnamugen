@@ -94,7 +94,7 @@ namespace xnaMugen
 
 			if (p1profile == null || p2profile == null || stageprofile == null) return null;
 
-			Combat.EngineInitialization initsettings = new Combat.EngineInitialization(mode, p1profile, p1palette, p2profile, p2palette, stageprofile);
+			Combat.EngineInitialization initsettings = new Combat.EngineInitialization(mode, p1profile, p1palette, p2profile, p2palette, stageprofile, seed);
 
 			List<Replay.RecordingData> replaydata = new List<Replay.RecordingData>();
 

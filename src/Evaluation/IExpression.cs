@@ -4,9 +4,7 @@ namespace xnaMugen.Evaluation
 {
 	interface IExpression
 	{
-		Result Evaluate(Object state);
-
-		void Evaluate(Object state, Result result);
+		Number[] Evaluate(Object state);
 
 		Boolean IsValid { get; }
 	}

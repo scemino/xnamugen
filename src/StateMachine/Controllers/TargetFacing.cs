@@ -17,7 +17,7 @@ namespace xnaMugen.StateMachine.Controllers
 		public override void Run(Combat.Character character)
 		{
 			Int32 facing = EvaluationHelper.AsInt32(character, Facing, 0);
-			Int32? target_id = EvaluationHelper.AsInt32(character, TargetId, null);
+			Int32 target_id = EvaluationHelper.AsInt32(character, TargetId, Int32.MinValue);
 
 			foreach (Combat.Entity entity in character.Engine.Entities)
 			{

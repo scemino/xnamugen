@@ -19,7 +19,7 @@ namespace xnaMugen.StateMachine.Controllers
 		public override void Run(Combat.Character character)
 		{
 			Int32? amount = EvaluationHelper.AsInt32(character, Amount, null);
-			Int32? target_id = EvaluationHelper.AsInt32(character, TargetId, null);
+			Int32 target_id = EvaluationHelper.AsInt32(character, TargetId, Int32.MinValue);
 			Boolean cankill = EvaluationHelper.AsBoolean(character, CanKill, true);
 			Boolean absolute = EvaluationHelper.AsBoolean(character, Absolute, false);
 

@@ -3,37 +3,31 @@ using System.Diagnostics;
 
 namespace xnaMugen.IO.FileHeaders
 {
-	struct PCX
+	struct PcxFileHeader
 	{
-		public PCX(File file)
+		public PcxFileHeader(File file)
 		{
 			if(file == null) throw new ArgumentNullException("file");
 
-			m_manufacturer = file.ReadByte();
-			m_version = file.ReadByte();
-			m_encoding = file.ReadByte();
-			m_bitsperpixel = file.ReadByte();
-			m_xmin = file.ReadInt16();
-			m_ymin = file.ReadInt16();
-			m_xmax = file.ReadInt16();
-			m_ymax = file.ReadInt16();
-			m_horizontalDPI = file.ReadInt16();
-			m_verticalDPI = file.ReadInt16();
+			Byte[] data = file.ReadBytes(HeaderSize);
+			if (data.Length != HeaderSize) throw new ArgumentException("File is not long enough", "file");
 
-			file.SeekFromCurrent(48); // Colormap
-			file.SeekFromCurrent(1); // Reserved
-			
-			m_colorplanes = file.ReadByte();
-			m_bytesperline = file.ReadInt16();
-			m_palettetype = file.ReadInt16();
-
-			file.SeekFromCurrent(2); // Horizontal Screensize
-			file.SeekFromCurrent(2); // Vertical Screensize
-
-			file.SeekFromCurrent(54); // Filler
+			m_manufacturer = data[0];
+			m_version = data[1];
+			m_encoding = data[2];
+			m_bitsperpixel = data[3];
+			m_xmin = BitConverter.ToInt16(data, 4);
+			m_ymin = BitConverter.ToInt16(data, 6);
+			m_xmax = BitConverter.ToInt16(data, 8);
+			m_ymax = BitConverter.ToInt16(data, 10);
+			m_horizontalDPI = BitConverter.ToInt16(data, 12);
+			m_verticalDPI = BitConverter.ToInt16(data, 14);
+			m_colorplanes = data[65];
+			m_bytesperline = BitConverter.ToInt16(data, 66);
+			m_palettetype = BitConverter.ToInt16(data, 68);
 		}
 
-		public PCX(Byte[] filebuffer)
+		public PcxFileHeader(Byte[] filebuffer)
 		{
 			if (filebuffer == null) throw new ArgumentNullException("filebuffer");
 
@@ -47,18 +41,9 @@ namespace xnaMugen.IO.FileHeaders
 			m_ymax = BitConverter.ToInt16(filebuffer, 10);
 			m_horizontalDPI = BitConverter.ToInt16(filebuffer, 12);
 			m_verticalDPI = BitConverter.ToInt16(filebuffer, 14);
-
-			//file.SeekFromCurrent(48); // Colormap
-			//file.SeekFromCurrent(1); // Reserved
-
 			m_colorplanes = filebuffer[65];
 			m_bytesperline = BitConverter.ToInt16(filebuffer, 66);
 			m_palettetype = BitConverter.ToInt16(filebuffer, 68);
-
-			//file.SeekFromCurrent(2); // Horizontal Screensize
-			//file.SeekFromCurrent(2); // Vertical Screensize
-
-			//file.SeekFromCurrent(54); // Filler
 		}
 
 		static public Int32 HeaderSize

@@ -19,7 +19,7 @@ namespace xnaMugen.StateMachine.Controllers
 
 		public override void Run(Combat.Character character)
 		{
-			Int32? explod_id = EvaluationHelper.AsInt32(character, Id, null);
+			Int32 explod_id = EvaluationHelper.AsInt32(character, Id, Int32.MinValue);
 			Int32 time = EvaluationHelper.AsInt32(character, Time, 1);
 
 			foreach (Combat.Entity entity in character.Engine.Entities)

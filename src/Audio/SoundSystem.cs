@@ -172,39 +172,31 @@ namespace xnaMugen.Audio
 
 			using (IO.File file = GetSubSystem<IO.FileSystem>().OpenFile(filepath))
 			{
-				String sig = file.ReadString(11);
-				Int32 version = file.ReadInt32();
-				Int32 numberofsounds = file.ReadInt32();
-				Int32 subheader_fileoffset = file.ReadInt32();
+				IO.FileHeaders.SoundFileHeader header = new IO.FileHeaders.SoundFileHeader(file);
 
-				file.SeekFromBeginning(subheader_fileoffset);
+				file.SeekFromBeginning(header.SubheaderOffset);
 
-				for (Int32 i = 0; i != numberofsounds; ++i)
+				for (Int32 i = 0; i != header.NumberOfSounds; ++i)
 				{
-					Int32 nextsubheader_fileoffset = file.ReadInt32();
-					Int32 sound_filelength = file.ReadInt32();
-					Int32 sound_groupnumber = file.ReadInt32();
-					Int32 sound_samplenumber = file.ReadInt32();
+					IO.FileHeaders.SoundFileSubHeader subheader = new IO.FileHeaders.SoundFileSubHeader(file);
 
-					SoundId id = new SoundId(sound_groupnumber, sound_samplenumber);
-
-					if (sounds.ContainsKey(id) == true)
+					if (sounds.ContainsKey(subheader.Id) == true)
 					{
-						Log.Write(LogLevel.Warning, LogSystem.SoundSystem, "Duplicate sound with ID {0} discarded.", id);
+						Log.Write(LogLevel.Warning, LogSystem.SoundSystem, "Duplicate sound with ID {0} discarded.", subheader.Id);
 					}
 					else
 					{
 						try
 						{
-							sounds.Add(id, CreateSoundBuffer(file, sound_filelength));
+							sounds.Add(subheader.Id, CreateSoundBuffer(file, subheader.SoundLength));
 						}
 						catch
 						{
-							Log.Write(LogLevel.Warning, LogSystem.SoundSystem, "Error reading sound with ID {0}.", id);
+							Log.Write(LogLevel.Warning, LogSystem.SoundSystem, "Error reading sound with ID {0}.", subheader.Id);
 						}
 					}
 
-					file.SeekFromBeginning(nextsubheader_fileoffset);
+					file.SeekFromBeginning(subheader.NextOffset);
 				}
 			}
 

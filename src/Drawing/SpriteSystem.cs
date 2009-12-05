@@ -38,19 +38,16 @@ namespace xnaMugen.Drawing
 
 			using (IO.File file = GetSubSystem<IO.FileSystem>().OpenFile(filepath))
 			{
-				String sig = file.ReadString(11);
-				Int32 unknown = file.ReadInt32();
-				Int32 imageoffset = file.ReadInt32();
-				Int32 imagesize = file.ReadInt32();
+				IO.FileHeaders.FontFileHeader header = new IO.FileHeaders.FontFileHeader(file);
 
-				file.SeekFromBeginning(imageoffset);
-				LoadImage(file, imagesize, out size, out pixels, out palette);
+				file.SeekFromBeginning(header.ImageOffset);
+				LoadImage(file, header.ImageSize, out size, out pixels, out palette);
 
-				file.SeekFromBeginning(imageoffset + imagesize);
+				file.SeekFromBeginning(header.ImageOffset + header.ImageSize);
 				textfile = GetSubSystem<IO.FileSystem>().BuildTextFile(file);
 			}
 
-			Sprite sprite = new Sprite(size, new Point(0, 0), pixels, palette, false);
+			Sprite sprite = new Sprite(size, new Point(0, 0), true, pixels, true, palette, false);
 
 			IO.TextSection data = textfile.GetSection("Def");
 			IO.TextSection textmap = textfile.GetSection("Map");
@@ -102,40 +99,22 @@ namespace xnaMugen.Drawing
 
 			IO.File file = GetSubSystem<IO.FileSystem>().OpenFile(filepath);
 
-			String signature = file.ReadString(11);
-			Byte version_high = file.ReadByte();
-			Byte version_low1 = file.ReadByte();
-			Byte version_low2 = file.ReadByte();
-			Byte version_low3 = file.ReadByte();
-			Int32 numberofgroups = file.ReadInt32();
-			Int32 numberofimages = file.ReadInt32();
-			Int32 firstsubheader_offset = file.ReadInt32();
-			Int32 subheader_size = file.ReadInt32();
-			Boolean shared_palette = file.ReadByte() > 0;
+			IO.FileHeaders.SpriteFileHeader header = new IO.FileHeaders.SpriteFileHeader(file);
 
-			SpriteFileVersion version = new SpriteFileVersion(version_high, version_low1, version_low2, version_low3);
+			List<SpriteFileData> datalist = new List<SpriteFileData>(header.NumberOfImages);
 
-			List<SpriteFileData> datalist = new List<SpriteFileData>(numberofimages);
-
-			Int32 subheader_offset = firstsubheader_offset;
+			Int32 subheader_offset = header.SubheaderOffset;
 			for (file.SeekFromBeginning(subheader_offset); file.ReadPosition != file.FileLength; file.SeekFromBeginning(subheader_offset))
 			{
-				Int32 nextsubheader_offset = file.ReadInt32();
-				Int32 image_size = file.ReadInt32();
-				Int16 axis_x = file.ReadInt16();
-				Int16 axis_y = file.ReadInt16();
-				Int16 groupnumber = file.ReadInt16();
-				Int16 imagenumber = file.ReadInt16();
-				Int16 sharedindex = file.ReadInt16();
-				Boolean copylastpalette = file.ReadByte() > 0;
+				IO.FileHeaders.SpriteFileSubHeader subheader = new IO.FileHeaders.SpriteFileSubHeader(file);
 
-				SpriteFileData data = new SpriteFileData((Int32)file.ReadPosition + 13, image_size, new Point(axis_x, axis_y), new SpriteId(groupnumber, imagenumber), sharedindex, copylastpalette);
+				SpriteFileData data = new SpriteFileData((Int32)file.ReadPosition + 13, subheader.ImageSize, subheader.Axis, subheader.Id, subheader.SharedIndex, subheader.CopyLastPalette);
 				datalist.Add(data);
 
-				subheader_offset = nextsubheader_offset;
+				subheader_offset = subheader.NextOffset;
 			}
 
-			return new SpriteFile(this, file, version, datalist, shared_palette);
+			return new SpriteFile(this, file, header.Version, datalist, header.SharedPalette);
 		}
 
 		public Boolean LoadImage(IO.File file, Int32 pcxsize, out Point size, out Texture2D pixels, out Texture2D palette)
@@ -155,30 +134,29 @@ namespace xnaMugen.Drawing
 			palette = GetSubSystem<Video.VideoSystem>().CreatePaletteTexture();
 			m_palettefilecache.Add(filepath, palette);
 
-			SharedBuffer buffer = GetSubSystem<SharedBuffer>();
 			using (IO.File file = GetSubSystem<IO.FileSystem>().OpenFile(filepath))
 			{
-				if (file.FileLength != 768)
+				if (file.FileLength != (256 * 3))
 				{
 					Log.Write(LogLevel.Error, LogSystem.SpriteSystem, "{0} is not a character palette file", filepath);
 				}
 				else
 				{
-					lock (buffer.LockObject)
+					Byte[] buffer = new Byte[256 * 4];
+					Byte[] filedata = file.ReadBytes(256 * 3);
+
+					for (Int32 i = 0; i != 256; ++i)
 					{
-						buffer.EnsureSize(256 * 4);
+						Int32 bufferindex = (255 - i) * 4;
+						Int32 fileindex = i * 3;
 
-						for (Int32 i = 255; i != -1; --i)
-						{
-							//blue, green, red, alpha
-							buffer[i * 4 + 2] = file.ReadByte();
-							buffer[i * 4 + 1] = file.ReadByte();
-							buffer[i * 4 + 0] = file.ReadByte();
-							buffer[i * 4 + 3] = 255;
-						}
-
-						palette.SetData<Byte>(buffer.Buffer, 0, 256 * 4, SetDataOptions.None);
+						buffer[bufferindex + 0] = filedata[fileindex + 2];
+						buffer[bufferindex + 1] = filedata[fileindex + 1];
+						buffer[bufferindex + 2] = filedata[fileindex + 0];
+						buffer[bufferindex + 3] = 255;
 					}
+
+					palette.SetData<Byte>(buffer, 0, 256 * 4, SetDataOptions.None);
 				}
 			}
 

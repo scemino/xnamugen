@@ -20,7 +20,7 @@ namespace xnaMugen.StateMachine.Controllers
 		{
 			Single? x = EvaluationHelper.AsSingle(character, X, null);
 			Single? y = EvaluationHelper.AsSingle(character, Y, null);
-			Int32? target_id = EvaluationHelper.AsInt32(character, TargetId, null);
+			Int32 target_id = EvaluationHelper.AsInt32(character, TargetId, Int32.MinValue);
 
 			foreach (Combat.Entity entity in character.Engine.Entities)
 			{

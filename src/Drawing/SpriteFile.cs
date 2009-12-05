@@ -50,7 +50,7 @@ namespace xnaMugen.Drawing
 
 		public Sprite GetSprite(SpriteId id)
 		{
-			if (id == SpriteId.Invalid) return null;			
+			if (id == SpriteId.Invalid) return null;
 
 			if (m_cachedsprites.ContainsKey(id) == true) return m_cachedsprites[id];
 
@@ -62,6 +62,8 @@ namespace xnaMugen.Drawing
 			Texture2D pixels;
 			Texture2D palette;
 			Boolean paletteoverride = false;
+			Boolean ownpixels = true;
+			Boolean ownpalette = true;
 
 			if (data.PcxSize > 0)
 			{
@@ -84,8 +86,10 @@ namespace xnaMugen.Drawing
 
 				size = shared_sprite.Size;
 				paletteoverride = shared_sprite.PaletteOverride;
-				pixels = m_spritesystem.GetSubSystem<Video.VideoSystem>().CloneTexture(shared_sprite.Pixels);
-				palette = m_spritesystem.GetSubSystem<Video.VideoSystem>().CloneTexture(shared_sprite.Palette);
+				pixels = shared_sprite.Pixels;
+				palette = shared_sprite.Palette;
+				ownpixels = false;
+				ownpalette = false;
 			}
 
 			if (data.CopyLastPalette == true && dataindex != 0)
@@ -97,14 +101,16 @@ namespace xnaMugen.Drawing
 					if (previoussprite != null)
 					{
 						paletteoverride = previoussprite.PaletteOverride;
-						m_spritesystem.GetSubSystem<Video.VideoSystem>().CopyTexture(previoussprite.Palette, palette);
+						ownpalette = false;
+
+						palette = previoussprite.Palette;
 					}
 				}
 			}
 
 			if (id == new SpriteId(0, 0) || id == SpriteId.SmallPortrait) paletteoverride = true;
 
-			Sprite sprite = new Sprite(size, data.Axis, pixels, palette, paletteoverride);
+			Sprite sprite = new Sprite(size, data.Axis, ownpixels, pixels, ownpalette, palette, paletteoverride);
 			m_cachedsprites.Add(id, sprite);
 
 			return sprite;
@@ -140,7 +146,11 @@ namespace xnaMugen.Drawing
 			{
 				if (m_cachedsprites != null)
 				{
-					foreach (Sprite sprite in m_cachedsprites.Values) sprite.Dispose();
+					foreach (Sprite sprite in m_cachedsprites.Values)
+					{
+						if (sprite != null) sprite.Dispose();
+					}
+
 					m_cachedsprites.Clear();
 				}
 			}

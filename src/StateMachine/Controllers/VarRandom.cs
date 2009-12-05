@@ -41,19 +41,22 @@ namespace xnaMugen.StateMachine.Controllers
 				return true;
 			}
 
-			Evaluation.Result result = Range.Evaluate(character);
+			Evaluation.Number[] result = Range.Evaluate(character);
 
-			if (result.IsValid(0) == true && result.IsValid(1) == true)
+			if (result.Length > 0 && result[0].NumberType != NumberType.None)
 			{
-				min = result[0].IntValue;
-				max = result[1].IntValue;
-				return true;
-			}
-
-			if (result.IsValid(0) == true)
-			{
-				min = 0;
-				max = result[0].IntValue;
+				if (result.Length > 1 && result[1].NumberType != NumberType.None)
+				{
+					min = result[0].IntValue;
+					max = result[1].IntValue;
+					return true;
+				}
+				else
+				{
+					min = 0;
+					max = result[0].IntValue;
+					return true;
+				}
 			}
 
 			min = 0;

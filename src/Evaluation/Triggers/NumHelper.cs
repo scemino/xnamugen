@@ -10,25 +10,14 @@ namespace xnaMugen.Evaluation.Triggers
 			Combat.Character character = state as Combat.Character;
 			if (character == null) return new Number();
 
-			Int32? helper_id;
+			if (number.NumberType != NumberType.Int) return new Number();
 
-			switch (number.NumberType)
-			{
-				case NumberType.Int:
-					helper_id = number.IntValue;
-					break;
-
-				default:
-					return new Number();
-			}
-
+			Int32 helper_id = number.IntValue;
 			Int32 count = 0;
 			foreach (Combat.Entity entity in character.Engine.Entities)
 			{
 				Combat.Helper helper = character.FilterEntityAsHelper(entity, helper_id);
-				if (helper == null) continue;
-
-				++count;
+				if (helper != null) ++count;
 			}
 
 			return new Number(count);

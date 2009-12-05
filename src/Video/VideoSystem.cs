@@ -100,47 +100,6 @@ namespace xnaMugen.Video
 			m_screenshot.Save(m_stringbuilder.ToString(), format);
 		}
 
-		public Texture2D CloneTexture(Texture2D texture)
-		{
-			if (texture == null) throw new ArgumentNullException("texture");
-			if (texture.Format != SurfaceFormat.Alpha8 && texture.Format != SurfaceFormat.Color) throw new ArgumentException("Cannot copy texture with format: " + texture.Format);
-
-			Texture2D clone = new Texture2D(Device, texture.Width, texture.Height, 1, TextureUsage.None, texture.Format);
-			SharedBuffer buffer = GetSubSystem<SharedBuffer>();
-			Int32 buffersize = texture.Width * texture.Height * GetFormatSize(texture.Format);
-
-			lock (buffer.LockObject)
-			{
-				buffer.EnsureSize(buffersize);
-
-				texture.GetData<Byte>(buffer.Buffer, 0, buffersize);
-				clone.SetData<Byte>(buffer.Buffer, 0, buffersize, SetDataOptions.None);
-			}
-
-			return clone;
-		}
-
-		public void CopyTexture(Texture2D input, Texture2D output)
-		{
-			if (input == null) throw new ArgumentNullException("input");
-			if (output == null) throw new ArgumentNullException("output");
-
-			if (input.Width != output.Width || input.Height != output.Height) throw new ArgumentException("Textures are not same size");
-			if (input.Format != output.Format) throw new ArgumentException("Textures do not have same SurfaceFormat");
-			if (input.Format != SurfaceFormat.Alpha8 && input.Format != SurfaceFormat.Color) throw new ArgumentException("Cannot copy texture with format: " + input.Format);
-
-			SharedBuffer buffer = GetSubSystem<SharedBuffer>();
-			Int32 buffersize = input.Width * input.Height * GetFormatSize(input.Format);
-
-			lock (buffer.LockObject)
-			{
-				buffer.EnsureSize(buffersize);
-
-				input.GetData<Byte>(buffer.Buffer, 0, buffersize);
-				output.SetData<Byte>(buffer.Buffer, 0, buffersize, SetDataOptions.None);
-			}
-		}
-
 		public Texture2D CreatePixelTexture(Point size)
 		{
 			Texture2D texture = new Texture2D(Device, size.X, size.Y, 1, TextureUsage.None, SurfaceFormat.Alpha8);

@@ -13,6 +13,17 @@ namespace xnaMugen.Drawing
 			m_low3 = low3;
 		}
 
+		public SpriteFileVersion(Byte[] bytes)
+		{
+			if (bytes == null) throw new ArgumentNullException("bytes");
+			if (bytes.Length != 4) throw new ArgumentException("Array length must be 4.", "bytes");
+
+			m_high = bytes[0];
+			m_low1 = bytes[1];
+			m_low2 = bytes[2];
+			m_low3 = bytes[4];
+		}
+
 		public override String ToString()
 		{
 			return String.Format("{0} {1} {2} {3}", m_high, m_low1, m_low2, m_low3);

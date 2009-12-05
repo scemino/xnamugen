@@ -16,7 +16,7 @@ namespace xnaMugen.StateMachine.Controllers
 		{
 			if (Parameters != null)
 			{
-				Evaluation.Result result = Parameters.Evaluate(character);
+				Evaluation.Number[] result = Parameters.Evaluate(character);
 				if (result == null) return;
 
 				character.Clipboard.Append(BuildString(result));

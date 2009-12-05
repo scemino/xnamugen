@@ -56,54 +56,9 @@ namespace xnaMugen.IO
 			m_stream.Seek(offset, SeekOrigin.Current);
 		}
 
-		/// <summary>
-		/// Reads a Byte from the file and increases the read position by one byte.
-		/// </summary>
-		/// <returns>The next Byte from the file.</returns>
-		[DebuggerStepThrough]
-		public Byte ReadByte()
+		public Byte[] ReadBytes(Int32 count)
 		{
-			return m_breader.ReadByte();
-		}
-
-		public Int32 ReadBytes(Byte[] array, Int32 count)
-		{
-			return m_breader.Read(array, 0, count);
-		}
-
-		/// <summary>
-		/// Reads an Int32 from the file and increases the read position by four bytes.
-		/// </summary>
-		/// <returns>The next Int32 from the file.</returns>
-		[DebuggerStepThrough]
-		public Int32 ReadInt32()
-		{
-			return m_breader.ReadInt32();
-		}
-
-		/// <summary>
-		/// Reads an Int16 from the file and increases the read position by two bytes.
-		/// </summary>
-		/// <returns>The next Int16 from the file.</returns>
-		[DebuggerStepThrough]
-		public Int16 ReadInt16()
-		{
-			return m_breader.ReadInt16();
-		}
-
-		/// <summary>
-		/// Reads a String from the file.
-		/// </summary>
-		/// <param name="length">The length of the string to read.</param>
-		/// <returns>A String of the given length.</returns>
-		[DebuggerStepThrough]
-		public String ReadString(Int32 length)
-		{
-			String str = new String(m_breader.ReadChars(length));
-
-			if (m_breader.PeekChar() == '\0') m_breader.ReadChar();
-
-			return str;
+			return m_breader.ReadBytes(count);
 		}
 
 		/// <summary>
@@ -139,6 +94,11 @@ namespace xnaMugen.IO
 		public String ReadToEnd()
 		{
 			return m_sreader.ReadToEnd();
+		}
+
+		public String ReadLine()
+		{
+			return m_sreader.ReadLine();
 		}
 
 		/// <summary>

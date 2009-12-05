@@ -12,30 +12,18 @@ namespace xnaMugen.Combat
 	{
 		public struct Enumerator : IEnumerator<Entity>
 		{
-			static Enumerator()
-			{
-				s_defaultfilter = x => true;
-			}
-
 			public Enumerator(EntityCollection collection)
-				: this(collection, s_defaultfilter)
-			{
-			}
-
-			public Enumerator(EntityCollection collection, Converter<Entity, Boolean> filter)
 			{
 				if (collection == null) throw new ArgumentNullException("collection");
-				if (filter == null) throw new ArgumentNullException("filter");
 
 				m_collection = collection;
-				m_filter = filter;
 				m_current = null;
 				m_index = 0;
 			}
 
 			public Enumerator GetEnumerator()
 			{
-				return new Enumerator(m_collection, m_filter);
+				return new Enumerator(m_collection);
 			}
 
 			public void Dispose()
@@ -46,22 +34,18 @@ namespace xnaMugen.Combat
 			{
 				if (m_collection == null) return false;
 
-				while (m_index >= 0 && m_index < m_collection.m_entities.Count)
+				Int32 firstcount = m_collection.m_entities.Count;
+				Int32 totalcount = firstcount + m_collection.m_addlist.Count;
+
+				for (; m_index < totalcount; ++m_index)
 				{
-					m_current = m_collection.m_entities[m_index];
-					++m_index;
+					m_current = (m_index < firstcount) ? m_collection.m_entities[m_index] : m_collection.m_addlist[m_index - firstcount];
 
-					if (m_collection.m_removelist.Contains(m_current) == false && m_filter(m_current) == true) return true;
-				}
-
-				Int32 newindex = m_index - m_collection.m_entities.Count;
-				while (newindex >= 0 && newindex < m_collection.m_addlist.Count)
-				{
-					m_current = m_collection.m_addlist[newindex];
-					++m_index;
-					++newindex;
-
-					if (m_collection.m_removelist.Contains(m_current) == false && m_filter(m_current) == true) return true;
+					if (m_collection.m_removelist.Contains(m_current) == false)
+					{
+						++m_index;
+						return true;
+					}
 				}
 
 				m_current = null;
@@ -87,13 +71,7 @@ namespace xnaMugen.Combat
 			#region Fields
 
 			[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-			readonly static Converter<Entity, Boolean> s_defaultfilter;
-
-			[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 			readonly EntityCollection m_collection;
-
-			[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-			readonly Converter<Entity, Boolean> m_filter;
 
 			[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 			Entity m_current;
@@ -298,13 +276,6 @@ namespace xnaMugen.Combat
 		public Enumerator GetEnumerator()
 		{
 			return new Enumerator(this);
-		}
-
-		public Enumerator FilterEntities(Converter<Entity, Boolean> filter)
-		{
-			if (filter == null) throw new ArgumentNullException("filter");
-
-			return new Enumerator(this, filter);
 		}
 
 		IEnumerator<Entity> IEnumerable<Entity>.GetEnumerator()

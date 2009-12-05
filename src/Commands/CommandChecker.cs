@@ -27,6 +27,7 @@ namespace xnaMugen.Commands
 					if (match_index > command.Time) return false;
 
 					--element_index;
+					input_index = match_index;
 				}
 				else if (element_index == 0)
 				{
@@ -36,8 +37,6 @@ namespace xnaMugen.Commands
 				{
 					return false;
 				}
-
-				input_index = match_index;
 			}
 
 			return false;

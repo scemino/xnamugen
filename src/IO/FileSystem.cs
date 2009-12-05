@@ -1,10 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Text;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using xnaMugen.Collections;
-using System.Reflection;
 
 namespace xnaMugen.IO
 {
@@ -20,10 +20,9 @@ namespace xnaMugen.IO
 		public FileSystem(SubSystems subsystems)
 			: base(subsystems)
 		{
-			m_sectiontitleregex = new Regex(@"^\s*\[(.+)\]\s*$", RegexOptions.IgnoreCase);
 			m_textcache = new KeyedCollection<String, TextFile>(x => x.Filepath, StringComparer.OrdinalIgnoreCase);
-			m_stringbuilder = new StringBuilder();
-			m_textbuilder = new TextFileBuilder(this);
+			m_titleregex = new Regex(@"^\s*\[(.+?)\]\s*$", RegexOptions.IgnoreCase);
+			m_parsedlineregex = new Regex(@"^\s*(.+?)\s*=\s*(.+?)\s*$", RegexOptions.IgnoreCase);
 		}
 
 		public override void Initialize()
@@ -126,22 +125,72 @@ namespace xnaMugen.IO
 
 			if (m_textcache.Contains(file.Filepath) == true) return m_textcache[file.Filepath];
 
-			TextFile textfile = m_textbuilder.Build(file);
+			TextFile textfile = Build(file);
 			m_textcache.Add(textfile);
+
 			return textfile;
+		}
+
+		TextFile Build(File file)
+		{
+			if (file == null) throw new ArgumentNullException("file");
+
+			List<TextSection> sections = new List<TextSection>();
+
+			String sectiontitle = null;
+			List<String> sectionlines = null;
+			List<KeyValuePair<String, String>> sectionparsedlines = null;
+
+			for (String line = file.ReadLine(); line != null; line = file.ReadLine())
+			{
+				line = line.Trim();
+
+				Int32 commentindex = line.IndexOf(';');
+				if (commentindex != -1) line = line.Substring(0, commentindex);
+
+				if (line == String.Empty) continue;
+
+				Match titlematch = m_titleregex.Match(line);
+				if (titlematch.Success == true)
+				{
+					if (sectiontitle != null) sections.Add(new TextSection(this, sectiontitle, sectionlines, sectionparsedlines));
+
+					sectiontitle = titlematch.Groups[1].Value;
+					sectionlines = new List<String>();
+					sectionparsedlines = new List<KeyValuePair<String, String>>();
+				}
+				else if (sectiontitle != null)
+				{
+					sectionlines.Add(line);
+
+					Match parsedmatch = m_parsedlineregex.Match(line);
+					if (parsedmatch.Success == true)
+					{
+						String key = parsedmatch.Groups[1].Value;
+						String value = parsedmatch.Groups[2].Value;
+
+						if (value.Length >= 2 && value[0] == '"' && value[value.Length - 1] == '"') value = value.Substring(1, value.Length - 2);
+
+						sectionparsedlines.Add(new KeyValuePair<String, String>(key, value));
+					}
+				}
+			}
+
+			if (sectiontitle != null) sections.Add(new TextSection(this, sectiontitle, sectionlines, sectionparsedlines));
+
+			return new TextFile(file.Filepath, sections);
 		}
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Regex m_sectiontitleregex;
-
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		readonly KeyedCollection<String, TextFile> m_textcache;
 
-		StringBuilder m_stringbuilder;
+		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+		readonly Regex m_titleregex;
 
-		readonly TextFileBuilder m_textbuilder;
+		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+		readonly Regex m_parsedlineregex;
 
 		#endregion
 	}

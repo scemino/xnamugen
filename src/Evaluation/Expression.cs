@@ -33,25 +33,13 @@ namespace xnaMugen.Evaluation
 			return true;
 		}
 
-		public Result Evaluate(Object state)
+		public Number[] Evaluate(Object state)
 		{
-			Result result = new Result();
+			Number[] result = new Number[m_functions.Count];
 
-			Evaluate(state, result);
+			for (Int32 i = 0; i != result.Length; ++i) result[i] = m_functions[i](state);
 
 			return result;
-		}
-
-		public void Evaluate(Object state, Result result)
-		{
-			if (result == null) throw new ArgumentNullException("result");
-
-			result.Clear();
-
-			foreach (EvaluationCallback func in m_functions)
-			{
-				result.Add(func(state));
-			}
 		}
 
 		public override String ToString()
@@ -62,11 +50,6 @@ namespace xnaMugen.Evaluation
 		public Boolean IsValid
 		{
 			get { return m_isvalid; }
-		}
-
-		ListIterator<EvaluationCallback> EvaluationCallbacks
-		{
-			get { return new ListIterator<EvaluationCallback>(m_functions); }
 		}
 
 		#region Fields

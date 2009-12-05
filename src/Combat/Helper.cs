@@ -19,6 +19,8 @@ namespace xnaMugen.Combat
 			if (data == null) throw new ArgumentNullException("data");
 
 			m_parent = parent;
+			m_baseplayer = m_parent.BasePlayer;
+			m_team = m_baseplayer.Team;
 			m_offsetcharacter = (data.PositionType == PositionType.P2) ? parent.GetOpponent() : parent;
 			m_remove = false;
 			m_data = data;
@@ -204,18 +206,24 @@ namespace xnaMugen.Combat
 
 		public override Team Team
 		{
-			get { return BasePlayer.Team; }
+			get { return m_team; }
 		}
 
 		public override Player BasePlayer
 		{
-			get { return Parent.BasePlayer; }
+			get { return m_baseplayer; }
 		}
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		readonly Character m_parent;
+
+		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+		readonly Player m_baseplayer;
+
+		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+		readonly Team m_team;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		readonly Character m_offsetcharacter;
