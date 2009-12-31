@@ -19,11 +19,8 @@ namespace xnaMugen.StateMachine.Controllers
 			Int32 facing = EvaluationHelper.AsInt32(character, Facing, 0);
 			Int32 target_id = EvaluationHelper.AsInt32(character, TargetId, Int32.MinValue);
 
-			foreach (Combat.Entity entity in character.Engine.Entities)
+			foreach (Combat.Character target in character.GetTargets(target_id))
 			{
-				Combat.Character target = character.FilterEntityAsTarget(entity, target_id);
-				if (target == null) continue;
-
 				if (facing > 0)
 				{
 					target.CurrentFacing = character.CurrentFacing;

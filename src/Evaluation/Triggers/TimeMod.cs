@@ -5,16 +5,18 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("TimeMod")]
 	static class TimeMod
 	{
-		public static Number Evaluate(Object state, Number r1, Number r2)
+		public static Boolean Evaluate(Object state, ref Boolean error, Int32 r1, Int32 r2)
 		{
 			Combat.Character character = state as Combat.Character;
-			if (character == null) return new Number();
+			if (character == null)
+			{
+				error = true;
+				return false;
+			}
 
-			if (r1.NumberType != NumberType.Int || r2.NumberType != NumberType.Int) return new Number();
+			Int32 statetime_remander = character.StateManager.StateTime % r1;
 
-			Int32 statetime_remander = character.StateManager.StateTime % r1.IntValue;
-
-			return new Number(statetime_remander == r2.IntValue);
+			return statetime_remander == r2;
 		}
 
 		public static Node Parse(ParseState parsestate)

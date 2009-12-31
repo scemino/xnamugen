@@ -5,22 +5,20 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("Var")]
 	static class Var
 	{
-		public static Number Evaluate(Object state, Number r1)
+		public static Int32 Evaluate(Object state, ref Boolean error, Int32 value)
 		{
 			Combat.Character character = state as Combat.Character;
-			if (character == null) return new Number();
-
-			if (r1.NumberType == NumberType.None) return new Number();
+			if (character == null)
+			{
+				error = true;
+				return 0;
+			}
 
 			Int32 result;
-			if (character.Variables.GetInteger(r1.IntValue, false, out result) == true)
-			{
-				return new Number(result);
-			}
-			else
-			{
-				return new Number();
-			}
+			if (character.Variables.GetInteger(value, false, out result) == true) return result;
+
+			error = true;
+			return 0;
 		}
 
 		public static Node Parse(ParseState parsestate)

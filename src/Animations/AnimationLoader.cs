@@ -87,6 +87,7 @@ namespace xnaMugen.Animations
 
 			Int32 animationnumber = Int32.Parse(titlematch.Groups[1].Value);
 			Int32 loopstart = 0;
+			Int32 starttick = 0;
 			List<AnimationElement> elements = new List<AnimationElement>();
 
 			List<Clsn> loading_type1 = new List<Clsn>();
@@ -151,9 +152,18 @@ namespace xnaMugen.Animations
 					continue;
 				}
 
-				AnimationElement element = CreateElement(line, elements.Count, default_type1, default_type2, loading_type1, loading_type2);
+				AnimationElement element = CreateElement(line, elements.Count, starttick, default_type1, default_type2, loading_type1, loading_type2);
 				if (element != null)
 				{
+					if (element.Gameticks == -1)
+					{
+						starttick = -1;
+					}
+					else
+					{
+						starttick += element.Gameticks;
+					}
+
 					elements.Add(element);
 
 					loading_type1.Clear();
@@ -213,10 +223,11 @@ namespace xnaMugen.Animations
 		/// <param name="default_clsn"></param>
 		/// <param name="loading_clsn"></param>
 		/// <returns></returns>
-		AnimationElement CreateElement(String line, Int32 elementid, List<Clsn> default_type1, List<Clsn> default_type2, List<Clsn> loading_type1, List<Clsn> loading_type2)
+		AnimationElement CreateElement(String line, Int32 elementid, Int32 starttick, List<Clsn> default_type1, List<Clsn> default_type2, List<Clsn> loading_type1, List<Clsn> loading_type2)
 		{
 			if (line == null) throw new ArgumentNullException("line");
 			if (elementid < 0) throw new ArgumentOutOfRangeException("elementid");
+			if (starttick < 0) throw new ArgumentOutOfRangeException("starttick");
 			if (default_type1 == null) throw new ArgumentNullException("default_type1");
 			if (default_type2 == null) throw new ArgumentNullException("default_type2");
 			if (loading_type1 == null) throw new ArgumentNullException("loading_type1");
@@ -257,7 +268,7 @@ namespace xnaMugen.Animations
 			clsn.AddRange(loading_type1.Count != 0 ? loading_type1 : default_type1);
 			clsn.AddRange(loading_type2.Count != 0 ? loading_type2 : default_type2);
 
-			AnimationElement element = new AnimationElement(elementid, clsn, gameticks, new SpriteId(groupnumber, imagenumber), new Point(offset_x, offset_y), flip, blending);
+			AnimationElement element = new AnimationElement(elementid, clsn, gameticks, starttick, new SpriteId(groupnumber, imagenumber), new Point(offset_x, offset_y), flip, blending);
 			return element;
 		}
 

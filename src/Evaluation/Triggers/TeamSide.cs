@@ -5,21 +5,26 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("TeamSide")]
 	static class TeamSide
 	{
-		public static Number Evaluate(Object state)
+		public static Int32 Evaluate(Object state, ref Boolean error)
 		{
 			Combat.Character character = state as Combat.Character;
-			if (character == null) return new Number();
+			if (character == null)
+			{
+				error = true;
+				return 0;
+			}
 
 			switch (character.Team.Side)
 			{
 				case xnaMugen.TeamSide.Left:
-					return new Number(1);
+					return 1;
 
 				case xnaMugen.TeamSide.Right:
-					return new Number(2);
+					return 2;
 
 				default:
-					return new Number();
+					error = true;
+					return 0;
 			}
 		}
 

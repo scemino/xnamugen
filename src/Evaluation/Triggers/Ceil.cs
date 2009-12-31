@@ -5,19 +5,14 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("Ceil")]
 	static class Ceil
 	{
-		public static Number Evaluate(Object state, Number value)
+		public static Int32 Evaluate(Object state, ref Boolean error, Int32 value)
 		{
-			switch (value.NumberType)
-			{
-				case NumberType.Int:
-					return new Number((Int32)Math.Ceiling(value.FloatValue));
+			return value;
+		}
 
-				case NumberType.Float:
-					return new Number(Math.Ceiling(value.FloatValue));
-
-				default:
-					return new Number();
-			}
+		public static Int32 Evaluate(Object state, ref Boolean error, Single value)
+		{
+			return (Int32)Math.Ceiling(value);
 		}
 
 		public static Node Parse(ParseState state)

@@ -5,13 +5,16 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("NumPartner")]
 	static class NumPartner
 	{
-		public static Number Evaluate(Object state)
+		public static Int32 Evaluate(Object state, ref Boolean error)
 		{
 			Combat.Character character = state as Combat.Character;
-			if (character == null) return new Number();
+			if (character == null)
+			{
+				error = true;
+				return 0;
+			}
 
 			Int32 count = 0;
-
 			foreach (Combat.Entity entity in character.Engine.Entities)
 			{
 				Combat.Character partner = character.BasePlayer.FilterEntityAsPartner(entity);
@@ -20,7 +23,7 @@ namespace xnaMugen.Evaluation.Triggers
 				++count;
 			}
 
-			return new Number(count);
+			return count;
 		}
 
 		public static Node Parse(ParseState parsestate)

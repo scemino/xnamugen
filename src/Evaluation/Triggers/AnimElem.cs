@@ -5,21 +5,30 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("AnimElem")]
 	static class AnimElem
 	{
-		public static Number Evaluate(Object state, Number r1, Number rhs, Operator compare_type)
+		public static Boolean Evaluate(Object state, ref Boolean error, Int32 r1, Int32 rhs, Operator compare_type)
 		{
 			Combat.Character character = state as Combat.Character;
-			if (character == null) return new Number();
-
-			if (r1.NumberType == NumberType.None) return new Number();
+			if (character == null)
+			{
+				error = true;
+				return false;
+			}
 
 			Animations.Animation animation = character.AnimationManager.CurrentAnimation;
+			if (animation == null)
+			{
+				error = true;
+				return false;
+			}
 
-			Int32 elementindex = r1.IntValue - 1;
-			if (elementindex < 0 || elementindex >= animation.Elements.Count) return new Number();
+			Int32 elementindex = r1 - 1;
+			if (elementindex < 0 || elementindex >= animation.Elements.Count)
+			{
+				error = true;
+				return false;
+			}
 
 			Int32 elementstarttime = animation.GetElementStartTime(elementindex);
-			if (elementstarttime == Int32.MinValue) return new Number();
-
 			Int32 animationtime = character.AnimationManager.TimeInAnimation;
 			while (animation.TotalTime != -1 && animationtime >= animation.TotalTime)
 			{
@@ -29,14 +38,48 @@ namespace xnaMugen.Evaluation.Triggers
 
 			Int32 timeoffset = animationtime - elementstarttime;
 
-			if (character.AnimationManager.IsAnimationFinished == true) return new Number(false);
+			if (character.AnimationManager.IsAnimationFinished == true) return false;
 
-			Number lhs = new Number(timeoffset);
+			Boolean result = SpecialFunctions.LogicalOperation(compare_type, timeoffset, rhs);
+			return (compare_type == Operator.Equals) ? result && character.UpdatedAnimation : result;
+		}
 
-			Number result = Number.BinaryOperation(compare_type, lhs, rhs);
-			if (compare_type == Operator.Equals) return new Number(result.BooleanValue && character.UpdatedAnimation);
+		public static Boolean Evaluate(Object state, ref Boolean error, Int32 r1, Int32 pre, Int32 post, Operator compare_type, Symbol pre_check, Symbol post_check)
+		{
+			Combat.Character character = state as Combat.Character;
+			if (character == null)
+			{
+				error = true;
+				return false;
+			}
 
-			return result;
+			Animations.Animation animation = character.AnimationManager.CurrentAnimation;
+			if (animation == null)
+			{
+				error = true;
+				return false;
+			}
+
+			Int32 elementindex = r1 - 1;
+			if (elementindex < 0 || elementindex >= animation.Elements.Count)
+			{
+				error = true;
+				return false;
+			}
+
+			Int32 elementstarttime = animation.GetElementStartTime(elementindex);
+			Int32 animationtime = character.AnimationManager.TimeInAnimation;
+			while (animation.TotalTime != -1 && animationtime >= animation.TotalTime)
+			{
+				Int32 looptime = animation.TotalTime - animation.GetElementStartTime(animation.Loopstart);
+				animationtime -= looptime;
+			}
+
+			Int32 timeoffset = animationtime - elementstarttime;
+
+			if (character.AnimationManager.IsAnimationFinished == true) return false;
+
+			return SpecialFunctions.Range(timeoffset, pre, post, compare_type, pre_check, post_check);
 		}
 
 		public static Node Parse(ParseState state)
@@ -80,15 +123,13 @@ namespace xnaMugen.Evaluation.Triggers
 				Node rangenode = state.BuildRangeNode();
 				if (rangenode != null)
 				{
-					Node newnode = new Node(new Token("AnimElem", new Tokenizing.CustomFunctionData("AnimElem", "AnimElem_", typeof(AnimElem_))));
-					newnode.Children.Add(arg1);
-					newnode.Children.Add(rangenode.Children[1]);
-					newnode.Children.Add(rangenode.Children[2]);
-					newnode.Arguments.Add(@operator);
-					newnode.Arguments.Add(rangenode.Arguments[1]);
-					newnode.Arguments.Add(rangenode.Arguments[2]);
+					state.BaseNode.Children.Add(rangenode.Children[1]);
+					state.BaseNode.Children.Add(rangenode.Children[2]);
+					state.BaseNode.Arguments.Add(@operator);
+					state.BaseNode.Arguments.Add(rangenode.Arguments[1]);
+					state.BaseNode.Arguments.Add(rangenode.Arguments[2]);
 
-					return newnode;
+					return state.BaseNode;
 				}
 
 				--state.TokenIndex;
@@ -116,43 +157,6 @@ namespace xnaMugen.Evaluation.Triggers
 			state.BaseNode.Children.Add(arg);
 
 			return state.BaseNode;
-		}
-	}
-
-	static class AnimElem_
-	{
-		public static Number Evaluate(Object state, Number r1, Number pre, Number post, Operator compare_type, Symbol pre_check, Symbol post_check)
-		{
-			Combat.Character character = state as Combat.Character;
-			if (character == null) return new Number();
-
-			if (r1.NumberType == NumberType.None) return new Number();
-
-			Animations.Animation animation = character.AnimationManager.CurrentAnimation;
-
-			Int32 elementindex = r1.IntValue - 1;
-			if (elementindex < 0 || elementindex >= animation.Elements.Count) return new Number();
-
-			Int32 elementstarttime = animation.GetElementStartTime(elementindex);
-			if (elementstarttime == Int32.MinValue) return new Number();
-
-			Int32 animationtime = character.AnimationManager.TimeInAnimation;
-			while (animation.TotalTime != -1 && animationtime >= animation.TotalTime)
-			{
-				Int32 looptime = animation.TotalTime - animation.GetElementStartTime(animation.Loopstart);
-				animationtime -= looptime;
-			}
-
-			Int32 timeoffset = animationtime - elementstarttime;
-
-			if (character.AnimationManager.IsAnimationFinished == true) return new Number(false);
-
-			return Number.Range(new Number(timeoffset), pre, post, compare_type, pre_check, post_check);
-		}
-
-		public static Node Parse(ParseState state)
-		{
-			return null;
 		}
 	}
 }

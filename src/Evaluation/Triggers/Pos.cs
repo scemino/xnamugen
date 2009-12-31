@@ -6,22 +6,27 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("Pos")]
 	static class Pos
 	{
-		public static Number Evaluate(Object state, Axis axis)
+		public static Single Evaluate(Object state, ref Boolean error, Axis axis)
 		{
 			Combat.Character character = state as Combat.Character;
-			if (character == null) return new Number();
+			if (character == null)
+			{
+				error = true;
+				return 0;
+			}
 
 			switch (axis)
 			{
 				case Axis.X:
 					Rectangle screenrect = character.Engine.Camera.ScreenBounds;
-					return new Number(character.CurrentLocation.X - screenrect.Left - (Mugen.ScreenSize.X / 2));
+					return character.CurrentLocation.X - screenrect.Left - (Mugen.ScreenSize.X / 2);
 
 				case Axis.Y:
-					return new Number(character.CurrentLocation.Y);
+					return character.CurrentLocation.Y;
 
 				default:
-					return new Number();
+					error = true;
+					return 0;
 			}
 		}
 

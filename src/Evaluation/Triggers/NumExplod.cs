@@ -1,26 +1,25 @@
 using System;
+using System.Collections.Generic;
 
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("NumExplod")]
 	static class NumExplod
 	{
-		public static Number Evaluate(Object state, Number number)
+		public static Int32 Evaluate(Object state, ref Boolean error, Int32 explod_id)
 		{
 			Combat.Character character = state as Combat.Character;
-			if (character == null) return new Number();
-
-			if (number.NumberType != NumberType.Int) return new Number();
-
-			Int32 explod_id = number.IntValue;
-			Int32 count = 0;
-			foreach (Combat.Entity entity in character.Engine.Entities)
+			if (character == null)
 			{
-				Combat.Explod explod = character.FilterEntityAsExplod(entity, explod_id);
-				if (explod != null) ++count;
+				error = true;
+				return 0;
 			}
 
-			return new Number(count);
+			Int32 count = 0;
+
+			foreach (Combat.Explod explod in character.GetExplods(explod_id)) ++count;
+
+			return count;
 		}
 
 		public static Node Parse(ParseState parsestate)

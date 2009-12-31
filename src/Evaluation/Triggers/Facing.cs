@@ -5,21 +5,26 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("Facing")]
 	static class Facing
 	{
-		public static Number Evaluate(Object state)
+		public static Int32 Evaluate(Object state, ref Boolean error)
 		{
 			Combat.Character character = state as Combat.Character;
-			if (character == null) return new Number();
+			if (character == null)
+			{
+				error = true;
+				return 0;
+			}
 
 			switch (character.CurrentFacing)
 			{
 				case xnaMugen.Facing.Left:
-					return new Number(-1);
+					return -1;
 
 				case xnaMugen.Facing.Right:
-					return new Number(1);
+					return 1;
 
 				default:
-					return new Number();
+					error = true;
+					return 0;
 			}
 		}
 

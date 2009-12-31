@@ -5,14 +5,16 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("SelfAnimExist")]
 	static class SelfAnimExist
 	{
-		public static Number Evaluate(Object state, Number animationnumber)
+		public static Boolean Evaluate(Object state, ref Boolean error, Int32 animationnumber)
 		{
 			Combat.Character character = state as Combat.Character;
-			if (character == null) return new Number();
+			if (character == null)
+			{
+				error = true;
+				return false;
+			}
 
-			if (animationnumber.NumberType != NumberType.Int) return new Number();
-
-			return new Number(character.AnimationManager.HasAnimation(animationnumber.IntValue));
+			return character.AnimationManager.HasAnimation(animationnumber);
 		}
 
 		public static Node Parse(ParseState parsestate)

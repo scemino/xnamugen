@@ -5,11 +5,14 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("IfElse")]
 	static class IfElse
 	{
-		public static Number Evaluate(Object state, Number r1, Number r2, Number r3)
+		public static Int32 Evaluate(Object state, ref Boolean error, Int32 r1, Int32 r2, Int32 r3)
 		{
-			if (r1.NumberType == NumberType.None || r2.NumberType == NumberType.None || r3.NumberType == NumberType.None) return new Number();
+			return r1 != 0 ? r2 : r3;
+		}
 
-			return r1.BooleanValue ? r2 : r3;
+		public static Single Evaluate(Object state, ref Boolean error, Single r1, Single r2, Single r3)
+		{
+			return r1 != 0 ? r2 : r3;
 		}
 
 		public static Node Parse(ParseState parsestate)

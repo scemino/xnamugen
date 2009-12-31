@@ -5,24 +5,19 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("NumTarget")]
 	static class NumTarget
 	{
-		public static Number Evaluate(Object state, Number number)
+		public static Int32 Evaluate(Object state, ref Boolean error, Int32 target_id)
 		{
 			Combat.Character character = state as Combat.Character;
-			if (character == null) return new Number();
-
-			if (number.NumberType != NumberType.Int) return new Number();
-
-			Int32 target_id = number.IntValue;
-			Int32 count = 0;
-			foreach (Combat.Entity entity in character.Engine.Entities)
+			if (character == null)
 			{
-				Combat.Character target = character.FilterEntityAsTarget(entity, target_id);
-				if (target == null) continue;
-
-				++count;
+				error = true;
+				return 0;
 			}
 
-			return new Number(count);
+			Int32 count = 0;
+			foreach (Combat.Character target in character.GetTargets(target_id)) ++count;
+
+			return count;
 		}
 
 		public static Node Parse(ParseState parsestate)

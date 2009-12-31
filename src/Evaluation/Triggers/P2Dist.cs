@@ -6,13 +6,21 @@ namespace xnaMugen.Evaluation.Triggers
 	static class P2Dist
 	{
 
-		public static Number Evaluate(Object state, Axis axis)
+		public static Single Evaluate(Object state, ref Boolean error, Axis axis)
 		{
 			Combat.Character character = state as Combat.Character;
-			if (character == null) return new Number();
+			if (character == null)
+			{
+				error = true;
+				return 0;
+			}
 
 			Combat.Player opponent = character.GetOpponent();
-			if (opponent == null) return new Number();
+			if (opponent == null)
+			{
+				error = true;
+				return 0;
+			}
 
 			switch (axis)
 			{
@@ -20,18 +28,19 @@ namespace xnaMugen.Evaluation.Triggers
 					Single distance = Math.Abs(character.CurrentLocation.X - opponent.CurrentLocation.X);
 					if (character.CurrentFacing == xnaMugen.Facing.Right)
 					{
-						return (opponent.CurrentLocation.X >= character.CurrentLocation.X) ? new Number(distance) : new Number(-distance);
+						return (opponent.CurrentLocation.X >= character.CurrentLocation.X) ? distance : -distance;
 					}
 					else
 					{
-						return (opponent.CurrentLocation.X >= character.CurrentLocation.X) ? new Number(-distance) : new Number(distance);
+						return (opponent.CurrentLocation.X >= character.CurrentLocation.X) ? -distance : distance;
 					}
 
 				case Axis.Y:
-					return new Number(opponent.CurrentLocation.Y - character.CurrentLocation.Y);
+					return opponent.CurrentLocation.Y - character.CurrentLocation.Y;
 
 				default:
-					return new Number();
+					error = true;
+					return 0;
 			}
 		}
 

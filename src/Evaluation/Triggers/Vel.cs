@@ -5,21 +5,26 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("Vel")]
 	static class Vel
 	{
-		public static Number Evaluate(Object state, Axis axis)
+		public static Single Evaluate(Object state, ref Boolean error, Axis axis)
 		{
 			Combat.Character character = state as Combat.Character;
-			if (character == null) return new Number();
+			if (character == null)
+			{
+				error = true;
+				return 0;
+			}
 
 			switch (axis)
 			{
 				case Axis.X:
-					return new Number(character.CurrentVelocity.X);
+					return character.CurrentVelocity.X;
 
 				case Axis.Y:
-					return new Number(character.CurrentVelocity.Y);
+					return character.CurrentVelocity.Y;
 
 				default:
-					return new Number();
+					error = true;
+					return 0;
 			}
 		}
 

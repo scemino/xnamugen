@@ -99,9 +99,12 @@ namespace xnaMugen
 		{
 			foreach (Type type in Assembly.GetExecutingAssembly().GetTypes())
 			{
-				if (type.IsAbstract == true || type.IsSubclassOf(typeof(SubSystem)) == false) continue;
+				if (type.IsAbstract == true || type.IsSubclassOf(typeof(SubSystem)) == false || m_subsystems.ContainsKey(type) == true) continue;
 
-				if (m_subsystems.ContainsKey(type) == false) m_subsystems.Add(type, (SubSystem)Activator.CreateInstance(type, this));
+				Constructor constructor = ConstructorDelegate.FastConstruct(type, GetType());
+				SubSystem subsystem = (SubSystem)constructor(this);
+
+				m_subsystems.Add(type, subsystem);
 			}
 		}
 
@@ -109,9 +112,12 @@ namespace xnaMugen
 		{
 			foreach (Type type in Assembly.GetExecutingAssembly().GetTypes())
 			{
-				if (type.IsAbstract == true || type.IsSubclassOf(typeof(MainSystem)) == false) continue;
+				if (type.IsAbstract == true || type.IsSubclassOf(typeof(MainSystem)) == false || m_mainsystems.ContainsKey(type) == true) continue;
 
-				if (m_mainsystems.ContainsKey(type) == false) m_mainsystems.Add(type, (MainSystem)Activator.CreateInstance(type, this));
+				Constructor constructor = ConstructorDelegate.FastConstruct(type, GetType());
+				MainSystem mainsystem = (MainSystem)constructor(this);
+
+				m_mainsystems.Add(type, mainsystem);
 			}
 		}
 

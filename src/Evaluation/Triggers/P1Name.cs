@@ -5,24 +5,33 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("P1Name")]
 	static class P1Name
 	{
-		public static Number Evaluate(Object state, Operator @operator, String text)
+		public static Boolean Evaluate(Object state, ref Boolean error, Operator @operator, String text)
 		{
 			Combat.Character character = state as Combat.Character;
-			if (character == null) return new Number();
+			if (character == null)
+			{
+				error = true;
+				return false;
+			}
 
 			String name = GetName(character);
-			if (name == null) return new Number();
+			if (name == null)
+			{
+				error = true;
+				return false;
+			}
 
 			switch (@operator)
 			{
 				case Operator.Equals:
-					return new Number(String.Equals(name, text, StringComparison.OrdinalIgnoreCase));
+					return String.Equals(name, text, StringComparison.OrdinalIgnoreCase);
 
 				case Operator.NotEquals:
-					return new Number(!String.Equals(name, text, StringComparison.OrdinalIgnoreCase));
+					return !String.Equals(name, text, StringComparison.OrdinalIgnoreCase);
 
 				default:
-					return new Number();
+					error = true;
+					return false;
 			}
 		}
 

@@ -5,23 +5,28 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("P2Name")]
 	static class P2Name
 	{
-		public static Number Evaluate(Object state, Operator @operator, String text)
+		public static Boolean Evaluate(Object state, ref Boolean error, Operator @operator, String text)
 		{
 			Combat.Character character = state as Combat.Character;
-			if (character == null) return new Number();
+			if (character == null)
+			{
+				error = true;
+				return false;
+			}
 
 			Combat.Player p2 = character.Team.OtherTeam.MainPlayer;
 
 			switch (@operator)
 			{
 				case Operator.Equals:
-					return new Number((p2 != null) ? String.Equals(p2.Profile.PlayerName, text, StringComparison.OrdinalIgnoreCase) : false);
+					return (p2 != null) ? String.Equals(p2.Profile.PlayerName, text, StringComparison.OrdinalIgnoreCase) : false;
 
 				case Operator.NotEquals:
-					return new Number((p2 != null) ?!String.Equals(p2.Profile.PlayerName, text, StringComparison.OrdinalIgnoreCase) : true);
+					return (p2 != null) ? !String.Equals(p2.Profile.PlayerName, text, StringComparison.OrdinalIgnoreCase) : true;
 
 				default:
-					return new Number();
+					error = true;
+					return false;
 			}
 		}
 

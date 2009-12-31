@@ -5,12 +5,16 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("MatchOver")]
 	static class MatchOver
 	{
-		public static Number Evaluate(Object state)
+		public static Boolean Evaluate(Object state, ref Boolean error)
 		{
 			Combat.Character character = state as Combat.Character;
-			if (character == null) return new Number();
+			if (character == null)
+			{
+				error = true;
+				return false;
+			}
 
-			return new Number(character.Engine.IsMatchOver());
+			return character.Engine.IsMatchOver();
 		}
 
 		public static Node Parse(ParseState parsestate)

@@ -5,15 +5,23 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("P2Life")]
 	static class P2Life
 	{
-		public static Number Evaluate(Object state)
+		public static Int32 Evaluate(Object state, ref Boolean error)
 		{
 			Combat.Character character = state as Combat.Character;
-			if (character == null) return new Number();
+			if (character == null)
+			{
+				error = true;
+				return 0;
+			}
 
 			Combat.Player opponent = character.GetOpponent();
-			if (opponent == null) return new Number();
+			if (opponent == null)
+			{
+				error = true;
+				return 0;
+			}
 
-			return new Number(opponent.Life);
+			return opponent.Life;
 		}
 
 		public static Node Parse(ParseState parsestate)

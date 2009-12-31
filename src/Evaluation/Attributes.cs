@@ -10,6 +10,11 @@ namespace xnaMugen.Evaluation
 			m_text = text;
 		}
 
+		public override String ToString()
+		{
+			return m_text;
+		}
+
 		public String Value
 		{
 			get { return m_text; }
@@ -84,6 +89,14 @@ namespace xnaMugen.Evaluation
 	class CustomFunctionAttribute : FunctionMappingAttribute
 	{
 		public CustomFunctionAttribute(String text)
+			: base(text, text)
+		{
+		}
+	}
+
+	class StateRedirectionAttribute : FunctionMappingAttribute
+	{
+		public StateRedirectionAttribute(String text)
 			: base(text, text)
 		{
 		}

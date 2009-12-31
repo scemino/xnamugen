@@ -5,12 +5,16 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("Lose")]
 	static class Lose
 	{
-		public static Number Evaluate(Object state)
+		public static Boolean Evaluate(Object state, ref Boolean error)
 		{
 			Combat.Character character = state as Combat.Character;
-			if (character == null) return new Number();
+			if (character == null)
+			{
+				error = true;
+				return false;
+			}
 
-			return new Number(character.Team.VictoryStatus.Lose);
+			return character.Team.VictoryStatus.Lose;
 		}
 
 		public static Node Parse(ParseState parsestate)
@@ -22,12 +26,16 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("LoseKO")]
 	static class LoseKO
 	{
-		public static Number Evaluate(Object state)
+		public static Boolean Evaluate(Object state, ref Boolean error)
 		{
 			Combat.Character character = state as Combat.Character;
-			if (character == null) return new Number();
+			if (character == null)
+			{
+				error = true;
+				return false;
+			}
 
-			return new Number(character.Team.VictoryStatus.LoseKO);
+			return character.Team.VictoryStatus.LoseKO;
 		}
 
 		public static Node Parse(ParseState parsestate)
@@ -39,12 +47,16 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("LoseTime")]
 	static class LoseTime
 	{
-		public static Number Evaluate(Object state)
+		public static Boolean Evaluate(Object state, ref Boolean error)
 		{
 			Combat.Character character = state as Combat.Character;
-			if (character == null) return new Number();
+			if (character == null)
+			{
+				error = true;
+				return false;
+			}
 
-			return new Number(character.Team.VictoryStatus.LoseTime);
+			return character.Team.VictoryStatus.LoseTime;
 		}
 
 		public static Node Parse(ParseState parsestate)

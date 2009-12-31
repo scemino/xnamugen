@@ -5,13 +5,16 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("Alive")]
 	static class Alive
 	{
-		public static Number Evaluate(Object state)
+		public static Boolean Evaluate(Object state, ref Boolean error)
 		{
 			Combat.Character character = state as Combat.Character;
-			if (character == null) return new Number();
+			if (character == null)
+			{
+				error = true;
+				return false;
+			}
 
-			return new Number(character.Life > 0);
-
+			return character.Life > 0;
 		}
 
 		public static Node Parse(ParseState state)

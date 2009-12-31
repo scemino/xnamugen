@@ -1,27 +1,37 @@
 using System;
-using System.Collections.Generic;
 
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("AnimElemNo")]
 	static class AnimElemNo
 	{
-		public static Number Evaluate(Object state, Number value)
+		public static Int32 Evaluate(Object state, ref Boolean error, Int32 timeoffset)
 		{
 			Combat.Character character = state as Combat.Character;
-			if (character == null) return new Number();
-
-			if (value.NumberType == NumberType.None) return new Number();
+			if (character == null)
+			{
+				error = true;
+				return 0;
+			}
 
 			Animations.Animation animation = character.AnimationManager.CurrentAnimation;
-			Int32 timeoffset = value.IntValue;
+			if (animation == null)
+			{
+				error = true;
+				return 0;
+			}
+
 			Int32 animtime = character.AnimationManager.TimeInAnimation;
 
 			Int32 checktime = animtime + timeoffset;
-			if (checktime < 0) return new Number();
+			if (checktime < 0)
+			{
+				error = true;
+				return 0;
+			}
 
 			Int32 elem_index = animation.GetElementFromTime(checktime).Id;
-			return new Number(elem_index + 1);
+			return elem_index + 1;
 		}
 
 		public static Node Parse(ParseState state)

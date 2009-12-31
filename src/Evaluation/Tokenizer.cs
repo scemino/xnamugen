@@ -53,10 +53,11 @@ namespace xnaMugen.Evaluation
 			{
 				if (type.IsAbstract == false || type.IsClass == false) continue;
 
-				CustomFunctionAttribute attr = (CustomFunctionAttribute)Attribute.GetCustomAttribute(type, typeof(CustomFunctionAttribute));
-				if (attr == null) continue;
+				CustomFunctionAttribute cf_attr = (CustomFunctionAttribute)Attribute.GetCustomAttribute(type, typeof(CustomFunctionAttribute));
+				if (cf_attr != null) mapping.Add(cf_attr.Value, new Tokenizing.CustomFunctionData(cf_attr.Value, cf_attr.Value, type));
 
-				mapping.Add(attr.Value, new Tokenizing.CustomFunctionData(attr.Value, attr.Value, type));
+				StateRedirectionAttribute sr_attr = (StateRedirectionAttribute)Attribute.GetCustomAttribute(type, typeof(StateRedirectionAttribute));
+				if (sr_attr != null) mapping.Add(sr_attr.Value, new Tokenizing.StateRedirectionData(sr_attr.Value, sr_attr.Value, type));
 			}
 
 			return mapping;

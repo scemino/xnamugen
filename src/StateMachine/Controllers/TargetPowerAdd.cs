@@ -21,11 +21,8 @@ namespace xnaMugen.StateMachine.Controllers
 
 			if (amount == null) return;
 
-			foreach (Combat.Entity entity in character.Engine.Entities)
+			foreach (Combat.Character target in character.GetTargets(target_id))
 			{
-				Combat.Character target = character.FilterEntityAsTarget(entity, target_id);
-				if (target == null) continue;
-
 				target.BasePlayer.Power += amount.Value;
 			}
 		}

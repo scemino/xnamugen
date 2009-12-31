@@ -1,18 +1,21 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("HitDefAttr")]
 	static class HitDefAttr
 	{
-		public static Number Evaluate(Object state, Operator @operator, AttackStateType ast, List<Combat.HitType> hittypes)
+		public static Boolean Evaluate(Object state, ref Boolean error, Operator @operator, AttackStateType ast, Combat.HitType[] hittypes)
 		{
 			Combat.Character character = state as Combat.Character;
-			if (character == null) return new Number();
+			if (character == null)
+			{
+				error = true;
+				return false;
+			}
 
-			if (character.MoveType != xnaMugen.MoveType.Attack) return new Number(false);
+			if (character.MoveType != xnaMugen.MoveType.Attack) return false;
 
 			Combat.HitAttribute attr = character.OffensiveInfo.HitDef.HitAttribute;
 
@@ -30,13 +33,14 @@ namespace xnaMugen.Evaluation.Triggers
 			switch (@operator)
 			{
 				case Operator.Equals:
-					return new Number(heightmatch && datamatch);
+					return heightmatch && datamatch;
 
 				case Operator.NotEquals:
-					return new Number(!heightmatch || !datamatch);
+					return !heightmatch || !datamatch;
 
 				default:
-					return new Number();
+					error = true;
+					return false;
 			}
 		}
 
@@ -54,6 +58,8 @@ namespace xnaMugen.Evaluation.Triggers
 			parsestate.BaseNode.Arguments.Add(ast);
 			++parsestate.TokenIndex;
 
+			List<Combat.HitType> hittypes = new List<Combat.HitType>();
+
 			while (true)
 			{
 				if (parsestate.CurrentSymbol != Symbol.Comma) break;
@@ -66,10 +72,11 @@ namespace xnaMugen.Evaluation.Triggers
 					break;
 				}
 
-				parsestate.BaseNode.Arguments.Add(hittype.Value);
+				hittypes.Add(hittype.Value);
 				++parsestate.TokenIndex;
 			}
 
+			parsestate.BaseNode.Arguments.Add(hittypes.ToArray());
 			return parsestate.BaseNode;
 		}
 	}

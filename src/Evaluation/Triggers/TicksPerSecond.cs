@@ -5,13 +5,17 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("TicksPerSecond")]
 	static class TicksPerSecond
 	{
-		public static Number Evaluate(Object state)
+		public static Int32 Evaluate(Object state, ref Boolean error)
 		{
 			Combat.Character character = state as Combat.Character;
-			if (character == null) return new Number();
+			if (character == null)
+			{
+				error = true;
+				return 0;
+			}
 
 #warning Hack
-			return new Number(60);
+			return 60;
 		}
 
 		public static Node Parse(ParseState parsestate)

@@ -21,11 +21,8 @@ namespace xnaMugen.StateMachine.Controllers
 
 			if (statenumber == null) return;
 
-			foreach (Combat.Entity entity in character.Engine.Entities)
+			foreach (Combat.Character target in character.GetTargets(target_id))
 			{
-				Combat.Character target = character.FilterEntityAsTarget(entity, target_id);
-				if (target == null) continue;
-
 				target.StateManager.ForeignManager = character.StateManager;
 				target.StateManager.ChangeState(statenumber.Value);
 			}

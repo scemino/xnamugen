@@ -5,23 +5,32 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("Physics")]
 	static class Physics 
 	{
-		public static Number Evaluate(Object state, Operator @operator, xnaMugen.Physics physics)
+		public static Boolean Evaluate(Object state, ref Boolean error, Operator @operator, xnaMugen.Physics physics)
 		{
 			Combat.Character character = state as Combat.Character;
-			if (character == null) return new Number();
+			if (character == null)
+			{
+				error = true;
+				return false;
+			}
 
-			if (physics == xnaMugen.Physics.Unchanged || physics == xnaMugen.Physics.None) return new Number();
+			if (physics == xnaMugen.Physics.Unchanged || physics == xnaMugen.Physics.None)
+			{
+				error = true;
+				return false;
+			}
 
 			switch (@operator)
 			{
 				case Operator.Equals:
-					return new Number(physics == character.Physics);
+					return physics == character.Physics;
 
 				case Operator.NotEquals:
-					return new Number(physics != character.Physics);
+					return physics != character.Physics;
 
 				default:
-					return new Number();
+					error = true;
+					return false;
 			}
 		}
 

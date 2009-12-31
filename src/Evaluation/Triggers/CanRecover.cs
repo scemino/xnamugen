@@ -5,14 +5,16 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("CanRecover")]
 	static class CanRecover
 	{
-		public static Number Evaluate(Object state)
+		public static Boolean Evaluate(Object state, ref Boolean error)
 		{
 			Combat.Character character = state as Combat.Character;
-			if (character == null) return new Number();
+			if (character == null)
+			{
+				error = true;
+				return false;
+			}
 
-			if (character.DefensiveInfo.IsFalling == false) return new Number(false);
-
-			return new Number(character.DefensiveInfo.HitDef.FallCanRecover);
+			return (character.DefensiveInfo.IsFalling == false) ? false : character.DefensiveInfo.HitDef.FallCanRecover;
 		}
 
 		public static Node Parse(ParseState state)

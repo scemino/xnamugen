@@ -5,12 +5,15 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("NumProjID")]
 	static class NumProjID
 	{
-		public static Number Evaluate(Object state, Number r1)
+		public static Int32 Evaluate(Object state, ref Boolean error, Int32 projectile_id)
 		{
 			Combat.Character character = state as Combat.Character;
-			if (character == null) return new Number();
+			if (character == null)
+			{
+				error = true;
+				return 0;
+			}
 
-			Int32 projectile_id = r1.IntValue;
 			Int32 count = 0;
 			foreach (Combat.Entity entity in character.Engine.Entities)
 			{
@@ -20,7 +23,7 @@ namespace xnaMugen.Evaluation.Triggers
 				++count;
 			}
 
-			return new Number(count);
+			return count;
 		}
 
 		public static Node Parse(ParseState parsestate)

@@ -1,28 +1,32 @@
 using System;
+using System.Collections.Generic;
 
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("NumEnemy")]
 	static class NumEnemy
 	{
-		public static Number Evaluate(Object state)
+		public static Int32 Evaluate(Object state, ref Boolean error)
 		{
 			Combat.Character character = state as Combat.Character;
-			if (character == null) return new Number();
-
-			Int32 count = 0;
-			foreach (Combat.Entity entity in character.Engine.Entities)
+			if (character == null)
 			{
-				Combat.Character enemy = character.FilterEntityAsCharacter(entity, AffectTeam.Enemy);
-				if (enemy == null) continue;
-
-				Combat.Player enemyplayer = enemy as Combat.Player;
-				if (enemyplayer == null) continue;
-
-				++count;
+				error = true;
+				return 0;
 			}
 
-			return new Number(count);
+			Int32 count = 0;
+			Action<Combat.Player> func = player =>
+			{
+				if (player != null && character.FilterEntityAsCharacter(player, AffectTeam.Enemy) != null) ++count;
+			};
+
+			func(character.Engine.Team1.MainPlayer);
+			func(character.Engine.Team2.MainPlayer);
+			func(character.Engine.Team1.TeamMate);
+			func(character.Engine.Team2.TeamMate);
+
+			return count;
 		}
 
 		public static Node Parse(ParseState parsestate)

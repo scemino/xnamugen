@@ -22,11 +22,8 @@ namespace xnaMugen.StateMachine.Controllers
 			Single? y = EvaluationHelper.AsSingle(character, Y, null);
 			Int32 target_id = EvaluationHelper.AsInt32(character, TargetId, Int32.MinValue);
 
-			foreach (Combat.Entity entity in character.Engine.Entities)
+			foreach (Combat.Character target in character.GetTargets(target_id))
 			{
-				Combat.Character target = character.FilterEntityAsTarget(entity, target_id);
-				if (target == null) continue;
-
 				Vector2 velocity = new Vector2(0, 0);
 
 				if (x != null) velocity.X = x.Value;

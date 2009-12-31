@@ -29,7 +29,7 @@ namespace xnaMugen.Combat
 
 		public Boolean GetInteger(Int32 index, Boolean system, out Int32 value)
 		{
-			Collections.ListIterator<Int32> variables = system ? SystemIntegerVariables : IntegerVariables;
+			var variables = system ? m_sysint : m_int;
 
 			if (index < 0 || index > variables.Count)
 			{
@@ -45,7 +45,7 @@ namespace xnaMugen.Combat
 
 		public Boolean SetInteger(Int32 index, Boolean system, Int32 value)
 		{
-			Collections.ListIterator<Int32> variables = system ? SystemIntegerVariables : IntegerVariables;
+			var variables = system ? m_sysint : m_int;
 
 			if (index < 0 || index > variables.Count)
 			{
@@ -60,7 +60,7 @@ namespace xnaMugen.Combat
 
 		public Boolean AddInteger(Int32 index, Boolean system, Int32 value)
 		{
-			Collections.ListIterator<Int32> variables = system ? SystemIntegerVariables : IntegerVariables;
+			var variables = system ? m_sysint : m_int;
 
 			if (index < 0 || index > variables.Count)
 			{
@@ -75,7 +75,7 @@ namespace xnaMugen.Combat
 
 		public Boolean GetFloat(Int32 index, Boolean system, out Single value)
 		{
-			Collections.ListIterator<Single> variables = system ? SystemFloatVariables : FloatVariables;
+			var variables = system ? m_sysfloat : m_float;
 
 			if (index < 0 || index > variables.Count)
 			{
@@ -91,7 +91,7 @@ namespace xnaMugen.Combat
 
 		public Boolean SetFloat(Int32 index, Boolean system, Single value)
 		{
-			Collections.ListIterator<Single> variables = system ? SystemFloatVariables : FloatVariables;
+			var variables = system ? m_sysfloat : m_float;
 
 			if (index < 0 || index > variables.Count)
 			{
@@ -106,7 +106,7 @@ namespace xnaMugen.Combat
 
 		public Boolean AddFloat(Int32 index, Boolean system, Single value)
 		{
-			Collections.ListIterator<Single> variables = system ? SystemFloatVariables : FloatVariables;
+			var variables = system ? m_sysfloat : m_float;
 
 			if (index < 0 || index > variables.Count)
 			{

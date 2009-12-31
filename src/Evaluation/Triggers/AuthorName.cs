@@ -5,19 +5,36 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("AuthorName")]
 	static class AuthorName
 	{
-		public static Number Evaluate(Object state, Operator @operator, String text)
+		public static Boolean Evaluate(Object state, ref Boolean error, Operator @operator, String text)
 		{
 			Combat.Character character = state as Combat.Character;
-			if (character == null) return new Number();
+			if (character == null)
+			{
+				error = true;
+				return false;
+			}
 
 			String authorname = character.BasePlayer.Profile.Author;
-			if (authorname == null) return new Number();
+			if (authorname == null)
+			{
+				error = true;
+				return false;
+			}
 
-			Number result = new Number(String.Equals(authorname, text, StringComparison.OrdinalIgnoreCase));
+			Boolean result = String.Equals(authorname, text, StringComparison.OrdinalIgnoreCase);
 
-			if (@operator == Operator.Equals) return result;
-			if (@operator == Operator.NotEquals) return !result;
-			return new Number();
+			switch (@operator)
+			{
+				case Operator.Equals:
+					return result;
+
+				case Operator.NotEquals:
+					return !result;
+
+				default:
+					error = true;
+					return false;
+			}
 		}
 
 		public static Node Parse(ParseState state)

@@ -1,19 +1,15 @@
 using System;
-using System.Diagnostics;
-using xnaMugen.Collections;
 using System.Collections.Generic;
-using xnaMugen.IO;
+using System.Diagnostics;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using Microsoft.Xna.Framework;
-using System.Reflection.Emit;
+using xnaMugen.Collections;
+using xnaMugen.IO;
 
 namespace xnaMugen.StateMachine
 {
 	class StateSystem : SubSystem
 	{
-		delegate StateController CreationCallback(StateSystem statesystem, String label, TextSection textsection);
-
 		public StateSystem(SubSystems subsystems)
 			: base(subsystems)
 		{
@@ -24,27 +20,12 @@ namespace xnaMugen.StateMachine
 			m_internalstates = GetStates("xnaMugen.data.Internal.cns");
 		}
 
-		static CreationCallback FastConstruct(Type type, Type[] argtypes)
-		{
-			DynamicMethod method = new DynamicMethod(String.Empty, typeof(StateController), argtypes, typeof(StateSystem));
-			ILGenerator generator = method.GetILGenerator();
-
-			generator.Emit(OpCodes.Ldarg, 0);
-			generator.Emit(OpCodes.Ldarg, 1);
-			generator.Emit(OpCodes.Ldarg, 2);
-
-			generator.Emit(OpCodes.Newobj, type.GetConstructor(argtypes));
-			generator.Emit(OpCodes.Ret);
-
-			return (CreationCallback)method.CreateDelegate(typeof(CreationCallback));
-		}
-
-		static ReadOnlyDictionary<String, CreationCallback> BuildControllerMap()
+		static ReadOnlyDictionary<String, Constructor> BuildControllerMap()
 		{
 			Type attrib_type = typeof(StateControllerNameAttribute);
 			Type[] constructortypes = new Type[] { typeof(StateSystem), typeof(String), typeof(TextSection) };
 
-			Dictionary<String, CreationCallback> controllermap = new Dictionary<String, CreationCallback>(StringComparer.OrdinalIgnoreCase);
+			Dictionary<String, Constructor> controllermap = new Dictionary<String, Constructor>(StringComparer.OrdinalIgnoreCase);
 
 			foreach (Type t in Assembly.GetCallingAssembly().GetTypes())
 			{
@@ -61,12 +42,12 @@ namespace xnaMugen.StateMachine
 					}
 					else
 					{
-						controllermap.Add(name, FastConstruct(t, constructortypes));
+						controllermap.Add(name, ConstructorDelegate.FastConstruct(t, constructortypes));
 					}
 				}
 			}
 
-			return new ReadOnlyDictionary<String, CreationCallback>(controllermap);
+			return new ReadOnlyDictionary<String, Constructor>(controllermap);
 		}
 
 		static void AddStateToCollection(KeyedCollection<Int32, State> collection, State state)
@@ -208,7 +189,7 @@ namespace xnaMugen.StateMachine
 				return null;
 			}
 
-			StateController controller = m_controllermap[typename](this, match.Groups[1].Value, textsection);
+			StateController controller = (StateController)m_controllermap[typename](this, match.Groups[1].Value, textsection);
 			return controller;
 		}
 
@@ -218,7 +199,7 @@ namespace xnaMugen.StateMachine
 		readonly Dictionary<String, ReadOnlyKeyedCollection<Int32, State>> m_statefiles;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly ReadOnlyDictionary<String, CreationCallback> m_controllermap;
+		readonly ReadOnlyDictionary<String, Constructor> m_controllermap;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		readonly Regex m_controllertitleregex;

@@ -37,9 +37,33 @@ namespace xnaMugen.Evaluation
 		{
 			Number[] result = new Number[m_functions.Count];
 
-			for (Int32 i = 0; i != result.Length; ++i) result[i] = m_functions[i](state);
+			for (Int32 i = 0; i != result.Length; ++i)
+			{
+				try
+				{
+					result[i] = m_functions[i](state);
+				}
+				catch
+				{
+					result[i] = new Number();
+				}
+			}
 
 			return result;
+		}
+
+		public Number EvaluateFirst(Object state)
+		{
+			if (IsValid == false) return new Number();
+
+			try
+			{
+				return m_functions[0](state);
+			}
+			catch
+			{
+				return new Number();
+			}
 		}
 
 		public override String ToString()

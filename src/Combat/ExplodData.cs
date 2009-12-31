@@ -14,7 +14,7 @@ namespace xnaMugen.Combat
 
 		public Boolean CommonAnimation { get; set; }
 		public Int32 AnimationNumber { get; set; }
-		public Int32? Id { get; set; }
+		public Int32 Id { get; set; }
 		public PositionType PositionType { get; set; }
 		public Vector2 Location { get; set; }
 		public Vector2 Velocity { get; set; }
@@ -34,7 +34,7 @@ namespace xnaMugen.Combat
 		public Boolean IgnoreHitPause { get; set; }
 		public Blending Transparency { get; set; }
 
-		public Entity Creator { get; set; }
+		public Character Creator { get; set; }
 		public Entity Offseter { get; set; }
 	}
 

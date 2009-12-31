@@ -17,6 +17,8 @@
     <SccLocalPath>Svn</SccLocalPath>
     <SccAuxPath>Svn</SccAuxPath>
     <SccProvider>SubversionScc</SccProvider>
+    <TargetFrameworkSubset>
+    </TargetFrameworkSubset>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release - Diagnostic|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -275,6 +277,7 @@
     <Compile Include="src\Commands\CommandManager.cs" />
     <Compile Include="src\Commands\CommandSystem.cs" />
     <Compile Include="src\Commands\InputBuffer.cs" />
+    <Compile Include="src\ConstructorDelegate.cs" />
     <Compile Include="src\Delegates.cs" />
     <Compile Include="src\Diagnostics\DiagnosticForm.cs">
       <SubType>Form</SubType>
@@ -304,6 +307,7 @@
     <Compile Include="src\Enumerations.cs" />
     <Compile Include="src\EvaluationHelper.cs" />
     <Compile Include="src\Evaluation\Attributes.cs" />
+    <Compile Include="src\Evaluation\Compiler.cs" />
     <Compile Include="src\Evaluation\EvaluationSystem.cs" />
     <Compile Include="src\Evaluation\Expression.cs" />
     <Compile Include="src\Evaluation\IExpression.cs" />
@@ -313,12 +317,12 @@
     <Compile Include="src\Evaluation\Operators.cs" />
     <Compile Include="src\Evaluation\ParseState.cs" />
     <Compile Include="src\Evaluation\PrefixedExpression.cs" />
+    <Compile Include="src\Evaluation\SpecialFunctions.cs" />
     <Compile Include="src\Evaluation\Symbols.cs" />
     <Compile Include="src\Evaluation\Token.cs" />
     <Compile Include="src\Evaluation\Tokenizer.cs" />
     <Compile Include="src\Evaluation\TokenizerData.cs" />
     <Compile Include="src\Evaluation\TreeBuilder.cs" />
-    <Compile Include="src\Evaluation\TreeCompiler.cs" />
     <Compile Include="src\Evaluation\Triggers\Abs.cs" />
     <Compile Include="src\Evaluation\Triggers\Acos.cs" />
     <Compile Include="src\Evaluation\Triggers\Alive.cs" />
@@ -431,7 +435,6 @@
     <Compile Include="src\Evaluation\Triggers\Var.cs" />
     <Compile Include="src\Evaluation\Triggers\Vel.cs" />
     <Compile Include="src\Evaluation\Triggers\Win.cs" />
-    <Compile Include="src\Evaluation\Triggers\_Assignment.cs" />
     <Compile Include="src\Events\Base.cs" />
     <Compile Include="src\Events\FadeScreen.cs" />
     <Compile Include="src\Events\LoadReplay.cs" />
@@ -572,7 +575,6 @@
     <Compile Include="src\StateMachine\StateManager.cs" />
     <Compile Include="src\StateMachine\StateNumber.cs" />
     <Compile Include="src\StateMachine\StateSystem.cs" />
-    <Compile Include="src\StateMachine\Trigger.cs" />
     <Compile Include="src\StateMachine\TriggerMap.cs" />
     <Compile Include="src\StringConverter.cs" />
     <Compile Include="src\StringFormatter.cs" />

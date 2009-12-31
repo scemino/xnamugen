@@ -31,6 +31,7 @@ namespace xnaMugen.Combat
 			m_power = 0;
 			m_palfx = new PaletteFx();
 			m_team = team;
+			m_helpers = new Dictionary<Int32, List<Helper>>();
 
 			if (Engine.GetSubSystem<InitializationSettings>().PreloadCharacterSprites == true)
 			{
@@ -50,6 +51,7 @@ namespace xnaMugen.Combat
 			base.Reset();
 
 			PushFlag = true;
+			m_helpers.Clear();
 		}
 
 		public override void CleanUp()
@@ -198,6 +200,11 @@ namespace xnaMugen.Combat
 			get { return this; }
 		}
 
+		public Dictionary<Int32, List<Helper>> Helpers
+		{
+			get { return m_helpers; }
+		}
+
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
@@ -238,6 +245,9 @@ namespace xnaMugen.Combat
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		readonly Team m_team;
+
+		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+		readonly Dictionary<Int32, List<Helper>> m_helpers;
 
 		#endregion
 	}

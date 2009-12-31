@@ -5,19 +5,14 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("Abs")]
 	static class Abs
 	{
-		public static Number Evaluate(Object state, Number value)
+		public static Int32 Evaluate(Object state, ref Boolean error, Int32 value)
 		{
-			switch (value.NumberType)
-			{
-				case NumberType.Int:
-					return new Number(value.IntValue > 0 ? value.IntValue : -value.IntValue);
+			return Math.Abs(value);
+		}
 
-				case NumberType.Float:
-					return new Number(value.FloatValue > 0 ? value.FloatValue : -value.FloatValue);
-
-				default:
-					return new Number();
-			}
+		public static Single Evaluate(Object state, ref Boolean error, Single value)
+		{
+			return Math.Abs(value);
 		}
 
 		public static Node Parse(ParseState state)

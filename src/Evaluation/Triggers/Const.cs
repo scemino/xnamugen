@@ -1,187 +1,645 @@
 using System;
-using System.Collections.Generic;
 
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("Const")]
 	static class Const
 	{
-		static Const()
+		[Tag("data.life")]
+		public static Int32 Data_Life(Object state, ref Boolean error)
 		{
-			s_playermap = new Dictionary<String, Converter<Combat.Player, Number>>(StringComparer.OrdinalIgnoreCase);
-			s_helpermap = new Dictionary<String, Converter<Combat.Helper, Number>>(StringComparer.OrdinalIgnoreCase);
+			Combat.Character character = state as Combat.Character;
+			if (character == null)
+			{
+				error = true;
+				return 0;
+			}
 
-			s_playermap["data.life"] = x => new Number(x.Constants.MaximumLife);
-			s_helpermap["data.life"] = x => new Number(x.BasePlayer.Constants.MaximumLife);
-
-			s_playermap["data.attack"] = x => new Number(x.Constants.AttackPower);
-			s_helpermap["data.attack"] = x => new Number(x.BasePlayer.Constants.AttackPower);
-
-			s_playermap["data.defence"] = x => new Number(x.Constants.DefensivePower);
-			s_helpermap["data.defence"] = x => new Number(x.BasePlayer.Constants.DefensivePower);
-
-			s_playermap["data.fall.defence_mul"] = x => new Number(100.0f / (100.0f + x.Constants.FallDefenseIncrease));
-			s_helpermap["data.fall.defence_mul"] = x => new Number(100.0f / (100.0f + x.BasePlayer.Constants.FallDefenseIncrease));
-
-			s_playermap["data.liedown.time"] = x => new Number(x.Constants.LieDownTime);
-			s_helpermap["data.liedown.time"] = x => new Number(x.BasePlayer.Constants.LieDownTime);
-
-			s_playermap["data.airjuggle"] = x => new Number(x.Constants.AirJuggle);
-			s_helpermap["data.airjuggle"] = x => new Number(x.BasePlayer.Constants.AirJuggle);
-
-			s_playermap["data.sparkno"] = x => new Number(GetDefaultHitSparkNumber(x));
-			s_helpermap["data.sparkno"] = x => new Number(GetDefaultHitSparkNumber(x));
-
-			s_playermap["data.guard.sparkno"] = x => new Number(GetDefaultGuardSparkNumber(x));
-			s_helpermap["data.guard.sparkno"] = x => new Number(GetDefaultGuardSparkNumber(x));
-
-			s_playermap["data.KO.echo"] = x => new Number(x.Constants.KOEcho);
-			s_helpermap["data.KO.echo"] = x => new Number(x.BasePlayer.Constants.KOEcho);
-
-			s_playermap["data.IntPersistIndex"] = x => new Number(x.Constants.PersistanceIntIndex);
-			s_helpermap["data.IntPersistIndex"] = x => new Number(x.BasePlayer.Constants.PersistanceIntIndex);
-
-			s_playermap["data.FloatPersistIndex"] = x => new Number(x.Constants.PersistanceFloatIndex);
-			s_helpermap["data.FloatPersistIndex"] = x => new Number(x.BasePlayer.Constants.PersistanceFloatIndex);
-
-			s_playermap["size.xscale"] = x => new Number(x.Constants.Scale.X);
-			s_helpermap["size.xscale"] = x => new Number(x.Data.Scale.X);
-
-			s_playermap["size.yscale"] = x => new Number(x.Constants.Scale.Y);
-			s_helpermap["size.yscale"] = x => new Number(x.Data.Scale.Y);
-
-			s_playermap["size.ground.back"] = x => new Number(x.Constants.GroundBack);
-			s_helpermap["size.ground.back"] = x => new Number(x.BasePlayer.Constants.GroundBack);
-
-			s_playermap["size.ground.front"] = x => new Number(x.Constants.GroundFront);
-			s_helpermap["size.ground.front"] = x => new Number(x.BasePlayer.Constants.GroundFront);
-
-			s_playermap["size.air.back"] = x => new Number(x.Constants.Airback);
-			s_helpermap["size.air.back"] = x => new Number(x.BasePlayer.Constants.Airback);
-
-			s_playermap["size.air.front"] = x => new Number(x.Constants.Airfront);
-			s_helpermap["size.air.front"] = x => new Number(x.BasePlayer.Constants.Airfront);
-
-			s_playermap["size.height"] = x => new Number(x.Constants.Height);
-			s_helpermap["size.height"] = x => new Number(x.BasePlayer.Constants.Height);
-
-			s_playermap["size.attack.dist"] = x => new Number(x.Constants.Attackdistance);
-			s_helpermap["size.attack.dist"] = x => new Number(x.BasePlayer.Constants.Attackdistance);
-
-			s_playermap["size.proj.attack.dist"] = x => new Number(x.Constants.Projectileattackdist);
-			s_helpermap["size.proj.attack.dist"] = x => new Number(x.BasePlayer.Constants.Projectileattackdist);
-
-			s_playermap["size.proj.doscale"] = x => new Number(x.Constants.ProjectileScaling);
-			s_helpermap["size.proj.doscale"] = x => new Number(x.Data.ProjectileScaling);
-
-			s_playermap["size.head.pos.x"] = x => new Number((Int32)x.Constants.Headposition.X);
-			s_helpermap["size.head.pos.x"] = x => new Number((Int32)x.Data.HeadPosition.X);
-
-			s_playermap["size.head.pos.y"] = x => new Number((Int32)x.Constants.Headposition.Y);
-			s_helpermap["size.head.pos.y"] = x => new Number((Int32)x.Data.HeadPosition.Y);
-
-			s_playermap["size.mid.pos.x"] = x => new Number((Int32)x.Constants.Midposition.X);
-			s_helpermap["size.mid.pos.x"] = x => new Number((Int32)x.Data.MidPosition.X);
-
-			s_playermap["size.mid.pos.y"] = x => new Number((Int32)x.Constants.Midposition.Y);
-			s_helpermap["size.mid.pos.y"] = x => new Number((Int32)x.Data.MidPosition.Y);
-
-			s_playermap["size.shadowoffset"] = x => new Number(x.Constants.Shadowoffset);
-			s_helpermap["size.shadowoffset"] = x => new Number(x.Data.ShadowOffset);
-
-			s_playermap["size.draw.offset.x"] = x => new Number(x.Constants.Drawoffset.X);
-			s_helpermap["size.draw.offset.x"] = x => new Number(x.BasePlayer.Constants.Drawoffset.X);
-
-			s_playermap["size.draw.offset.y"] = x => new Number(x.Constants.Drawoffset.Y);
-			s_helpermap["size.draw.offset.y"] = x => new Number(x.BasePlayer.Constants.Drawoffset.Y);
-
-			s_playermap["velocity.walk.fwd.x"] = x => new Number(x.Constants.Walk_forward);
-			s_helpermap["velocity.walk.fwd.x"] = x => new Number(x.BasePlayer.Constants.Walk_forward);
-
-			s_playermap["velocity.walk.back.x"] = x => new Number(x.Constants.Walk_back);
-			s_helpermap["velocity.walk.back.x"] = x => new Number(x.BasePlayer.Constants.Walk_back);
-
-			s_playermap["velocity.run.fwd.x"] = x => new Number(x.Constants.Run_fwd.X);
-			s_helpermap["velocity.run.fwd.x"] = x => new Number(x.BasePlayer.Constants.Run_fwd.X);
-
-			s_playermap["velocity.run.fwd.y"] = x => new Number(x.Constants.Run_fwd.Y);
-			s_helpermap["velocity.run.fwd.y"] = x => new Number(x.BasePlayer.Constants.Run_fwd.Y);
-
-			s_playermap["velocity.run.back.x"] = x => new Number(x.Constants.Run_back.X);
-			s_helpermap["velocity.run.back.x"] = x => new Number(x.BasePlayer.Constants.Run_back.X);
-
-			s_playermap["velocity.run.back.y"] = x => new Number(x.Constants.Run_back.Y);
-			s_helpermap["velocity.run.back.y"] = x => new Number(x.BasePlayer.Constants.Run_back.Y);
-
-			s_playermap["velocity.jump.y"] = x => new Number(x.Constants.Jump_neutral.Y);
-			s_helpermap["velocity.jump.y"] = x => new Number(x.BasePlayer.Constants.Jump_neutral.Y);
-
-			s_playermap["velocity.jump.neu.x"] = x => new Number(x.Constants.Jump_neutral.X);
-			s_helpermap["velocity.jump.neu.x"] = x => new Number(x.BasePlayer.Constants.Jump_neutral.X);
-
-			s_playermap["velocity.jump.back.x"] = x => new Number(x.Constants.Jump_back.X);
-			s_helpermap["velocity.jump.back.x"] = x => new Number(x.BasePlayer.Constants.Jump_back.X);
-
-			s_playermap["velocity.jump.fwd.x"] = x => new Number(x.Constants.Jump_forward.X);
-			s_helpermap["velocity.jump.fwd.x"] = x => new Number(x.BasePlayer.Constants.Jump_forward.X);
-
-			s_playermap["velocity.runjump.back.x"] = x => new Number(x.Constants.Runjump_back.X);
-			s_helpermap["velocity.runjump.back.x"] = x => new Number(x.BasePlayer.Constants.Runjump_back.X);
-
-			s_playermap["velocity.runjump.fwd.x"] = x => new Number(x.Constants.Runjump_fwd.X);
-			s_helpermap["velocity.runjump.fwd.x"] = x => new Number(x.BasePlayer.Constants.Runjump_fwd.X);
-
-			s_playermap["velocity.airjump.y"] = x => new Number(x.Constants.Airjump_neutral.Y);
-			s_helpermap["velocity.airjump.y"] = x => new Number(x.BasePlayer.Constants.Airjump_neutral.Y);
-
-			s_playermap["velocity.airjump.neu.x"] = x => new Number(x.Constants.Airjump_neutral.X);
-			s_helpermap["velocity.airjump.neu.x"] = x => new Number(x.BasePlayer.Constants.Airjump_neutral.X);
-
-			s_playermap["velocity.airjump.back.x"] = x => new Number(x.Constants.Airjump_back.X);
-			s_helpermap["velocity.airjump.back.x"] = x => new Number(x.BasePlayer.Constants.Airjump_back.X);
-
-			s_playermap["velocity.airjump.fwd.x"] = x => new Number(x.Constants.Airjump_forward.X);
-			s_helpermap["velocity.airjump.fwd.x"] = x => new Number(x.BasePlayer.Constants.Airjump_forward.X);
-
-			s_playermap["movement.airjump.num"] = x => new Number(x.Constants.Airjumps);
-			s_helpermap["movement.airjump.num"] = x => new Number(x.BasePlayer.Constants.Airjumps);
-
-			s_playermap["movement.airjump.height"] = x => new Number(x.Constants.Airjumpheight);
-			s_helpermap["movement.airjump.height"] = x => new Number(x.BasePlayer.Constants.Airjumpheight);
-
-			s_playermap["movement.yaccel"] = x => new Number(x.Constants.Vert_acceleration);
-			s_helpermap["movement.yaccel"] = x => new Number(x.BasePlayer.Constants.Vert_acceleration);
-
-			s_playermap["movement.stand.friction"] = x => new Number(x.Constants.Standfriction);
-			s_helpermap["movement.stand.friction"] = x => new Number(x.BasePlayer.Constants.Standfriction);
-
-			s_playermap["movement.crouch.friction"] = x => new Number(x.Constants.Crouchfriction);
-			s_helpermap["movement.crouch.friction"] = x => new Number(x.BasePlayer.Constants.Crouchfriction);
+			return character.BasePlayer.Constants.MaximumLife;
 		}
 
-		public static Number Evaluate(Object state, String consttype)
+		[Tag("data.attack")]
+		public static Int32 Data_Attack(Object state, ref Boolean error)
 		{
-			Combat.Player player = state as Combat.Player;
-			if (player != null && s_playermap.ContainsKey(consttype) == true) return s_playermap[consttype](player);
+			Combat.Character character = state as Combat.Character;
+			if (character == null)
+			{
+				error = true;
+				return 0;
+			}
 
-			Combat.Helper helper = state as Combat.Helper;
-			if (helper != null && s_helpermap.ContainsKey(consttype) == true) return s_helpermap[consttype](helper);
-
-			return new Number();
+			return character.BasePlayer.Constants.AttackPower;
 		}
 
-		static Int32 GetDefaultHitSparkNumber(Combat.Character character)
+		[Tag("data.defence")]
+		public static Int32 Data_Defence(Object state, ref Boolean error)
 		{
-			if (character == null) throw new ArgumentNullException("character");
+			Combat.Character character = state as Combat.Character;
+			if (character == null)
+			{
+				error = true;
+				return 0;
+			}
+
+			return character.BasePlayer.Constants.DefensivePower;
+		}
+
+		[Tag("data.fall.defence_mul")]
+		public static Single Data_Fall_Defence_Mul(Object state, ref Boolean error)
+		{
+			Combat.Character character = state as Combat.Character;
+			if (character == null)
+			{
+				error = true;
+				return 0;
+			}
+
+			return 100.0f / (100.0f + character.BasePlayer.Constants.FallDefenseIncrease);
+		}
+
+		[Tag("data.liedown.time")]
+		public static Int32 Data_Liedown_Time(Object state, ref Boolean error)
+		{
+			Combat.Character character = state as Combat.Character;
+			if (character == null)
+			{
+				error = true;
+				return 0;
+			}
+
+			return character.BasePlayer.Constants.LieDownTime;
+		}
+
+		[Tag("data.airjuggle")]
+		public static Int32 Data_Airjuggle(Object state, ref Boolean error)
+		{
+			Combat.Character character = state as Combat.Character;
+			if (character == null)
+			{
+				error = true;
+				return 0;
+			}
+
+			return character.BasePlayer.Constants.AirJuggle;
+		}
+
+		[Tag("data.sparkno")]
+		public static Int32 Data_Sparkno(Object state, ref Boolean error)
+		{
+			Combat.Character character = state as Combat.Character;
+			if (character == null)
+			{
+				error = true;
+				return 0;
+			}
 
 			return EvaluationHelper.AsInt32(character, character.BasePlayer.Constants.DefaultSparkNumber, -1);
 		}
 
-		static Int32 GetDefaultGuardSparkNumber(Combat.Character character)
+		[Tag("data.guard.sparkno")]
+		public static Int32 Data_Guard_Sparkno(Object state, ref Boolean error)
 		{
-			if (character == null) throw new ArgumentNullException("character");
+			Combat.Character character = state as Combat.Character;
+			if (character == null)
+			{
+				error = true;
+				return 0;
+			}
 
 			return EvaluationHelper.AsInt32(character, character.BasePlayer.Constants.DefaultGuardSparkNumber, -1);
+		}
+
+		[Tag("data.KO.echo")]
+		public static Boolean Data_Ko_Echo(Object state, ref Boolean error)
+		{
+			Combat.Character character = state as Combat.Character;
+			if (character == null)
+			{
+				error = true;
+				return false;
+			}
+
+			return character.BasePlayer.Constants.KOEcho;
+		}
+
+		[Tag("data.IntPersistIndex")]
+		public static Int32 Data_IntPersistIndex(Object state, ref Boolean error)
+		{
+			Combat.Character character = state as Combat.Character;
+			if (character == null)
+			{
+				error = true;
+				return 0;
+			}
+
+			return character.BasePlayer.Constants.PersistanceIntIndex;
+		}
+
+		[Tag("data.FloatPersistIndex")]
+		public static Int32 Data_FloatPersistIndex(Object state, ref Boolean error)
+		{
+			Combat.Character character = state as Combat.Character;
+			if (character == null)
+			{
+				error = true;
+				return 0;
+			}
+
+			return character.BasePlayer.Constants.PersistanceFloatIndex;
+		}
+
+		[Tag("size.draw.offset.x")]
+		public static Int32 Size_Draw_Offset_X(Object state, ref Boolean error)
+		{
+			Combat.Character character = state as Combat.Character;
+			if (character == null)
+			{
+				error = true;
+				return 0;
+			}
+
+			return character.BasePlayer.Constants.Drawoffset.X;
+		}
+
+		[Tag("size.draw.offset.y")]
+		public static Int32 Size_Draw_Offset_Y(Object state, ref Boolean error)
+		{
+			Combat.Character character = state as Combat.Character;
+			if (character == null)
+			{
+				error = true;
+				return 0;
+			}
+
+			return character.BasePlayer.Constants.Drawoffset.Y;
+		}
+
+		[Tag("size.xscale")]
+		public static Single Size_Xscale(Object state, ref Boolean error)
+		{
+			Combat.Player player = state as Combat.Player;
+			if (player != null) return player.Constants.Scale.X;
+
+			Combat.Helper helper = state as Combat.Helper;
+			if (helper != null) return helper.Data.Scale.X;
+
+			error = true;
+			return 0;
+		}
+
+		[Tag("size.yscale")]
+		public static Single Size_Yscale(Object state, ref Boolean error)
+		{
+			Combat.Player player = state as Combat.Player;
+			if (player != null) return player.Constants.Scale.Y;
+
+			Combat.Helper helper = state as Combat.Helper;
+			if (helper != null) return helper.Data.Scale.Y;
+
+			error = true;
+			return 0;
+		}
+
+		[Tag("size.ground.back")]
+		public static Int32 Size_Ground_Back(Object state, ref Boolean error)
+		{
+			Combat.Character character = state as Combat.Character;
+			if (character == null)
+			{
+				error = true;
+				return 0;
+			}
+
+			return character.BasePlayer.Constants.GroundBack;
+		}
+
+		[Tag("size.ground.front")]
+		public static Int32 Size_Ground_Front(Object state, ref Boolean error)
+		{
+			Combat.Character character = state as Combat.Character;
+			if (character == null)
+			{
+				error = true;
+				return 0;
+			}
+
+			return character.BasePlayer.Constants.GroundFront;
+		}
+
+		[Tag("Size.Air.Back")]
+		public static Int32 Size_Air_Back(Object state, ref Boolean error)
+		{
+			Combat.Character character = state as Combat.Character;
+			if (character == null)
+			{
+				error = true;
+				return 0;
+			}
+
+			return character.BasePlayer.Constants.Airback;
+		}
+
+		[Tag("Size.Air.Front")]
+		public static Int32 Size_Air_Front(Object state, ref Boolean error)
+		{
+			Combat.Character character = state as Combat.Character;
+			if (character == null)
+			{
+				error = true;
+				return 0;
+			}
+
+			return character.BasePlayer.Constants.Airfront;
+		}
+
+		[Tag("Size.Height")]
+		public static Int32 Size_Height(Object state, ref Boolean error)
+		{
+			Combat.Character character = state as Combat.Character;
+			if (character == null)
+			{
+				error = true;
+				return 0;
+			}
+
+			return character.BasePlayer.Constants.Height;
+		}
+
+		[Tag("Size.Attack.Dist")]
+		public static Int32 Size_Attack_Dist(Object state, ref Boolean error)
+		{
+			Combat.Character character = state as Combat.Character;
+			if (character == null)
+			{
+				error = true;
+				return 0;
+			}
+
+			return character.BasePlayer.Constants.Attackdistance;
+		}
+
+		[Tag("Size.Proj.Attack.Dist")]
+		public static Int32 Size_Proj_Attack_Dist(Object state, ref Boolean error)
+		{
+			Combat.Character character = state as Combat.Character;
+			if (character == null)
+			{
+				error = true;
+				return 0;
+			}
+
+			return character.BasePlayer.Constants.Projectileattackdist;
+		}
+
+		[Tag("Size.Proj.Doscale")]
+		public static Boolean Size_Proj_Doscale(Object state, ref Boolean error)
+		{
+			Combat.Player player = state as Combat.Player;
+			if (player != null) return player.Constants.ProjectileScaling;
+
+			Combat.Helper helper = state as Combat.Helper;
+			if (helper != null) return helper.Data.ProjectileScaling;
+
+			error = true;
+			return false;
+		}
+
+		[Tag("Size.Head.Pos.X")]
+		public static Single Size_Head_Pos_X(Object state, ref Boolean error)
+		{
+			Combat.Player player = state as Combat.Player;
+			if (player != null) return player.Constants.Headposition.X;
+
+			Combat.Helper helper = state as Combat.Helper;
+			if (helper != null) return helper.Data.HeadPosition.X;
+
+			error = true;
+			return 0;
+		}
+
+		[Tag("Size.Head.Pos.Y")]
+		public static Single Size_Head_Pos_Y(Object state, ref Boolean error)
+		{
+			Combat.Player player = state as Combat.Player;
+			if (player != null) return player.Constants.Headposition.Y;
+
+			Combat.Helper helper = state as Combat.Helper;
+			if (helper != null) return helper.Data.HeadPosition.Y;
+
+			error = true;
+			return 0;
+		}
+
+		[Tag("size.mid.pos.x")]
+		public static Single Size_Mid_Pos_X(Object state, ref Boolean error)
+		{
+			Combat.Player player = state as Combat.Player;
+			if (player != null) return player.Constants.Midposition.X;
+
+			Combat.Helper helper = state as Combat.Helper;
+			if (helper != null) return helper.Data.MidPosition.X;
+
+			error = true;
+			return 0;
+		}
+
+		[Tag("size.mid.pos.y")]
+		public static Single Size_Mid_Pos_Y(Object state, ref Boolean error)
+		{
+			Combat.Player player = state as Combat.Player;
+			if (player != null) return player.Constants.Midposition.Y;
+
+			Combat.Helper helper = state as Combat.Helper;
+			if (helper != null) return helper.Data.MidPosition.Y;
+
+			error = true;
+			return 0;
+		}
+
+		[Tag("Size.Shadowoffset")]
+		public static Int32 Size_Shadowoffset(Object state, ref Boolean error)
+		{
+			Combat.Player player = state as Combat.Player;
+			if (player != null) return player.Constants.Shadowoffset;
+
+			Combat.Helper helper = state as Combat.Helper;
+			if (helper != null) return helper.Data.ShadowOffset;
+
+			error = true;
+			return 0;
+		}
+
+		[Tag("Velocity.Walk.Fwd.X")]
+		public static Single Velocity_Walk_Fwd_X(Object state, ref Boolean error)
+		{
+			Combat.Character character = state as Combat.Character;
+			if (character == null)
+			{
+				error = true;
+				return 0;
+			}
+
+			return character.BasePlayer.Constants.Walk_forward;
+		}
+
+		[Tag("Velocity.Walk.Back.X")]
+		public static Single Velocity_Walk_Back_X(Object state, ref Boolean error)
+		{
+			Combat.Character character = state as Combat.Character;
+			if (character == null)
+			{
+				error = true;
+				return 0;
+			}
+
+			return character.BasePlayer.Constants.Walk_back;
+		}
+
+		[Tag("Velocity.Run.Fwd.X")]
+		public static Single Velocity_Run_Fwd_X(Object state, ref Boolean error)
+		{
+			Combat.Character character = state as Combat.Character;
+			if (character == null)
+			{
+				error = true;
+				return 0;
+			}
+
+			return character.BasePlayer.Constants.Run_fwd.X;
+		}
+
+		[Tag("Velocity.Run.Fwd.Y")]
+		public static Single Velocity_Run_Fwd_Y(Object state, ref Boolean error)
+		{
+			Combat.Character character = state as Combat.Character;
+			if (character == null)
+			{
+				error = true;
+				return 0;
+			}
+
+			return character.BasePlayer.Constants.Run_fwd.Y;
+		}
+
+		[Tag("Velocity.Run.Back.X")]
+		public static Single Velocity_Run_Back_X(Object state, ref Boolean error)
+		{
+			Combat.Character character = state as Combat.Character;
+			if (character == null)
+			{
+				error = true;
+				return 0;
+			}
+
+			return character.BasePlayer.Constants.Run_back.X;
+		}
+
+		[Tag("Velocity.Run.Back.Y")]
+		public static Single Velocity_Run_Back_Y(Object state, ref Boolean error)
+		{
+			Combat.Character character = state as Combat.Character;
+			if (character == null)
+			{
+				error = true;
+				return 0;
+			}
+
+			return character.BasePlayer.Constants.Run_back.Y;
+		}
+
+		[Tag("Velocity.Jump.Y")]
+		public static Single Velocity_Jump_Y(Object state, ref Boolean error)
+		{
+			Combat.Character character = state as Combat.Character;
+			if (character == null)
+			{
+				error = true;
+				return 0;
+			}
+
+			return character.BasePlayer.Constants.Jump_neutral.Y;
+		}
+
+		[Tag("Velocity.Jump.Neu.X")]
+		public static Single Velocity_Jump_Neu_X(Object state, ref Boolean error)
+		{
+			Combat.Character character = state as Combat.Character;
+			if (character == null)
+			{
+				error = true;
+				return 0;
+			}
+
+			return character.BasePlayer.Constants.Jump_neutral.X;
+		}
+
+		[Tag("Velocity.Jump.Back.X")]
+		public static Single Velocity_Jump_Back_X(Object state, ref Boolean error)
+		{
+			Combat.Character character = state as Combat.Character;
+			if (character == null)
+			{
+				error = true;
+				return 0;
+			}
+
+			return character.BasePlayer.Constants.Jump_back.X;
+		}
+
+		[Tag("Velocity.Jump.Fwd.X")]
+		public static Single Velocity_Jump_Fwd_X(Object state, ref Boolean error)
+		{
+			Combat.Character character = state as Combat.Character;
+			if (character == null)
+			{
+				error = true;
+				return 0;
+			}
+
+			return character.BasePlayer.Constants.Jump_forward.X;
+		}
+
+		[Tag("Velocity.Runjump.Back.X")]
+		public static Single Velocity_Runjump_Back_X(Object state, ref Boolean error)
+		{
+			Combat.Character character = state as Combat.Character;
+			if (character == null)
+			{
+				error = true;
+				return 0;
+			}
+
+			return character.BasePlayer.Constants.Runjump_back.X;
+		}
+
+		[Tag("Velocity.Runjump.Fwd.X")]
+		public static Single Velocity_Runjump_Fwd_X(Object state, ref Boolean error)
+		{
+			Combat.Character character = state as Combat.Character;
+			if (character == null)
+			{
+				error = true;
+				return 0;
+			}
+
+			return character.BasePlayer.Constants.Runjump_fwd.X;
+		}
+
+		[Tag("Velocity.Airjump.Y")]
+		public static Single Velocity_Airjump_Y(Object state, ref Boolean error)
+		{
+			Combat.Character character = state as Combat.Character;
+			if (character == null)
+			{
+				error = true;
+				return 0;
+			}
+
+			return character.BasePlayer.Constants.Airjump_neutral.Y;
+		}
+
+		[Tag("Velocity.Airjump.Neu.X")]
+		public static Single Velocity_Airjump_Neu_X(Object state, ref Boolean error)
+		{
+			Combat.Character character = state as Combat.Character;
+			if (character == null)
+			{
+				error = true;
+				return 0;
+			}
+
+			return character.BasePlayer.Constants.Airjump_neutral.X;
+		}
+
+		[Tag("Velocity.Airjump.Back.X")]
+		public static Single Velocity_Airjump_Back_X(Object state, ref Boolean error)
+		{
+			Combat.Character character = state as Combat.Character;
+			if (character == null)
+			{
+				error = true;
+				return 0;
+			}
+
+			return character.BasePlayer.Constants.Airjump_back.X;
+		}
+
+		[Tag("Velocity.Airjump.Fwd.X")]
+		public static Single Velocity_Airjump_Fwd_X(Object state, ref Boolean error)
+		{
+			Combat.Character character = state as Combat.Character;
+			if (character == null)
+			{
+				error = true;
+				return 0;
+			}
+
+			return character.BasePlayer.Constants.Airjump_forward.X;
+		}
+
+		[Tag("Movement.Airjump.Num")]
+		public static Int32 Movement_Airjump_Num(Object state, ref Boolean error)
+		{
+			Combat.Character character = state as Combat.Character;
+			if (character == null)
+			{
+				error = true;
+				return 0;
+			}
+
+			return character.BasePlayer.Constants.Airjumps;
+		}
+
+		[Tag("Movement.Airjump.Height")]
+		public static Int32 Movement_Airjump_Height(Object state, ref Boolean error)
+		{
+			Combat.Character character = state as Combat.Character;
+			if (character == null)
+			{
+				error = true;
+				return 0;
+			}
+
+			return character.BasePlayer.Constants.Airjumpheight;
+		}
+
+		[Tag("Movement.Yaccel")]
+		public static Single Movement_Yaccel(Object state, ref Boolean error)
+		{
+			Combat.Character character = state as Combat.Character;
+			if (character == null)
+			{
+				error = true;
+				return 0;
+			}
+
+			return character.BasePlayer.Constants.Vert_acceleration;
+		}
+
+		[Tag("Movement.Stand.Friction")]
+		public static Single Movement_Stand_Friction(Object state, ref Boolean error)
+		{
+			Combat.Character character = state as Combat.Character;
+			if (character == null)
+			{
+				error = true;
+				return 0;
+			}
+
+			return character.BasePlayer.Constants.Standfriction;
+		}
+
+		[Tag("Movement.Crouch.Friction")]
+		public static Single Movement_Crouch_Friction(Object state, ref Boolean error)
+		{
+			Combat.Character character = state as Combat.Character;
+			if (character == null)
+			{
+				error = true;
+				return 0;
+			}
+
+			return character.BasePlayer.Constants.Crouchfriction;
 		}
 
 		public static Node Parse(ParseState state)
@@ -200,14 +658,5 @@ namespace xnaMugen.Evaluation.Triggers
 
 			return state.BaseNode;
 		}
-
-		#region Fields
-
-		readonly static Dictionary<String, Converter<Combat.Player, Number>> s_playermap;
-
-		readonly static Dictionary<String, Converter<Combat.Helper, Number>> s_helpermap;
-
-		#endregion
-
 	}
 }

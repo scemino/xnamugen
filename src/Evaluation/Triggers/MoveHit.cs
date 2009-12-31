@@ -5,19 +5,16 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("MoveHit")]
 	static class MoveHit
 	{
-		public static Number Evaluate(Object state)
+		public static Int32 Evaluate(Object state, ref Boolean error)
 		{
 			Combat.Character character = state as Combat.Character;
-			if (character == null) return new Number();
+			if (character == null)
+			{
+				error = true;
+				return 0;
+			}
 
-			if (character.MoveType == xnaMugen.MoveType.Attack)
-			{
-				return new Number(character.OffensiveInfo.MoveHit);
-			}
-			else
-			{
-				return new Number(0);
-			}
+			return (character.MoveType == xnaMugen.MoveType.Attack) ? character.OffensiveInfo.MoveHit : 0;
 		}
 
 		public static Node Parse(ParseState parsestate)

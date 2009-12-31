@@ -5,12 +5,16 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("Win")]
 	static class Win
 	{
-		public static Number Evaluate(Object state)
+		public static Boolean Evaluate(Object state, ref Boolean error)
 		{
 			Combat.Character character = state as Combat.Character;
-			if (character == null) return new Number();
+			if (character == null)
+			{
+				error = true;
+				return false;
+			}
 
-			return new Number(character.Team.VictoryStatus.Win);
+			return character.Team.VictoryStatus.Win;
 		}
 
 		public static Node Parse(ParseState parsestate)
@@ -22,12 +26,16 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("WinKO")]
 	static class WinKO
 	{
-		public static Number Evaluate(Object state)
+		public static Boolean Evaluate(Object state, ref Boolean error)
 		{
 			Combat.Character character = state as Combat.Character;
-			if (character == null) return new Number();
+			if (character == null)
+			{
+				error = true;
+				return false;
+			}
 
-			return new Number(character.Team.VictoryStatus.WinKO);
+			return character.Team.VictoryStatus.WinKO;
 		}
 
 		public static Node Parse(ParseState parsestate)
@@ -39,12 +47,16 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("WinTime")]
 	static class WinTime
 	{
-		public static Number Evaluate(Object state)
+		public static Boolean Evaluate(Object state, ref Boolean error)
 		{
 			Combat.Character character = state as Combat.Character;
-			if (character == null) return new Number();
+			if (character == null)
+			{
+				error = true;
+				return false;
+			}
 
-			return new Number(character.Team.VictoryStatus.WinTime);
+			return character.Team.VictoryStatus.WinTime;
 		}
 
 		public static Node Parse(ParseState parsestate)
@@ -56,12 +68,16 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("WinPerfect")]
 	static class WinPerfect
 	{
-		public static Number Evaluate(Object state)
+		public static Boolean Evaluate(Object state, ref Boolean error)
 		{
 			Combat.Character character = state as Combat.Character;
-			if (character == null) return new Number();
+			if (character == null)
+			{
+				error = true;
+				return false;
+			}
 
-			return new Number(character.Team.VictoryStatus.WinPerfect);
+			return character.Team.VictoryStatus.WinPerfect;
 		}
 
 		public static Node Parse(ParseState parsestate)

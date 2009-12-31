@@ -61,7 +61,7 @@ namespace xnaMugen.StateMachine.Controllers
 			if (character == null) throw new ArgumentNullException("character");
 
 			Int32? animationnumber = EvaluationHelper.AsInt32(character, AnimationNumber, null);
-			Int32? id = EvaluationHelper.AsInt32(character, Id, null);
+			Int32 id = EvaluationHelper.AsInt32(character, Id, -1);
 			Point location = EvaluationHelper.AsPoint(character, Position, new Point(0, 0));
 			Int32 horizfacing = EvaluationHelper.AsInt32(character, Facing, 1);
 			Int32 vertfacing = EvaluationHelper.AsInt32(character, VerticalFacing, 1);

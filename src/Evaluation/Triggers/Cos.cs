@@ -5,17 +5,9 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("Cos")]
 	static class Cos
 	{
-		public static Number Evaluate(Object state, Number value)
+		public static Single Evaluate(Object state, ref Boolean error, Single value)
 		{
-			switch (value.NumberType)
-			{
-				case NumberType.Int:
-				case NumberType.Float:
-					return new Number(Math.Cos(value.FloatValue));
-
-				default:
-					return new Number();
-			}
+			return (Single)Math.Cos(value);
 		}
 
 		public static Node Parse(ParseState state)

@@ -46,13 +46,7 @@ namespace xnaMugen.StateMachine.Controllers
 			Combat.ModifyExplodData data = CreateModifyExplodData(character);
 			if (data == null) return;
 
-			foreach (Combat.Entity entity in character.Engine.Entities)
-			{
-				Combat.Explod explod = character.FilterEntityAsExplod(entity, data.Id);
-				if (explod == null) continue;
-
-				explod.Modify(data);
-			}
+			foreach (Combat.Explod explod in character.GetExplods(data.Id)) explod.Modify(data);
 		}
 
 		public override Boolean IsValid()

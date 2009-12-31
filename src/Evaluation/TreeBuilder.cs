@@ -187,6 +187,28 @@ namespace xnaMugen.Evaluation
 				}
 			}
 
+			if (token.Data is Tokenizing.StateRedirectionData)
+			{
+				Tokenizing.StateRedirectionData data = token.Data as Tokenizing.StateRedirectionData;
+
+				Node node = new Node(token);
+				++tokenindex;
+
+				ParseState state = new ParseState(m_system, m_fullnodebuild, m_endnodebuild, m_rangenodebuild, node, tokens, tokenindex);
+
+				Node parsednode = data.Parse(state);
+				if (parsednode != null)
+				{
+					tokenindex = state.TokenIndex;
+					return parsednode;
+				}
+				else
+				{
+					tokenindex = state.InitialTokenIndex - 1;
+					return null;
+				}
+			}
+
 			return null;
 		}
 

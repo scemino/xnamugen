@@ -9,9 +9,10 @@ using Microsoft.Xna.Framework;
 
 namespace xnaMugen.StateMachine
 {
-	[DebuggerTypeProxy(typeof(TriggerMap.DebuggerProxy))]
+	//[DebuggerTypeProxy(typeof(TriggerMap.DebuggerProxy))]
 	class TriggerMap
 	{
+		/*
 		class DebuggerProxy
 		{
 			public DebuggerProxy(TriggerMap triggermap)
@@ -28,14 +29,13 @@ namespace xnaMugen.StateMachine
 
 			#endregion
 		}
+		*/
 
 		public TriggerMap(SortedDictionary<Int32, List<Evaluation.Expression>> triggers)
 		{
 			if (triggers == null) throw new ArgumentNullException("triggers");
 
-			m_triggers = new List<Trigger>(triggers.Keys.Count);
-			foreach (var kvp in triggers) m_triggers.Add(new Trigger(kvp.Key, kvp.Value));
-
+			m_triggers = triggers;
 			m_isvalid = ValidCheck();
 		}
 
@@ -44,13 +44,13 @@ namespace xnaMugen.StateMachine
 			if (m_triggers.Count == 0) return false;
 
 			Int32 indexnumber = 0;
-			foreach (Trigger trigger in m_triggers)
+			foreach (var trigger in m_triggers)
 			{
-				if (trigger.Index == indexnumber)
+				if (trigger.Key == indexnumber)
 				{
 					indexnumber += 1;
 				}
-				else if (indexnumber == 0 && trigger.Index == 1)
+				else if (indexnumber == 0 && trigger.Key == 1)
 				{
 					indexnumber = 2;
 				}
@@ -67,15 +67,25 @@ namespace xnaMugen.StateMachine
 		{
 			if (character == null) throw new ArgumentNullException("character");
 
-			foreach (Trigger trigger in m_triggers)
+			foreach (var trigger in m_triggers)
 			{
-				if (trigger.Check(character) == true)
+				Boolean ok = true;
+				foreach (Evaluation.Expression exp in trigger.Value)
 				{
-					if (trigger.Index != 0) return true;
+					if(exp.EvaluateFirst(character).BooleanValue == false)
+					{
+						ok = false;
+						break;
+					}
+				}
+
+				if (ok == true)
+				{
+					if (trigger.Key != 0) return true;
 				}
 				else
 				{
-					if (trigger.Index == 0) return false;
+					if (trigger.Key == 0) return false;
 				}
 			}
 
@@ -93,7 +103,7 @@ namespace xnaMugen.StateMachine
 		readonly Boolean m_isvalid;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly List<Trigger> m_triggers;
+		readonly SortedDictionary<Int32, List<Evaluation.Expression>> m_triggers;
 
 		#endregion
 	}

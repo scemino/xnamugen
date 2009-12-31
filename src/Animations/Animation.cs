@@ -51,15 +51,7 @@ namespace xnaMugen.Animations
 		{
 			if (elementnumber < 0 || elementnumber >= Elements.Count) throw new ArgumentOutOfRangeException("elementnumber");
 
-			Int32 time = 0;
-			for (Int32 i = 0; i != elementnumber; ++i)
-			{
-				if (Elements[i].Gameticks == -1) break;
-
-				time += Elements[i].Gameticks;
-			}
-
-			return time;
+			return Elements[elementnumber].StartTick;
 		}
 
 		/// <summary>

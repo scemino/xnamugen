@@ -34,6 +34,7 @@ namespace xnaMugen.Combat
 			m_offensiveinfo = new OffensiveInfo(this);
 			m_defensiveinfo = new DefensiveInfo(this);
 			m_updatedanimation = false;
+			m_explods = new Dictionary<Int32, List<Explod>>();
 		}
 
 		public override void Reset()
@@ -59,6 +60,7 @@ namespace xnaMugen.Combat
 			m_offensiveinfo.Reset();
 			m_defensiveinfo.Reset();
 			m_updatedanimation = false;
+			m_explods.Clear();
 		}
 
 		public override void Draw()
@@ -139,13 +141,13 @@ namespace xnaMugen.Combat
 			}
 		}
 
-        public override void UpdateAfterImages()
-        {
-            if (InHitPause == false)
-            {
-                base.UpdateAfterImages();
-            }
-        }
+		public override void UpdateAfterImages()
+		{
+			if (InHitPause == false)
+			{
+				base.UpdateAfterImages();
+			}
+		}
 
 		public override void UpdateState()
 		{
@@ -484,44 +486,6 @@ namespace xnaMugen.Combat
 			return c;
 		}
 
-		public Character FilterEntityAsTarget(Entity entity, Int32 targetid)
-		{
-			if (entity == null) throw new ArgumentNullException("entity");
-
-			Character c = entity as Character;
-			if (c == null || c == this) return null;
-
-			//if (c.AttackInfo.HitTime == 0) return null; 
-
-			//if (c.MoveType != MoveType.BeingHit) return null;
-			//if (c.AttackInfo.Attacker != this) return null;
-
-			if (OffensiveInfo.TargetList.Contains(c) == false) return null;
-			if (targetid >= 0 && c.DefensiveInfo.HitDef.TargetId != targetid) return null;
-
-			return c;
-		}
-
-		public Explod FilterEntityAsExplod(Entity entity, Int32 explodid)
-		{
-			if (entity == null) throw new ArgumentNullException("entity");
-
-			Explod explod = entity as Explod;
-			if (explod == null || explod.Creator != this || (explodid >= 0 && explod.Data.Id != explodid)) return null;
-
-			return explod;
-		}
-
-		public Helper FilterEntityAsHelper(Entity entity, Int32 helperid)
-		{
-			if (entity == null) throw new ArgumentNullException("entity");
-
-			Helper helper = entity as Helper;
-			if (helper == null || helper.BasePlayer != this.BasePlayer || (helperid > 0 && helper.Data.HelperId != helperid)) return null;
-
-			return helper;
-		}
-
 		public Projectile FilterEntityAsProjectile(Entity entity, Int32 projid)
 		{
 			if (entity == null) throw new ArgumentNullException("entity");
@@ -552,6 +516,45 @@ namespace xnaMugen.Combat
 			}
 
 			return null;
+		}
+
+		public IEnumerable<Character> GetTargets(Int32 target_id)
+		{
+			if (target_id >= 0)
+			{
+				foreach (Character character in OffensiveInfo.TargetList)
+				{
+					//if (character.AttackInfo.HitTime == 0) continue;
+					//if (character.MoveType != MoveType.BeingHit) continue;
+					//if (character.AttackInfo.Attacker != this) continue;
+
+					if (character.DefensiveInfo.HitDef.TargetId == target_id) yield return character;
+				}
+			}
+			else
+			{
+				foreach (Character character in OffensiveInfo.TargetList) yield return character;
+			}
+		}
+
+		public IEnumerable<Explod> GetExplods(Int32 id)
+		{
+			if (id >= 0)
+			{
+				List<Explod> explods;
+				if (Explods.TryGetValue(id, out explods) == true)
+				{
+					foreach (Explod explod in explods) yield return explod;
+				}
+
+			}
+			else
+			{
+				foreach (var data in Explods)
+				{
+					foreach (Explod explod in data.Value) yield return explod;
+				}
+			}
 		}
 
 		void RemoveFromOthersTargetLists()
@@ -615,10 +618,10 @@ namespace xnaMugen.Combat
 		{
 			get { return m_statetype; }
 
-			set 
+			set
 			{
 				if (value == StateType.None || value == StateType.Unchanged) throw new ArgumentOutOfRangeException("value");
-				m_statetype = value; 
+				m_statetype = value;
 			}
 		}
 
@@ -745,6 +748,11 @@ namespace xnaMugen.Combat
 			get { return m_updatedanimation; }
 		}
 
+		public Dictionary<Int32, List<Explod>> Explods
+		{
+			get { return m_explods; }
+		}
+
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
@@ -818,6 +826,9 @@ namespace xnaMugen.Combat
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		Boolean m_updatedanimation;
+
+		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+		readonly Dictionary<Int32, List<Explod>> m_explods;
 
 		#endregion
 	}

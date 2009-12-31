@@ -5,17 +5,15 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("Asin")]
 	static class Asin
 	{
-		public static Number Evaluate(Object state, Number value)
+		public static Single Evaluate(Object state, ref Boolean error, Single value)
 		{
-			switch (value.NumberType)
+			if (value < -1 || value > 1)
 			{
-				case NumberType.Int:
-				case NumberType.Float:
-					return new Number(Math.Asin(value.FloatValue));
-
-				default:
-					return new Number();
+				error = true;
+				return 0;
 			}
+
+			return (Single)Math.Asin(value);
 		}
 
 		public static Node Parse(ParseState state)

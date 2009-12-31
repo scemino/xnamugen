@@ -5,9 +5,9 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("E")]
 	static class E
 	{
-		public static Number Evaluate(Object state)
+		public static Single Evaluate(Object state, ref Boolean error)
 		{
-			return new Number(Math.E);
+			return (Single)Math.E;
 		}
 
 		public static Node Parse(ParseState state)

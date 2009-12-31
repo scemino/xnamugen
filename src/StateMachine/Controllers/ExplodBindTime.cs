@@ -22,13 +22,7 @@ namespace xnaMugen.StateMachine.Controllers
 			Int32 explod_id = EvaluationHelper.AsInt32(character, Id, Int32.MinValue);
 			Int32 time = EvaluationHelper.AsInt32(character, Time, 1);
 
-			foreach (Combat.Entity entity in character.Engine.Entities)
-			{
-				Combat.Explod explod = character.FilterEntityAsExplod(entity, explod_id);
-				if (explod == null) continue;
-
-				explod.Data.BindTime = time;
-			}
+			foreach (Combat.Explod explod in character.GetExplods(explod_id)) explod.Data.BindTime = time;
 		}
 
 		public Evaluation.Expression Id

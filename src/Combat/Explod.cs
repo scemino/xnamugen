@@ -370,7 +370,7 @@ namespace xnaMugen.Combat
 			get { return EntityUpdateOrder.Explod; }
 		}
 
-		public Entity Creator
+		public Character Creator
 		{
 			get { return m_creator; }
 		}
@@ -450,7 +450,7 @@ namespace xnaMugen.Combat
 		readonly Facing m_creationfacing;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Entity m_creator;
+		readonly Character m_creator;
 
 		#endregion
 	}

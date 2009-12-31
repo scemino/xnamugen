@@ -47,11 +47,6 @@ namespace xnaMugen.Evaluation
 			set { m_precedenceoverride = value; }
 		}
 
-		public static Node EmptyNode
-		{
-			get { return s_emptynode; }
-		}
-
 		public static Node ZeroNode
 		{
 			get { return s_zeronode; }

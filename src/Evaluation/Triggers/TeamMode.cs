@@ -5,10 +5,14 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("TeamMode")]
 	static class TeamMode
 	{
-		public static Number Evaluate(Object state, Operator @operator, String text)
+		public static Boolean Evaluate(Object state, ref Boolean error, Operator @operator, String text)
 		{
 			Combat.Character character = state as Combat.Character;
-			if (character == null) return new Number();
+			if (character == null)
+			{
+				error = true;
+				return false;
+			}
 
 #warning Hack
 			Boolean match = String.Equals(text, "versus", StringComparison.OrdinalIgnoreCase);
@@ -16,13 +20,14 @@ namespace xnaMugen.Evaluation.Triggers
 			switch (@operator)
 			{
 				case Operator.Equals:
-					return new Number(match);
+					return match;
 
 				case Operator.NotEquals:
-					return new Number(!match);
+					return !match;
 
 				default:
-					return new Number();
+					error = true;
+					return false;
 			}
 		}
 

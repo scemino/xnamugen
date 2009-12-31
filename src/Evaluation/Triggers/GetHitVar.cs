@@ -6,215 +6,497 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("GetHitVar")]
 	static class GetHitVar
 	{
-		static GetHitVar()
-		{
-			HitVarMap = new Dictionary<String, Converter<Combat.Character, Number>>(StringComparer.OrdinalIgnoreCase);
-
-			HitVarMap["xveladd"] = x => new Number();
-			HitVarMap["yveladd"] = x => new Number();
-			HitVarMap["type"] = GetHitType;
-			HitVarMap["animtype"] = GetAnimType;
-			HitVarMap["airtype"] = GetAirHitType;
-			HitVarMap["groundtype"] = GetGroundHitType;
-			HitVarMap["damage"] = GetDamage;
-			HitVarMap["hitcount"] = GetHitCount;
-			HitVarMap["fallcount"] = x => new Number();
-			HitVarMap["hitshaketime"] = GetHitShakeTime;
-			HitVarMap["hittime"] = GetHitTime;
-			HitVarMap["slidetime"] = GetSlideTime;
-			HitVarMap["ctrltime"] = GetGuardControlTime;
-			HitVarMap["recovertime"] = x => new Number();
-			HitVarMap["xoff"] = GetSnapX;
-			HitVarMap["yoff"] = GetSnapY;
-			HitVarMap["zoff"] = x => new Number();
-			HitVarMap["xvel"] = x => GetHitVelocity(x, Axis.X);
-			HitVarMap["yvel"] = x => GetHitVelocity(x, Axis.Y);
-			HitVarMap["yaccel"] = GetYAccleration;
-			HitVarMap["chainid"] = x => new Number(x.DefensiveInfo.HitDef.ChainId);
-			HitVarMap["guarded"] = x => new Number(x.DefensiveInfo.Blocked);
-			HitVarMap["isbound"] = GetIsBound;
-			HitVarMap["fall"] = x => new Number(x.DefensiveInfo.IsFalling);
-			HitVarMap["fall.damage"] = x => new Number(x.DefensiveInfo.HitDef.FallDamage);
-			HitVarMap["fall.xvel"] = x => new Number(x.DefensiveInfo.HitDef.FallVelocityX ?? x.CurrentVelocity.X);
-			HitVarMap["fall.yvel"] = x => new Number(x.DefensiveInfo.HitDef.FallVelocityY);
-			HitVarMap["fall.recover"] = x => new Number(x.DefensiveInfo.HitDef.FallCanRecover);
-			HitVarMap["fall.recovertime"] = x => new Number(x.DefensiveInfo.HitDef.FallRecoverTime);
-			HitVarMap["fall.kill"] = x => new Number(x.DefensiveInfo.HitDef.CanFallKill);
-			HitVarMap["fall.envshake.time"] = x => new Number(x.DefensiveInfo.HitDef.EnvShakeFallTime);
-			HitVarMap["fall.envshake.freq"] = x => new Number(x.DefensiveInfo.HitDef.EnvShakeFallFrequency);
-			HitVarMap["fall.envshake.ampl"] = x => new Number(x.DefensiveInfo.HitDef.EnvShakeFallAmplitude);
-			HitVarMap["fall.envshake.phase"] = x => new Number(x.DefensiveInfo.HitDef.EnvShakeFallPhase);
-		}
-
-		public static Number Evaluate(Object state, String consttype)
+		[Tag("fall.envshake.time")]
+		public static Int32 GetFallShakeTime(Object state, ref Boolean error)
 		{
 			Combat.Character character = state as Combat.Character;
-			if (character == null) return new Number();
-
-			if (HitVarMap.ContainsKey(consttype) == true) return HitVarMap[consttype](character);
-			return new Number();
-		}
-
-		static Number GetHitCount(Combat.Character character)
-		{
-			return new Number(character.DefensiveInfo.HitCount);
-		}
-
-		static Number GetHitVelocity(Combat.Character character, Axis axis)
-		{
-			if (axis == Axis.X)
+			if (character == null)
 			{
-				Single result = character.DefensiveInfo.GetHitVelocity().X;
-				//if (character.CurrentFacing == xnaMugen.Facing.Left) result = -result;
-
-				return new Number(result);
+				error = true;
+				return 0;
 			}
 
-			if (axis == Axis.Y)
+			return character.DefensiveInfo.HitDef.EnvShakeFallTime;
+		}
+
+		[Tag("fall.envshake.freq")]
+		public static Single GetFallShakeFreq(Object state, ref Boolean error)
+		{
+			Combat.Character character = state as Combat.Character;
+			if (character == null)
 			{
-				return new Number(character.DefensiveInfo.GetHitVelocity().Y);
+				error = true;
+				return 0;
 			}
 
-			return new Number();
+			return character.DefensiveInfo.HitDef.EnvShakeFallFrequency;
 		}
 
-		static Number GetHitType(Combat.Character p)
+		[Tag("fall.envshake.ampl")]
+		public static Single GetFallShakeAmpl(Object state, ref Boolean error)
 		{
-			if (p.Life == 0) return new Number(3);
+			Combat.Character character = state as Combat.Character;
+			if (character == null)
+			{
+				error = true;
+				return 0;
+			}
 
-			return (p.DefensiveInfo.HitStateType == xnaMugen.StateType.Airborne) ? GetAirHitType(p) : GetGroundHitType(p);
+			return character.DefensiveInfo.HitDef.EnvShakeFallAmplitude;
 		}
 
-		static Number GetAnimType(Combat.Character p)
+		[Tag("fall.envshake.phase")]
+		public static Single GetFallShakePhase(Object state, ref Boolean error)
 		{
+			Combat.Character character = state as Combat.Character;
+			if (character == null)
+			{
+				error = true;
+				return 0;
+			}
+
+			return character.DefensiveInfo.HitDef.EnvShakeFallPhase;
+		}
+
+
+		[Tag("guarded")]
+		public static Boolean GetGuarded(Object state, ref Boolean error)
+		{
+			Combat.Character character = state as Combat.Character;
+			if (character == null)
+			{
+				error = true;
+				return false;
+			}
+
+			return character.DefensiveInfo.Blocked;
+		}
+
+		[Tag("chainid")]
+		public static Int32 GetChainId(Object state, ref Boolean error)
+		{
+			Combat.Character character = state as Combat.Character;
+			if (character == null)
+			{
+				error = true;
+				return 0;
+			}
+
+			return character.DefensiveInfo.HitDef.ChainId;
+		}
+
+		[Tag("fall")]
+		public static Boolean GetFalling(Object state, ref Boolean error)
+		{
+			Combat.Character character = state as Combat.Character;
+			if (character == null)
+			{
+				error = true;
+				return false;
+			}
+
+			return character.DefensiveInfo.IsFalling;
+		}
+
+		[Tag("fall.damage")]
+		public static Int32 GetFallDamage(Object state, ref Boolean error)
+		{
+			Combat.Character character = state as Combat.Character;
+			if (character == null)
+			{
+				error = true;
+				return 0;
+			}
+
+			return character.DefensiveInfo.HitDef.FallDamage;
+		}
+
+		[Tag("fall.recover")]
+		public static Boolean GetCanFallRecover(Object state, ref Boolean error)
+		{
+			Combat.Character character = state as Combat.Character;
+			if (character == null)
+			{
+				error = true;
+				return false;
+			}
+
+			return character.DefensiveInfo.HitDef.FallCanRecover;
+		}
+
+		[Tag("fall.kill")]
+		public static Boolean GetCanFallKill(Object state, ref Boolean error)
+		{
+			Combat.Character character = state as Combat.Character;
+			if (character == null)
+			{
+				error = true;
+				return false;
+			}
+
+			return character.DefensiveInfo.HitDef.CanFallKill;
+		}
+
+		[Tag("fall.recovertime")]
+		public static Int32 GetFallRecoverTime(Object state, ref Boolean error)
+		{
+			Combat.Character character = state as Combat.Character;
+			if (character == null)
+			{
+				error = true;
+				return 0;
+			}
+
+			return character.DefensiveInfo.HitDef.FallRecoverTime;
+		}
+
+		[Tag("fall.xvel")]
+		public static Single GetFallVelocityX(Object state, ref Boolean error)
+		{
+			Combat.Character character = state as Combat.Character;
+			if (character == null)
+			{
+				error = true;
+				return 0;
+			}
+
+			return character.DefensiveInfo.HitDef.FallVelocityX ?? character.CurrentVelocity.X;
+		}
+
+		[Tag("fall.yvel")]
+		public static Single GetFallVelocityY(Object state, ref Boolean error)
+		{
+			Combat.Character character = state as Combat.Character;
+			if (character == null)
+			{
+				error = true;
+				return 0;
+			}
+
+			return character.DefensiveInfo.HitDef.FallVelocityY;
+		}
+
+		[Tag("xveladd")]
+		public static Int32 GetVelocityAddX(Object state, ref Boolean error)
+		{
+			error = true;
+			return 0;
+		}
+
+		[Tag("yveladd")]
+		public static Int32 GetVelocityAddY(Object state, ref Boolean error)
+		{
+			error = true;
+			return 0;
+		}
+
+		[Tag("fallcount")]
+		public static Int32 GetFallCount(Object state, ref Boolean error)
+		{
+			error = true;
+			return 0;
+		}
+
+		[Tag("recovertime")]
+		public static Int32 GetRecoverTime(Object state, ref Boolean error)
+		{
+			error = true;
+			return 0;
+		}
+
+		[Tag("hitcount")]
+		public static Int32 GetHitCount(Object state, ref Boolean error)
+		{
+			Combat.Character character = state as Combat.Character;
+			if (character == null)
+			{
+				error = true;
+				return 0;
+			}
+
+			return character.DefensiveInfo.HitCount;
+		}
+
+		[Tag("xvel")]
+		public static Single GetHitVelocityX(Object state, ref Boolean error)
+		{
+			Combat.Character character = state as Combat.Character;
+			if (character == null)
+			{
+				error = true;
+				return 0;
+			}
+
+			return character.DefensiveInfo.GetHitVelocity().X;
+		}
+
+		[Tag("yvel")]
+		public static Single GetHitVelocityY(Object state, ref Boolean error)
+		{
+			Combat.Character character = state as Combat.Character;
+			if (character == null)
+			{
+				error = true;
+				return 0;
+			}
+
+			return character.DefensiveInfo.GetHitVelocity().Y;
+		}
+
+		[Tag("type")]
+		public static Int32 GetHitType(Object state, ref Boolean error)
+		{
+			Combat.Character character = state as Combat.Character;
+			if (character == null)
+			{
+				error = true;
+				return 0;
+			}
+
+			if (character.Life == 0) return 3;
+
+			return (character.DefensiveInfo.HitStateType == xnaMugen.StateType.Airborne) ? GetAirHitType(state, ref error) : GetGroundHitType(state, ref error);
+		}
+
+		[Tag("animtype")]
+		public static Int32 GetAnimType(Object state, ref Boolean error)
+		{
+			Combat.Character character = state as Combat.Character;
+			if (character == null)
+			{
+				error = true;
+				return 0;
+			}
+
 			HitAnimationType hat = HitAnimationType.Light;
 
-			if (p.DefensiveInfo.IsFalling == true) hat = p.DefensiveInfo.HitDef.FallAnimationType;
-			else if (p.DefensiveInfo.HitStateType == xnaMugen.StateType.Airborne) hat = p.DefensiveInfo.HitDef.AirAnimationType;
-			else hat = p.DefensiveInfo.HitDef.GroundAnimationType;
+			if (character.DefensiveInfo.IsFalling == true) hat = character.DefensiveInfo.HitDef.FallAnimationType;
+			else if (character.DefensiveInfo.HitStateType == xnaMugen.StateType.Airborne) hat = character.DefensiveInfo.HitDef.AirAnimationType;
+			else hat = character.DefensiveInfo.HitDef.GroundAnimationType;
 
 			switch (hat)
 			{
-				case HitAnimationType.None:
-					return new Number();
-
 				case HitAnimationType.Light:
-					return new Number(0);
+					return 0;
 
 				case HitAnimationType.Medium:
-					return new Number(1);
+					return 1;
 
 				case HitAnimationType.Hard:
-					return new Number(2);
+					return 2;
 
 				case HitAnimationType.Back:
-					return new Number(3);
+					return 3;
 
 				case HitAnimationType.Up:
-					return new Number(4);
+					return 4;
 
 				case HitAnimationType.DiagUp:
-					return new Number(5);
+					return 5;
 
 				default:
-					return new Number(0);
+					error = true;
+					return 0;
 			}
 		}
 
-		static Number GetAirHitType(Combat.Character p)
+		[Tag("airtype")]
+		public static Int32 GetAirHitType(Object state, ref Boolean error)
 		{
-			switch (p.DefensiveInfo.HitDef.AirAttackEffect)
+			Combat.Character character = state as Combat.Character;
+			if (character == null)
 			{
-				case AttackEffect.None:
-					return new Number(0);
+				error = true;
+				return 0;
+			}
 
+			switch (character.DefensiveInfo.HitDef.AirAttackEffect)
+			{
 				case AttackEffect.High:
-					return new Number(1);
+					return 1;
 
 				case AttackEffect.Low:
-					return new Number(2);
+					return 2;
 
 				case AttackEffect.Trip:
-					return new Number(3);
+					return 3;
 
 				default:
-					return new Number(0);
+					return 4;
 			}
 		}
 
-		static Number GetGroundHitType(Combat.Character p)
+		[Tag("groundtype")]
+		public static Int32 GetGroundHitType(Object state, ref Boolean error)
 		{
-			switch (p.DefensiveInfo.HitDef.GroundAttackEffect)
+			Combat.Character character = state as Combat.Character;
+			if (character == null)
 			{
-				case AttackEffect.None:
-					return new Number(0);
+				error = true;
+				return 0;
+			}
 
+			switch (character.DefensiveInfo.HitDef.GroundAttackEffect)
+			{
 				case AttackEffect.High:
-					return new Number(1);
+					return 1;
 
 				case AttackEffect.Low:
-					return new Number(2);
+					return 2;
 
 				case AttackEffect.Trip:
-					return new Number(3);
+					return 3;
 
 				default:
-					return new Number(0);
+					return 0;
 			}
 		}
 
-		static Number GetDamage(Combat.Character p)
+		[Tag("damage")]
+		public static Int32 GetDamage(Object state, ref Boolean error)
 		{
-			return (p.DefensiveInfo.Blocked == true) ? new Number(p.DefensiveInfo.HitDef.GuardDamage) : new Number(p.DefensiveInfo.HitDef.HitDamage);
+			Combat.Character character = state as Combat.Character;
+			if (character == null)
+			{
+				error = true;
+				return 0;
+			}
+
+			return (character.DefensiveInfo.Blocked == true) ? character.DefensiveInfo.HitDef.GuardDamage : character.DefensiveInfo.HitDef.HitDamage;
 		}
 
-		static Number GetHitShakeTime(Combat.Character p)
+		[Tag("hitshaketime")]
+		public static Int32 GetHitShakeTime(Object state, ref Boolean error)
 		{
-			return new Number(p.DefensiveInfo.HitShakeTime);
+			Combat.Character character = state as Combat.Character;
+			if (character == null)
+			{
+				error = true;
+				return 0;
+			}
+
+			return character.DefensiveInfo.HitShakeTime;
 		}
 
-		static Number GetHitTime(Combat.Character p)
+		[Tag("hittime")]
+		public static Int32 GetHitTime(Object state, ref Boolean error)
 		{
-			return new Number(p.DefensiveInfo.HitTime);
+			Combat.Character character = state as Combat.Character;
+			if (character == null)
+			{
+				error = true;
+				return 0;
+			}
+
+			return character.DefensiveInfo.HitTime;
 		}
 
-		static Number GetSlideTime(Combat.Character p)
+		[Tag("slidetime")]
+		public static Int32 GetSlideTime(Object state, ref Boolean error)
 		{
-			return (p.DefensiveInfo.Blocked == true) ? new Number(p.DefensiveInfo.HitDef.GuardSlideTime) : new Number(p.DefensiveInfo.HitDef.GroundSlideTime);
+			Combat.Character character = state as Combat.Character;
+			if (character == null)
+			{
+				error = true;
+				return 0;
+			}
+
+			return (character.DefensiveInfo.Blocked == true) ? character.DefensiveInfo.HitDef.GuardSlideTime : character.DefensiveInfo.HitDef.GroundSlideTime;
 		}
 
-		static Number GetGuardControlTime(Combat.Character p)
+		[Tag("ctrltime")]
+		public static Int32 GetGuardControlTime(Object state, ref Boolean error)
 		{
-			switch (p.DefensiveInfo.HitStateType)
+			Combat.Character character = state as Combat.Character;
+			if (character == null)
+			{
+				error = true;
+				return 0;
+			}
+
+			switch (character.DefensiveInfo.HitStateType)
 			{
 				case xnaMugen.StateType.Airborne:
-					return new Number(p.DefensiveInfo.HitDef.AirGuardControlTime);
+					return character.DefensiveInfo.HitDef.AirGuardControlTime;
 
 				default:
-					return new Number(p.DefensiveInfo.HitDef.GuardControlTime);
+					return character.DefensiveInfo.HitDef.GuardControlTime;
 			}
 		}
 
-		static Number GetSnapX(Combat.Character p)
+		[Tag("xoff")]
+		public static Int32 GetSnapX(Object state, ref Boolean error)
 		{
-			return (p.DefensiveInfo.HitDef.SnapLocation != null) ? new Number(p.DefensiveInfo.HitDef.SnapLocation.Value.X) : new Number();
+			Combat.Character character = state as Combat.Character;
+			if (character == null)
+			{
+				error = true;
+				return 0;
+			}
+
+			Point? location = character.DefensiveInfo.HitDef.SnapLocation;
+			if (location.HasValue == false)
+			{
+				error = true;
+				return 0;
+			}
+
+			return location.Value.X;
 		}
 
-		static Number GetSnapY(Combat.Character p)
+		[Tag("yoff")]
+		public static Int32 GetSnapY(Object state, ref Boolean error)
 		{
-			return (p.DefensiveInfo.HitDef.SnapLocation != null) ? new Number(p.DefensiveInfo.HitDef.SnapLocation.Value.Y) : new Number();
+			Combat.Character character = state as Combat.Character;
+			if (character == null)
+			{
+				error = true;
+				return 0;
+			}
+
+			Point? location = character.DefensiveInfo.HitDef.SnapLocation;
+			if (location.HasValue == false)
+			{
+				error = true;
+				return 0;
+			}
+
+			return location.Value.Y;
 		}
 
-		static Number GetYAccleration(Combat.Character p)
+		[Tag("zoff")]
+		public static Int32 GetSnapZ(Object state, ref Boolean error)
 		{
-			return new Number(p.DefensiveInfo.HitDef.YAcceleration);
+			error = true;
+			return 0;
 		}
 
-		static Number GetIsBound(Combat.Character p)
+		[Tag("yaccel")]
+		public static Single GetYAccleration(Object state, ref Boolean error)
 		{
-			Combat.CharacterBind bind = p.Bind;
+			Combat.Character character = state as Combat.Character;
+			if (character == null)
+			{
+				error = true;
+				return 0;
+			}
 
-			return new Number(bind.IsActive == true && bind.IsTargetBind == true);
+			return character.DefensiveInfo.HitDef.YAcceleration;
+		}
+
+		[Tag("isbound")]
+		public static Boolean GetIsBound(Object state, ref Boolean error)
+		{
+			Combat.Character character = state as Combat.Character;
+			if (character == null)
+			{
+				error = true;
+				return false;
+			}
+
+			Combat.CharacterBind bind = character.Bind;
+
+			return bind.IsActive == true && bind.IsTargetBind == true;
 		}
 
 		public static Node Parse(ParseState parsestate)
@@ -233,7 +515,5 @@ namespace xnaMugen.Evaluation.Triggers
 
 			return parsestate.BaseNode;
 		}
-
-		static Dictionary<String, Converter<Combat.Character, Number>> HitVarMap { get; set; }
 	}
 }

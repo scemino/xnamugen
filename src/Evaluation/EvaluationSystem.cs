@@ -7,6 +7,8 @@ using xnaMugen.Collections;
 
 namespace xnaMugen.Evaluation
 {
+	class EvaluationException : Exception { }
+
 	class EvaluationSystem : SubSystem
 	{
 		public EvaluationSystem(SubSystems subsystems)
@@ -15,7 +17,10 @@ namespace xnaMugen.Evaluation
 			m_expressioncache = new KeyedCollection<String, Expression>(x => x.ToString(), StringComparer.OrdinalIgnoreCase);
 			m_tokenizer = new Tokenizer();
 			m_treebuilder = new TreeBuilder(this);
-			m_treecompiler = new TreeCompiler();
+			m_compiler = new Compiler();
+
+			//var exp = CreateExpression("0.0 = [-10, 10]");
+			//var result = exp.Evaluate(null);
 		}
 
 		public Expression CreateExpression(String input)
@@ -94,7 +99,7 @@ namespace xnaMugen.Evaluation
 			List<Node> nodes = m_treebuilder.BuildTree(tokens);
 
 			List<EvaluationCallback> functions = new List<EvaluationCallback>();
-			foreach (Node node in nodes) functions.Add(m_treecompiler.Create(node));
+			foreach (Node node in nodes) functions.Add(m_compiler.Create(node));
 
 			Expression expression = new Expression(input, functions);
 
@@ -112,7 +117,7 @@ namespace xnaMugen.Evaluation
 		readonly TreeBuilder m_treebuilder;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly TreeCompiler m_treecompiler;
+		readonly Compiler m_compiler;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		readonly KeyedCollection<String, Expression> m_expressioncache;

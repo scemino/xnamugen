@@ -120,6 +120,34 @@ namespace xnaMugen.Combat
 			{
 				m_addlist.Add(entity);
 			}
+
+			if (entity is Helper)
+			{
+				Helper helper = (Helper)entity;
+
+				List<Helper> helpers;
+				if (helper.BasePlayer.Helpers.TryGetValue(helper.Data.HelperId, out helpers) == false)
+				{
+					helpers = new List<Helper>();
+					helper.BasePlayer.Helpers.Add(helper.Data.HelperId, helpers);
+				}
+
+				helpers.Add(helper);
+			}
+
+			if (entity is Explod)
+			{
+				Explod explod = (Explod)entity;
+
+				List<Explod> explods;
+				if (explod.Creator.Explods.TryGetValue(explod.Data.Id, out explods) == false)
+				{
+					explods = new List<Explod>();
+					explod.Creator.Explods.Add(explod.Data.Id, explods);
+				}
+
+				explods.Add(explod);
+			}
 		}
 
 		public void Remove(Entity entity)
@@ -136,6 +164,18 @@ namespace xnaMugen.Combat
 			else
 			{
 				m_removelist.Add(entity);
+			}
+
+			if (entity is Helper)
+			{
+				Helper helper = (Helper)entity;
+				helper.BasePlayer.Helpers[helper.Data.HelperId].Remove(helper);
+			}
+
+			if (entity is Explod)
+			{
+				Explod explod = (Explod)entity;
+				explod.Creator.Explods[explod.Data.Id].Remove(explod);
 			}
 		}
 

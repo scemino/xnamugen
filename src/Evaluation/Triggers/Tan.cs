@@ -6,17 +6,9 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("Tan")]
 	static class Tan
 	{
-		public static Number Evaluate(Object state, Number value)
+		public static Single Evaluate(Object state, ref Boolean error, Single value)
 		{
-			switch (value.NumberType)
-			{
-				case NumberType.Int:
-				case NumberType.Float:
-					return new Number(Math.Tan(value.FloatValue));
-
-				default:
-					return new Number();
-			}
+			return (Single)Math.Tan(value);
 		}
 
 		public static Node Parse(ParseState state)

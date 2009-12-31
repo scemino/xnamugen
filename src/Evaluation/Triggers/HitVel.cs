@@ -5,21 +5,26 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("HitVel")]
 	static class HitVel
 	{
-		public static Number Evaluate(Object state, Axis axis)
+		public static Single Evaluate(Object state, ref Boolean error, Axis axis)
 		{
 			Combat.Character character = state as Combat.Character;
-			if (character == null) return new Number();
+			if (character == null)
+			{
+				error = true;
+				return 0;
+			}
 
 			switch (axis)
 			{
 				case Axis.X:
-					return new Number(character.DefensiveInfo.GetHitVelocity().X);
+					return character.DefensiveInfo.GetHitVelocity().X;
 
 				case Axis.Y:
-					return new Number(character.DefensiveInfo.GetHitVelocity().Y);
+					return character.DefensiveInfo.GetHitVelocity().Y;
 
 				default:
-					return new Number();
+					error = true;
+					return 0;
 			}
 		}
 

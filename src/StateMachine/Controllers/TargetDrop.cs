@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using xnaMugen.IO;
+using System.Collections.Generic;
 
 namespace xnaMugen.StateMachine.Controllers
 {
@@ -16,9 +17,23 @@ namespace xnaMugen.StateMachine.Controllers
 
 		public override void Run(Combat.Character character)
 		{
-			Int32? exclude_id = EvaluationHelper.AsInt32(character, Id, null);
+			Int32 exclude_id = EvaluationHelper.AsInt32(character, Id, -1);
 			Boolean keepone = EvaluationHelper.AsBoolean(character, KeepOne, true);
 
+
+			List<Combat.Character> removelist = new List<Combat.Character>();
+			foreach (Combat.Character target in character.GetTargets(Int32.MinValue))
+			{
+				if (exclude_id != -1 && target.DefensiveInfo.HitDef.TargetId == exclude_id) continue;
+
+				removelist.Add(target);
+			}
+
+			if (removelist.Count > 0 && keepone == true) removelist.RemoveAt(0);
+
+			foreach (Combat.Character target in removelist) character.OffensiveInfo.TargetList.Remove(target);
+
+			/*
 			Boolean keptone = false;
 			foreach (Combat.Entity entity in character.Engine.Entities)
 			{
@@ -35,6 +50,7 @@ namespace xnaMugen.StateMachine.Controllers
 
 				character.OffensiveInfo.TargetList.Remove(target);
 			}
+			*/
 		}
 
 		public Evaluation.Expression Id

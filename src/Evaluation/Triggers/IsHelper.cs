@@ -5,23 +5,19 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("IsHelper")]
 	static class IsHelper
 	{
-		public static Number Evaluate(Object state, Number helperid)
+		public static Boolean Evaluate(Object state, ref Boolean error, Int32 helperid)
 		{
 			Combat.Character character = state as Combat.Character;
-			if (character == null) return new Number();
+			if (character == null)
+			{
+				error = true;
+				return false;
+			}
 
 			Combat.Helper helper = character as Combat.Helper;
-			if (helper == null) return new Number(false);
+			if (helper == null) return false;
 
-			switch (helperid.NumberType)
-			{
-				case NumberType.Int:
-				case NumberType.Float:
-					return new Number(helper.Data.HelperId == helperid.IntValue);
-
-				default:
-					return new Number(true);
-			}
+			return (helperid >= 0) ? helper.Data.HelperId == helperid : true;
 		}
 
 		public static Node Parse(ParseState parsestate)
@@ -33,7 +29,7 @@ namespace xnaMugen.Evaluation.Triggers
 			}
 			else
 			{
-				parsestate.BaseNode.Children.Add(Node.EmptyNode);
+				parsestate.BaseNode.Children.Add(Node.NegativeOneNode);
 				return parsestate.BaseNode;
 			}
 		}

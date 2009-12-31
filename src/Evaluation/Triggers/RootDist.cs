@@ -5,13 +5,21 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("RootDist")]
 	static class RootDist
 	{
-		public static Number Evaluate(Object state, Axis axis)
+		public static Single Evaluate(Object state, ref Boolean error, Axis axis)
 		{
 			Combat.Character character = state as Combat.Character;
-			if (character == null) return new Number();
+			if (character == null)
+			{
+				error = true;
+				return 0;
+			}
 
 			Combat.Helper helper = character as Combat.Helper;
-			if (helper == null) return new Number();
+			if (helper == null)
+			{
+				error = true;
+				return 0;
+			}
 
 			switch (axis)
 			{
@@ -19,18 +27,19 @@ namespace xnaMugen.Evaluation.Triggers
 					Single distance = Math.Abs(helper.CurrentLocation.X - helper.BasePlayer.CurrentLocation.X);
 					if (helper.CurrentFacing == xnaMugen.Facing.Right)
 					{
-						return (helper.BasePlayer.CurrentLocation.X >= helper.CurrentLocation.X) ? new Number(distance) : new Number(-distance);
+						return (helper.BasePlayer.CurrentLocation.X >= helper.CurrentLocation.X) ? distance : -distance;
 					}
 					else
 					{
-						return (helper.BasePlayer.CurrentLocation.X >= helper.CurrentLocation.X) ? new Number(-distance) : new Number(distance);
+						return (helper.BasePlayer.CurrentLocation.X >= helper.CurrentLocation.X) ? -distance : distance;
 					}
 
 				case Axis.Y:
-					return new Number(helper.BasePlayer.CurrentLocation.Y - helper.CurrentLocation.Y);
+					return helper.BasePlayer.CurrentLocation.Y - helper.CurrentLocation.Y;
 
 				default:
-					return new Number();
+					error = true;
+					return 0;
 			}
 		}
 

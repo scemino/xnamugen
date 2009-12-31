@@ -5,12 +5,16 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("LifeMax")]
 	static class LifeMax
 	{
-		public static Number Evaluate(Object state)
+		public static Int32 Evaluate(Object state, ref Boolean error)
 		{
 			Combat.Character character = state as Combat.Character;
-			if (character == null) return new Number();
+			if (character == null)
+			{
+				error = true;
+				return 0;
+			}
 
-			return new Number(character.BasePlayer.Constants.MaximumLife);
+			return character.BasePlayer.Constants.MaximumLife;
 		}
 
 		public static Node Parse(ParseState state)

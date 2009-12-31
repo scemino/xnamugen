@@ -279,6 +279,14 @@ namespace xnaMugen.Evaluation.Tokenizing
 		#endregion
 	}
 
+	class StateRedirectionData : CustomFunctionData
+	{
+		public StateRedirectionData(String text, String name, Type type)
+			: base(text, name, type)
+		{
+		}
+	}
+
 	class RangeData : TokenData
 	{
 		public RangeData()

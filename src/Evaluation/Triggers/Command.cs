@@ -5,23 +5,27 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("Command")]
 	static class Command
 	{
-		public static Number Evaluate(Object state, Operator @operator, String text)
+		public static Boolean Evaluate(Object state, ref Boolean error, Operator @operator, String text)
 		{
 			Combat.Character character = state as Combat.Character;
-			if (character == null) return new Number();
-
+			if (character == null)
+			{
+				error = true;
+				return false;
+			}
 			Boolean active = character.CommandManager.IsActive(text);
 
 			switch (@operator)
 			{
 				case Operator.Equals:
-					return new Number(active);
+					return active;
 
 				case Operator.NotEquals:
-					return new Number(!active);
+					return !active;
 
 				default:
-					return new Number();
+					error = true;
+					return false;
 			}
 		}
 

@@ -52,11 +52,8 @@ namespace xnaMugen.StateMachine.Controllers
 			Int32 target_id = EvaluationHelper.AsInt32(character, TargetId, Int32.MinValue);
 			Vector2 offset = EvaluationHelper.AsVector2(character, Position, new Vector2(0, 0));
 
-			foreach (Combat.Entity entity in character.Engine.Entities)
+			foreach (Combat.Character target in character.GetTargets(target_id))
 			{
-				Combat.Character target = character.FilterEntityAsTarget(entity, target_id);
-				if (target == null) continue;
-
 				switch (BindPosition)
 				{
 					case BindToTargetPostion.Mid:

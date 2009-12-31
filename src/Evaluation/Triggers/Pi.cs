@@ -5,9 +5,9 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("Pi")]
 	static class Pi
 	{
-		public static Number Evaluate(Object state)
+		public static Single Evaluate(Object state, ref Boolean error)
 		{
-			return new Number(Math.PI);
+			return (Single)Math.PI;
 		}
 
 		public static Node Parse(ParseState state)

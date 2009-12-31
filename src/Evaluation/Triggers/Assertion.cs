@@ -5,73 +5,78 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("Assertion")]
 	static class Assertion
 	{
-		public static Number Evaluate(Object state, xnaMugen.Assertion assertion)
+		public static Boolean Evaluate(Object state, ref Boolean error, xnaMugen.Assertion assertion)
 		{
 			Combat.Character character = state as Combat.Character;
-			if (character == null) return new Number();
+			if (character == null)
+			{
+				error = true;
+				return false;
+			}
 
 			switch (assertion)
 			{
 				case xnaMugen.Assertion.Intro:
-					return new Number(character.Engine.Assertions.Intro);
+					return character.Engine.Assertions.Intro;
 
 				case xnaMugen.Assertion.Invisible:
-					return new Number(character.Assertions.Invisible);
+					return character.Assertions.Invisible;
 
 				case xnaMugen.Assertion.RoundNotOver:
-					return new Number(character.Engine.Assertions.WinPose);
+					return character.Engine.Assertions.WinPose;
 
 				case xnaMugen.Assertion.NoBarDisplay:
-					return new Number(character.Engine.Assertions.NoBarDisplay);
+					return character.Engine.Assertions.NoBarDisplay;
 
 				case xnaMugen.Assertion.NoBackground:
-					return new Number(character.Engine.Assertions.NoBackLayer);
+					return character.Engine.Assertions.NoBackLayer;
 
 				case xnaMugen.Assertion.NoForeground:
-					return new Number(character.Engine.Assertions.NoFrontLayer);
+					return character.Engine.Assertions.NoFrontLayer;
 
 				case xnaMugen.Assertion.NoStandGuard:
-					return new Number(character.Assertions.NoStandingGuard);
+					return character.Assertions.NoStandingGuard;
 
 				case xnaMugen.Assertion.NoAirGuard:
-					return new Number(character.Assertions.NoAirGuard);
+					return character.Assertions.NoAirGuard;
 
 				case xnaMugen.Assertion.NoCrouchGuard:
-					return new Number(character.Assertions.NoCrouchingGuard);
+					return character.Assertions.NoCrouchingGuard;
 
 				case xnaMugen.Assertion.NoAutoturn:
-					return new Number(character.Assertions.NoAutoTurn);
+					return character.Assertions.NoAutoTurn;
 
 				case xnaMugen.Assertion.NoJuggleCheck:
-					return new Number(character.Assertions.NoJuggleCheck);
+					return character.Assertions.NoJuggleCheck;
 
 				case xnaMugen.Assertion.NoKOSound:
-					return new Number(character.Engine.Assertions.NoKOSound);
+					return character.Engine.Assertions.NoKOSound;
 
 				case xnaMugen.Assertion.NoKOSlow:
-					return new Number(character.Engine.Assertions.NoKOSlow);
+					return character.Engine.Assertions.NoKOSlow;
 
 				case xnaMugen.Assertion.NoShadow:
-					return new Number(character.Assertions.NoShadow);
+					return character.Assertions.NoShadow;
 
 				case xnaMugen.Assertion.GlobalNoShadow:
-					return new Number(character.Engine.Assertions.NoGlobalShadow);
+					return character.Engine.Assertions.NoGlobalShadow;
 
 				case xnaMugen.Assertion.NoMusic:
-					return new Number(character.Engine.Assertions.NoMusic);
+					return character.Engine.Assertions.NoMusic;
 
 				case xnaMugen.Assertion.NoWalk:
-					return new Number(character.Assertions.NoWalk);
+					return character.Assertions.NoWalk;
 
 				case xnaMugen.Assertion.TimerFreeze:
-					return new Number(character.Engine.Assertions.TimerFreeze);
+					return character.Engine.Assertions.TimerFreeze;
 
 				case xnaMugen.Assertion.Unguardable:
-					return new Number(character.Assertions.UnGuardable);
+					return character.Assertions.UnGuardable;
 
 				case xnaMugen.Assertion.None:
 				default:
-					return new Number(0);
+					error = true;
+					return false;
 			}
 		}
 

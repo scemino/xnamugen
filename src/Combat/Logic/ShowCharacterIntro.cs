@@ -58,6 +58,9 @@ namespace xnaMugen.Combat.Logic
 			player.JugglePoints = player.Constants.AirJuggle;
 			player.StateManager.ChangeState(StateMachine.StateNumber.Standing);
 
+			player.Explods.Clear();
+			player.Helpers.Clear();
+
 			if (player.Team.Side == TeamSide.Left)
 			{
 				player.CurrentLocation = Engine.Stage.P1Start;

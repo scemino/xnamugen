@@ -24,11 +24,12 @@ namespace xnaMugen.Animations
 		/// <param name="offset">The offset, in pixels, used to draw this element.</param>
 		/// <param name="flip">The drawing orientation of this element.</param>
 		/// <param name="blending">Alpha blending to be used while drawing this element.</param>
-		public AnimationElement(Int32 id, List<Clsn> clsns, Int32 ticks, SpriteId spriteid, Point offset, SpriteEffects flip, Blending blending)
+		public AnimationElement(Int32 id, List<Clsn> clsns, Int32 ticks, Int32 starttick, SpriteId spriteid, Point offset, SpriteEffects flip, Blending blending)
 		{
 			if (id < 0) throw new ArgumentOutOfRangeException("id");
 			if (clsns == null) throw new ArgumentNullException("clsns");
-			if (id < 0) throw new ArgumentOutOfRangeException("ticks");
+			if (ticks < -1) throw new ArgumentOutOfRangeException("ticks");
+			if (starttick < 0) throw new ArgumentOutOfRangeException("starttick");
 			if (blending == null) throw new ArgumentNullException("blending");
 
 			m_id = id;
@@ -38,6 +39,7 @@ namespace xnaMugen.Animations
 			m_offset = (Vector2)offset;
 			m_flip = flip;
 			m_blending = blending;
+			m_starttick = starttick;
 		}
 
 		/// <summary>
@@ -121,6 +123,11 @@ namespace xnaMugen.Animations
 			get { return m_blending; }
 		}
 
+		public Int32 StartTick
+		{
+			get { return m_starttick; }
+		}
+
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
@@ -143,6 +150,9 @@ namespace xnaMugen.Animations
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		readonly Blending m_blending;
+
+		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+		readonly Int32 m_starttick;
 
 		#endregion
 	}

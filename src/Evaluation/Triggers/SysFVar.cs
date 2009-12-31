@@ -5,22 +5,20 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("SysFVar")]
 	static class SysFVar
 	{
-		public static Number Evaluate(Object state, Number r1)
+		public static Single Evaluate(Object state, ref Boolean error, Int32 value)
 		{
 			Combat.Character character = state as Combat.Character;
-			if (character == null) return new Number();
-
-			if (r1.NumberType == NumberType.None) return new Number();
+			if (character == null)
+			{
+				error = true;
+				return 0;
+			}
 
 			Single result;
-			if (character.Variables.GetFloat(r1.IntValue, true, out result) == true)
-			{
-				return new Number(result);
-			}
-			else
-			{
-				return new Number();
-			}
+			if (character.Variables.GetFloat(value, true, out result) == true) return result;
+
+			error = true;
+			return 0;
 		}
 
 		public static Node Parse(ParseState parsestate)

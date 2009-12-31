@@ -6,23 +6,28 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("ScreenPos")]
 	static class ScreenPos
 	{
-		public static Number Evaluate(Object state, Axis axis)
+		public static Single Evaluate(Object state, ref Boolean error, Axis axis)
 		{
 			Combat.Character character = state as Combat.Character;
-			if (character == null) return new Number();
+			if (character == null)
+			{
+				error = true;
+				return 0;
+			}
 
 			Vector2 drawlocation = character.GetDrawLocation() - (Vector2)character.Engine.Camera.Location;
 
 			switch (axis)
 			{
 				case Axis.X:
-					return new Number(drawlocation.X);
+					return drawlocation.X;
 
 				case Axis.Y:
-					return new Number(drawlocation.Y);
+					return drawlocation.Y;
 
 				default:
-					return new Number();
+					error = true;
+					return 0;
 			}
 		}
 

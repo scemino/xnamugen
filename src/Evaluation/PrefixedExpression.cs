@@ -24,7 +24,7 @@ namespace xnaMugen.Evaluation
 
 		public Number[] Evaluate(Object state)
 		{
-			return Expression.Evaluate(state);
+			return m_expression.Evaluate(state);
 		}
 
 		public Expression Expression

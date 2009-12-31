@@ -5,26 +5,39 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("P2MoveType")]
 	static class P2MoveType
 	{
-		public static Number Evaluate(Object state, Operator @operator, xnaMugen.MoveType movetype)
+		public static Boolean Evaluate(Object state, ref Boolean error, Operator @operator, xnaMugen.MoveType movetype)
 		{
 			Combat.Character character = state as Combat.Character;
-			if (character == null) return new Number();
+			if (character == null)
+			{
+				error = true;
+				return false;
+			}
 
 			Combat.Player opponent = character.GetOpponent();
-			if (opponent == null) return new Number();
+			if (opponent == null)
+			{
+				error = true;
+				return false;
+			}
 
-			if (movetype == xnaMugen.MoveType.Unchanged || movetype == xnaMugen.MoveType.None) return new Number();
+			if (movetype == xnaMugen.MoveType.Unchanged || movetype == xnaMugen.MoveType.None)
+			{
+				error = true;
+				return false;
+			}
 
 			switch (@operator)
 			{
 				case Operator.Equals:
-					return new Number(movetype == opponent.MoveType);
+					return movetype == opponent.MoveType;
 
 				case Operator.NotEquals:
-					return new Number(movetype != opponent.MoveType);
+					return movetype != opponent.MoveType;
 
 				default:
-					return new Number();
+					error = true;
+					return false;
 			}
 		}
 

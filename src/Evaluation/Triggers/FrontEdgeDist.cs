@@ -7,27 +7,29 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("FrontEdgeDist")]
 	static class FrontEdgeDist
 	{
-		public static Number Evaluate(Object state)
+		public static Int32 Evaluate(Object state, ref Boolean error)
 		{
 			Combat.Character character = state as Combat.Character;
-			if (character == null) return new Number();
+			if (character == null)
+			{
+				error = true;
+				return 0;
+			}
 
 			Rectangle camerarect = character.Engine.Camera.ScreenBounds;
 			Combat.Stage stage = character.Engine.Stage;
 
-			if (character.CurrentFacing == xnaMugen.Facing.Right)
+			switch (character.CurrentFacing)
 			{
-				Int32 value = camerarect.Right - character.GetRightEdgePosition(false);
-				return new Number(value);
-			}
-			else if (character.CurrentFacing == xnaMugen.Facing.Left)
-			{
-				Int32 value = character.GetLeftEdgePosition(false) - camerarect.Left;
-				return new Number(value);
-			}
-			else
-			{
-				return new Number();
+				case xnaMugen.Facing.Left:
+					return character.GetLeftEdgePosition(false) - camerarect.Left;
+
+				case xnaMugen.Facing.Right:
+					return camerarect.Right - character.GetRightEdgePosition(false);
+
+				default:
+					error = true;
+					return 0;
 			}
 		}
 

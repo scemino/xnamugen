@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using xnaMugen.IO;
+using System.Collections.Generic;
 
 namespace xnaMugen.StateMachine.Controllers
 {
@@ -17,13 +18,9 @@ namespace xnaMugen.StateMachine.Controllers
 		{
 			Int32 explod_id = EvaluationHelper.AsInt32(character, ExplodId, Int32.MinValue);
 
-			foreach (Combat.Entity entity in character.Engine.Entities)
-			{
-				Combat.Explod explod = character.FilterEntityAsExplod(entity, explod_id);
-				if (explod == null) continue;
+			List<Combat.Explod> removelist = new List<Combat.Explod>(character.GetExplods(explod_id));
 
-				explod.Kill();
-			}
+			foreach (Combat.Explod explod in removelist) explod.Kill();
 		}
 
 		public Evaluation.Expression ExplodId

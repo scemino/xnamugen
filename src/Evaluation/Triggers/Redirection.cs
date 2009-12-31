@@ -3,18 +3,26 @@ using System.Collections.Generic;
 
 namespace xnaMugen.Evaluation.Triggers.Redirection
 {
-	[CustomFunction("Parent")]
+	[StateRedirection("Parent")]
 	static class Parent
 	{
-		public static Number RedirectState(Object state, EvaluationCallback callback)
+		public static Object RedirectState(Object state, ref Boolean error)
 		{
 			Combat.Character character = state as Combat.Character;
-			if (character == null) return new Number();
+			if (character == null)
+			{
+				error = true;
+				return null;
+			}
 
 			Combat.Helper helper = character as Combat.Helper;
-			if (helper == null) return new Number();
+			if (helper == null)
+			{
+				error = true;
+				return null;
+			}
 
-			return callback(helper.Parent);
+			return helper.Parent;
 		}
 
 		public static Node Parse(ParseState parsestate)
@@ -30,18 +38,26 @@ namespace xnaMugen.Evaluation.Triggers.Redirection
 		}
 	}
 
-	[CustomFunction("Root")]
+	[StateRedirection("Root")]
 	static class Root
 	{
-		public static Number RedirectState(Object state, EvaluationCallback callback)
+		public static Object RedirectState(Object state, ref Boolean error)
 		{
 			Combat.Character character = state as Combat.Character;
-			if (character == null) return new Number();
+			if (character == null)
+			{
+				error = true;
+				return null;
+			}
 
 			Combat.Helper helper = character as Combat.Helper;
-			if (helper == null) return new Number();
+			if (helper == null)
+			{
+				error = true;
+				return null;
+			}
 
-			return callback(helper.BasePlayer);
+			return helper.BasePlayer;
 		}
 
 		public static Node Parse(ParseState parsestate)
@@ -57,26 +73,23 @@ namespace xnaMugen.Evaluation.Triggers.Redirection
 		}
 	}
 
-	[CustomFunction("Helper")]
+	[StateRedirection("Helper")]
 	static class Helper
 	{
-		public static Number RedirectState(Object state, EvaluationCallback id, EvaluationCallback callback)
+		public static Object RedirectState(Object state, ref Boolean error, Int32 helper_id)
 		{
 			Combat.Character character = state as Combat.Character;
-			if (character == null) return new Number();
-
-			Number helper_id = id(state);
-			if (helper_id.NumberType != NumberType.Int) return new Number();
-
-			foreach (Combat.Entity entity in character.Engine.Entities)
+			if (character == null)
 			{
-				Combat.Helper helper = character.FilterEntityAsHelper(entity, helper_id.IntValue);
-				if (helper == null) continue;
-
-				return callback(helper);
+				error = true;
+				return null;
 			}
 
-			return new Number();
+			List<Combat.Helper> helpers;
+			if (character.BasePlayer.Helpers.TryGetValue(helper_id, out helpers) == true && helpers.Count > 0) return helpers[0];
+
+			error = true;
+			return null;
 		}
 
 		public static Node Parse(ParseState parsestate)
@@ -102,26 +115,25 @@ namespace xnaMugen.Evaluation.Triggers.Redirection
 		}
 	}
 
-	[CustomFunction("Target")]
+	[StateRedirection("Target")]
 	static class Target
 	{
-		public static Number RedirectState(Object state, EvaluationCallback id, EvaluationCallback callback)
+		public static Object RedirectState(Object state, ref Boolean error, Int32 target_id)
 		{
 			Combat.Character character = state as Combat.Character;
-			if (character == null) return new Number();
-
-			Number target_id = id(state);
-			if (target_id.NumberType != NumberType.Int) return new Number();
-
-			foreach (Combat.Entity entity in character.Engine.Entities)
+			if (character == null)
 			{
-				Combat.Character target = character.FilterEntityAsTarget(entity, target_id.IntValue);
-				if (target == null) continue;
-
-				return callback(target);
+				error = true;
+				return null;
 			}
 
-			return new Number();
+			foreach (Combat.Character target in character.GetTargets(target_id))
+			{
+				return target;
+			}
+
+			error = true;
+			return null;
 		}
 
 		public static Node Parse(ParseState parsestate)
@@ -147,18 +159,27 @@ namespace xnaMugen.Evaluation.Triggers.Redirection
 		}
 	}
 
-	[CustomFunction("Partner")]
+	[StateRedirection("Partner")]
 	static class Partner
 	{
-		public static Number RedirectState(Object state, EvaluationCallback callback)
+		public static Object RedirectState(Object state, ref Boolean error)
 		{
 			Combat.Character character = state as Combat.Character;
-			if (character == null) return new Number();
+			if (character == null)
+			{
+				error = true;
+				return null;
+			}
+
 
 			Combat.Player partner = GetTeamMate(character);
-			if (partner == null) return new Number();
+			if (partner == null)
+			{
+				error = true;
+				return null;
+			}
 
-			return callback(partner);
+			return partner;
 		}
 
 		static Combat.Player GetTeamMate(Combat.Character character)
@@ -188,16 +209,17 @@ namespace xnaMugen.Evaluation.Triggers.Redirection
 		}
 	}
 
-	[CustomFunction("Enemy")]
+	[StateRedirection("Enemy")]
 	static class Enemy
 	{
-		public static Number RedirectState(Object state, EvaluationCallback id, EvaluationCallback callback)
+		public static Object RedirectState(Object state, ref Boolean error, Int32 nth)
 		{
 			Combat.Character character = state as Combat.Character;
-			if (character == null) return new Number();
-
-			Number nth = id(state);
-			if (nth.NumberType == NumberType.None) return new Number();
+			if (character == null)
+			{
+				error = true;
+				return null;
+			}
 
 			Int32 count = 0;
 			foreach (Combat.Entity entity in character.Engine.Entities)
@@ -208,16 +230,17 @@ namespace xnaMugen.Evaluation.Triggers.Redirection
 				Combat.Player enemyplayer = enemy as Combat.Player;
 				if (enemyplayer == null) continue;
 
-				if (count != nth.IntValue)
+				if (count != nth)
 				{
 					++count;
 					continue;
 				}
 
-				return callback(enemy);
+				return enemy;
 			}
 
-			return new Number();
+			error = true;
+			return null;
 		}
 
 		public static Node Parse(ParseState parsestate)
@@ -243,25 +266,29 @@ namespace xnaMugen.Evaluation.Triggers.Redirection
 		}
 	}
 
-	[CustomFunction("EnemyNear")]
+	[StateRedirection("EnemyNear")]
 	static class EnemyNear
 	{
-		public static Number RedirectState(Object state, EvaluationCallback id, EvaluationCallback callback)
+		public static Object RedirectState(Object state, ref Boolean error, Int32 nth)
 		{
 			Combat.Character character = state as Combat.Character;
-			if (character == null) return new Number();
-
-			Number nth = id(state);
-			if (nth.NumberType == NumberType.None) return new Number();
+			if (character == null)
+			{
+				error = true;
+				return null;
+			}
 
 			List<Combat.Player> playerlist = BuildPlayerList(character);
 
 			//SortPlayerList(character);
 
-			if (nth.IntValue >= playerlist.Count) return new Number();
+			if (nth >= playerlist.Count)
+			{
+				error = true;
+				return null;
+			}
 
-			Combat.Player enemy = playerlist[nth.IntValue];
-			return callback(enemy);
+			return playerlist[nth];
 		}
 
 		static void SortPlayerList(Combat.Character character)
@@ -272,18 +299,11 @@ namespace xnaMugen.Evaluation.Triggers.Redirection
 		{
 			if (character == null) throw new ArgumentNullException("character");
 
+			Combat.Team otherteam = character.Team.OtherTeam;
+
 			List<Combat.Player> players = new List<Combat.Player>();
-
-			foreach (Combat.Entity entity in character.Engine.Entities)
-			{
-				Combat.Character enemy = character.FilterEntityAsCharacter(entity, AffectTeam.Enemy);
-				if (enemy == null) continue;
-
-				Combat.Player enemy_player = enemy as Combat.Player;
-				if (enemy_player == null) continue;
-
-				players.Add(enemy_player);
-			}
+			if (otherteam.MainPlayer != null) players.Add(otherteam.MainPlayer);
+			if (otherteam.TeamMate != null) players.Add(otherteam.TeamMate);
 
 			return players;
 		}
@@ -311,26 +331,28 @@ namespace xnaMugen.Evaluation.Triggers.Redirection
 		}
 	}
 
-	[CustomFunction("PlayerID")]
+	[StateRedirection("PlayerID")]
 	static class PlayerID
 	{
-		public static Number RedirectState(Object state, EvaluationCallback id, EvaluationCallback callback)
+		public static Object RedirectState(Object state, ref Boolean error, Int32 character_id)
 		{
 			Combat.Character character = state as Combat.Character;
-			if (character == null) return new Number();
-
-			Number character_id = id(state);
-			if (character_id.NumberType != NumberType.Int) return new Number();
+			if (character == null)
+			{
+				error = true;
+				return null;
+			}
 
 			foreach (Combat.Entity entity in character.Engine.Entities)
 			{
 				Combat.Character character2 = entity as Combat.Character;
-				if (character2 == null || character2.Id != character_id.IntValue) continue;
+				if (character2 == null || character2.Id != character_id) continue;
 
-				return callback(character2);
+				return character2;
 			}
 
-			return new Number();
+			error = true;
+			return null;
 		}
 
 		public static Node Parse(ParseState parsestate)

@@ -1,21 +1,26 @@
 using System;
-using System.Collections.Generic;
 
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("AnimExist")]
 	static class AnimExist
 	{
-		public static Number Evaluate(Object state, Number value)
+		public static Boolean Evaluate(Object state, ref Boolean error, Int32 value)
 		{
 			Combat.Character character = state as Combat.Character;
-			if (character == null) return new Number();
+			if (character == null)
+			{
+				error = true;
+				return false;
+			}
 
-			if (character.AnimationManager.IsForeignAnimation == true) return new Number();
+			if (character.AnimationManager.IsForeignAnimation == true)
+			{
+				error = true;
+				return false;
+			}
 
-			if (value.NumberType == NumberType.None) return new Number();
-
-			return new Number(character.AnimationManager.HasAnimation(value.IntValue));
+			return character.AnimationManager.HasAnimation(value);
 		}
 
 		public static Node Parse(ParseState state)
