@@ -10,7 +10,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace xnaMugen.Menus
 {
-	class TitleScreen : NonCombatScreen
+    class TitleScreen : NonCombatScreen
 	{
 		public TitleScreen(MenuSystem screensystem, TextSection textsection, String spritepath, String animationpath, String soundpath) :
 			base(screensystem, textsection, spritepath, animationpath, soundpath)
@@ -147,7 +147,7 @@ namespace xnaMugen.Menus
 					if (m_currentmenuitem >= menuoffset + m_visiblemenuitems) m_verticalmenudrawoffset += m_spacing.Y;
 				}
 
-				SoundManager.Play(m_soundcursormove);
+				//SoundManager.Play(m_soundcursormove);
 			}
 		}
 
@@ -169,7 +169,7 @@ namespace xnaMugen.Menus
 					if (m_currentmenuitem < menuoffset) m_verticalmenudrawoffset -= m_spacing.Y;
 				}
 
-				SoundManager.Play(m_soundcursormove);
+				//SoundManager.Play(m_soundcursormove);
 			}
 		}
 
@@ -177,7 +177,7 @@ namespace xnaMugen.Menus
 		{
 			if (pressed == true)
 			{
-				SoundManager.Play(m_soundselect);
+				//SoundManager.Play(m_soundselect);
 
 				if (m_currentmenuitem == (Int32)MainMenuOption.Versus)
 				{
@@ -195,7 +195,7 @@ namespace xnaMugen.Menus
 			if (pressed == true)
 			{
 				m_quitselected = true;
-				SoundManager.Play(m_soundcancel);
+				//SoundManager.Play(m_soundcancel);
 				MenuSystem.PostEvent(new Events.FadeScreen(FadeDirection.Out));
 			}
 		}

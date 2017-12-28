@@ -140,12 +140,12 @@ namespace xnaMugen.Menus
 				if (Pause == PauseState.Paused || Pause == PauseState.PauseStep)
 				{
 					m_pause = PauseState.Unpaused;
-					MenuSystem.GetSubSystem<Audio.SoundSystem>().UnPauseSounds();
+					//MenuSystem.GetSubSystem<Audio.SoundSystem>().UnPauseSounds();
 				}
 				else
 				{
 					m_pause = PauseState.Paused;
-					MenuSystem.GetSubSystem<Audio.SoundSystem>().PauseSounds();
+					//MenuSystem.GetSubSystem<Audio.SoundSystem>().PauseSounds();
 				}
 			}
 		}

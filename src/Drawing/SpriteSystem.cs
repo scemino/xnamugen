@@ -156,7 +156,7 @@ namespace xnaMugen.Drawing
 						buffer[bufferindex + 3] = 255;
 					}
 
-					palette.SetData<Byte>(buffer, 0, 256 * 4, SetDataOptions.None);
+					palette.SetData(buffer, 0, 256 * 4);
 				}
 			}
 

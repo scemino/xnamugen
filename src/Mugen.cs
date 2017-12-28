@@ -15,22 +15,20 @@ namespace xnaMugen
 		/// <summary>
 		/// Initializes a new instance of this class. Sets game timing and default screen size.
 		/// </summary>
-		public Mugen(String[] args)
+		public Mugen(string[] args)
 		{
 			if (args == null) throw new ArgumentNullException("args");
 
-			m_args = new List<String>(args);
+			m_args = new List<string>(args);
 
 			IsFixedTimeStep = true;
 			TargetElapsedTime = TimeSpan.FromTicks(TimeSpan.TicksPerSecond / 60);
 			IsMouseVisible = true;
 
 			GraphicsDeviceManager graphics = new GraphicsDeviceManager(this);
-			graphics.MinimumVertexShaderProfile = ShaderProfile.VS_1_1;
-			graphics.MinimumPixelShaderProfile = ShaderProfile.PS_2_0;
 			graphics.PreferredBackBufferWidth = Mugen.ScreenSize.X;
 			graphics.PreferredBackBufferHeight = Mugen.ScreenSize.Y;
-			graphics.ApplyChanges();
+            graphics.ApplyChanges();
 
 			m_debugdraw = false;
 			m_takescreeshot = false;
@@ -49,7 +47,7 @@ namespace xnaMugen
 			m_subsystems.GetSubSystem<ProfileLoader>().Initialize();
 			m_subsystems.GetSubSystem<Input.InputSystem>().Initialize();
 			m_subsystems.GetSubSystem<Video.VideoSystem>().Initialize();
-			m_subsystems.GetSubSystem<Audio.SoundSystem>().Initialize();
+			//m_subsystems.GetSubSystem<Audio.SoundSystem>().Initialize();
 			m_subsystems.GetSubSystem<Diagnostics.DiagnosticSystem>().Initialize();
 
 			m_subsystems.LoadAllMainSystems();
@@ -60,7 +58,7 @@ namespace xnaMugen
 			base.Initialize();
 		}
 
-		Replay.Recording BuildRecording(String filepath)
+		Replay.Recording BuildRecording(string filepath)
 		{
 			if (filepath == null) throw new ArgumentNullException("filepath");
 
@@ -74,16 +72,16 @@ namespace xnaMugen
 
 			if (header == null || data == null) return null;
 
-			Int32 version = header.GetAttribute<Int32>("Version", 0);
-			CombatMode mode = header.GetAttribute<CombatMode>("Combat Mode", CombatMode.None);
-			String p1name = header.GetAttribute<String>("Player 1 Name", null);
-			String p1version = header.GetAttribute<String>("Player 1 Version", null);
-			Int32 p1palette = header.GetAttribute<Int32>("Player 1 Palette", Int32.MinValue);
-			String p2name = header.GetAttribute<String>("Player 2 Name", null);
-			String p2version = header.GetAttribute<String>("Player 2 Version", null);
-			Int32 p2palette = header.GetAttribute<Int32>("Player 2 Palette", Int32.MinValue);
-			String stagepath = header.GetAttribute<String>("Stage Path", null);
-			Int32 seed = header.GetAttribute<Int32>("Seed", Int32.MinValue);
+			Int32 version = header.GetAttribute("Version", 0);
+			CombatMode mode = header.GetAttribute("Combat Mode", CombatMode.None);
+            string p1name = header.GetAttribute<string>("Player 1 Name", null);
+            string p1version = header.GetAttribute<string>("Player 1 Version", null);
+			Int32 p1palette = header.GetAttribute("Player 1 Palette", Int32.MinValue);
+            string p2name = header.GetAttribute<string>("Player 2 Name", null);
+            string p2version = header.GetAttribute<string>("Player 2 Version", null);
+			Int32 p2palette = header.GetAttribute("Player 2 Palette", Int32.MinValue);
+            string stagepath = header.GetAttribute<string>("Stage Path", null);
+			Int32 seed = header.GetAttribute("Seed", Int32.MinValue);
 
 			if (version != 1 || mode == CombatMode.None || stagepath == null || seed == Int32.MinValue) return null;
 			if (p1name == null || p1version == null || p1palette == Int32.MinValue) return null;
@@ -100,7 +98,7 @@ namespace xnaMugen
 
 			Regex line_regex = new Regex(@"^(\d+),\s*(\d+),\s*(\d+),\s*(\d+),\s*(\d+)$", RegexOptions.IgnoreCase);
 			StringConverter converter = profiles.GetSubSystem<StringConverter>();
-			foreach (String dataline in data.Lines)
+			foreach (string dataline in data.Lines)
 			{
 				Match match = line_regex.Match(dataline);
 				if (match.Success == false) continue;
@@ -126,7 +124,7 @@ namespace xnaMugen
 		{
 			base.BeginRun();
 
-			String recordingpath = (m_args.Count > 0) ? m_args[0] : String.Empty;
+            string recordingpath = (m_args.Count > 0) ? m_args[0] : string.Empty;
 
 			Replay.Recording recording = BuildRecording(recordingpath);
 			if (recording != null)
@@ -170,13 +168,13 @@ namespace xnaMugen
 
 			m_subsystems.GetMainSystem<Menus.MenuSystem>().Draw(DebugDraw);
 
-			if (m_takescreeshot == true)
-			{
-				m_takescreeshot = false;
-				m_subsystems.GetSubSystem<Video.VideoSystem>().TakeScreenshot();
-			}
+            if (m_takescreeshot == true)
+            {
+                m_takescreeshot = false;
+                m_subsystems.GetSubSystem<Video.VideoSystem>().TakeScreenshot();
+            }
 
-			base.Draw(gameTime);
+            base.Draw(gameTime);
 		}
 
 		/// <summary>
@@ -240,7 +238,7 @@ namespace xnaMugen
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly List<String> m_args;
+		readonly List<string> m_args;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		SubSystems m_subsystems;

@@ -22,7 +22,7 @@ namespace xnaMugen.Drawing
 			palette = null;
 
 			Byte[] filedata = file.ReadBytes(pcxsize);
-			if (filedata.Length != pcxsize) return false;
+			//if (filedata.Length != pcxsize) return false;
 
 			IO.FileHeaders.PcxFileHeader header = new IO.FileHeaders.PcxFileHeader(filedata);
 			Point tempsize = new Point(header.XMax - header.XMin + 1, header.YMax - header.YMin + 1);
@@ -81,7 +81,7 @@ namespace xnaMugen.Drawing
 			}
 
 			Texture2D texture = m_system.GetSubSystem<Video.VideoSystem>().CreatePixelTexture(size);
-			texture.SetData<Byte>(buffer, 0, size.X * size.Y, SetDataOptions.None);
+			texture.SetData(buffer, 0, size.X * size.Y);
 			return texture;
 		}
 
@@ -105,7 +105,7 @@ namespace xnaMugen.Drawing
 					buffer[writeoffset + 3] = 255;
 				}
 
-				texture.SetData<Byte>(buffer, 0, 256 * 4, SetDataOptions.None);
+				texture.SetData(buffer, 0, 256 * 4);
 			}
 
 			return texture;

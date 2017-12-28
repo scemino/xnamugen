@@ -9,21 +9,21 @@ namespace xnaMugen.Elements
 {
 	class Base
 	{
-		public Base(Collection collection, String name, DataMap datamap, Drawing.SpriteManager sprites, Animations.AnimationManager animations, Audio.SoundManager sounds)
+		public Base(Collection collection, String name, DataMap datamap, Drawing.SpriteManager sprites, Animations.AnimationManager animations/*, Audio.SoundManager sounds*/)
 		{
 			if (collection == null) throw new ArgumentNullException("collection");
 			if (name == null) throw new ArgumentNullException("name");
 			if (datamap == null) throw new ArgumentNullException("datamap");
 			if (sprites == null) throw new ArgumentNullException("sprites");
 			if (animations == null) throw new ArgumentNullException("animations");
-			if (sounds == null) throw new ArgumentNullException("sounds");
+			//if (sounds == null) throw new ArgumentNullException("sounds");
 
 			m_collection = collection;
 			m_name = name;
 			m_data = datamap;
 			m_spritemanager = sprites;
 			m_animationmanager = animations.Clone();
-			m_soundmanager = sounds;
+			//m_soundmanager = sounds;
 		}
 
 		public virtual void Draw(Vector2 location)
@@ -43,10 +43,10 @@ namespace xnaMugen.Elements
 		{
 		}
 
-		public Audio.Channel PlaySound()
-		{
-			return m_soundmanager.Play(DataMap.SoundId);
-		}
+		//public Audio.Channel PlaySound()
+		//{
+		//	return m_soundmanager.Play(DataMap.SoundId);
+		//}
 
 		public Collection Collection
 		{
@@ -63,10 +63,10 @@ namespace xnaMugen.Elements
 			get { return m_data; }
 		}
 
-		public Audio.SoundManager SoundManager
-		{
-			get { return m_soundmanager; }
-		}
+		//public Audio.SoundManager SoundManager
+		//{
+		//	get { return m_soundmanager; }
+		//}
 
 		public Drawing.SpriteManager SpriteManager
 		{
@@ -92,8 +92,8 @@ namespace xnaMugen.Elements
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		readonly Drawing.SpriteManager m_spritemanager;
 
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Audio.SoundManager m_soundmanager;
+		//[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+		//readonly Audio.SoundManager m_soundmanager;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		readonly Animations.AnimationManager m_animationmanager;

@@ -23,8 +23,8 @@ namespace xnaMugen.StateMachine.Controllers
 
 			if (channel == null) return;
 
-			if (pan != null) character.SoundManager.RelativePan(channel.Value, pan.Value);
-			if (abspan != null) character.SoundManager.AbsolutePan(channel.Value, abspan.Value);
+			//if (pan != null) character.SoundManager.RelativePan(channel.Value, pan.Value);
+			//if (abspan != null) character.SoundManager.AbsolutePan(channel.Value, abspan.Value);
 		}
 
 		public override Boolean IsValid()

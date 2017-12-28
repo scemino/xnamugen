@@ -91,7 +91,7 @@ namespace xnaMugen.Combat
 		{
 			if (elementname == null) throw new ArgumentNullException("elementname");
 
-			Engine.Elements.PlaySound(elementname);
+			//Engine.Elements.PlaySound(elementname);
 		}
 
 		public Int32 NumberOfRounds

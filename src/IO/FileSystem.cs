@@ -27,9 +27,9 @@ namespace xnaMugen.IO
 
 		public override void Initialize()
 		{
-#if FRANTZX
-            Directory.SetCurrentDirectory(@"D:\WinMugen");
-#endif
+//#if FRANTZX
+//            Directory.SetCurrentDirectory(@"D:\WinMugen");
+//#endif
 
 			Log.Write(LogLevel.Normal, LogSystem.FileSystem, "Base Directory: {0}", Directory.GetCurrentDirectory());
 		}

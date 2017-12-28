@@ -20,7 +20,7 @@ namespace xnaMugen.Combat.Logic
 			player.SetLocalAnimation(0, 0);
 			player.PlayerControl = PlayerControl.NoControl;
 			player.Life = player.Constants.MaximumLife;
-			player.SoundManager.Stop();
+			//player.SoundManager.Stop();
 			player.JugglePoints = player.Constants.AirJuggle;
 			player.StateManager.ChangeState(StateMachine.StateNumber.Initialize);
             player.OffensiveInfo.Reset();

@@ -21,7 +21,7 @@ namespace xnaMugen.Combat
 			m_profile = profile;
 			m_spritemanager = Engine.GetSubSystem<Drawing.SpriteSystem>().CreateManager(Profile.SpritePath);
 			m_animationmanager = Engine.GetSubSystem<Animations.AnimationSystem>().CreateManager(Profile.AnimationPath);
-			m_soundmanager = Engine.GetSubSystem<Audio.SoundSystem>().CreateManager(Profile.SoundPath);
+			//m_soundmanager = Engine.GetSubSystem<Audio.SoundSystem>().CreateManager(Profile.SoundPath);
 			m_statemanager = Engine.GetSubSystem<StateMachine.StateSystem>().CreateManager(this, Profile.StateFiles);
 			m_commandmanager = Engine.GetSubSystem<Commands.CommandSystem>().CreateManager(Profile.CommandPath);
 			m_constants = new PlayerConstants(this, Engine.GetSubSystem<IO.FileSystem>().OpenTextFile(Profile.ConstantsPath));
@@ -119,10 +119,10 @@ namespace xnaMugen.Combat
 			get { return m_animationmanager; }
 		}
 
-		public override Audio.SoundManager SoundManager
-		{
-			get { return m_soundmanager; }
-		}
+		//public override Audio.SoundManager SoundManager
+		//{
+		//	get { return m_soundmanager; }
+		//}
 
 		public override Commands.CommandManager CommandManager
 		{
@@ -216,8 +216,8 @@ namespace xnaMugen.Combat
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		readonly Animations.AnimationManager m_animationmanager;
 
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Audio.SoundManager m_soundmanager;
+		//[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+		//readonly Audio.SoundManager m_soundmanager;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		readonly Commands.CommandManager m_commandmanager;

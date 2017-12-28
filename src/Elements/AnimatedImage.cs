@@ -9,8 +9,8 @@ namespace xnaMugen.Elements
 {
 	class AnimatedImage : Base
 	{
-		public AnimatedImage(Collection collection, String name, DataMap datamap, Drawing.SpriteManager sprites, Animations.AnimationManager animations, Audio.SoundManager sounds)
-			: base(collection, name, datamap, sprites, animations, sounds)
+		public AnimatedImage(Collection collection, String name, DataMap datamap, Drawing.SpriteManager sprites, Animations.AnimationManager animations/*, Audio.SoundManager sounds*/)
+			: base(collection, name, datamap, sprites, animations/*, sounds*/)
 		{
 			Reset();
 		}

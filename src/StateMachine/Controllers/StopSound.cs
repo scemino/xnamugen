@@ -20,11 +20,11 @@ namespace xnaMugen.StateMachine.Controllers
 
 			if (channelnumber == -1)
 			{
-				StateSystem.GetSubSystem<Audio.SoundSystem>().StopAllSounds();
+				//StateSystem.GetSubSystem<Audio.SoundSystem>().StopAllSounds();
 			}
 			else
 			{
-				character.SoundManager.Stop(channelnumber.Value);
+				//character.SoundManager.Stop(channelnumber.Value);
 			}
 		}
 

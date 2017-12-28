@@ -9,8 +9,8 @@ namespace xnaMugen.Elements
 {
 	class StaticImage : Base
 	{
-		public StaticImage(Collection collection, String name, DataMap datamap, Drawing.SpriteManager sprites, Animations.AnimationManager animations, Audio.SoundManager sounds)
-			: base(collection, name, datamap, sprites, animations, sounds)
+		public StaticImage(Collection collection, String name, DataMap datamap, Drawing.SpriteManager sprites, Animations.AnimationManager animations/*, Audio.SoundManager sounds*/)
+			: base(collection, name, datamap, sprites, animations/*, sounds*/)
 		{
 		}
 

@@ -9,8 +9,8 @@ namespace xnaMugen.Elements
 {
 	class Text : Base
 	{
-		public Text(Collection collection, String name, DataMap datamap, Drawing.SpriteManager sprites, Animations.AnimationManager animations, Audio.SoundManager sounds)
-			: base(collection, name, datamap, sprites, animations, sounds)
+		public Text(Collection collection, String name, DataMap datamap, Drawing.SpriteManager sprites, Animations.AnimationManager animations/*, Audio.SoundManager sounds*/)
+			: base(collection, name, datamap, sprites, animations/*, sounds*/)
 		{
 		}
 

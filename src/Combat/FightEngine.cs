@@ -31,13 +31,13 @@ namespace xnaMugen.Combat
             m_speed = GameSpeed.Normal;
             m_slowspeedbuffer = 0;
             m_fontmap = BuildFontMap(filesection);
-            m_fightsounds = GetSubSystem<Audio.SoundSystem>().CreateManager(BuildPath(basepath, filesection.GetAttribute<String>("snd")));
-            m_commonsounds = GetSubSystem<Audio.SoundSystem>().CreateManager(BuildPath(basepath, filesection.GetAttribute<String>("common.snd")));
+            //m_fightsounds = GetSubSystem<Audio.SoundSystem>().CreateManager(BuildPath(basepath, filesection.GetAttribute<String>("snd")));
+            //m_commonsounds = GetSubSystem<Audio.SoundSystem>().CreateManager(BuildPath(basepath, filesection.GetAttribute<String>("common.snd")));
             m_fightsprites = GetSubSystem<Drawing.SpriteSystem>().CreateManager(BuildPath(basepath, filesection.GetAttribute<String>("sff")));
             m_fxsprites = GetSubSystem<Drawing.SpriteSystem>().CreateManager(BuildPath(basepath, filesection.GetAttribute<String>("fightfx.sff")));
             m_fightanimations = GetSubSystem<Animations.AnimationSystem>().CreateManager(textfile.Filepath);
             m_fxanimations = GetSubSystem<Animations.AnimationSystem>().CreateManager(BuildPath(basepath, filesection.GetAttribute<String>("fightfx.air")));
-            m_elements = new Elements.Collection(FightSprites, FightAnimations, FightSounds, Fonts);
+            m_elements = new Elements.Collection(FightSprites, FightAnimations/*, FightSounds*/, Fonts);
             m_roundinfo = new RoundInformation(this, textfile);
             m_team1 = new Team(this, TeamSide.Left);
             m_team2 = new Team(this, TeamSide.Right);
@@ -90,8 +90,8 @@ namespace xnaMugen.Combat
 
             RoundNumber = 1;
 
-            FightSounds.Stop();
-            CommonSounds.Stop();
+            //FightSounds.Stop();
+            //CommonSounds.Stop();
 
 			Stage.Reset();
             Camera.Reset();
@@ -330,15 +330,15 @@ namespace xnaMugen.Combat
             return m_logic is Logic.ShowWinPose && m_logic.TickCount >= 0 && (Team1.Wins.Count >= RoundInformation.NumberOfRounds || Team2.Wins.Count >= RoundInformation.NumberOfRounds);
         }
 
-        public Audio.SoundManager FightSounds
-        {
-            get { return m_fightsounds; }
-        }
+        //public Audio.SoundManager FightSounds
+        //{
+        //    get { return m_fightsounds; }
+        //}
 
-        public Audio.SoundManager CommonSounds
-        {
-            get { return m_commonsounds; }
-        }
+        //public Audio.SoundManager CommonSounds
+        //{
+        //    get { return m_commonsounds; }
+        //}
 
         public Drawing.SpriteManager FightSprites
         {
@@ -468,11 +468,11 @@ namespace xnaMugen.Combat
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		EngineInitialization m_init;
 
-        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        readonly Audio.SoundManager m_fightsounds;
+        //[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        //readonly Audio.SoundManager m_fightsounds;
 
-        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        readonly Audio.SoundManager m_commonsounds;
+        //[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        //readonly Audio.SoundManager m_commonsounds;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         readonly Drawing.SpriteManager m_fightsprites;

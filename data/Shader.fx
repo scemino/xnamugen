@@ -31,6 +31,20 @@ int xAI_number;
 
 float4 xShadowColor;
 
+struct VS_Output
+{
+    float4 Position : SV_Position;
+    float2 TextureCoords: TEXCOORD;
+    float4 Color: COLOR;
+};
+
+struct VS_Input
+{
+    float4 Position : SV_Position;
+    float2 TextureCoords: TEXCOORD;
+    float4 Color: COLOR;
+};
+
 float4 BaseColor(float4 inputcolor, float base)
 {
 	if(base == 0.0f)
@@ -46,163 +60,159 @@ float4 BaseColor(float4 inputcolor, float base)
 
 float4 PalFx(float4 inputcolor)
 {
-	float4 output = BaseColor(inputcolor, xPalFx_Color);
-	
-	if(xPalFx_Invert == true) output = float4(1 - output.rgba);
-		
-	output = (output + xPalFx_Add + xPalFx_SinMath) * xPalFx_Mul;
-	
-	return float4(output.rgb, inputcolor.a);
+    float4 output = BaseColor(inputcolor, xPalFx_Color);
+    
+    if(xPalFx_Invert == true) output = float4(1 - output.rgba);
+        
+    output = (output + xPalFx_Add + xPalFx_SinMath) * xPalFx_Mul;
+    
+    return float4(output.rgb, inputcolor.a);
 }
 
 float4 AfterImageOLD(float4 inputcolor)
 {
-	float4 output = BaseColor(inputcolor, xAI_color);
-	
-	if(xAI_Invert == true) output = float4(1 - output.rgba);
-	
-	output += xAI_preadd;
-	output *= xAI_contrast;
-	output += xAI_postadd;
-	
-	return float4(output.rgb, inputcolor.a);
+    float4 output = BaseColor(inputcolor, xAI_color);
+    
+    if(xAI_Invert == true) output = float4(1 - output.rgba);
+    
+    output += xAI_preadd;
+    output *= xAI_contrast;
+    output += xAI_postadd;
+    
+    return float4(output.rgb, inputcolor.a);
 }
 
 float4 AfterImage(float4 inputcolor)
 {
-	float4 output = BaseColor(inputcolor, xAI_color);
-	
-	if(xAI_Invert == true) output = float4(1 - output.rgba);
-	
-	output += xAI_preadd;
-	output *= xAI_contrast;
-	output += xAI_postadd;
-	
-	for(int i = 0; i <= xAI_number; ++i) output = (output + xAI_paladd) * xAI_palmul;
-	
-	return float4(output.rgb, inputcolor.a);
+    float4 output = BaseColor(inputcolor, xAI_color);
+    
+    if(xAI_Invert == true) output = float4(1 - output.rgba);
+    
+    output += xAI_preadd;
+    output *= xAI_contrast;
+    output += xAI_postadd;
+    
+    [unroll(25)]
+    for(int i = 0; i <= xAI_number; ++i) output = (output + xAI_paladd) * xAI_palmul;
+    
+    return float4(output.rgb, inputcolor.a);
 }
 
-struct VS_Output
+VS_Output DefaultVertexShader(VS_Input input)
 {
-	float4 Position : POSITION;
-	float2 TextureCoords: TEXCOORD;
-	float4 Color: COLOR;
-};
-
-VS_Output VertexShader(float4 inPos : POSITION, float2 inTexCoords: TEXCOORD, float4 inColor : COLOR)
-{
-	VS_Output Output = (VS_Output)0;
-	Output.Position = mul(mul(inPos, xMatrix), xRotation);
-	Output.TextureCoords = inTexCoords;
-	Output.Color = inColor;
-	return Output;
+    VS_Output Output;
+    Output.Position = mul(mul(input.Position, xMatrix), xRotation);
+    Output.TextureCoords = input.TextureCoords;
+    Output.Color = input.Color;
+    //Output.Color = float4(input.Color.b, input.Color.g, input.Color.r, input.Color.a);
+    return Output;
 }
 
-float4 DefaultPixelShader(float4 color : COLOR, float2 texCoord : TEXCOORD) : COLOR
+float4 DefaultPixelShader(VS_Output input) : COLOR
 {
-	float color_index = tex2D(xPixelsSampler, texCoord).a;
-	float4 output_color = tex1D(xPaletteSampler, color_index);
-	
-	if(xPalFx_Use == true) output_color = PalFx(output_color);
-	if(xAI_Use == true) output_color = AfterImage(output_color);
-	
-	output_color *= color;
-			
-	if(color_index == 0.0f)
-	{
-		return float4(0, 0, 0, 0);
-	}
-	else
-	{
-		return float4(output_color.rgb, xBlendWeight);
-	}
+    float color_index = tex2D(xPixelsSampler, input.TextureCoords).a;
+    float4 output_color = tex1D(xPaletteSampler, color_index);
+    
+    if(xPalFx_Use == true) output_color = PalFx(output_color);
+    if(xAI_Use == true) output_color = AfterImage(output_color);
+    
+    output_color *= input.Color;
+            
+    if(color_index == 0.0f)
+    {
+        return float4(0, 0, 0, 0);
+    }
+    else
+    {
+        //return float4(output_color.rgb, xBlendWeight);
+        return float4(output_color.b, output_color.g, output_color.r, xBlendWeight);
+    }
 }
 
-float4 PixelShaderOLD(float4 color : COLOR, float2 texCoord : TEXCOORD) : COLOR
+float4 PixelShaderOLD(VS_Output input) : COLOR
 {
-	float color_index = tex2D(xPixelsSampler, texCoord).a;
-	float4 output_color = tex1D(xPaletteSampler, color_index);
-	
-	if(xPalFx_Use == true) output_color = PalFx(output_color);
-	if(xAI_Use == true) output_color = AfterImageOLD(output_color);
-	
-	output_color *= color;
-	
-	if(color_index == 0.0f)
-	{
-		return float4(0, 0, 0, 0);
-	}
-	else
-	{
-		return float4(output_color.rgb, xBlendWeight);
-	}
+    float color_index = tex2D(xPixelsSampler, input.TextureCoords).a;
+    float4 output_color = tex1D(xPaletteSampler, color_index);
+    
+    if(xPalFx_Use == true) output_color = PalFx(output_color);
+    if(xAI_Use == true) output_color = AfterImageOLD(output_color);
+    
+    output_color *= input.Color;
+    
+    if(color_index == 0.0f)
+    {
+        return float4(0, 0, 0, 0);
+    }
+    else
+    {
+        return float4(output_color.rgb, xBlendWeight);
+    }
 }
 
-float4 FontPixelShader(float4 color : COLOR, float2 texCoord : TEXCOORD) : COLOR
+float4 FontPixelShader(VS_Output input) : COLOR
 {
-	float color_index = tex2D(xPixelsSampler, texCoord).a;
-	float per = 1.0 - float(xFontColorIndex) / float(xFontTotalColors);
-	float4 output_color = tex1D(xPaletteSampler, color_index * per - 1.0/255.0);
-	
-	output_color *= color;
-	
-	if(color_index == 0.0f)
-	{
-		return float4(0, 0, 0, 0);
-	}
-	else
-	{
-		return float4(output_color.rgb, xBlendWeight);
-	}
+    float color_index = tex2D(xPixelsSampler, input.TextureCoords).a;
+    float per = 1.0 - float(xFontColorIndex) / float(xFontTotalColors);
+    float4 output_color = tex1D(xPaletteSampler, color_index * per - 1.0/255.0);
+    
+    output_color *= input.Color;
+    
+    if(color_index == 0.0f)
+    {
+        return float4(0, 0, 0, 0);
+    }
+    else
+    {
+        return float4(output_color.rgb, xBlendWeight);
+    }
 }
 
-float4 ShadowPixelShader(float4 color : COLOR, float2 texCoord : TEXCOORD) : COLOR
+float4 ShadowPixelShader(VS_Output input) : COLOR
 {
-	float color_index = tex2D(xPixelsSampler, texCoord).a;	
-	
-	if(color_index == 0.0f)
-	{
-		return float4(0, 0, 0, 0);
-	}
-	else
-	{
-		return float4(xShadowColor.rgb, xBlendWeight);
-	}
+    float color_index = tex2D(xPixelsSampler, input.TextureCoords).a;
+    
+    if(color_index == 0.0f)
+    {
+        return float4(0, 0, 0, 0);
+    }
+    else
+    {
+        return float4(xShadowColor.rgb, xBlendWeight);
+    }
 }
 
 technique Draw
 {
-	pass Pass0
-	{
-		VertexShader = compile vs_1_1 VertexShader();
-		PixelShader = compile ps_3_0 DefaultPixelShader();
-	}
+    pass Pass0
+    {
+        VertexShader = compile vs_4_0_level_9_1 DefaultVertexShader();
+        PixelShader = compile ps_4_0_level_9_3 DefaultPixelShader();
+    }
 }
 
 technique DrawOLD
 {
-	pass Pass0
-	{
-		VertexShader = compile vs_1_1 VertexShader();
-		PixelShader = compile ps_2_0 PixelShaderOLD();
-	}
+    pass Pass0
+    {
+        VertexShader = compile vs_4_0_level_9_1 DefaultVertexShader();
+        PixelShader = compile ps_4_0_level_9_3 PixelShaderOLD();
+    }
 }
 
 technique FontDraw
 {
-	pass Pass0
-	{
-		VertexShader = compile vs_1_1 VertexShader();
-		PixelShader = compile ps_2_0 FontPixelShader();
-	}
+    pass Pass0
+    {
+        VertexShader = compile vs_4_0_level_9_1 DefaultVertexShader();
+        PixelShader = compile ps_4_0_level_9_3 FontPixelShader();
+    }
 }
 
 technique ShadowDraw
 {
-	pass Pass0
-	{
-		VertexShader = compile vs_1_1 VertexShader();
-		PixelShader = compile ps_2_0 ShadowPixelShader();
-	}
+    pass Pass0
+    {
+        VertexShader = compile vs_4_0_level_9_1 DefaultVertexShader();
+        PixelShader = compile ps_4_0_level_9_3 ShadowPixelShader();
+    }
 }

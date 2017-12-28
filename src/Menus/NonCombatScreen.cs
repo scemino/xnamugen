@@ -16,7 +16,7 @@ namespace xnaMugen.Menus
 			if (animationpath == null) throw new ArgumentNullException("animationpath");
 			if (soundpath == null) throw new ArgumentNullException("soundpath");
 
-			m_soundmanager = MenuSystem.GetSubSystem<Audio.SoundSystem>().CreateManager(soundpath);
+			//m_soundmanager = MenuSystem.GetSubSystem<Audio.SoundSystem>().CreateManager(soundpath);
 			m_spritemanager = MenuSystem.GetSubSystem<Drawing.SpriteSystem>().CreateManager(spritepath);
 			m_animationmanager = MenuSystem.GetSubSystem<Animations.AnimationSystem>().CreateManager(animationpath);
 			m_backgrounds = new Backgrounds.Collection(m_spritemanager.Clone(), m_animationmanager.Clone());
@@ -75,10 +75,10 @@ namespace xnaMugen.Menus
 			get { return m_backgrounds; }
 		}
 
-		public Audio.SoundManager SoundManager
-		{
-			get { return m_soundmanager; }
-		}
+		//public Audio.SoundManager SoundManager
+		//{
+		//	get { return m_soundmanager; }
+		//}
 
 		public Drawing.SpriteManager SpriteManager
 		{
@@ -105,8 +105,8 @@ namespace xnaMugen.Menus
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		readonly Backgrounds.Collection m_backgrounds;
 
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Audio.SoundManager m_soundmanager;
+		//[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+		//readonly Audio.SoundManager m_soundmanager;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		readonly Drawing.SpriteManager m_spritemanager;

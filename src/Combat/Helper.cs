@@ -29,7 +29,7 @@ namespace xnaMugen.Combat
 			m_spritemanager = Parent.SpriteManager.Clone();
 			m_animationmanager = Parent.AnimationManager.Clone();
 			m_commandmanager = Parent.CommandManager.Clone();
-			m_soundmanager = Parent.SoundManager.Clone();
+			//m_soundmanager = Parent.SoundManager.Clone();
 			m_dimensions = new CharacterDimensions(Data.GroundFront, Data.GroundBack, Data.AirFront, Data.AirBack, Data.Height);
 			m_palfx = (Data.OwnPaletteFx == true) ? new PaletteFx() : Parent.PaletteFx;
 
@@ -174,10 +174,10 @@ namespace xnaMugen.Combat
 			get { return m_animationmanager; }
 		}
 
-		public override Audio.SoundManager SoundManager
-		{
-			get { return m_soundmanager; }
-		}
+		//public override Audio.SoundManager SoundManager
+		//{
+		//	get { return m_soundmanager; }
+		//}
 
 		public override Commands.CommandManager CommandManager
 		{
@@ -234,8 +234,8 @@ namespace xnaMugen.Combat
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		readonly Animations.AnimationManager m_animationmanager;
 
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Audio.SoundManager m_soundmanager;
+		//[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+		//readonly Audio.SoundManager m_soundmanager;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		readonly Commands.CommandManager m_commandmanager;
