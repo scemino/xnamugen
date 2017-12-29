@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework;
 
 namespace xnaMugen
 {
-	class Timer
+	internal class Timer
 	{
 		public Timer()
 		{
@@ -14,7 +14,7 @@ namespace xnaMugen
 
 		public virtual void Update(GameTime time)
 		{
-			if (IsRunning == true)
+			if (IsRunning)
 			{
 				m_timespan += time.ElapsedGameTime;
 			}
@@ -25,45 +25,42 @@ namespace xnaMugen
 			m_timespan = TimeSpan.Zero;
 		}
 
-		public Boolean IsRunning
+		public bool IsRunning
 		{
-			get { return m_running; }
+			get => m_running;
 
 			set { m_running = value; }
 		}
 
-		public TimeSpan Time
-		{
-			get { return m_timespan; }
-		}
+		public TimeSpan Time => m_timespan;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Boolean m_running;
+		private bool m_running;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		TimeSpan m_timespan;
+		private TimeSpan m_timespan;
 
 		#endregion
 	}
 
-	class CountdownTimer : Timer
+	internal class CountdownTimer : Timer
 	{
-		public CountdownTimer(TimeSpan time, EventHandler<EventArgs> IFunction)
+		public CountdownTimer(TimeSpan time, EventHandler<EventArgs> function)
 		{
-			if (time < new TimeSpan()) throw new ArgumentOutOfRangeException("Time cannot be negative");
-			if (IFunction == null) throw new ArgumentNullException("IFunction");
+			if (time < new TimeSpan()) throw new ArgumentOutOfRangeException(nameof(time), "Time cannot be negative");
+			if (function == null) throw new ArgumentNullException(nameof(function));
 
 			m_countdowntime = time;
-			m_IFunction = IFunction;
+			m_IFunction = function;
 		}
 
 		public override void Update(GameTime time)
 		{
 			base.Update(time);
 
-			if (IsRunning == true && m_wentoff == false && Time >= m_countdowntime)
+			if (IsRunning && m_wentoff == false && Time >= m_countdowntime)
 			{
 				m_wentoff = true;
 				m_IFunction(this, EventArgs.Empty);
@@ -80,13 +77,13 @@ namespace xnaMugen
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly TimeSpan m_countdowntime;
+		private readonly TimeSpan m_countdowntime;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Boolean m_wentoff;
+		private bool m_wentoff;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		EventHandler<EventArgs> m_IFunction;
+		private EventHandler<EventArgs> m_IFunction;
 
 		#endregion
 	}

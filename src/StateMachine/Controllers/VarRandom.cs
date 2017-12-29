@@ -1,13 +1,12 @@
-using System;
 using System.Diagnostics;
 using xnaMugen.IO;
 
 namespace xnaMugen.StateMachine.Controllers
 {
 	[StateControllerName("VarRandom")]
-	class VarRandom : StateController
+	internal class VarRandom : StateController
 	{
-		public VarRandom(StateSystem statesystem, String label, TextSection textsection)
+		public VarRandom(StateSystem statesystem, string label, TextSection textsection)
 			: base(statesystem, label, textsection)
 		{
 			m_intnumber = textsection.GetAttribute<Evaluation.Expression>("v", null);
@@ -16,23 +15,23 @@ namespace xnaMugen.StateMachine.Controllers
 
 		public override void Run(Combat.Character character)
 		{
-			Int32? varindex = EvaluationHelper.AsInt32(character, IntNumber, null);
+			var varindex = EvaluationHelper.AsInt32(character, IntNumber, null);
 			if (varindex == null) return;
 
-			Int32 min = 0;
-			Int32 max = 1;
+			int min;
+			int max;
 			if (GetRange(character, out min, out max) == false) return;
 
 			if (min > max) Misc.Swap(ref min, ref max);
 
-			Int32 randomvalue = StateSystem.GetSubSystem<Random>().NewInt(min, max);
+			var randomvalue = StateSystem.GetSubSystem<Random>().NewInt(min, max);
 
 			if (character.Variables.SetInteger(varindex.Value, false, randomvalue) == false)
 			{
 			}
 		}
 
-		Boolean GetRange(Combat.Character character, out Int32 min, out Int32 max)
+		private bool GetRange(Combat.Character character, out int min, out int max)
 		{
 			if (Range == null)
 			{
@@ -41,7 +40,7 @@ namespace xnaMugen.StateMachine.Controllers
 				return true;
 			}
 
-			Evaluation.Number[] result = Range.Evaluate(character);
+			var result = Range.Evaluate(character);
 
 			if (result.Length > 0 && result[0].NumberType != NumberType.None)
 			{
@@ -51,12 +50,10 @@ namespace xnaMugen.StateMachine.Controllers
 					max = result[1].IntValue;
 					return true;
 				}
-				else
-				{
-					min = 0;
-					max = result[0].IntValue;
-					return true;
-				}
+
+				min = 0;
+				max = result[0].IntValue;
+				return true;
 			}
 
 			min = 0;
@@ -64,7 +61,7 @@ namespace xnaMugen.StateMachine.Controllers
 			return false;
 		}
 
-		public override Boolean IsValid()
+		public override bool IsValid()
 		{
 			if (base.IsValid() == false) return false;
 
@@ -73,23 +70,17 @@ namespace xnaMugen.StateMachine.Controllers
 			return true;
 		}
 
-		public Evaluation.Expression IntNumber
-		{
-			get { return m_intnumber; }
-		}
+		public Evaluation.Expression IntNumber => m_intnumber;
 
-		public Evaluation.Expression Range
-		{
-			get { return m_range; }
-		}
+		public Evaluation.Expression Range => m_range;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_intnumber;
+		private readonly Evaluation.Expression m_intnumber;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_range;
+		private readonly Evaluation.Expression m_range;
 
 		#endregion
 	}

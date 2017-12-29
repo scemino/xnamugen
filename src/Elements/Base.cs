@@ -1,21 +1,18 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Collections.Generic;
-using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
-using xnaMugen.Collections;
 
 namespace xnaMugen.Elements
 {
-	class Base
+	internal class Base
 	{
-		public Base(Collection collection, String name, DataMap datamap, Drawing.SpriteManager sprites, Animations.AnimationManager animations/*, Audio.SoundManager sounds*/)
+		public Base(Collection collection, string name, DataMap datamap, Drawing.SpriteManager sprites, Animations.AnimationManager animations/*, Audio.SoundManager sounds*/)
 		{
-			if (collection == null) throw new ArgumentNullException("collection");
-			if (name == null) throw new ArgumentNullException("name");
-			if (datamap == null) throw new ArgumentNullException("datamap");
-			if (sprites == null) throw new ArgumentNullException("sprites");
-			if (animations == null) throw new ArgumentNullException("animations");
+			if (collection == null) throw new ArgumentNullException(nameof(collection));
+			if (name == null) throw new ArgumentNullException(nameof(name));
+			if (datamap == null) throw new ArgumentNullException(nameof(datamap));
+			if (sprites == null) throw new ArgumentNullException(nameof(sprites));
+			if (animations == null) throw new ArgumentNullException(nameof(animations));
 			//if (sounds == null) throw new ArgumentNullException("sounds");
 
 			m_collection = collection;
@@ -30,7 +27,7 @@ namespace xnaMugen.Elements
 		{
 		}
 
-		public virtual Boolean FinishedDrawing(Int32 tickcount)
+		public virtual bool FinishedDrawing(int tickcount)
 		{
 			return true;
 		}
@@ -48,55 +45,40 @@ namespace xnaMugen.Elements
 		//	return m_soundmanager.Play(DataMap.SoundId);
 		//}
 
-		public Collection Collection
-		{
-			get { return m_collection; }
-		}
+		public Collection Collection => m_collection;
 
-		public String Name
-		{
-			get { return m_name; }
-		}
+		public string Name => m_name;
 
-		public DataMap DataMap
-		{
-			get { return m_data; }
-		}
+		public DataMap DataMap => m_data;
 
 		//public Audio.SoundManager SoundManager
 		//{
 		//	get { return m_soundmanager; }
 		//}
 
-		public Drawing.SpriteManager SpriteManager
-		{
-			get { return m_spritemanager; }
-		}
+		public Drawing.SpriteManager SpriteManager => m_spritemanager;
 
-		public Animations.AnimationManager AnimationManager
-		{
-			get { return m_animationmanager; }
-		}
+		public Animations.AnimationManager AnimationManager => m_animationmanager;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Collection m_collection;
+		private readonly Collection m_collection;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly String m_name;
+		private readonly string m_name;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly DataMap m_data;
+		private readonly DataMap m_data;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Drawing.SpriteManager m_spritemanager;
+		private readonly Drawing.SpriteManager m_spritemanager;
 
 		//[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		//readonly Audio.SoundManager m_soundmanager;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Animations.AnimationManager m_animationmanager;
+		private readonly Animations.AnimationManager m_animationmanager;
 
 		#endregion
 	}

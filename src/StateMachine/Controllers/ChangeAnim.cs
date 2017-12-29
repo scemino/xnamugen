@@ -1,13 +1,12 @@
-using System;
 using System.Diagnostics;
 using xnaMugen.IO;
 
 namespace xnaMugen.StateMachine.Controllers
 {
 	[StateControllerName("ChangeAnim")]
-	class ChangeAnim : StateController
+	internal class ChangeAnim : StateController
 	{
-		public ChangeAnim(StateSystem statesystem, String label, TextSection textsection)
+		public ChangeAnim(StateSystem statesystem, string label, TextSection textsection)
 			: base(statesystem, label, textsection)
 		{
 			m_animationnumber = textsection.GetAttribute<Evaluation.Expression>("value", null);
@@ -16,8 +15,8 @@ namespace xnaMugen.StateMachine.Controllers
 
 		public override void Run(Combat.Character character)
 		{
-			Int32? animationnumber = EvaluationHelper.AsInt32(character, AnimationNumber, null);
-			Int32 elementnumber = EvaluationHelper.AsInt32(character, ElementNumber, 0);
+			var animationnumber = EvaluationHelper.AsInt32(character, AnimationNumber, null);
+			var elementnumber = EvaluationHelper.AsInt32(character, ElementNumber, 0);
 
 			if (animationnumber == null) return;
 
@@ -27,7 +26,7 @@ namespace xnaMugen.StateMachine.Controllers
 			character.SetLocalAnimation(animationnumber.Value, elementnumber);
 		}
 
-		public override Boolean IsValid()
+		public override bool IsValid()
 		{
 			if (base.IsValid() == false) return false;
 
@@ -36,23 +35,17 @@ namespace xnaMugen.StateMachine.Controllers
 			return true;
 		}
 
-		public Evaluation.Expression AnimationNumber
-		{
-			get { return m_animationnumber; }
-		}
+		public Evaluation.Expression AnimationNumber => m_animationnumber;
 
-		public Evaluation.Expression ElementNumber
-		{
-			get { return m_elementnumber; }
-		}
+		public Evaluation.Expression ElementNumber => m_elementnumber;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_animationnumber;
+		private readonly Evaluation.Expression m_animationnumber;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_elementnumber;
+		private readonly Evaluation.Expression m_elementnumber;
 
 		#endregion
 	}

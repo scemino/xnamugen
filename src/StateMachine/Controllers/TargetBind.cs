@@ -1,4 +1,3 @@
-using System;
 using System.Diagnostics;
 using xnaMugen.IO;
 using Microsoft.Xna.Framework;
@@ -6,9 +5,9 @@ using Microsoft.Xna.Framework;
 namespace xnaMugen.StateMachine.Controllers
 {
 	[StateControllerName("TargetBind")]
-	class TargetBind : StateController
+	internal class TargetBind : StateController
 	{
-		public TargetBind(StateSystem statesystem, String label, TextSection textsection)
+		public TargetBind(StateSystem statesystem, string label, TextSection textsection)
 			: base(statesystem, label, textsection)
 		{
 			m_time = textsection.GetAttribute<Evaluation.Expression>("time", null);
@@ -18,41 +17,32 @@ namespace xnaMugen.StateMachine.Controllers
 
 		public override void Run(Combat.Character character)
 		{
-			Int32 time = EvaluationHelper.AsInt32(character, Time, 1);
-			Int32 target_id = EvaluationHelper.AsInt32(character, TargetId, Int32.MinValue);
-			Vector2 position = EvaluationHelper.AsVector2(character, Position, new Vector2(0, 0));
+			var time = EvaluationHelper.AsInt32(character, Time, 1);
+			var targetId = EvaluationHelper.AsInt32(character, TargetId, int.MinValue);
+			var position = EvaluationHelper.AsVector2(character, Position, new Vector2(0, 0));
 
-			foreach (Combat.Character target in character.GetTargets(target_id))
+			foreach (var target in character.GetTargets(targetId))
 			{
 				target.Bind.Set(character, position, time, 0, true);
 			}
 		}
 
-		public Evaluation.Expression Time
-		{
-			get { return m_time; }
-		}
+		public Evaluation.Expression Time => m_time;
 
-		public Evaluation.Expression TargetId
-		{
-			get { return m_id; }
-		}
+		public Evaluation.Expression TargetId => m_id;
 
-		public Evaluation.Expression Position
-		{
-			get { return m_pos; }
-		}
+		public Evaluation.Expression Position => m_pos;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_time;
+		private readonly Evaluation.Expression m_time;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_id;
+		private readonly Evaluation.Expression m_id;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_pos;
+		private readonly Evaluation.Expression m_pos;
 
 		#endregion
 	}

@@ -1,23 +1,19 @@
 ﻿using System;
-using xnaMugen.IO;
 using System.Diagnostics;
-using System.Collections.Generic;
 using xnaMugen.Collections;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System.Text.RegularExpressions;
 
 namespace xnaMugen.Drawing
 {
-	[DebuggerDisplay("{Filepath}")]
-	class Font : Resource
+	[DebuggerDisplay("{" + nameof(Filepath) + "}")]
+	internal class Font : Resource
 	{
-		public Font(SpriteSystem spritesystem, String filepath, Sprite sprite, ReadOnlyDictionary<Char, Rectangle> sizemap, Point charsize, Int32 colors)
+		public Font(SpriteSystem spritesystem, string filepath, Sprite sprite, ReadOnlyDictionary<char, Rectangle> sizemap, Point charsize, int colors)
 		{
-			if (spritesystem == null) throw new ArgumentNullException("spritesystem");
-			if (filepath == null) throw new ArgumentNullException("filepath");
-			if (sprite == null) throw new ArgumentNullException("sprite");
-			if (sizemap == null) throw new ArgumentNullException("sizemap");
+			if (spritesystem == null) throw new ArgumentNullException(nameof(spritesystem));
+			if (filepath == null) throw new ArgumentNullException(nameof(filepath));
+			if (sprite == null) throw new ArgumentNullException(nameof(sprite));
+			if (sizemap == null) throw new ArgumentNullException(nameof(sizemap));
 
 			m_spritesystem = spritesystem;
 			m_filepath = filepath;
@@ -28,9 +24,9 @@ namespace xnaMugen.Drawing
 			m_drawstate = new Video.DrawState(m_spritesystem.GetSubSystem<Video.VideoSystem>());
 		}
 
-		public void Print(Vector2 location, Int32 color, PrintJustification just, String text, Rectangle? scissorrect)
+		public void Print(Vector2 location, int color, PrintJustification just, string text, Rectangle? scissorrect)
 		{
-			if (text == null) throw new ArgumentNullException("text");
+			if (text == null) throw new ArgumentNullException(nameof(text));
 
 			location = GetPrintLocation(text, location, just);
 
@@ -41,9 +37,9 @@ namespace xnaMugen.Drawing
 			m_drawstate.ShaderParameters.FontColorIndex = color;
 			m_drawstate.ShaderParameters.FontTotalColors = m_colors;
 
-			foreach (Char c in text)
+			foreach (var c in text)
 			{
-				Rectangle r = GetCharRectangle(c);
+				var r = GetCharRectangle(c);
 				m_drawstate.AddData(location, r);
 
 				location.X += r.Width;
@@ -52,21 +48,21 @@ namespace xnaMugen.Drawing
 			m_drawstate.Use();
 		}
 
-		Rectangle GetCharRectangle(Char c)
+		private Rectangle GetCharRectangle(char c)
 		{
-			Rectangle r = new Rectangle(0, 0, m_charsize.X, 0);
+			var r = new Rectangle(0, 0, m_charsize.X, 0);
 
 			if (c != ' ') m_sizemap.TryGetValue(c, out r);
 
 			return r;
 		}
 
-		public Int32 GetTextLength(String text)
+		public int GetTextLength(string text)
 		{
-			if (text == null) throw new ArgumentNullException("text");
+			if (text == null) throw new ArgumentNullException(nameof(text));
 
-			Int32 length = 0;
-			foreach (Char c in text)
+			var length = 0;
+			foreach (var c in text)
 			{
 				if (c != ' ')
 				{
@@ -81,23 +77,23 @@ namespace xnaMugen.Drawing
 			return length;
 		}
 
-		Vector2 GetPrintLocation(String text, Vector2 location, PrintJustification just)
+		private Vector2 GetPrintLocation(string text, Vector2 location, PrintJustification just)
 		{
-			if (text == null) throw new ArgumentNullException("text");
+			if (text == null) throw new ArgumentNullException(nameof(text));
 
-			Single length = GetTextLength(text);
+			float length = GetTextLength(text);
 
 			switch (just)
 			{
 				case PrintJustification.Center:
-					location.X -= (Int32)(length / 2);
+					location.X -= (int)(length / 2);
 					break;
 
 				case PrintJustification.Left:
 					break;
 
 				case PrintJustification.Right:
-					location.X -= (Int32)length;
+					location.X -= (int)length;
 					break;
 			}
 
@@ -106,9 +102,9 @@ namespace xnaMugen.Drawing
 			return location;
 		}
 
-		protected override void Dispose(Boolean disposing)
+		protected override void Dispose(bool disposing)
 		{
-			if (disposing == true)
+			if (disposing)
 			{
 				if (m_sprite != null) m_sprite.Dispose();
 			}
@@ -116,43 +112,34 @@ namespace xnaMugen.Drawing
 			base.Dispose(disposing);
 		}
 
-		public String Filepath
-		{
-			get { return m_filepath; }
-		}
+		public string Filepath => m_filepath;
 
-		Sprite Sprite
-		{
-			get { return m_sprite; }
-		}
+		private Sprite Sprite => m_sprite;
 
-		ReadOnlyDictionary<Char, Rectangle> SizeMap
-		{
-			get { return m_sizemap; }
-		}
+		private ReadOnlyDictionary<char, Rectangle> SizeMap => m_sizemap;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly String m_filepath;
+		private readonly string m_filepath;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Sprite m_sprite;
+		private readonly Sprite m_sprite;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly ReadOnlyDictionary<Char, Rectangle> m_sizemap;
+		private readonly ReadOnlyDictionary<char, Rectangle> m_sizemap;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Point m_charsize;
+		private readonly Point m_charsize;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Int32 m_colors;
+		private readonly int m_colors;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly SpriteSystem m_spritesystem;
+		private readonly SpriteSystem m_spritesystem;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Video.DrawState m_drawstate;
+		private readonly Video.DrawState m_drawstate;
 
 		#endregion
 	}

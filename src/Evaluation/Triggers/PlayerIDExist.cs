@@ -1,22 +1,20 @@
-using System;
-
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("PlayerIDExist")]
-	static class PlayerIDExist
+	internal static class PlayerIDExist
 	{
-		public static Boolean Evaluate(Object state, ref Boolean error, Int32 id)
+		public static bool Evaluate(object state, ref bool error, int id)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
 				return false;
 			}
 
-			foreach (Combat.Entity entity in character.Engine.Entities)
+			foreach (var entity in character.Engine.Entities)
 			{
-				Combat.Character c = entity as Combat.Character;
+				var c = entity as Combat.Character;
 				if (c == null) continue;
 
 				if (c.Id == id) return true;

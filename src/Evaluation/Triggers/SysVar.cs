@@ -1,21 +1,19 @@
-using System;
-
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("SysVar")]
-	static class SysVar
+	internal static class SysVar
 	{
-		public static Int32 Evaluate(Object state, ref Boolean error, Int32 value)
+		public static int Evaluate(object state, ref bool error, int value)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
 				return 0;
 			}
 
-			Int32 result;
-			if (character.Variables.GetInteger(value, true, out result) == true) return result;
+			int result;
+			if (character.Variables.GetInteger(value, true, out result)) return result;
 
 			error = true;
 			return 0;

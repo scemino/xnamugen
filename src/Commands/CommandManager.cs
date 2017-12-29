@@ -2,31 +2,28 @@
 using System.Diagnostics;
 using System.Collections.Generic;
 using xnaMugen.Collections;
-using xnaMugen.IO;
-using System.Text.RegularExpressions;
-using System.Text;
 
 namespace xnaMugen.Commands
 {
-	[DebuggerDisplay("{Filepath}")]
-	class CommandManager
+	[DebuggerDisplay("{" + nameof(Filepath) + "}")]
+	internal class CommandManager
 	{
-		public CommandManager(CommandSystem commandsystem, String filepath, ReadOnlyList<Command> commands)
+		public CommandManager(CommandSystem commandsystem, string filepath, ReadOnlyList<Command> commands)
 		{
-			if (commandsystem == null) throw new ArgumentNullException("commandsystem");
-			if (filepath == null) throw new ArgumentNullException("filepath");
-			if (commands == null) throw new ArgumentNullException("commands");
+			if (commandsystem == null) throw new ArgumentNullException(nameof(commandsystem));
+			if (filepath == null) throw new ArgumentNullException(nameof(filepath));
+			if (commands == null) throw new ArgumentNullException(nameof(commands));
 
 			m_commandsystem = commandsystem;
 			m_filepath = filepath;
 			m_commands = commands;
-			m_commandcount = new Dictionary<String, BufferCount>(StringComparer.Ordinal);
+			m_commandcount = new Dictionary<string, BufferCount>(StringComparer.Ordinal);
 			m_inputbuffer = new InputBuffer();
-			m_activecommands = new List<String>();
+			m_activecommands = new List<string>();
 
-			foreach (Command command in Commands)
+			foreach (var command in Commands)
 			{
-				if (m_commandcount.ContainsKey(command.Name) == true) continue;
+				if (m_commandcount.ContainsKey(command.Name)) continue;
 
 				m_commandcount.Add(command.Name, new BufferCount());
 			}
@@ -45,68 +42,62 @@ namespace xnaMugen.Commands
 			foreach (var data in m_commandcount) data.Value.Reset();
 		}
 
-		public void Update(PlayerButton input, Facing facing, Boolean paused)
+		public void Update(PlayerButton input, Facing facing, bool paused)
 		{
 			m_inputbuffer.Add(input, facing);
 
 			if (paused == false)
 			{
-				foreach (BufferCount count in m_commandcount.Values) count.Tick();
+				foreach (var count in m_commandcount.Values) count.Tick();
 			}
 
-			foreach (Command command in Commands)
+			foreach (var command in Commands)
 			{
 				if (command.IsValid == false) continue;
 
-				if (CommandChecker.Check(command, m_inputbuffer) == true)
+				if (CommandChecker.Check(command, m_inputbuffer))
 				{
-					Int32 time = command.BufferTime;
-					if (paused == true) ++time;
+					var time = command.BufferTime;
+					if (paused) ++time;
 
 					m_commandcount[command.Name].Set(time);
 				}
 			}
 
 			m_activecommands.Clear();
-			foreach (var data in m_commandcount) if (data.Value.IsActive == true) m_activecommands.Add(data.Key);
+			foreach (var data in m_commandcount) if (data.Value.IsActive) m_activecommands.Add(data.Key);
 		}
 
-		public Boolean IsActive(String commandname)
+		public bool IsActive(string commandname)
 		{
-			if (commandname == null) throw new ArgumentNullException("commandname");
+			if (commandname == null) throw new ArgumentNullException(nameof(commandname));
 
 			return m_activecommands.Contains(commandname);
 		}
 
-		ReadOnlyList<Command> Commands
-		{
-			get { return m_commands; }
-		}
+		private ReadOnlyList<Command> Commands => m_commands;
 
-		public String Filepath
-		{
-			get { return m_filepath; }
-		}
+		public string Filepath => m_filepath;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly CommandSystem m_commandsystem;
+		private readonly CommandSystem m_commandsystem;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly String m_filepath;
+		private readonly string m_filepath;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly ReadOnlyList<Command> m_commands;
+		private readonly ReadOnlyList<Command> m_commands;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Dictionary<String, BufferCount> m_commandcount;
+		private readonly Dictionary<string, BufferCount> m_commandcount;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly List<String> m_activecommands;
+		private readonly List<string> m_activecommands;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly InputBuffer m_inputbuffer;
+		private readonly InputBuffer m_inputbuffer;
 
 		#endregion
 	}

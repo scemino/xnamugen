@@ -11,7 +11,7 @@ namespace xnaMugen.IO
 	/// <summary>
 	/// Interfaces between game code underlying OS filesystem.
 	/// </summary>
-	class FileSystem : SubSystem
+	internal class FileSystem : SubSystem
 	{
 		/// <summary>
 		/// Initializes a new instance of this class.
@@ -20,7 +20,7 @@ namespace xnaMugen.IO
 		public FileSystem(SubSystems subsystems)
 			: base(subsystems)
 		{
-			m_textcache = new KeyedCollection<String, TextFile>(x => x.Filepath, StringComparer.OrdinalIgnoreCase);
+			m_textcache = new KeyedCollection<string, TextFile>(x => x.Filepath, StringComparer.OrdinalIgnoreCase);
 			m_titleregex = new Regex(@"^\s*\[(.+?)\]\s*$", RegexOptions.IgnoreCase);
 			m_parsedlineregex = new Regex(@"^\s*(.+?)\s*=\s*(.+?)\s*$", RegexOptions.IgnoreCase);
 		}
@@ -39,9 +39,9 @@ namespace xnaMugen.IO
 		/// </summary>
 		/// <param name="filepath">The file to look for.</param>
 		/// <returns>true is the file exists; false otherwise.</returns>
-		public Boolean DoesFileExist(String filepath)
+		public bool DoesFileExist(string filepath)
 		{
-			if (filepath == null) throw new ArgumentNullException("filepath");
+			if (filepath == null) throw new ArgumentNullException(nameof(filepath));
 
 			return System.IO.File.Exists(filepath);
 		}
@@ -52,10 +52,10 @@ namespace xnaMugen.IO
 		/// <param name="lhs">The first path to combine.</param>
 		/// <param name="rhs">The second path to combine.</param>
 		/// <returns>The combined path string.</returns>
-		public String CombinePaths(String lhs, String rhs)
+		public string CombinePaths(string lhs, string rhs)
 		{
-			if (lhs == null) throw new ArgumentNullException("lhs");
-			if (rhs == null) throw new ArgumentNullException("rhs");
+			if (lhs == null) throw new ArgumentNullException(nameof(lhs));
+			if (rhs == null) throw new ArgumentNullException(nameof(rhs));
 
 			return Path.Combine(lhs, rhs);
 		}
@@ -65,9 +65,9 @@ namespace xnaMugen.IO
 		/// </summary>
 		/// <param name="filepath">The path of a file or directory.</param>
 		/// <returns>A string containing the filepath to the containing directory.</returns>
-		public String GetDirectory(String filepath)
+		public string GetDirectory(string filepath)
 		{
-			if (filepath == null) throw new ArgumentNullException("filepath");
+			if (filepath == null) throw new ArgumentNullException(nameof(filepath));
 
 			return Path.GetDirectoryName(filepath);
 		}
@@ -77,23 +77,23 @@ namespace xnaMugen.IO
 		/// </summary>
 		/// <param name="filepath">The path to the file to be opened.</param>
 		/// <returns>A xnaMugen.IO.File for the given path.</returns>
-		public File OpenFile(String filepath)
+		public File OpenFile(string filepath)
 		{
 			try
 			{
-				if (filepath == null) throw new ArgumentNullException("filepath");
+				if (filepath == null) throw new ArgumentNullException(nameof(filepath));
 
 				Log.Write(LogLevel.Normal, LogSystem.FileSystem, "Opening file: {0}", filepath);
 
-				if (String.Compare(filepath, 0, "xnaMugen.", 0, 9, StringComparison.Ordinal) == 0)
+				if (string.Compare(filepath, 0, "xnaMugen.", 0, 9, StringComparison.Ordinal) == 0)
 				{
-					System.IO.Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(filepath);
+					var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(filepath);
 					if (stream != null) return new File(filepath, stream);
 				}
 
 				return new File(filepath, new FileStream(filepath, FileMode.Open, FileAccess.Read));
 			}
-			catch (System.IO.FileNotFoundException)
+			catch (FileNotFoundException)
 			{
 				Log.Write(LogLevel.Error, LogSystem.FileSystem, "File not found: {0}", filepath);
 				throw;
@@ -105,11 +105,11 @@ namespace xnaMugen.IO
 		/// </summary>
 		/// <param name="filepath">The path to the file to be opened.</param>
 		/// <returns>A xnaMugen.IO.TextFile for the given path.</returns>
-		public TextFile OpenTextFile(String filepath)
+		public TextFile OpenTextFile(string filepath)
 		{
-			if (filepath == null) throw new ArgumentNullException("filepath");
+			if (filepath == null) throw new ArgumentNullException(nameof(filepath));
 
-			if (m_textcache.Contains(filepath) == true) return m_textcache[filepath];
+			if (m_textcache.Contains(filepath)) return m_textcache[filepath];
 
 			return BuildTextFile(OpenFile(filepath));
 		}
@@ -121,57 +121,57 @@ namespace xnaMugen.IO
 		/// <returns>The xnaMugen.IO.TextFile parsed out of the given file.</returns>
 		public TextFile BuildTextFile(File file)
 		{
-			if (file == null) throw new ArgumentNullException("file");
+			if (file == null) throw new ArgumentNullException(nameof(file));
 
-			if (m_textcache.Contains(file.Filepath) == true) return m_textcache[file.Filepath];
+			if (m_textcache.Contains(file.Filepath)) return m_textcache[file.Filepath];
 
-			TextFile textfile = Build(file);
+			var textfile = Build(file);
 			m_textcache.Add(textfile);
 
 			return textfile;
 		}
 
-		TextFile Build(File file)
+		private TextFile Build(File file)
 		{
-			if (file == null) throw new ArgumentNullException("file");
+			if (file == null) throw new ArgumentNullException(nameof(file));
 
-			List<TextSection> sections = new List<TextSection>();
+			var sections = new List<TextSection>();
 
-			String sectiontitle = null;
-			List<String> sectionlines = null;
-			List<KeyValuePair<String, String>> sectionparsedlines = null;
+			string sectiontitle = null;
+			List<string> sectionlines = null;
+			List<KeyValuePair<string, string>> sectionparsedlines = null;
 
-			for (String line = file.ReadLine(); line != null; line = file.ReadLine())
+			for (var line = file.ReadLine(); line != null; line = file.ReadLine())
 			{
 				line = line.Trim();
 
-				Int32 commentindex = line.IndexOf(';');
+				var commentindex = line.IndexOf(';');
 				if (commentindex != -1) line = line.Substring(0, commentindex);
 
-				if (line == String.Empty) continue;
+				if (line == string.Empty) continue;
 
-				Match titlematch = m_titleregex.Match(line);
-				if (titlematch.Success == true)
+				var titlematch = m_titleregex.Match(line);
+				if (titlematch.Success)
 				{
 					if (sectiontitle != null) sections.Add(new TextSection(this, sectiontitle, sectionlines, sectionparsedlines));
 
 					sectiontitle = titlematch.Groups[1].Value;
-					sectionlines = new List<String>();
-					sectionparsedlines = new List<KeyValuePair<String, String>>();
+					sectionlines = new List<string>();
+					sectionparsedlines = new List<KeyValuePair<string, string>>();
 				}
 				else if (sectiontitle != null)
 				{
 					sectionlines.Add(line);
 
-					Match parsedmatch = m_parsedlineregex.Match(line);
-					if (parsedmatch.Success == true)
+					var parsedmatch = m_parsedlineregex.Match(line);
+					if (parsedmatch.Success)
 					{
-						String key = parsedmatch.Groups[1].Value;
-						String value = parsedmatch.Groups[2].Value;
+						var key = parsedmatch.Groups[1].Value;
+						var value = parsedmatch.Groups[2].Value;
 
 						if (value.Length >= 2 && value[0] == '"' && value[value.Length - 1] == '"') value = value.Substring(1, value.Length - 2);
 
-						sectionparsedlines.Add(new KeyValuePair<String, String>(key, value));
+						sectionparsedlines.Add(new KeyValuePair<string, string>(key, value));
 					}
 				}
 			}
@@ -184,13 +184,13 @@ namespace xnaMugen.IO
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly KeyedCollection<String, TextFile> m_textcache;
+		private readonly KeyedCollection<string, TextFile> m_textcache;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Regex m_titleregex;
+		private readonly Regex m_titleregex;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Regex m_parsedlineregex;
+		private readonly Regex m_parsedlineregex;
 
 		#endregion
 	}

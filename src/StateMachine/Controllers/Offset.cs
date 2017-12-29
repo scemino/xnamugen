@@ -1,14 +1,12 @@
-using System;
 using System.Diagnostics;
 using xnaMugen.IO;
-using Microsoft.Xna.Framework;
 
 namespace xnaMugen.StateMachine.Controllers
 {
 	[StateControllerName("Offset")]
-	class Offset : StateController
+	internal class Offset : StateController
 	{
-		public Offset(StateSystem statesystem, String label, TextSection textsection)
+		public Offset(StateSystem statesystem, string label, TextSection textsection)
 			: base(statesystem, label, textsection)
 		{
 			m_x = textsection.GetAttribute<Evaluation.Expression>("x", null);
@@ -17,10 +15,10 @@ namespace xnaMugen.StateMachine.Controllers
 
 		public override void Run(Combat.Character character)
 		{
-			Single? x = EvaluationHelper.AsSingle(character, X, null);
-			Single? y = EvaluationHelper.AsSingle(character, Y, null);
+			var x = EvaluationHelper.AsSingle(character, X, null);
+			var y = EvaluationHelper.AsSingle(character, Y, null);
 
-			Vector2 offset = character.DrawOffset;
+			var offset = character.DrawOffset;
 
 			if (x != null) offset.X = x.Value;
 			if (y != null) offset.Y = y.Value;
@@ -28,23 +26,17 @@ namespace xnaMugen.StateMachine.Controllers
 			character.DrawOffset = offset;
 		}
 
-		public Evaluation.Expression X
-		{
-			get { return m_x; }
-		}
+		public Evaluation.Expression X => m_x;
 
-		public Evaluation.Expression Y
-		{
-			get { return m_y; }
-		}
+		public Evaluation.Expression Y => m_y;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_x;
+		private readonly Evaluation.Expression m_x;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_y;
+		private readonly Evaluation.Expression m_y;
 
 		#endregion
 	}

@@ -3,18 +3,18 @@ using System;
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("RootDist")]
-	static class RootDist
+	internal static class RootDist
 	{
-		public static Single Evaluate(Object state, ref Boolean error, Axis axis)
+		public static float Evaluate(object state, ref bool error, Axis axis)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
 				return 0;
 			}
 
-			Combat.Helper helper = character as Combat.Helper;
+			var helper = character as Combat.Helper;
 			if (helper == null)
 			{
 				error = true;
@@ -24,14 +24,14 @@ namespace xnaMugen.Evaluation.Triggers
 			switch (axis)
 			{
 				case Axis.X:
-					Single distance = Math.Abs(helper.CurrentLocation.X - helper.BasePlayer.CurrentLocation.X);
+					var distance = Math.Abs(helper.CurrentLocation.X - helper.BasePlayer.CurrentLocation.X);
 					if (helper.CurrentFacing == xnaMugen.Facing.Right)
 					{
-						return (helper.BasePlayer.CurrentLocation.X >= helper.CurrentLocation.X) ? distance : -distance;
+						return helper.BasePlayer.CurrentLocation.X >= helper.CurrentLocation.X ? distance : -distance;
 					}
 					else
 					{
-						return (helper.BasePlayer.CurrentLocation.X >= helper.CurrentLocation.X) ? -distance : distance;
+						return helper.BasePlayer.CurrentLocation.X >= helper.CurrentLocation.X ? -distance : distance;
 					}
 
 				case Axis.Y:
@@ -45,7 +45,7 @@ namespace xnaMugen.Evaluation.Triggers
 
 		public static Node Parse(ParseState parsestate)
 		{
-			Axis axis = parsestate.ConvertCurrentToken<Axis>();
+			var axis = parsestate.ConvertCurrentToken<Axis>();
 			if (axis == Axis.None) return null;
 
 			++parsestate.TokenIndex;

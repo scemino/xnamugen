@@ -1,13 +1,12 @@
-using System;
 using System.Diagnostics;
 using xnaMugen.IO;
 
 namespace xnaMugen.StateMachine.Controllers
 {
 	[StateControllerName("DefenseMulSet", "DefenceMulSet")]
-	class DefenseMulSet : StateController
+	internal class DefenseMulSet : StateController
 	{
-		public DefenseMulSet(StateSystem statesystem, String label, TextSection textsection)
+		public DefenseMulSet(StateSystem statesystem, string label, TextSection textsection)
 			: base(statesystem, label, textsection)
 		{
 			m_multiplier = textsection.GetAttribute<Evaluation.Expression>("value", null);
@@ -15,14 +14,14 @@ namespace xnaMugen.StateMachine.Controllers
 
 		public override void Run(Combat.Character character)
 		{
-			Single? multiplier = EvaluationHelper.AsSingle(character, Multiplier, null);
+			var multiplier = EvaluationHelper.AsSingle(character, Multiplier, null);
 
 			if (multiplier == null) return;
 
 			character.DefensiveInfo.DefenseMultiplier = multiplier.Value;
 		}
 
-		public override Boolean IsValid()
+		public override bool IsValid()
 		{
 			if (base.IsValid() == false) return false;
 
@@ -31,15 +30,12 @@ namespace xnaMugen.StateMachine.Controllers
 			return true;
 		}
 
-		public Evaluation.Expression Multiplier
-		{
-			get { return m_multiplier; }
-		}
+		public Evaluation.Expression Multiplier => m_multiplier;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_multiplier;
+		private readonly Evaluation.Expression m_multiplier;
 
 		#endregion
 	}

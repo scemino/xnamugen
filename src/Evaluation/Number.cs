@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Globalization;
 
 namespace xnaMugen.Evaluation
 {
-	struct Number : IEquatable<Number>
+	internal struct Number : IEquatable<Number>
 	{
 		[DebuggerStepThrough]
-		public Number(Boolean value)
+		public Number(bool value)
 		{
 			NumberType = NumberType.Int;
 
@@ -23,7 +24,7 @@ namespace xnaMugen.Evaluation
 		}
 
 		[DebuggerStepThrough]
-		public Number(Int32 value)
+		public Number(int value)
 		{
 			NumberType = NumberType.Int;
 			IntValue = value;
@@ -31,27 +32,27 @@ namespace xnaMugen.Evaluation
 		}
 
 		[DebuggerStepThrough]
-		public Number(Single value)
+		public Number(float value)
 		{
 			NumberType = NumberType.Float;
-			IntValue = (Int32)value;
+			IntValue = (int)value;
 			FloatValue = value;
 		}
 
 		[DebuggerStepThrough]
-		public Number(Double value)
+		public Number(double value)
 		{
 			NumberType = NumberType.Float;
-			IntValue = (Int32)value;
-			FloatValue = (Single)value;
+			IntValue = (int)value;
+			FloatValue = (float)value;
 		}
 
-		public Boolean Equals(Number other)
+		public bool Equals(Number other)
 		{
 			return (this == other).BooleanValue;
 		}
 
-		public override String ToString()
+		public override string ToString()
 		{
 			switch (NumberType)
 			{
@@ -59,14 +60,14 @@ namespace xnaMugen.Evaluation
 					return IntValue.ToString();
 
 				case NumberType.Float:
-					return FloatValue.ToString();
+					return FloatValue.ToString(CultureInfo.InvariantCulture);
 
 				default:
 					return "None";
 			}
 		}
 
-		public override Int32 GetHashCode()
+		public override int GetHashCode()
 		{
 			switch (NumberType)
 			{
@@ -81,7 +82,7 @@ namespace xnaMugen.Evaluation
 			}
 		}
 
-		public override Boolean Equals(Object obj)
+		public override bool Equals(object obj)
 		{
 			if (obj == null) return false;
 
@@ -253,12 +254,12 @@ namespace xnaMugen.Evaluation
 
 		public static Number LogicalNot(Number input)
 		{
-			return (input.NumberType == NumberType.None) ? new Number() : new Number(!input.BooleanValue);
+			return input.NumberType == NumberType.None ? new Number() : new Number(!input.BooleanValue);
 		}
 
 		public static Number BinaryNot(Number input)
 		{
-			return (input.NumberType == NumberType.Int) ? new Number(~input.IntValue) : new Number();
+			return input.NumberType == NumberType.Int ? new Number(~input.IntValue) : new Number();
 		}
 
 		public static Number BinaryAnd(Number lhs, Number rhs)
@@ -286,9 +287,9 @@ namespace xnaMugen.Evaluation
 		{
 			if (lhs.NumberType == NumberType.None || rhs.NumberType == NumberType.None) return new Number();
 
-			if (lhs.NumberType == NumberType.Int && rhs.NumberType == NumberType.Int) return new Number((Int32)Math.Pow(lhs.IntValue, rhs.IntValue));
+			if (lhs.NumberType == NumberType.Int && rhs.NumberType == NumberType.Int) return new Number((int)Math.Pow(lhs.IntValue, rhs.IntValue));
 
-			return new Number((Single)Math.Pow(lhs.FloatValue, rhs.FloatValue));
+			return new Number((float)Math.Pow(lhs.FloatValue, rhs.FloatValue));
 		}
 
 		public static Number Negate(Number input)
@@ -296,15 +297,15 @@ namespace xnaMugen.Evaluation
 			return new Number(0) - input;
 		}
 
-		public static Number Range(Number lhs, Number rhs1, Number rhs2, Operator compare_type, Symbol pre_check, Symbol post_check)
+		public static Number Range(Number lhs, Number rhs1, Number rhs2, Operator compareType, Symbol preCheck, Symbol postCheck)
 		{
 			if (lhs.NumberType == NumberType.None || rhs1.NumberType == NumberType.None || rhs2.NumberType == NumberType.None) return new Number();
-			if (compare_type != Operator.Equals && compare_type != Operator.NotEquals) return new Number();
+			if (compareType != Operator.Equals && compareType != Operator.NotEquals) return new Number();
 
-			Number pre = new Number();
-			Number post = new Number();
+			Number pre;
+			Number post;
 
-			switch (pre_check)
+			switch (preCheck)
 			{
 				case Symbol.LeftBracket:
 					pre = lhs >= rhs1;
@@ -317,7 +318,7 @@ namespace xnaMugen.Evaluation
 					return new Number();
 			}
 
-			switch (post_check)
+			switch (postCheck)
 			{
 				case Symbol.RightBracket:
 					post = lhs <= rhs2;
@@ -331,17 +332,17 @@ namespace xnaMugen.Evaluation
 			}
 
 
-			Boolean inrange = pre.BooleanValue && post.BooleanValue;
-			return new Number(compare_type == Operator.Equals ? inrange : !inrange);
+			var inrange = pre.BooleanValue && post.BooleanValue;
+			return new Number(compareType == Operator.Equals ? inrange : !inrange);
 		}
 
 		public readonly NumberType NumberType;
 
-		public readonly Int32 IntValue;
+		public readonly int IntValue;
 
-		public readonly Single FloatValue;
+		public readonly float FloatValue;
 
-		public Boolean BooleanValue
+		public bool BooleanValue
 		{
 			get
 			{

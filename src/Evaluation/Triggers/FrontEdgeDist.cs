@@ -1,23 +1,19 @@
-using System;
-using System.Collections.Generic;
-using Microsoft.Xna.Framework;
-
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("FrontEdgeDist")]
-	static class FrontEdgeDist
+	internal static class FrontEdgeDist
 	{
-		public static Int32 Evaluate(Object state, ref Boolean error)
+		public static int Evaluate(object state, ref bool error)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
 				return 0;
 			}
 
-			Rectangle camerarect = character.Engine.Camera.ScreenBounds;
-			Combat.Stage stage = character.Engine.Stage;
+			var camerarect = character.Engine.Camera.ScreenBounds;
+			var stage = character.Engine.Stage;
 
 			switch (character.CurrentFacing)
 			{

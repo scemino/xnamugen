@@ -1,20 +1,18 @@
-using System;
-
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("P2MoveType")]
-	static class P2MoveType
+	internal static class P2MoveType
 	{
-		public static Boolean Evaluate(Object state, ref Boolean error, Operator @operator, xnaMugen.MoveType movetype)
+		public static bool Evaluate(object state, ref bool error, Operator @operator, xnaMugen.MoveType movetype)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
 				return false;
 			}
 
-			Combat.Player opponent = character.GetOpponent();
+			var opponent = character.GetOpponent();
 			if (opponent == null)
 			{
 				error = true;
@@ -43,12 +41,12 @@ namespace xnaMugen.Evaluation.Triggers
 
 		public static Node Parse(ParseState parsestate)
 		{
-			Operator @operator = parsestate.CurrentOperator;
+			var @operator = parsestate.CurrentOperator;
 			if (@operator != Operator.Equals && @operator != Operator.NotEquals) return null;
 
 			++parsestate.TokenIndex;
 
-			xnaMugen.MoveType movetype = parsestate.ConvertCurrentToken<xnaMugen.MoveType>();
+			var movetype = parsestate.ConvertCurrentToken<xnaMugen.MoveType>();
 			if (movetype == xnaMugen.MoveType.Unchanged || movetype == xnaMugen.MoveType.None) return null;
 
 			++parsestate.TokenIndex;

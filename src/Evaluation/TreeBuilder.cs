@@ -4,11 +4,11 @@ using System.Collections.Generic;
 
 namespace xnaMugen.Evaluation
 {
-	class TreeBuilder
+	internal class TreeBuilder
 	{
 		public TreeBuilder(EvaluationSystem system)
 		{
-			if (system == null) throw new ArgumentNullException("system");
+			if (system == null) throw new ArgumentNullException(nameof(system));
 
 			m_system = system;
 			m_fullnodebuild = ParseNode;
@@ -18,14 +18,14 @@ namespace xnaMugen.Evaluation
 
 		public List<Node> BuildTree(List<Token> tokens)
 		{
-			if (tokens == null) throw new ArgumentNullException("tokens");
+			if (tokens == null) throw new ArgumentNullException(nameof(tokens));
 
-			Int32 tokenindex = 0;
-			List<Node> output = new List<Node>();
+			var tokenindex = 0;
+			var output = new List<Node>();
 
 			while (GetToken(tokens, tokenindex) != null)
 			{
-				Node node = ParseNode(tokens, ref tokenindex);
+				var node = ParseNode(tokens, ref tokenindex);
 				if (node == null)
 				{
 					output.Clear();
@@ -51,28 +51,28 @@ namespace xnaMugen.Evaluation
 			return output;
 		}
 
-		Node ParseNode(List<Token> tokens, ref Int32 tokenindex)
+		private Node ParseNode(List<Token> tokens, ref int tokenindex)
 		{
-			if (tokens == null) throw new ArgumentNullException("tokens");
-			if (tokenindex < 0 || tokenindex >= tokens.Count) throw new ArgumentOutOfRangeException("tokenindex");
+			if (tokens == null) throw new ArgumentNullException(nameof(tokens));
+			if (tokenindex < 0 || tokenindex >= tokens.Count) throw new ArgumentOutOfRangeException(nameof(tokenindex));
 
-			Node lhs = ParseEndNode(tokens, ref tokenindex);
+			var lhs = ParseEndNode(tokens, ref tokenindex);
 			if (lhs == null) return null;
 
-			for (Token token = GetToken(tokens, tokenindex); token != null; token = GetToken(tokens, tokenindex))
+			for (var token = GetToken(tokens, tokenindex); token != null; token = GetToken(tokens, tokenindex))
 			{
-				if ((token.Data is Tokenizing.BinaryOperatorData) == false) break;
+				if (token.Data is Tokenizing.BinaryOperatorData == false) break;
 
 				if (lhs.Token.Data is Tokenizing.RangeData && lhs.PrecedenceOverride == false) return null;
 
-				Node operatornode = new Node(token);
+				var operatornode = new Node(token);
 				++tokenindex;
 
-				Operator @operator = (token.Data as Tokenizing.BinaryOperatorData).Operator;
+				var @operator = (token.Data as Tokenizing.BinaryOperatorData).Operator;
 
 				if (@operator == Operator.Equals || @operator == Operator.NotEquals)
 				{
-					Node range = ParseRangeNode(tokens, ref tokenindex);
+					var range = ParseRangeNode(tokens, ref tokenindex);
 					if (range != null)
 					{
 						range.Children[0] = lhs;
@@ -83,10 +83,10 @@ namespace xnaMugen.Evaluation
 					}
 				}
 
-				Node rhs = ParseNode(tokens, ref tokenindex);
+				var rhs = ParseNode(tokens, ref tokenindex);
 				if (rhs == null) return null;
 
-				if(SwitchOrder(operatornode, rhs) == true)
+				if(SwitchOrder(operatornode, rhs))
 				{
 					lhs = BreakTree(lhs, operatornode, rhs);
 				}
@@ -102,19 +102,19 @@ namespace xnaMugen.Evaluation
 			return lhs;
 		}
 
-		Node ParseEndNode(List<Token> tokens, ref Int32 tokenindex)
+		private Node ParseEndNode(List<Token> tokens, ref int tokenindex)
 		{
-			if (tokens == null) throw new ArgumentNullException("tokens");
-			if (tokenindex < 0 || tokenindex >= tokens.Count) throw new ArgumentOutOfRangeException("tokenindex");
+			if (tokens == null) throw new ArgumentNullException(nameof(tokens));
+			if (tokenindex < 0 || tokenindex >= tokens.Count) throw new ArgumentOutOfRangeException(nameof(tokenindex));
 
-			Token token = GetToken(tokens, tokenindex);
+			var token = GetToken(tokens, tokenindex);
 			if (token == null) return null;
 
 			if (token.Data is Tokenizing.NumberData)
 			{
 				++tokenindex;
 
-				Node node = new Node(token);
+				var node = new Node(token);
 				return node;
 			}
 
@@ -122,9 +122,9 @@ namespace xnaMugen.Evaluation
 			{
 				++tokenindex;
 
-				Node node = new Node(token);
+				var node = new Node(token);
 
-				Node child = ParseEndNode(tokens, ref tokenindex);
+				var child = ParseEndNode(tokens, ref tokenindex);
 				if (child == null) return null;
 
 				node.Children.Add(child);
@@ -135,9 +135,9 @@ namespace xnaMugen.Evaluation
 			{
 				++tokenindex;
 
-				Node node = new Node(token);
+				var node = new Node(token);
 
-				Node child = ParseEndNode(tokens, ref tokenindex);
+				var child = ParseEndNode(tokens, ref tokenindex);
 				if (child == null) return null;
 
 				node.Children.Add(child);
@@ -146,14 +146,14 @@ namespace xnaMugen.Evaluation
 
 			if (token.AsSymbol == Symbol.LeftParen)
 			{
-				Int32 savedindex = tokenindex;
+				var savedindex = tokenindex;
 
 				++tokenindex;
 
-				Node node = ParseNode(tokens, ref tokenindex);
+				var node = ParseNode(tokens, ref tokenindex);
 				if (node != null)
 				{
-					Token endtoken = GetToken(tokens, tokenindex);
+					var endtoken = GetToken(tokens, tokenindex);
 					if (endtoken != null && endtoken.AsSymbol == Symbol.RightParen)
 					{
 						++tokenindex;
@@ -167,83 +167,79 @@ namespace xnaMugen.Evaluation
 
 			if (token.Data is Tokenizing.CustomFunctionData)
 			{
-				Tokenizing.CustomFunctionData data = token.Data as Tokenizing.CustomFunctionData;
+				var data = token.Data as Tokenizing.CustomFunctionData;
 
-				Node node = new Node(token);
+				var node = new Node(token);
 				++tokenindex;
 
-				ParseState state = new ParseState(m_system, m_fullnodebuild, m_endnodebuild, m_rangenodebuild, node, tokens, tokenindex);
+				var state = new ParseState(m_system, m_fullnodebuild, m_endnodebuild, m_rangenodebuild, node, tokens, tokenindex);
 
-				Node parsednode = data.Parse(state);
+				var parsednode = data.Parse(state);
 				if (parsednode != null)
 				{
 					tokenindex = state.TokenIndex;
 					return parsednode;
 				}
-				else
-				{
-					tokenindex = state.InitialTokenIndex - 1;
-					return null;
-				}
+
+				tokenindex = state.InitialTokenIndex - 1;
+				return null;
 			}
 
 			if (token.Data is Tokenizing.StateRedirectionData)
 			{
-				Tokenizing.StateRedirectionData data = token.Data as Tokenizing.StateRedirectionData;
+				var data = token.Data as Tokenizing.StateRedirectionData;
 
-				Node node = new Node(token);
+				var node = new Node(token);
 				++tokenindex;
 
-				ParseState state = new ParseState(m_system, m_fullnodebuild, m_endnodebuild, m_rangenodebuild, node, tokens, tokenindex);
+				var state = new ParseState(m_system, m_fullnodebuild, m_endnodebuild, m_rangenodebuild, node, tokens, tokenindex);
 
-				Node parsednode = data.Parse(state);
+				var parsednode = data.Parse(state);
 				if (parsednode != null)
 				{
 					tokenindex = state.TokenIndex;
 					return parsednode;
 				}
-				else
-				{
-					tokenindex = state.InitialTokenIndex - 1;
-					return null;
-				}
+
+				tokenindex = state.InitialTokenIndex - 1;
+				return null;
 			}
 
 			return null;
 		}
 
-		Node ParseRangeNode(List<Token> tokens, ref Int32 tokenindex)
+		private Node ParseRangeNode(List<Token> tokens, ref int tokenindex)
 		{
-			if (tokens == null) throw new ArgumentNullException("tokens");
-			if (tokenindex < 0 || tokenindex >= tokens.Count) throw new ArgumentOutOfRangeException("tokenindex");
+			if (tokens == null) throw new ArgumentNullException(nameof(tokens));
+			if (tokenindex < 0 || tokenindex >= tokens.Count) throw new ArgumentOutOfRangeException(nameof(tokenindex));
 
-			Int32 savedindex = tokenindex;
+			var savedindex = tokenindex;
 
-			Token token_pre = GetToken(tokens, tokenindex);
-			if (token_pre == null || (token_pre.AsSymbol != Symbol.LeftBracket && token_pre.AsSymbol != Symbol.LeftParen)) goto EndOfMethod;
+			var tokenPre = GetToken(tokens, tokenindex);
+			if (tokenPre == null || tokenPre.AsSymbol != Symbol.LeftBracket && tokenPre.AsSymbol != Symbol.LeftParen) goto EndOfMethod;
 			++tokenindex;
 
-			Node node_left = ParseNode(tokens, ref tokenindex);
-			if (node_left == null) goto EndOfMethod;
+			var nodeLeft = ParseNode(tokens, ref tokenindex);
+			if (nodeLeft == null) goto EndOfMethod;
 
-			Token token_comma = GetToken(tokens, tokenindex);
-			if (token_comma == null || token_comma.AsSymbol != Symbol.Comma) goto EndOfMethod;
+			var tokenComma = GetToken(tokens, tokenindex);
+			if (tokenComma == null || tokenComma.AsSymbol != Symbol.Comma) goto EndOfMethod;
 			++tokenindex;
 
-			Node node_right = ParseNode(tokens, ref tokenindex);
-			if (node_right == null) goto EndOfMethod;
+			var nodeRight = ParseNode(tokens, ref tokenindex);
+			if (nodeRight == null) goto EndOfMethod;
 
-			Token token_post = GetToken(tokens, tokenindex);
-			if (token_post == null || (token_post.AsSymbol != Symbol.RightBracket && token_post.AsSymbol != Symbol.RightParen)) goto EndOfMethod;
+			var tokenPost = GetToken(tokens, tokenindex);
+			if (tokenPost == null || tokenPost.AsSymbol != Symbol.RightBracket && tokenPost.AsSymbol != Symbol.RightParen) goto EndOfMethod;
 			++tokenindex;
 
-			Node rangenode = new Node(new Token(String.Empty, new Tokenizing.RangeData()));
+			var rangenode = new Node(new Token(string.Empty, new Tokenizing.RangeData()));
 			rangenode.Children.Add(null);
-			rangenode.Children.Add(node_left);
-			rangenode.Children.Add(node_right);
+			rangenode.Children.Add(nodeLeft);
+			rangenode.Children.Add(nodeRight);
 			rangenode.Arguments.Add(null);
-			rangenode.Arguments.Add(token_pre.AsSymbol);
-			rangenode.Arguments.Add(token_post.AsSymbol);
+			rangenode.Arguments.Add(tokenPre.AsSymbol);
+			rangenode.Arguments.Add(tokenPost.AsSymbol);
 			return rangenode;
 
 		EndOfMethod:
@@ -251,16 +247,16 @@ namespace xnaMugen.Evaluation
 			return null;
 		}
 
-		static Node BreakTree(Node lhs, Node operatornode, Node rhs)
+		private static Node BreakTree(Node lhs, Node operatornode, Node rhs)
 		{
-			if (lhs == null) throw new ArgumentNullException("lhs");
-			if (operatornode == null) throw new ArgumentNullException("operatornode");
-			if (rhs == null) throw new ArgumentNullException("rhs");
+			if (lhs == null) throw new ArgumentNullException(nameof(lhs));
+			if (operatornode == null) throw new ArgumentNullException(nameof(operatornode));
+			if (rhs == null) throw new ArgumentNullException(nameof(rhs));
 
 			operatornode.Children.Add(lhs);
 
-			Node newbase = rhs;
-			while (newbase.Children.Count != 0 && newbase.Children[0].Children.Count != 0 && newbase.Children[0].PrecedenceOverride == false && SwitchOrder(operatornode, newbase.Children[0]) == true)
+			var newbase = rhs;
+			while (newbase.Children.Count != 0 && newbase.Children[0].Children.Count != 0 && newbase.Children[0].PrecedenceOverride == false && SwitchOrder(operatornode, newbase.Children[0]))
 			{
 				newbase = newbase.Children[0];
 			}
@@ -271,22 +267,22 @@ namespace xnaMugen.Evaluation
 			return rhs;
 		}
 
-		static Token GetToken(List<Token> tokens, Int32 index)
+		private static Token GetToken(List<Token> tokens, int index)
 		{
-			if (tokens == null) throw new ArgumentNullException("tokens");
+			if (tokens == null) throw new ArgumentNullException(nameof(tokens));
 
-			return (index >= 0 && index < tokens.Count) ? tokens[index] : null;
+			return index >= 0 && index < tokens.Count ? tokens[index] : null;
 		}
 
-		static Boolean SwitchOrder(Node lhs, Node rhs)
+		private static bool SwitchOrder(Node lhs, Node rhs)
 		{
-			if (lhs == null) throw new ArgumentNullException("lhs");
-			if (rhs == null) throw new ArgumentNullException("rhs");
+			if (lhs == null) throw new ArgumentNullException(nameof(lhs));
+			if (rhs == null) throw new ArgumentNullException(nameof(rhs));
 
-			if (rhs.PrecedenceOverride == true) return false;
+			if (rhs.PrecedenceOverride) return false;
 
-			Tokenizing.BinaryOperatorData lhsdata = lhs.Token.Data as Tokenizing.BinaryOperatorData;
-			Tokenizing.BinaryOperatorData rhsdata = rhs.Token.Data as Tokenizing.BinaryOperatorData;
+			var lhsdata = lhs.Token.Data as Tokenizing.BinaryOperatorData;
+			var rhsdata = rhs.Token.Data as Tokenizing.BinaryOperatorData;
 			if (lhsdata == null || rhsdata == null) return false;
 
 			return lhsdata.Precedence >= rhsdata.Precedence;
@@ -295,16 +291,16 @@ namespace xnaMugen.Evaluation
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly EvaluationSystem m_system;
+		private readonly EvaluationSystem m_system;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly NodeBuild m_fullnodebuild;
+		private readonly NodeBuild m_fullnodebuild;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly NodeBuild m_endnodebuild;
+		private readonly NodeBuild m_endnodebuild;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly NodeBuild m_rangenodebuild;
+		private readonly NodeBuild m_rangenodebuild;
 
 		#endregion
 	}

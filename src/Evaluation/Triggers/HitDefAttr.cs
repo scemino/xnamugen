@@ -1,14 +1,13 @@
-using System;
 using System.Collections.Generic;
 
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("HitDefAttr")]
-	static class HitDefAttr
+	internal static class HitDefAttr
 	{
-		public static Boolean Evaluate(Object state, ref Boolean error, Operator @operator, AttackStateType ast, Combat.HitType[] hittypes)
+		public static bool Evaluate(object state, ref bool error, Operator @operator, AttackStateType ast, Combat.HitType[] hittypes)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
@@ -17,12 +16,12 @@ namespace xnaMugen.Evaluation.Triggers
 
 			if (character.MoveType != xnaMugen.MoveType.Attack) return false;
 
-			Combat.HitAttribute attr = character.OffensiveInfo.HitDef.HitAttribute;
+			var attr = character.OffensiveInfo.HitDef.HitAttribute;
 
-			Boolean heightmatch = (attr.AttackHeight & ast) != AttackStateType.None;
+			var heightmatch = (attr.AttackHeight & ast) != AttackStateType.None;
 
-			Boolean datamatch = false;
-			foreach (Combat.HitType hittype in hittypes)
+			var datamatch = false;
+			foreach (var hittype in hittypes)
 			{
 				if (attr.HasData(hittype) == false) continue;
 
@@ -46,26 +45,26 @@ namespace xnaMugen.Evaluation.Triggers
 
 		public static Node Parse(ParseState parsestate)
 		{
-			Operator @operator = parsestate.CurrentOperator;
+			var @operator = parsestate.CurrentOperator;
 			if (@operator != Operator.Equals && @operator != Operator.NotEquals) return null;
 
 			parsestate.BaseNode.Arguments.Add(@operator);
 			++parsestate.TokenIndex;
 
-			AttackStateType ast = parsestate.ConvertCurrentToken<AttackStateType>();
+			var ast = parsestate.ConvertCurrentToken<AttackStateType>();
 			if (ast == AttackStateType.None) return null;
 
 			parsestate.BaseNode.Arguments.Add(ast);
 			++parsestate.TokenIndex;
 
-			List<Combat.HitType> hittypes = new List<Combat.HitType>();
+			var hittypes = new List<Combat.HitType>();
 
 			while (true)
 			{
 				if (parsestate.CurrentSymbol != Symbol.Comma) break;
 				++parsestate.TokenIndex;
 
-				Combat.HitType? hittype = parsestate.ConvertCurrentToken<Combat.HitType?>();
+				var hittype = parsestate.ConvertCurrentToken<Combat.HitType?>();
 				if (hittype == null)
 				{
 					--parsestate.TokenIndex;

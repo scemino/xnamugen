@@ -2,14 +2,12 @@
 using System.Diagnostics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System.Collections.Generic;
-using xnaMugen.Collections;
 using System.Text;
 using System.IO;
 
 namespace xnaMugen.Video
 {
-	class VideoSystem :	SubSystem
+	internal class VideoSystem :	SubSystem
 	{
 		public VideoSystem(SubSystems subsystems)
 			: base(subsystems)
@@ -26,17 +24,13 @@ namespace xnaMugen.Video
 			OnDeviceReset(this,	EventArgs.Empty);
 		}
 
-		void OnDeviceReset(Object sender, EventArgs	args)
+		private void OnDeviceReset(object sender, EventArgs	args)
 		{
-			//Device.VertexDeclaration = Vertex.VertexDeclaration;
-			//Device.BlendState	= BlendState.AlphaBlend;
-			//	  Device.RenderState.AlphaTestEnable = true;
-			//	  Device.RenderState.AlphaFunction = CompareFunction.Greater;
-			//	  Device.RenderState.ReferenceAlpha	= 0;
+			Device.BlendState = BlendState.AlphaBlend;
 
 			m_renderer.OnDeviceReset(sender, args);
 
-			if (m_screenshot ==	null ||	m_screenshot.IsDisposed	== true	|| ScreenSize != new Point(m_screenshot.Width, m_screenshot.Height))
+			if (m_screenshot ==	null ||	m_screenshot.IsDisposed	|| ScreenSize != new Point(m_screenshot.Width, m_screenshot.Height))
 			{
 				m_screenshot = new RenderTarget2D(Device, Device.PresentationParameters.BackBufferWidth, Device.PresentationParameters.BackBufferHeight, true, Device.PresentationParameters.BackBufferFormat, Device.PresentationParameters.DepthStencilFormat);
 			}
@@ -44,7 +38,7 @@ namespace xnaMugen.Video
 
 		public override	void Initialize()
 		{
-			InitializationSettings settings	= GetSubSystem<InitializationSettings>();
+			var settings	= GetSubSystem<InitializationSettings>();
 
 #if	FRANTZX
 			ScreenSize = Mugen.ScreenSize *	2;
@@ -68,12 +62,11 @@ namespace xnaMugen.Video
 		{
 			if (m_screenshot ==	null) return;
 
-			//Device.ResolveBackBuffer(m_screenshot);
 			Device.SetRenderTarget(m_screenshot);
 
-			InitializationSettings settings	= GetSubSystem<InitializationSettings>();
+			var settings	= GetSubSystem<InitializationSettings>();
 
-			String extension = null;
+			string extension = null;
 			/*ImageFileFormat format = ImageFileFormat.Bmp;
 
 			switch (settings.ScreenShotFormat)
@@ -102,6 +95,9 @@ namespace xnaMugen.Video
 				case ScreenShotFormat.Png:
 					extension =	"png";
 					break;
+				case ScreenShotFormat.Jpg:
+					extension =	"jpg";
+					break;
 				default:
 					return;
 			}
@@ -116,6 +112,9 @@ namespace xnaMugen.Video
 					case ScreenShotFormat.Png:
 						m_screenshot.SaveAsPng(fs, settings.ScreenSize.X, settings.ScreenSize.Y);
 						break;
+					case ScreenShotFormat.Jpg:
+						m_screenshot.SaveAsJpeg(fs, settings.ScreenSize.X, settings.ScreenSize.Y);
+						break;
 					default:
 						return;
 				}
@@ -124,58 +123,39 @@ namespace xnaMugen.Video
 
 		public Texture2D CreatePixelTexture(Point size)
 		{
-			Texture2D texture =	new	Texture2D(Device, size.X, size.Y, false, SurfaceFormat.Alpha8);
+			var texture =	new	Texture2D(Device, size.X, size.Y, false, SurfaceFormat.Alpha8);
 			return texture;
 		}
 
 		public Texture2D CreatePaletteTexture()
 		{
-			Texture2D texture =	new	Texture2D(Device, 256, 1, false, SurfaceFormat.Color);
+			var texture =	new	Texture2D(Device, 256, 1, false, SurfaceFormat.Color);
 			return texture;
 		}
 
-		protected override void	Dispose(Boolean	disposing)
+		protected override void	Dispose(bool	disposing)
 		{
 			base.Dispose(disposing);
 
-			if (disposing == true)
+			if (disposing)
 			{
-				if (m_renderer != null)	m_renderer.Dispose();
-
-				if (m_screenshot !=	null) m_screenshot.Dispose();
+				m_renderer?.Dispose();
+				m_screenshot?.Dispose();
 			}
 		}
 
 		public void	Draw(DrawState drawstate)
 		{
-			if (drawstate == null) throw new ArgumentNullException("drawstate");
+			if (drawstate == null) throw new ArgumentNullException(nameof(drawstate));
 
 			m_renderer.Draw(drawstate);
 		}
 
-		static Int32 GetFormatSize(SurfaceFormat format)
-		{
-			switch (format)
-			{
-				case SurfaceFormat.Alpha8:
-					return 1;
-
-				case SurfaceFormat.Color:
-					return 4;
-
-				default:
-					throw new ArgumentException("Cannot	get	size of	SurfaceFormat: " + format);
-			}
-		}
-
-		public GraphicsDevice Device
-		{
-			get	{ return m_devicemanager.GraphicsDevice; }
-		}
+		public GraphicsDevice Device => m_devicemanager.GraphicsDevice;
 
 		public Point ScreenSize
 		{
-			get	{ return m_screensize; }
+			get => m_screensize;
 
 			set
 			{
@@ -189,47 +169,44 @@ namespace xnaMugen.Video
 			}
 		}
 
-		public Vector2 ScreenScale
-		{
-			get	{ return (Vector2)ScreenSize / (Vector2)Mugen.ScreenSize; }
-		}
+		public Vector2 ScreenScale => (Vector2)ScreenSize / (Vector2)Mugen.ScreenSize;
 
 		public Point CameraShift
 		{
-			get	{ return m_camerashift;	}
+			get => m_camerashift;
 
-			set	{ m_camerashift	= value; }
+			set => m_camerashift	= value;
 		}
 
 		public Color Tint
 		{
-			get	{ return m_tint; }
+			get => m_tint;
 
-			set	{ m_tint = value; }
+			set => m_tint = value;
 		}
 
 		#region	Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly GraphicsDeviceManager m_devicemanager;
+		private readonly GraphicsDeviceManager m_devicemanager;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Point m_screensize;
+		private Point m_screensize;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Point m_camerashift;
+		private Point m_camerashift;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Color m_tint;
+		private Color m_tint;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Renderer m_renderer;
+		private readonly Renderer m_renderer;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		RenderTarget2D m_screenshot;
+		private RenderTarget2D m_screenshot;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly StringBuilder m_stringbuilder;
+		private readonly StringBuilder m_stringbuilder;
 
 		#endregion
 	}

@@ -5,20 +5,20 @@ using System.Collections.Generic;
 
 namespace xnaMugen
 {
-	class StringFormatter: SubSystem
+	internal class StringFormatter: SubSystem
 	{
 		public StringFormatter(SubSystems systems)
 			: base(systems)
 		{
-			m_lock = new Object();
+			m_lock = new object();
 			m_builder = new StringBuilder(100);
-			m_args = new List<Object>();
+			m_args = new List<object>();
 		}
 
-		public String BuildString(String format, params Object[] args)
+		public string BuildString(string format, params object[] args)
 		{
-			if (format == null) throw new ArgumentNullException("format");
-			if (args == null) throw new ArgumentNullException("args");
+			if (format == null) throw new ArgumentNullException(nameof(format));
+			if (args == null) throw new ArgumentNullException(nameof(args));
 
 			lock (m_lock)
 			{
@@ -29,10 +29,10 @@ namespace xnaMugen
 			}
 		}
 
-		public String BuildString(String format, List<Object> args)
+		public string BuildString(string format, List<object> args)
 		{
-			if (format == null) throw new ArgumentNullException("format");
-			if (args == null) throw new ArgumentNullException("args");
+			if (format == null) throw new ArgumentNullException(nameof(format));
+			if (args == null) throw new ArgumentNullException(nameof(args));
 
 			lock (m_lock)
 			{
@@ -43,16 +43,16 @@ namespace xnaMugen
 			}
 		}
 
-		public String BuildString(String format, Evaluation.Number[] args)
+		public string BuildString(string format, Evaluation.Number[] args)
 		{
-			if (format == null) throw new ArgumentNullException("format");
-			if (args == null) throw new ArgumentNullException("args");
+			if (format == null) throw new ArgumentNullException(nameof(format));
+			if (args == null) throw new ArgumentNullException(nameof(args));
 
 			lock(m_lock)
 			{
 				m_args.Clear();
 
-				for (Int32 i = 0; i != args.Length; ++i)
+				for (var i = 0; i != args.Length; ++i)
 				{
 					if (args[i].NumberType == NumberType.Int) m_args.Add(args[i].IntValue);
 					else if (args[i].NumberType == NumberType.Float) m_args.Add(args[i].FloatValue);
@@ -63,17 +63,17 @@ namespace xnaMugen
 			}
 		}
 
-		String Build(String format)
+		private string Build(string format)
 		{
-			if (format == null) throw new ArgumentNullException("format");
+			if (format == null) throw new ArgumentNullException(nameof(format));
 
 			m_builder.Length = 0;
-			Int32 currentparam = 0;
+			var currentparam = 0;
 
-			for (Int32 i = 0; i < format.Length; ++i)
+			for (var i = 0; i < format.Length; ++i)
 			{
-				Char current = format[i];
-				Char next = (i + 1 < format.Length) ? format[i + 1] : (Char)0;
+				var current = format[i];
+				var next = i + 1 < format.Length ? format[i + 1] : (char)0;
 
 				if (current == '%')
 				{
@@ -85,50 +85,50 @@ namespace xnaMugen
 					{
 						if (currentparam < m_args.Count)
 						{
-							Object arg = m_args[currentparam];
-							if (arg is Int32 || arg is Single) m_builder.Append(arg.ToString());
+							var arg = m_args[currentparam];
+							if (arg is int || arg is float) m_builder.Append(arg);
 
 							++currentparam;
 							++i;
 						}
 						else
 						{
-							return String.Empty;
+							return string.Empty;
 						}
 					}
 					else if (next == 'f' || next == 'F')
 					{
 						if (currentparam < m_args.Count)
 						{
-							Object arg = m_args[currentparam];
-							if (arg is Int32 || arg is Single) m_builder.Append(arg.ToString());
+							var arg = m_args[currentparam];
+							if (arg is int || arg is float) m_builder.Append(arg);
 
 							++currentparam;
 							++i;
 						}
 						else
 						{
-							return String.Empty;
+							return string.Empty;
 						}
 					}
 					else if (next == 's' || next == 'S')
 					{
 						if (currentparam < m_args.Count)
 						{
-							Object arg = m_args[currentparam];
-							if (arg is String) m_builder.Append(arg.ToString());
+							var arg = m_args[currentparam];
+							if (arg is string) m_builder.Append(arg);
 
 							++currentparam;
 							++i;
 						}
 						else
 						{
-							return String.Empty;
+							return string.Empty;
 						}
 					}
 					else
 					{
-						return String.Empty;
+						return string.Empty;
 					}
 				}
 				else if (current == '\\')
@@ -145,7 +145,7 @@ namespace xnaMugen
 					}
 					else
 					{
-						return String.Empty;
+						return string.Empty;
 					}
 				}
 				else
@@ -160,13 +160,13 @@ namespace xnaMugen
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Object m_lock;
+		private readonly object m_lock;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly StringBuilder m_builder;
+		private readonly StringBuilder m_builder;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly List<Object> m_args;
+		private readonly List<object> m_args;
 
 		#endregion
 	}

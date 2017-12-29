@@ -1,13 +1,12 @@
-using System;
 using System.Diagnostics;
 using xnaMugen.IO;
 
 namespace xnaMugen.StateMachine.Controllers
 {
 	[StateControllerName("PosFreeze")]
-	class PosFreeze : StateController
+	internal class PosFreeze : StateController
 	{
-		public PosFreeze(StateSystem statesystem, String label, TextSection textsection)
+		public PosFreeze(StateSystem statesystem, string label, TextSection textsection)
 			: base(statesystem, label, textsection)
 		{
 			m_freeze = textsection.GetAttribute<Evaluation.Expression>("value", null);
@@ -15,20 +14,17 @@ namespace xnaMugen.StateMachine.Controllers
 
 		public override void Run(Combat.Character character)
 		{
-			Boolean freeze = EvaluationHelper.AsBoolean(character, Freeze, true);
+			var freeze = EvaluationHelper.AsBoolean(character, Freeze, true);
 
 			character.PositionFreeze = freeze;
 		}
 
-		public Evaluation.Expression Freeze
-		{
-			get { return m_freeze; }
-		}
+		public Evaluation.Expression Freeze => m_freeze;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_freeze;
+		private readonly Evaluation.Expression m_freeze;
 
 		#endregion
 	}

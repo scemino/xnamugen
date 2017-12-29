@@ -4,11 +4,11 @@ using System.Diagnostics;
 
 namespace xnaMugen.Collections
 {
-	[DebuggerDisplay("Count = {Count}")]
+	[DebuggerDisplay("Count = {" + nameof(Count) + "}")]
 	[DebuggerTypeProxy(typeof(ListIterator<>.DebuggerProxy))]
-	struct ListIterator<T> : IEnumerable<T>
+	internal struct ListIterator<T> : IEnumerable<T>
 	{
-		class DebuggerProxy
+		private class DebuggerProxy
 		{
 			public DebuggerProxy(ListIterator<T> collection)
 			{
@@ -20,7 +20,7 @@ namespace xnaMugen.Collections
 			{
 				get
 				{
-					List<T> list = new List<T>();
+					var list = new List<T>();
 					foreach (var obj in m_collection) list.Add(obj);
 
 					return list.ToArray();
@@ -30,7 +30,7 @@ namespace xnaMugen.Collections
 			#region Fields
 
 			[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-			readonly ListIterator<T> m_collection;
+			private readonly ListIterator<T> m_collection;
 
 			#endregion
 		}
@@ -57,7 +57,7 @@ namespace xnaMugen.Collections
 			return GetEnumerator();
 		}
 
-		public T this[Int32 index]
+		public T this[int index]
 		{
 			get
 			{
@@ -79,15 +79,12 @@ namespace xnaMugen.Collections
 			}
 		}
 
-		public Int32 Count
-		{
-			get { return (m_list != null) ? m_list.Count : 0; }
-		}
+		public int Count => m_list != null ? m_list.Count : 0;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly List<T> m_list;
+		private readonly List<T> m_list;
 
 		#endregion
 	}

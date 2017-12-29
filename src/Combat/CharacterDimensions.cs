@@ -1,20 +1,13 @@
 ﻿using System;
 using System.Diagnostics;
-using xnaMugen.IO;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using xnaMugen.Collections;
-using System.Collections.Generic;
-using System.Text;
 
 namespace xnaMugen.Combat
 {
-
-	class CharacterDimensions
+	internal class CharacterDimensions
 	{
 		public CharacterDimensions(PlayerConstants constants)
 		{
-			if (constants == null) throw new ArgumentNullException("constants");
+			if (constants == null) throw new ArgumentNullException(nameof(constants));
 
 			m_groundfrontwidth = constants.GroundFront;
 			m_groundbackwidth = constants.GroundBack;
@@ -28,7 +21,7 @@ namespace xnaMugen.Combat
 			m_backedgewidthoverride = 0;
 		}
 
-		public CharacterDimensions(Int32 groundfront, Int32 groundback, Int32 airfront, Int32 airback, Int32 height)
+		public CharacterDimensions(int groundfront, int groundback, int airfront, int airback, int height)
 		{
 			m_groundfrontwidth = groundfront;
 			m_groundbackwidth = groundback;
@@ -42,13 +35,13 @@ namespace xnaMugen.Combat
 			m_backedgewidthoverride = 0;
 		}
 
-		public void SetOverride(Int32 frontwidth, Int32 backwidth)
+		public void SetOverride(int frontwidth, int backwidth)
 		{
 			m_frontwidthoverride = frontwidth;
 			m_backwidthoverride = backwidth;
 		}
 
-		public void SetEdgeOverride(Int32 frontwidth, Int32 backwidth)
+		public void SetEdgeOverride(int frontwidth, int backwidth)
 		{
 			m_frontedgewidthoverride = frontwidth;
 			m_backedgewidthoverride = backwidth;
@@ -62,15 +55,14 @@ namespace xnaMugen.Combat
 			m_backedgewidthoverride = 0;
 		}
 
-		public Int32 GetFrontWidth(StateType statetype)
+		public int GetFrontWidth(StateType statetype)
 		{
-			Int32 width = m_frontwidthoverride;
+			var width = m_frontwidthoverride;
 
 			switch (statetype)
 			{
-				case StateType.Unchanged:
 				default:
-					throw new ArgumentOutOfRangeException("statetype", "Statetype is not valid");
+					throw new ArgumentOutOfRangeException(nameof(statetype), "Statetype is not valid");
 
 				case StateType.Prone:
 				case StateType.Standing:
@@ -86,15 +78,14 @@ namespace xnaMugen.Combat
 			return width;
 		}
 
-		public Int32 GetBackWidth(StateType statetype)
+		public int GetBackWidth(StateType statetype)
 		{
-			Int32 width = m_backwidthoverride;
+			var width = m_backwidthoverride;
 
 			switch (statetype)
 			{
-				case StateType.Unchanged:
 				default:
-					throw new ArgumentOutOfRangeException("statetype", "Statetype is not valid");
+					throw new ArgumentOutOfRangeException(nameof(statetype), "Statetype is not valid");
 
 				case StateType.Prone:
 				case StateType.Standing:
@@ -110,49 +101,40 @@ namespace xnaMugen.Combat
 			return width;
 		}
 
-		public Int32 Height
-		{
-			get { return m_height; }
-		}
+		public int Height => m_height;
 
-		public Int32 FrontEdgeWidth
-		{
-			get { return m_frontedgewidthoverride; }
-		}
+		public int FrontEdgeWidth => m_frontedgewidthoverride;
 
-		public Int32 BackEdgeWidth
-		{
-			get { return m_backedgewidthoverride; }
-		}
+		public int BackEdgeWidth => m_backedgewidthoverride;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Int32 m_groundfrontwidth;
+		private readonly int m_groundfrontwidth;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Int32 m_groundbackwidth;
+		private readonly int m_groundbackwidth;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Int32 m_airfrontwidth;
+		private readonly int m_airfrontwidth;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Int32 m_airbackwidth;
+		private readonly int m_airbackwidth;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Int32 m_height;
+		private readonly int m_height;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Int32 m_frontwidthoverride;
+		private int m_frontwidthoverride;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Int32 m_backwidthoverride;
+		private int m_backwidthoverride;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Int32 m_frontedgewidthoverride;
+		private int m_frontedgewidthoverride;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Int32 m_backedgewidthoverride;
+		private int m_backedgewidthoverride;
 
 		#endregion
 	}

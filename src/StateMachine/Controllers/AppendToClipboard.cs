@@ -1,13 +1,11 @@
-using System;
-using System.Diagnostics;
 using xnaMugen.IO;
 
 namespace xnaMugen.StateMachine.Controllers
 {
 	[StateControllerName("AppendToClipboard")]
-	class AppendToClipboard : DisplayToClipboard
+	internal class AppendToClipboard : DisplayToClipboard
 	{
-		public AppendToClipboard(StateSystem statesystem, String label, TextSection textsection)
+		public AppendToClipboard(StateSystem statesystem, string label, TextSection textsection)
 			: base(statesystem, label, textsection)
 		{
 		}
@@ -16,7 +14,7 @@ namespace xnaMugen.StateMachine.Controllers
 		{
 			if (Parameters != null)
 			{
-				Evaluation.Number[] result = Parameters.Evaluate(character);
+				var result = Parameters.Evaluate(character);
 				if (result == null) return;
 
 				character.Clipboard.Append(BuildString(result));

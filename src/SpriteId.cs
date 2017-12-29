@@ -14,7 +14,7 @@ namespace xnaMugen
 		/// <param name="group">The group number of the represented sprite.</param>
 		/// <param name="image">The image number of the represented sprite.</param>
 		[DebuggerStepThrough]
-		public SpriteId(Int32 group, Int32 image)
+		public SpriteId(int group, int image)
 		{
 			Group = group;
 			Image = image;
@@ -25,7 +25,7 @@ namespace xnaMugen
 		/// </summary>
 		/// <returns>The hash code of this instance.</returns>
 		[DebuggerStepThrough]
-		public override Int32 GetHashCode()
+		public override int GetHashCode()
 		{
 			return Group ^ Image;
 		}
@@ -36,7 +36,7 @@ namespace xnaMugen
 		/// <param name="obj">The SpriteId to be compared to the current instance.</param>
 		/// <returns>true if the supplied SpriteId is equal to this instance; false otherwise.</returns>
 		[DebuggerStepThrough]
-		public Boolean Equals(SpriteId other)
+		public bool Equals(SpriteId other)
 		{
 			return this == other;
 		}
@@ -47,9 +47,9 @@ namespace xnaMugen
 		/// <param name="obj">The object to be compared.</param>
 		/// <returns>true if the supplied object is equal to this instance; false otherwise.</returns>
 		[DebuggerStepThrough]
-		public override Boolean Equals(Object obj)
+		public override bool Equals(object obj)
 		{
-			if (obj == null || obj.GetType() != this.GetType()) return false;
+			if (obj == null || obj.GetType() != GetType()) return false;
 
 			return this == (SpriteId)obj;
 		}
@@ -61,7 +61,7 @@ namespace xnaMugen
 		/// <param name="rhs">The second SpriteId to be compared.</param>
 		/// <returns>true if the two Points identify the same Sprite; false otherwise.</returns>
 		[DebuggerStepThrough]
-		public static Boolean operator ==(SpriteId lhs, SpriteId rhs)
+		public static bool operator ==(SpriteId lhs, SpriteId rhs)
 		{
 			return lhs.Group == rhs.Group && lhs.Image == rhs.Image;
 		}
@@ -73,7 +73,7 @@ namespace xnaMugen
 		/// <param name="rhs">The second SpriteId to be compared.</param>
 		/// <returns>true if the two Points do not identify the same Sprite; false otherwise.</returns>
 		[DebuggerStepThrough]
-		public static Boolean operator !=(SpriteId lhs, SpriteId rhs)
+		public static bool operator !=(SpriteId lhs, SpriteId rhs)
 		{
 			return lhs.Group != rhs.Group || lhs.Image != rhs.Image;
 		}
@@ -82,48 +82,39 @@ namespace xnaMugen
 		/// Generates a System.String whose value is an representation of this instance.
 		/// </summary>
 		/// <returns>A System.String representation of this instance.</returns>
-		public override String ToString()
+		public override string ToString()
 		{
-			return (this != Invalid) ? Group + ", " + Image : "Invalid";
+			return this != Invalid ? Group + ", " + Image : "Invalid";
 		}
 
 		/// <summary>
 		/// A SpriteId that does not identify a xnaMugen.Drawing.Sprite.
 		/// </summary>
 		/// <returns>A SpriteId that does not identify a Sprite.</returns>
-		static public SpriteId Invalid
-		{
-			get { return new SpriteId(Int32.MinValue, Int32.MinValue); }
-		}
+		public static SpriteId Invalid => new SpriteId(int.MinValue, int.MinValue);
 
 		/// <summary>
 		/// A SpriteId that identifies the xnaMugen.Drawing.Sprite that is the Large Portrait.
 		/// </summary>
 		/// <returns>A SpriteId that identifies the Large Portrait Sprite.</returns>
-		static public SpriteId LargePortrait
-		{
-			get { return new SpriteId(9000, 1); }
-		}
+		public static SpriteId LargePortrait => new SpriteId(9000, 1);
 
 		/// <summary>
 		/// A SpriteId that identifies the xnaMugen.Drawing.Sprite that is the Small Portrait.
 		/// </summary>
 		/// <returns>A SpriteId that identifies the Small Portrait Sprite.</returns>
-		static public SpriteId SmallPortrait
-		{
-			get { return new SpriteId(9000, 0); }
-		}
+		public static SpriteId SmallPortrait => new SpriteId(9000, 0);
 
 		/// <summary>
 		/// The Group number of this instance.
 		/// </summary>
 		/// <returns>The Group number.</returns>
-		public readonly Int32 Group;
+		public readonly int Group;
 
 		/// <summary>
 		/// The Image number of this instance.
 		/// </summary>
 		/// <returns>The Image number.</returns>
-		public readonly Int32 Image;
+		public readonly int Image;
 	}
 }

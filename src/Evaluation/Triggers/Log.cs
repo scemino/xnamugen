@@ -3,11 +3,11 @@ using System;
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("Log")]
-	static class Log
+	internal static class Log
 	{
-		public static Single Evaluate(Object state, ref Boolean error, Single lhs, Single rhs)
+		public static float Evaluate(object state, ref bool error, float lhs, float rhs)
 		{
-			return (Single)Math.Log(lhs, rhs);
+			return (float)Math.Log(lhs, rhs);
 		}
 
 		public static Node Parse(ParseState state)

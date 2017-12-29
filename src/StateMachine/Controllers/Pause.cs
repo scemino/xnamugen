@@ -1,13 +1,12 @@
-using System;
 using System.Diagnostics;
 using xnaMugen.IO;
 
 namespace xnaMugen.StateMachine.Controllers
 {
 	[StateControllerName("Pause")]
-	class Pause : StateController
+	internal class Pause : StateController
 	{
-		public Pause(StateSystem statesystem, String label, TextSection textsection)
+		public Pause(StateSystem statesystem, string label, TextSection textsection)
 			: base(statesystem, label, textsection)
 		{
 			m_time = textsection.GetAttribute<Evaluation.Expression>("time", null);
@@ -18,17 +17,17 @@ namespace xnaMugen.StateMachine.Controllers
 
 		public override void Run(Combat.Character character)
 		{
-			Int32? time = EvaluationHelper.AsInt32(character, Time, null);
-			Int32 buffertime = EvaluationHelper.AsInt32(character, EndCommandBufferTime, 0);
-			Int32 movetime = EvaluationHelper.AsInt32(character, MoveTime, 0);
-			Boolean pausebg = EvaluationHelper.AsBoolean(character, PauseBackgrounds, true);
+			var time = EvaluationHelper.AsInt32(character, Time, null);
+			var buffertime = EvaluationHelper.AsInt32(character, EndCommandBufferTime, 0);
+			var movetime = EvaluationHelper.AsInt32(character, MoveTime, 0);
+			var pausebg = EvaluationHelper.AsBoolean(character, PauseBackgrounds, true);
 
 			if (time == null) return;
 
 			character.Engine.Pause.Set(character, time.Value, buffertime, movetime, false, pausebg);
 		}
 
-		public override Boolean IsValid()
+		public override bool IsValid()
 		{
 			if (base.IsValid() == false) return false;
 
@@ -37,39 +36,27 @@ namespace xnaMugen.StateMachine.Controllers
 			return true;
 		}
 
-		public Evaluation.Expression Time
-		{
-			get { return m_time; }
-		}
+		public Evaluation.Expression Time => m_time;
 
-		public Evaluation.Expression EndCommandBufferTime
-		{
-			get { return m_cmdbuffertime; }
-		}
+		public Evaluation.Expression EndCommandBufferTime => m_cmdbuffertime;
 
-		public Evaluation.Expression MoveTime
-		{
-			get { return m_movetime; }
-		}
+		public Evaluation.Expression MoveTime => m_movetime;
 
-		public Evaluation.Expression PauseBackgrounds
-		{
-			get { return m_pausebackground; }
-		}
+		public Evaluation.Expression PauseBackgrounds => m_pausebackground;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_time;
+		private readonly Evaluation.Expression m_time;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_cmdbuffertime;
+		private readonly Evaluation.Expression m_cmdbuffertime;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_movetime;
+		private readonly Evaluation.Expression m_movetime;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_pausebackground;
+		private readonly Evaluation.Expression m_pausebackground;
 
 		#endregion
 	}

@@ -3,28 +3,25 @@ using System.Diagnostics;
 using xnaMugen.Collections;
 using System.Collections.Generic;
 using xnaMugen.IO;
-using System.Reflection;
-using System.Text.RegularExpressions;
-using Microsoft.Xna.Framework;
 
 namespace xnaMugen.StateMachine
 {
 	[DebuggerDisplay("State #{Number}, Controllers = {Controllers.Count}")]
-	class State
+	internal class State
 	{
-		public State(StateSystem statesystem, Int32 number, TextSection textsection, List<StateController> controllers)
+		public State(StateSystem statesystem, int number, TextSection textsection, List<StateController> controllers)
 		{
-			if (statesystem == null) throw new ArgumentNullException("statesystem");
-			if (number < -3) throw new ArgumentOutOfRangeException("State number must be greater then or equal to -3");
-			if (textsection == null) throw new ArgumentNullException("textsection");
-			if (controllers == null) throw new ArgumentNullException("controllers");
+			if (statesystem == null) throw new ArgumentNullException(nameof(statesystem));
+			if (number < -3) throw new ArgumentOutOfRangeException(nameof(number), "State number must be greater then or equal to -3");
+			if (textsection == null) throw new ArgumentNullException(nameof(textsection));
+			if (controllers == null) throw new ArgumentNullException(nameof(controllers));
 
 			m_statesystem = statesystem;
 			m_number = number;
 			m_controllers = new ReadOnlyList<StateController>(controllers);
-			m_statetype = textsection.GetAttribute<StateType>("type", StateType.Standing);
-			m_movetype = textsection.GetAttribute<MoveType>("MoveType", MoveType.Idle);
-			m_physics = textsection.GetAttribute<Physics>("Physics", Physics.None);
+			m_statetype = textsection.GetAttribute("type", StateType.Standing);
+			m_movetype = textsection.GetAttribute("MoveType", MoveType.Idle);
+			m_physics = textsection.GetAttribute("Physics", Physics.None);
 			m_animationnumber = textsection.GetAttribute<Evaluation.Expression>("anim", null);
 			m_velocity = textsection.GetAttribute<Evaluation.Expression>("velset", null);
 			m_control = textsection.GetAttribute<Evaluation.Expression>("ctrl", null);
@@ -37,135 +34,87 @@ namespace xnaMugen.StateMachine
 			m_spritepriority = textsection.GetAttribute<Evaluation.Expression>("sprpriority", null);
 		}
 
-		public StateSystem StateSystem
-		{
-			get { return m_statesystem; }
-		}
+		public StateSystem StateSystem => m_statesystem;
 
-		public Int32 Number
-		{
-			get { return m_number; }
-		}
+		public int Number => m_number;
 
-		public StateType StateType
-		{
-			get { return m_statetype; }
-		}
+		public StateType StateType => m_statetype;
 
-		public MoveType MoveType
-		{
-			get { return m_movetype; }
-		}
+		public MoveType MoveType => m_movetype;
 
-		public Physics Physics
-		{
-			get { return m_physics; }
-		}
+		public Physics Physics => m_physics;
 
-		public Evaluation.Expression AnimationNumber
-		{
-			get { return m_animationnumber; }
-		}
+		public Evaluation.Expression AnimationNumber => m_animationnumber;
 
-		public Evaluation.Expression Velocity
-		{
-			get { return m_velocity; }
-		}
+		public Evaluation.Expression Velocity => m_velocity;
 
-		public Evaluation.Expression PlayerControl
-		{
-			get { return m_control; }
-		}
+		public Evaluation.Expression PlayerControl => m_control;
 
-		public Evaluation.Expression Power
-		{
-			get { return m_power; }
-		}
+		public Evaluation.Expression Power => m_power;
 
-		public Evaluation.Expression JugglePoints
-		{
-			get { return m_jugglepoints; }
-		}
+		public Evaluation.Expression JugglePoints => m_jugglepoints;
 
-		public Evaluation.Expression FaceEnemy
-		{
-			get { return m_faceenemy; }
-		}
+		public Evaluation.Expression FaceEnemy => m_faceenemy;
 
-		public Evaluation.Expression HitdefPersistance
-		{
-			get { return m_hitdefpersist; }
-		}
+		public Evaluation.Expression HitdefPersistance => m_hitdefpersist;
 
-		public Evaluation.Expression MovehitPersistance
-		{
-			get { return m_movehitpersist; }
-		}
+		public Evaluation.Expression MovehitPersistance => m_movehitpersist;
 
-		public Evaluation.Expression HitCountPersistance
-		{
-			get { return m_hitcountpersist; }
-		}
+		public Evaluation.Expression HitCountPersistance => m_hitcountpersist;
 
-		public Evaluation.Expression SpritePriority
-		{
-			get { return m_spritepriority; }
-		}
+		public Evaluation.Expression SpritePriority => m_spritepriority;
 
-		public ReadOnlyList<StateController> Controllers
-		{
-			get { return m_controllers; }
-		}
+		public ReadOnlyList<StateController> Controllers => m_controllers;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly StateSystem m_statesystem;
+		private readonly StateSystem m_statesystem;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Int32 m_number;
+		private readonly int m_number;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly StateType m_statetype;
+		private readonly StateType m_statetype;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly MoveType m_movetype;
+		private readonly MoveType m_movetype;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Physics m_physics;
+		private readonly Physics m_physics;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_animationnumber;
+		private readonly Evaluation.Expression m_animationnumber;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_velocity;
+		private readonly Evaluation.Expression m_velocity;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_control;
+		private readonly Evaluation.Expression m_control;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_power;
+		private readonly Evaluation.Expression m_power;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_jugglepoints;
+		private readonly Evaluation.Expression m_jugglepoints;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_faceenemy;
+		private readonly Evaluation.Expression m_faceenemy;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_hitdefpersist;
+		private readonly Evaluation.Expression m_hitdefpersist;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_movehitpersist;
+		private readonly Evaluation.Expression m_movehitpersist;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_hitcountpersist;
+		private readonly Evaluation.Expression m_hitcountpersist;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_spritepriority;
+		private readonly Evaluation.Expression m_spritepriority;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly ReadOnlyList<StateController> m_controllers;
+		private readonly ReadOnlyList<StateController> m_controllers;
 
 		#endregion
 	}

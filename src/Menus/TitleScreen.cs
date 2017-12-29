@@ -1,33 +1,30 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using xnaMugen.IO;
 using System.Collections.Generic;
 using xnaMugen.Drawing;
 using xnaMugen.Collections;
-using System.Text.RegularExpressions;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace xnaMugen.Menus
 {
-    class TitleScreen : NonCombatScreen
+	internal class TitleScreen : NonCombatScreen
 	{
-		public TitleScreen(MenuSystem screensystem, TextSection textsection, String spritepath, String animationpath, String soundpath) :
+		public TitleScreen(MenuSystem screensystem, TextSection textsection, string spritepath, string animationpath, string soundpath) :
 			base(screensystem, textsection, spritepath, animationpath, soundpath)
 		{
 			m_menuposition = textsection.GetAttribute<Point>("menu.pos");
 			m_mainfont = textsection.GetAttribute<PrintData>("menu.item.font");
 			m_activefont = textsection.GetAttribute<PrintData>("menu.item.active.font");
 			m_spacing = textsection.GetAttribute<Point>("menu.item.spacing");
-			m_visiblemenuitems = textsection.GetAttribute<Int32>("menu.window.visibleitems");
-			m_cursorvisible = textsection.GetAttribute<Boolean>("menu.boxcursor.visible");
+			m_visiblemenuitems = textsection.GetAttribute<int>("menu.window.visibleitems");
+			m_cursorvisible = textsection.GetAttribute<bool>("menu.boxcursor.visible");
 			m_soundcursormove = textsection.GetAttribute<SoundId>("cursor.move.snd");
 			m_soundselect = textsection.GetAttribute<SoundId>("cursor.done.snd");
 			m_soundcancel = textsection.GetAttribute<SoundId>("cancel.snd");
 
 			m_menutext = BuildMenuText(textsection);
 
-			Point margins = textsection.GetAttribute<Point>("menu.window.margins.y");
+			var margins = textsection.GetAttribute<Point>("menu.window.margins.y");
 			m_marginytop = margins.X;
 			m_marginybottom = margins.Y;
 
@@ -36,50 +33,50 @@ namespace xnaMugen.Menus
 			m_quitselected = false;
 		}
 
-		static ReadOnlyDictionary<Int32, String> BuildMenuText(TextSection textsection)
+		private static ReadOnlyDictionary<int, string> BuildMenuText(TextSection textsection)
 		{
-			Dictionary<Int32, String> menutext = new Dictionary<Int32, String>();
+			var menutext = new Dictionary<int, string>();
 
-			menutext[(Int32)MainMenuOption.Arcade] = textsection.GetAttribute<String>("menu.itemname.arcade");
-			menutext[(Int32)MainMenuOption.Versus] = textsection.GetAttribute<String>("menu.itemname.versus");
-			menutext[(Int32)MainMenuOption.TeamArcade] = textsection.GetAttribute<String>("menu.itemname.teamarcade");
-			menutext[(Int32)MainMenuOption.TeamVersus] = textsection.GetAttribute<String>("menu.itemname.teamversus");
-			menutext[(Int32)MainMenuOption.TeamCoop] = textsection.GetAttribute<String>("menu.itemname.teamcoop");
-			menutext[(Int32)MainMenuOption.Survival] = textsection.GetAttribute<String>("menu.itemname.survival");
-			menutext[(Int32)MainMenuOption.SurvivalCoop] = textsection.GetAttribute<String>("menu.itemname.survivalcoop");
-			menutext[(Int32)MainMenuOption.Training] = textsection.GetAttribute<String>("menu.itemname.training");
-			menutext[(Int32)MainMenuOption.Watch] = textsection.GetAttribute<String>("menu.itemname.watch");
-			menutext[(Int32)MainMenuOption.Options] = textsection.GetAttribute<String>("menu.itemname.options");
-			menutext[(Int32)MainMenuOption.Quit] = textsection.GetAttribute<String>("menu.itemname.exit");
+			menutext[(int)MainMenuOption.Arcade] = textsection.GetAttribute<string>("menu.itemname.arcade");
+			menutext[(int)MainMenuOption.Versus] = textsection.GetAttribute<string>("menu.itemname.versus");
+			menutext[(int)MainMenuOption.TeamArcade] = textsection.GetAttribute<string>("menu.itemname.teamarcade");
+			menutext[(int)MainMenuOption.TeamVersus] = textsection.GetAttribute<string>("menu.itemname.teamversus");
+			menutext[(int)MainMenuOption.TeamCoop] = textsection.GetAttribute<string>("menu.itemname.teamcoop");
+			menutext[(int)MainMenuOption.Survival] = textsection.GetAttribute<string>("menu.itemname.survival");
+			menutext[(int)MainMenuOption.SurvivalCoop] = textsection.GetAttribute<string>("menu.itemname.survivalcoop");
+			menutext[(int)MainMenuOption.Training] = textsection.GetAttribute<string>("menu.itemname.training");
+			menutext[(int)MainMenuOption.Watch] = textsection.GetAttribute<string>("menu.itemname.watch");
+			menutext[(int)MainMenuOption.Options] = textsection.GetAttribute<string>("menu.itemname.options");
+			menutext[(int)MainMenuOption.Quit] = textsection.GetAttribute<string>("menu.itemname.exit");
 
 #warning Some menu items aren't implemented yet
-			menutext[(Int32)MainMenuOption.Arcade] = "NOT IMPLEMENTED";
-			menutext[(Int32)MainMenuOption.TeamArcade] = "NOT IMPLEMENTED";
-			menutext[(Int32)MainMenuOption.TeamVersus] = "NOT IMPLEMENTED";
-			menutext[(Int32)MainMenuOption.TeamCoop] = "NOT IMPLEMENTED";
-			menutext[(Int32)MainMenuOption.Survival] = "NOT IMPLEMENTED";
-			menutext[(Int32)MainMenuOption.SurvivalCoop] = "NOT IMPLEMENTED";
-			menutext[(Int32)MainMenuOption.Training] = "NOT IMPLEMENTED";
-			menutext[(Int32)MainMenuOption.Watch] = "NOT IMPLEMENTED";
-			menutext[(Int32)MainMenuOption.Options] = "NOT IMPLEMENTED";
+			menutext[(int)MainMenuOption.Arcade] = "NOT IMPLEMENTED";
+			menutext[(int)MainMenuOption.TeamArcade] = "NOT IMPLEMENTED";
+			menutext[(int)MainMenuOption.TeamVersus] = "NOT IMPLEMENTED";
+			menutext[(int)MainMenuOption.TeamCoop] = "NOT IMPLEMENTED";
+			menutext[(int)MainMenuOption.Survival] = "NOT IMPLEMENTED";
+			menutext[(int)MainMenuOption.SurvivalCoop] = "NOT IMPLEMENTED";
+			menutext[(int)MainMenuOption.Training] = "NOT IMPLEMENTED";
+			menutext[(int)MainMenuOption.Watch] = "NOT IMPLEMENTED";
+			menutext[(int)MainMenuOption.Options] = "NOT IMPLEMENTED";
 
-			return new ReadOnlyDictionary<Int32, String>(menutext);
+			return new ReadOnlyDictionary<int, string>(menutext);
 		}
 
 		public override void SetInput(Input.InputState inputstate)
 		{
 			base.SetInput(inputstate);
 
-			inputstate[0].Add(SystemButton.Quit, this.QuitGame);
+			inputstate[0].Add(SystemButton.Quit, QuitGame);
 
-			inputstate[1].Add(PlayerButton.Up, this.DecreaseActiveMenuItem);
-			inputstate[1].Add(PlayerButton.Down, this.IncreaseActiveMenuItem);
-			inputstate[1].Add(PlayerButton.A, this.SelectActiveMenuItem);
-			inputstate[1].Add(PlayerButton.B, this.SelectActiveMenuItem);
-			inputstate[1].Add(PlayerButton.C, this.SelectActiveMenuItem);
-			inputstate[1].Add(PlayerButton.X, this.SelectActiveMenuItem);
-			inputstate[1].Add(PlayerButton.Y, this.SelectActiveMenuItem);
-			inputstate[1].Add(PlayerButton.Z, this.SelectActiveMenuItem);
+			inputstate[1].Add(PlayerButton.Up, DecreaseActiveMenuItem);
+			inputstate[1].Add(PlayerButton.Down, IncreaseActiveMenuItem);
+			inputstate[1].Add(PlayerButton.A, SelectActiveMenuItem);
+			inputstate[1].Add(PlayerButton.B, SelectActiveMenuItem);
+			inputstate[1].Add(PlayerButton.C, SelectActiveMenuItem);
+			inputstate[1].Add(PlayerButton.X, SelectActiveMenuItem);
+			inputstate[1].Add(PlayerButton.Y, SelectActiveMenuItem);
+			inputstate[1].Add(PlayerButton.Z, SelectActiveMenuItem);
 		}
 
 		public override void Reset()
@@ -91,35 +88,35 @@ namespace xnaMugen.Menus
 			m_quitselected = false;
 		}
 
-		public override void Draw(Boolean debugdraw)
+		public override void Draw(bool debugdraw)
 		{
 			base.Draw(debugdraw);
 
-			Int32 height = (m_spacing.Y * (m_visiblemenuitems - 1)) + m_marginytop + m_marginybottom;
-			Rectangle scissorrect = new Rectangle(0, m_menuposition.Y - m_spacing.Y, Mugen.ScreenSize.X, height);
+			var height = m_spacing.Y * (m_visiblemenuitems - 1) + m_marginytop + m_marginybottom;
+			var scissorrect = new Rectangle(0, m_menuposition.Y - m_spacing.Y, Mugen.ScreenSize.X, height);
 
-			Int32 offset = 0;
-			for (Int32 i = 0; i != 11; ++i) DrawMenuItem(i, ref offset, scissorrect);
+			var offset = 0;
+			for (var i = 0; i != 11; ++i) DrawMenuItem(i, ref offset, scissorrect);
 		}
 
 		public override void FadeOutComplete()
 		{
 			base.FadeOutComplete();
 
-			if (m_quitselected == true)
+			if (m_quitselected)
 			{
 				MenuSystem.SubSystems.Game.Exit();
 			}
 		}
 
-		void DrawMenuItem(Int32 i, ref Int32 offset, Rectangle? scissorrect)
+		private void DrawMenuItem(int i, ref int offset, Rectangle? scissorrect)
 		{
 			if (m_menutext.ContainsKey(i) == false) return;
-			String text = m_menutext[i];
+			var text = m_menutext[i];
 
-			PrintData data = (i == m_currentmenuitem) ? m_activefont : m_mainfont;
+			var data = i == m_currentmenuitem ? m_activefont : m_mainfont;
 
-			Vector2 location = (Vector2)m_menuposition;
+			var location = (Vector2)m_menuposition;
 			location.X += m_spacing.X * offset;
 			location.Y += m_spacing.Y * offset;
 			location.Y -= m_verticalmenudrawoffset;
@@ -129,9 +126,9 @@ namespace xnaMugen.Menus
 			Print(data, location, text, scissorrect);
 		}
 
-		void IncreaseActiveMenuItem(Boolean pressed)
+		private void IncreaseActiveMenuItem(bool pressed)
 		{
-			if (pressed == true)
+			if (pressed)
 			{
 				if (m_currentmenuitem == 10)
 				{
@@ -143,7 +140,7 @@ namespace xnaMugen.Menus
 				{
 					++m_currentmenuitem;
 
-					Int32 menuoffset = m_verticalmenudrawoffset / m_spacing.Y;
+					var menuoffset = m_verticalmenudrawoffset / m_spacing.Y;
 					if (m_currentmenuitem >= menuoffset + m_visiblemenuitems) m_verticalmenudrawoffset += m_spacing.Y;
 				}
 
@@ -151,9 +148,9 @@ namespace xnaMugen.Menus
 			}
 		}
 
-		void DecreaseActiveMenuItem(Boolean pressed)
+		private void DecreaseActiveMenuItem(bool pressed)
 		{
-			if (pressed == true)
+			if (pressed)
 			{
 				if (m_currentmenuitem == 0)
 				{
@@ -165,7 +162,7 @@ namespace xnaMugen.Menus
 				{
 					--m_currentmenuitem;
 
-					Int32 menuoffset = m_verticalmenudrawoffset / m_spacing.Y;
+					var menuoffset = m_verticalmenudrawoffset / m_spacing.Y;
 					if (m_currentmenuitem < menuoffset) m_verticalmenudrawoffset -= m_spacing.Y;
 				}
 
@@ -173,26 +170,26 @@ namespace xnaMugen.Menus
 			}
 		}
 
-		void SelectActiveMenuItem(Boolean pressed)
+		private void SelectActiveMenuItem(bool pressed)
 		{
-			if (pressed == true)
+			if (pressed)
 			{
 				//SoundManager.Play(m_soundselect);
 
-				if (m_currentmenuitem == (Int32)MainMenuOption.Versus)
+				if (m_currentmenuitem == (int)MainMenuOption.Versus)
 				{
 					MenuSystem.PostEvent(new Events.SwitchScreen(ScreenType.Select));
 				}
-				else if (m_currentmenuitem == (Int32)MainMenuOption.Quit)
+				else if (m_currentmenuitem == (int)MainMenuOption.Quit)
 				{
 					QuitGame(true);
 				}
 			}
 		}
 
-		void QuitGame(Boolean pressed)
+		private void QuitGame(bool pressed)
 		{
-			if (pressed == true)
+			if (pressed)
 			{
 				m_quitselected = true;
 				//SoundManager.Play(m_soundcancel);
@@ -203,48 +200,48 @@ namespace xnaMugen.Menus
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly ReadOnlyDictionary<Int32, String> m_menutext;
+		private readonly ReadOnlyDictionary<int, string> m_menutext;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Point m_menuposition;
+		private readonly Point m_menuposition;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly PrintData m_mainfont;
+		private readonly PrintData m_mainfont;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly PrintData m_activefont;
+		private readonly PrintData m_activefont;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Point m_spacing;
+		private readonly Point m_spacing;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Int32 m_marginytop;
+		private readonly int m_marginytop;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Int32 m_marginybottom;
+		private readonly int m_marginybottom;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Int32 m_visiblemenuitems;
+		private readonly int m_visiblemenuitems;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Boolean m_cursorvisible;
+		private readonly bool m_cursorvisible;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly SoundId m_soundcursormove;
+		private readonly SoundId m_soundcursormove;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly SoundId m_soundselect;
+		private readonly SoundId m_soundselect;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly SoundId m_soundcancel;
+		private readonly SoundId m_soundcancel;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Int32 m_currentmenuitem;
+		private int m_currentmenuitem;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Int32 m_verticalmenudrawoffset;
+		private int m_verticalmenudrawoffset;
 
-		Boolean m_quitselected;
+		private bool m_quitselected;
 
 		#endregion
 	}

@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Diagnostics;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System.Collections.Generic;
-using xnaMugen.StateMachine;
 
 namespace xnaMugen.Combat
 {
-	class PaletteFx
+	internal class PaletteFx
 	{
 		public PaletteFx()
 		{
@@ -28,7 +25,7 @@ namespace xnaMugen.Combat
 
 		public void Update()
 		{
-			if (IsActive == true && (TotalTime == -1 || (TotalTime > 0 && Time < TotalTime)))
+			if (IsActive && (TotalTime == -1 || TotalTime > 0 && Time < TotalTime))
 			{
 				++m_time;
 			}
@@ -40,9 +37,9 @@ namespace xnaMugen.Combat
 
 		public void SetShader(Video.ShaderParameters shader)
 		{
-			if (shader == null) throw new ArgumentNullException("shader");
+			if (shader == null) throw new ArgumentNullException(nameof(shader));
 
-			if (IsActive == true)
+			if (IsActive)
 			{
 				shader.PaletteFxEnable = true;
 				shader.PaletteFxAdd = Add;
@@ -58,7 +55,7 @@ namespace xnaMugen.Combat
 			}
 		}
 
-		public void Set(Int32 totaltime, Vector3 add, Vector3 mul, Vector4 sinadd, Boolean invert, Single basecolor)
+		public void Set(int totaltime, Vector3 add, Vector3 mul, Vector4 sinadd, bool invert, float basecolor)
 		{
 			m_totaltime = totaltime;
 			m_time = 0;
@@ -71,76 +68,52 @@ namespace xnaMugen.Combat
 			m_isactive = true;
 		}
 
-		static Vector3 Clamp(Vector3 input)
+		private static Vector3 Clamp(Vector3 input)
 		{
 			return input / 255.0f;
 		}
 
-		public Boolean IsActive
-		{
-			get { return m_isactive; }
-		}
+		public bool IsActive => m_isactive;
 
-		public Int32 TotalTime
-		{
-			get { return m_totaltime; }
-		}
+		public int TotalTime => m_totaltime;
 
-		public Int32 Time
-		{
-			get { return m_time; }
-		}
+		public int Time => m_time;
 
-		public Vector3 Add
-		{
-			get { return m_add; }
-		}
+		public Vector3 Add => m_add;
 
-		public Vector3 Mul
-		{
-			get { return m_mul; }
-		}
+		public Vector3 Mul => m_mul;
 
-		public Vector4 SinAdd
-		{
-			get { return m_sinadd; }
-		}
+		public Vector4 SinAdd => m_sinadd;
 
-		public Boolean Invert
-		{
-			get { return m_invert; }
-		}
+		public bool Invert => m_invert;
 
-		public Single BaseColor
-		{
-			get { return m_basecolor; }
-		}
+		public float BaseColor => m_basecolor;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Boolean m_isactive;
+		private bool m_isactive;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Int32 m_totaltime;
+		private int m_totaltime;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Int32 m_time;
+		private int m_time;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Vector3 m_add;
+		private Vector3 m_add;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Vector3 m_mul;
+		private Vector3 m_mul;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Single m_basecolor;
+		private float m_basecolor;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Vector4 m_sinadd;
+		private Vector4 m_sinadd;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Boolean m_invert;
+		private bool m_invert;
 
 		#endregion
 	}

@@ -1,13 +1,12 @@
-using System;
 using System.Diagnostics;
 using xnaMugen.IO;
 
 namespace xnaMugen.StateMachine.Controllers
 {
 	[StateControllerName("PlayerPush")]
-	class PlayerPush : StateController
+	internal class PlayerPush : StateController
 	{
-		public PlayerPush(StateSystem statesystem, String label, TextSection textsection)
+		public PlayerPush(StateSystem statesystem, string label, TextSection textsection)
 			: base(statesystem, label, textsection)
 		{
 			m_value = textsection.GetAttribute<Evaluation.Expression>("value", null);
@@ -15,7 +14,7 @@ namespace xnaMugen.StateMachine.Controllers
 
 		public override void Run(Combat.Character character)
 		{
-			Boolean? pushflag = EvaluationHelper.AsBoolean(character, PushFlag, null);
+			var pushflag = EvaluationHelper.AsBoolean(character, PushFlag, null);
 
 			if (pushflag != null)
 			{
@@ -23,7 +22,7 @@ namespace xnaMugen.StateMachine.Controllers
 			} 
 		}
 
-		public override Boolean IsValid()
+		public override bool IsValid()
 		{
 			if (base.IsValid() == false) return false;
 
@@ -32,15 +31,12 @@ namespace xnaMugen.StateMachine.Controllers
 			return true;
 		}
 
-		public Evaluation.Expression PushFlag
-		{
-			get { return m_value; }
-		}
+		public Evaluation.Expression PushFlag => m_value;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_value;
+		private readonly Evaluation.Expression m_value;
 
 		#endregion
 	}

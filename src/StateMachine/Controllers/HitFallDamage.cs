@@ -1,13 +1,11 @@
-using System;
-using System.Diagnostics;
 using xnaMugen.IO;
 
 namespace xnaMugen.StateMachine.Controllers
 {
 	[StateControllerName("HitFallDamage")]
-	class HitFallDamage : StateController
+	internal class HitFallDamage : StateController
 	{
-		public HitFallDamage(StateSystem statesystem, String label, TextSection textsection)
+		public HitFallDamage(StateSystem statesystem, string label, TextSection textsection)
 			: base(statesystem, label, textsection)
 		{
 		}

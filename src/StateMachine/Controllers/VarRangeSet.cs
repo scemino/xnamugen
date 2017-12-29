@@ -1,13 +1,12 @@
-using System;
 using System.Diagnostics;
 using xnaMugen.IO;
 
 namespace xnaMugen.StateMachine.Controllers
 {
 	[StateControllerName("VarRangeSet")]
-	class VarRangeSet : StateController
+	internal class VarRangeSet : StateController
 	{
-		public VarRangeSet(StateSystem statesystem, String label, TextSection textsection)
+		public VarRangeSet(StateSystem statesystem, string label, TextSection textsection)
 			: base(statesystem, label, textsection)
 		{
 			m_intnumber = textsection.GetAttribute<Evaluation.Expression>("value", null);
@@ -18,15 +17,15 @@ namespace xnaMugen.StateMachine.Controllers
 
 		public override void Run(Combat.Character character)
 		{
-			Int32? start = EvaluationHelper.AsInt32(character, StartRange, null);
-			Int32? end = EvaluationHelper.AsInt32(character, EndRange, null);
+			var start = EvaluationHelper.AsInt32(character, StartRange, null);
+			var end = EvaluationHelper.AsInt32(character, EndRange, null);
 
 			if (IntNumber != null)
 			{
-				Int32? value = EvaluationHelper.AsInt32(character, IntNumber, null);
+				var value = EvaluationHelper.AsInt32(character, IntNumber, null);
 				if (value != null)
 				{
-					for (Int32 i = 0; i != character.Variables.IntegerVariables.Count; ++i)
+					for (var i = 0; i != character.Variables.IntegerVariables.Count; ++i)
 					{
 						if (i < start || i > end) continue;
 						character.Variables.SetInteger(i, false, value.Value);
@@ -36,10 +35,10 @@ namespace xnaMugen.StateMachine.Controllers
 
 			if (FloatNumber != null)
 			{
-				Single? value = EvaluationHelper.AsSingle(character, FloatNumber, null);
+				var value = EvaluationHelper.AsSingle(character, FloatNumber, null);
 				if (value != null)
 				{
-					for (Int32 i = 0; i != character.Variables.FloatVariables.Count; ++i)
+					for (var i = 0; i != character.Variables.FloatVariables.Count; ++i)
 					{
 						if (i < start || i > end) continue;
 						character.Variables.SetFloat(i, false, value.Value);
@@ -48,7 +47,7 @@ namespace xnaMugen.StateMachine.Controllers
 			}
 		}
 
-		public override Boolean IsValid()
+		public override bool IsValid()
 		{
 			if (base.IsValid() == false) return false;
 
@@ -57,39 +56,27 @@ namespace xnaMugen.StateMachine.Controllers
 			return true;
 		}
 
-		public Evaluation.Expression IntNumber
-		{
-			get { return m_intnumber; }
-		}
+		public Evaluation.Expression IntNumber => m_intnumber;
 
-		public Evaluation.Expression FloatNumber
-		{
-			get { return m_floatnumber; }
-		}
+		public Evaluation.Expression FloatNumber => m_floatnumber;
 
-		public Evaluation.Expression StartRange
-		{
-			get { return m_startrrange; }
-		}
+		public Evaluation.Expression StartRange => m_startrrange;
 
-		public Evaluation.Expression EndRange
-		{
-			get { return m_endrange; }
-		}
+		public Evaluation.Expression EndRange => m_endrange;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_intnumber;
+		private readonly Evaluation.Expression m_intnumber;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_floatnumber;
+		private readonly Evaluation.Expression m_floatnumber;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_startrrange;
+		private readonly Evaluation.Expression m_startrrange;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_endrange;
+		private readonly Evaluation.Expression m_endrange;
 
 		#endregion
 	}

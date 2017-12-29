@@ -1,16 +1,11 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Collections.Generic;
-using xnaMugen.Collections;
-using xnaMugen.IO;
-using System.Text.RegularExpressions;
-using System.Text;
 
 namespace xnaMugen.Commands
 {
-	class CommandElement : IEquatable<CommandElement>
+	internal class CommandElement : IEquatable<CommandElement>
 	{
-		public CommandElement(CommandDirection direction, CommandButton button, Int32? triggertime, Boolean helddown, Boolean nothingelse)
+		public CommandElement(CommandDirection direction, CommandButton button, int? triggertime, bool helddown, bool nothingelse)
 		{
 			Direction = direction;
 			Buttons = button;
@@ -22,7 +17,7 @@ namespace xnaMugen.Commands
 			MatchHash2 = BuildHash2();
 		}
 
-		PlayerButton BuildHash1()
+		private PlayerButton BuildHash1()
 		{
 			PlayerButton hash = 0;
 
@@ -66,10 +61,6 @@ namespace xnaMugen.Commands
 				case CommandDirection.UB:
 					hash |= PlayerButton.Up;
 					hash |= PlayerButton.Left;
-					break;
-
-				case CommandDirection.None:
-				default:
 					break;
 			}
 
@@ -84,7 +75,7 @@ namespace xnaMugen.Commands
 			return hash;
 		}
 
-		PlayerButton BuildHash2()
+		private PlayerButton BuildHash2()
 		{
 			PlayerButton hash = 0;
 
@@ -133,30 +124,22 @@ namespace xnaMugen.Commands
 					hash |= PlayerButton.Down;
 					hash |= PlayerButton.Right;
 					break;
-
-				case CommandDirection.B4Way:
-				case CommandDirection.U4Way:
-				case CommandDirection.F4Way:
-				case CommandDirection.D4Way:
-				case CommandDirection.None:
-				default:
-					break;
 			}
 
 			return hash;
 		}
 
-		static public Boolean Equals(CommandElement lhs, CommandElement rhs)
+		public static bool Equals(CommandElement lhs, CommandElement rhs)
 		{
 			return lhs == rhs;
 		}
 
-		public Boolean Equals(CommandElement other)
+		public bool Equals(CommandElement other)
 		{
 			return this == other;
 		}
 
-		public override Boolean Equals(Object obj)
+		public override bool Equals(object obj)
 		{
 			if (obj == null) return false;
 			if (obj is CommandElement == false) return false;
@@ -164,10 +147,10 @@ namespace xnaMugen.Commands
 			return this == (CommandElement)obj;
 		}
 
-		public static Boolean operator ==(CommandElement lhs, CommandElement rhs)
+		public static bool operator ==(CommandElement lhs, CommandElement rhs)
 		{
-			Boolean ll = Object.ReferenceEquals(lhs, null);
-			Boolean rr = Object.ReferenceEquals(rhs, null);
+			var ll = ReferenceEquals(lhs, null);
+			var rr = ReferenceEquals(rhs, null);
 
 			if (ll && rr) return true;
 			if (ll != rr) return false;
@@ -181,12 +164,12 @@ namespace xnaMugen.Commands
 			return true;
 		}
 
-		public static Boolean operator !=(CommandElement lhs, CommandElement rhs)
+		public static bool operator !=(CommandElement lhs, CommandElement rhs)
 		{
 			return !(lhs == rhs);
 		}
 
-		public override Int32 GetHashCode()
+		public override int GetHashCode()
 		{
 			return Hash;
 		}
@@ -195,11 +178,11 @@ namespace xnaMugen.Commands
 
 		public readonly CommandButton Buttons;
 
-		public readonly Int32? TriggerOnRelease;
+		public readonly int? TriggerOnRelease;
 
-		public readonly Boolean HeldDown;
+		public readonly bool HeldDown;
 
-		public readonly Boolean NothingElse;
+		public readonly bool NothingElse;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		public readonly PlayerButton MatchHash1;
@@ -208,6 +191,6 @@ namespace xnaMugen.Commands
 		public readonly PlayerButton MatchHash2;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Int32 Hash;
+		private readonly int Hash;
 	}
 }

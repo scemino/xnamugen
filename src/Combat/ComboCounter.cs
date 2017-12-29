@@ -4,39 +4,39 @@ using Microsoft.Xna.Framework;
 
 namespace xnaMugen.Combat
 {
-    class ComboCounter
+    internal class ComboCounter
     {
-        enum State { None, NotShown, MovingIn, MovingOut, Shown }
+        private enum State { None, NotShown, MovingIn, MovingOut, Shown }
 
         public ComboCounter(Team team)
         {
-            if (team == null) throw new ArgumentNullException("team");
+            if (team == null) throw new ArgumentNullException(nameof(team));
 
             m_team = team;
 
-            String prefix = Misc.GetPrefix(m_team.Side);
+            var prefix = Misc.GetPrefix(m_team.Side);
 
-            IO.TextFile textfile = m_team.Engine.GetSubSystem<IO.FileSystem>().OpenTextFile(@"data/fight.def");
-            IO.TextSection combosection = textfile.GetSection("Combo");
+            var textfile = m_team.Engine.GetSubSystem<IO.FileSystem>().OpenTextFile(@"data/fight.def");
+            var combosection = textfile.GetSection("Combo");
 
-            m_displaylocation = (Vector2)combosection.GetAttribute<Point>("pos", new Point(0, 0));
+            m_displaylocation = (Vector2)combosection.GetAttribute("pos", new Point(0, 0));
 
-            Single startx = (Single)combosection.GetAttribute<Int32>("start.x", (Int32)m_displaylocation.X);
-            Single starty = (Single)combosection.GetAttribute<Int32>("start.y", (Int32)m_displaylocation.Y);
+            var startx = (float)combosection.GetAttribute("start.x", (int)m_displaylocation.X);
+            var starty = (float)combosection.GetAttribute("start.y", (int)m_displaylocation.Y);
             m_startlocation = new Vector2(startx, starty);
 
             m_counterelement = m_team.Engine.Elements.Build(prefix + ".combo counter", combosection, "counter");
             m_displayelement = m_team.Engine.Elements.Build(prefix + ".combo text", combosection, "text");
 
-            m_displaytime = combosection.GetAttribute<Int32>("displaytime", 90);
+            m_displaytime = combosection.GetAttribute("displaytime", 90);
 
             m_velocity = new Vector2(5, 5);
             m_state = State.NotShown;
             m_currentlocation = m_startlocation;
             m_hitcount = 0;
             m_displaytimecount = 0;
-            m_countertext = String.Empty;
-            m_displaytext = String.Empty;
+            m_countertext = string.Empty;
+            m_displaytext = string.Empty;
             m_hitbonus = 0;
         }
 
@@ -46,8 +46,8 @@ namespace xnaMugen.Combat
             m_currentlocation = m_startlocation;
             m_hitcount = 0;
             m_displaytimecount = 0;
-            m_countertext = String.Empty;
-            m_displaytext = String.Empty;
+            m_countertext = string.Empty;
+            m_displaytext = string.Empty;
             m_hitbonus = 0;
             m_displayelement.Reset();
             m_displayelement.Reset();
@@ -91,19 +91,19 @@ namespace xnaMugen.Combat
         {
             if (m_state == State.NotShown) return;
 
-            Vector2 location = GetDrawLocation();
+            var location = GetDrawLocation();
 
-            Int32 offset = DrawElement(m_counterelement, location, m_countertext);
+            var offset = DrawElement(m_counterelement, location, m_countertext);
 
             location.X += offset;
 
             DrawElement(m_displayelement, location, m_displaytext);
         }
 
-        Int32 DrawElement(Elements.Base element, Vector2 location, String overridetext)
+        private int DrawElement(Elements.Base element, Vector2 location, string overridetext)
         {
-            if (element == null) throw new ArgumentNullException("element");
-            if (overridetext == null) throw new ArgumentNullException("overridetext");
+            if (element == null) throw new ArgumentNullException(nameof(element));
+            if (overridetext == null) throw new ArgumentNullException(nameof(overridetext));
 
             if (element is Elements.Text)
             {
@@ -118,14 +118,14 @@ namespace xnaMugen.Combat
             return 0;
         }
 
-        public void AddHits(Int32 hits)
+        public void AddHits(int hits)
         {
-            if (hits < 0) throw new ArgumentOutOfRangeException("hits");
+            if (hits < 0) throw new ArgumentOutOfRangeException(nameof(hits));
 
             m_hitbonus += hits;
         }
 
-        Drawing.PrintData ModifyPrintData(Drawing.PrintData data)
+        private Drawing.PrintData ModifyPrintData(Drawing.PrintData data)
         {
             if (data.IsValid == false) return new Drawing.PrintData();
 
@@ -147,7 +147,7 @@ namespace xnaMugen.Combat
             return new Drawing.PrintData(data.Index, data.ColorIndex, justification);
         }
 
-        Vector2 GetDrawLocation()
+        private Vector2 GetDrawLocation()
         {
             switch (m_team.Side)
             {
@@ -162,9 +162,9 @@ namespace xnaMugen.Combat
             }
         }
 
-        void SetHitCount(Int32 count)
+        private void SetHitCount(int count)
         {
-            if (count < 0) throw new ArgumentOutOfRangeException("count");
+            if (count < 0) throw new ArgumentOutOfRangeException(nameof(count));
 
             if (count < 2) return;
 
@@ -182,7 +182,7 @@ namespace xnaMugen.Combat
             }
         }
 
-        static Vector2 MoveVector(Vector2 location, Vector2 target, Vector2 velocity)
+        private static Vector2 MoveVector(Vector2 location, Vector2 target, Vector2 velocity)
         {
             if (location.X > target.X) location.X = Math.Max(target.X, location.X - velocity.X);
             if (location.X < target.X) location.X = Math.Min(target.X, location.X + velocity.X);
@@ -193,10 +193,10 @@ namespace xnaMugen.Combat
             return location;
         }
 
-        Int32 GetNewHitCount()
+        private int GetNewHitCount()
         {
-            Team otherteam = m_team.OtherTeam;
-            Int32 hitcount = 0;
+            var otherteam = m_team.OtherTeam;
+            var hitcount = 0;
 
             if (otherteam.MainPlayer != null && otherteam.MainPlayer.MoveType == MoveType.BeingHit) hitcount += otherteam.MainPlayer.DefensiveInfo.HitCount;
             if (otherteam.TeamMate != null && otherteam.TeamMate.MoveType == MoveType.BeingHit) hitcount += otherteam.TeamMate.DefensiveInfo.HitCount;
@@ -204,54 +204,49 @@ namespace xnaMugen.Combat
             return hitcount + m_hitbonus;
         }
 
-        State CounterState
-        {
-            get { return m_state; }
-        }
-
         #region Fields
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        readonly Team m_team;
+        private readonly Team m_team;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        readonly Vector2 m_displaylocation;
+        private readonly Vector2 m_displaylocation;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        readonly Vector2 m_startlocation;
+        private readonly Vector2 m_startlocation;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        readonly Int32 m_displaytime;
+        private readonly int m_displaytime;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        State m_state;
+        private State m_state;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        Vector2 m_currentlocation;
+        private Vector2 m_currentlocation;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        readonly Vector2 m_velocity;
+        private readonly Vector2 m_velocity;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        Int32 m_hitcount;
+        private int m_hitcount;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        Int32 m_displaytimecount;
+        private int m_displaytimecount;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        String m_countertext;
+        private string m_countertext;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        String m_displaytext;
+        private string m_displaytext;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        readonly Elements.Base m_displayelement;
+        private readonly Elements.Base m_displayelement;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        readonly Elements.Base m_counterelement;
+        private readonly Elements.Base m_counterelement;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        Int32 m_hitbonus;
+        private int m_hitbonus;
 
         #endregion
     }

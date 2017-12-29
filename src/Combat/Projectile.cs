@@ -2,21 +2,19 @@
 using System.Diagnostics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System.Collections.Generic;
-using xnaMugen.StateMachine;
 
 namespace xnaMugen.Combat
 {
-	class Projectile : Entity
+	internal class Projectile : Entity
 	{
 		public Projectile(FightEngine fightengine, Character creator, ProjectileData data)
 			: base(fightengine)
 		{
-			if (creator == null) throw new ArgumentNullException("creator");
-			if (data == null) throw new ArgumentNullException("data");
+			if (creator == null) throw new ArgumentNullException(nameof(creator));
+			if (data == null) throw new ArgumentNullException(nameof(data));
 
 			m_creator = creator;
-			m_offsetcharacter = (data.PositionType == PositionType.P2) ? creator.GetOpponent() : creator;
+			m_offsetcharacter = data.PositionType == PositionType.P2 ? creator.GetOpponent() : creator;
 			m_data = data;
 			m_animationmanager = Creator.AnimationManager.Clone();
 			m_spritemanager = Creator.SpriteManager.Clone();
@@ -40,10 +38,10 @@ namespace xnaMugen.Combat
 			SetLocalAnimation(Data.AnimationNumber, 0);
 		}
 
-		Vector2 GetStartLocation()
+		private Vector2 GetStartLocation()
 		{
-			Rectangle camerabounds = Engine.Camera.ScreenBounds;
-			Facing facing = m_offsetcharacter.CurrentFacing;
+			var camerabounds = Engine.Camera.ScreenBounds;
+			var facing = m_offsetcharacter.CurrentFacing;
 			Vector2 location;
 
 			switch (m_data.PositionType)
@@ -60,12 +58,12 @@ namespace xnaMugen.Combat
 
 				case PositionType.Back:
 					location = Misc.GetOffset(Vector2.Zero, facing, Data.CreationOffset);
-					location.X += (facing == Facing.Right) ? camerabounds.Left : camerabounds.Right;
+					location.X += facing == Facing.Right ? camerabounds.Left : camerabounds.Right;
 					return location;
 
 				case PositionType.Front:
 					location = Misc.GetOffset(Vector2.Zero, facing, Data.CreationOffset);
-					location.X += (facing == Facing.Left) ? camerabounds.Left : camerabounds.Right;
+					location.X += facing == Facing.Left ? camerabounds.Left : camerabounds.Right;
 					return location;
 
 				default:
@@ -78,7 +76,7 @@ namespace xnaMugen.Combat
 			return CurrentLocation + new Vector2(Mugen.ScreenSize.X / 2, Engine.Stage.ZOffset);
 		}
 
-		public override Boolean RemoveCheck()
+		public override bool RemoveCheck()
 		{
 			return m_state == ProjectileState.Kill;
 		}
@@ -115,13 +113,13 @@ namespace xnaMugen.Combat
 
 			if (m_state == ProjectileState.Canceling || m_state == ProjectileState.Removing)
 			{
-				if (AnimationManager.IsAnimationFinished == true) m_state = ProjectileState.Kill;
+				if (AnimationManager.IsAnimationFinished) m_state = ProjectileState.Kill;
 				return;
 			}
 
-			Rectangle camera_rect = Engine.Camera.ScreenBounds;
-			Vector2 drawlocation = GetDrawLocation();
-			Stage stage = Engine.Stage;
+			var camera_rect = Engine.Camera.ScreenBounds;
+			var drawlocation = GetDrawLocation();
+			var stage = Engine.Stage;
 
 			if (Data.RemoveTimeout != -1 && m_gameticks != 1 && m_gameticks >= Data.RemoveTimeout) StartRemoval();
 
@@ -135,12 +133,12 @@ namespace xnaMugen.Combat
 			//if (CurrentLocation.Y < Data.HeightLowerBound) StartRemoval();
 			//if (CurrentLocation.Y > Data.HeightUpperBound) StartRemoval();
 
-			if (Data.RemoveOnHit == true && m_totalhits >= Data.HitsBeforeRemoval) StartHitRemoval();
+			if (Data.RemoveOnHit && m_totalhits >= Data.HitsBeforeRemoval) StartHitRemoval();
 		}
 
-		Facing GetStartFacing()
+		private Facing GetStartFacing()
 		{
-			Facing facing = Facing.Left;
+			var facing = Facing.Left;
 
 			switch (Data.PositionType)
 			{
@@ -156,7 +154,6 @@ namespace xnaMugen.Combat
 					facing = Facing.Right;
 					break;
 
-				case PositionType.None:
 				default:
 					throw new ArgumentOutOfRangeException("Data.PositionType");
 			}
@@ -168,7 +165,7 @@ namespace xnaMugen.Combat
 		{
 			if (m_state == ProjectileState.Removing) return;
 
-			if (AnimationManager.HasAnimation(Data.HitAnimationNumber) == true && AnimationManager.CurrentAnimation.Number != Data.HitAnimationNumber)
+			if (AnimationManager.HasAnimation(Data.HitAnimationNumber) && AnimationManager.CurrentAnimation.Number != Data.HitAnimationNumber)
 			{
 				m_state = ProjectileState.Removing;
 				SetLocalAnimation(Data.HitAnimationNumber, 0);
@@ -184,7 +181,7 @@ namespace xnaMugen.Combat
 		{
 			if (m_state == ProjectileState.Removing) return;
 
-			if (AnimationManager.HasAnimation(Data.RemoveAnimationNumber) == true && AnimationManager.CurrentAnimation.Number != Data.RemoveAnimationNumber)
+			if (AnimationManager.HasAnimation(Data.RemoveAnimationNumber) && AnimationManager.CurrentAnimation.Number != Data.RemoveAnimationNumber)
 			{
 				m_state = ProjectileState.Removing;
 				SetLocalAnimation(Data.RemoveAnimationNumber, 0);
@@ -200,7 +197,7 @@ namespace xnaMugen.Combat
 		{
 			if (m_state == ProjectileState.Canceling) return;
 
-			if (AnimationManager.HasAnimation(Data.CancelAnimationNumber) == true && AnimationManager.CurrentAnimation.Number != Data.CancelAnimationNumber)
+			if (AnimationManager.HasAnimation(Data.CancelAnimationNumber) && AnimationManager.CurrentAnimation.Number != Data.CancelAnimationNumber)
 			{
 				m_state = ProjectileState.Canceling;
 				SetLocalAnimation(Data.CancelAnimationNumber, 0);
@@ -212,7 +209,7 @@ namespace xnaMugen.Combat
 			}
 		}
 
-		public Boolean CanAttack()
+		public bool CanAttack()
 		{
 			if (State != ProjectileState.Normal) return false;
 			if (Data.HitDef == null) return false;
@@ -223,77 +220,53 @@ namespace xnaMugen.Combat
 			return true;
 		}
 
-		public override Drawing.SpriteManager SpriteManager
-		{
-			get { return m_spritemanager; }
-		}
+		public override Drawing.SpriteManager SpriteManager => m_spritemanager;
 
-		public override Animations.AnimationManager AnimationManager
-		{
-			get { return m_animationmanager; }
-		}
+		public override Animations.AnimationManager AnimationManager => m_animationmanager;
 
-		public override EntityUpdateOrder UpdateOrder
-		{
-			get { return EntityUpdateOrder.Projectile; }
-		}
+		public override EntityUpdateOrder UpdateOrder => EntityUpdateOrder.Projectile;
 
-		public Character Creator
-		{
-			get { return m_creator; }
-		}
+		public Character Creator => m_creator;
 
-		public ProjectileData Data
-		{
-			get { return m_data; }
-		}
+		public ProjectileData Data => m_data;
 
-		public override PaletteFx PaletteFx
-		{
-			get { return m_palfx; }
-		}
+		public override PaletteFx PaletteFx => m_palfx;
 
-		public override Team Team
-		{
-			get { return BasePlayer.Team; }
-		}
+		public override Team Team => BasePlayer.Team;
 
-		public override Player BasePlayer
-		{
-			get { return Creator.BasePlayer; }
-		}
+		public override Player BasePlayer => Creator.BasePlayer;
 
-		public Int32 TotalHits
+		public int TotalHits
 		{
-			get { return m_totalhits; }
+			get => m_totalhits;
 
 			set { m_totalhits = value; }
 		}
 
-		public Int32 HitCountdown
+		public int HitCountdown
 		{
-			get { return m_hitcountdown; }
+			get => m_hitcountdown;
 
 			set { m_hitcountdown = value; }
 		}
 
-		public Int32 Priority
+		public int Priority
 		{
-			get { return m_currentpriority; }
+			get => m_currentpriority;
 
 			set { m_currentpriority = value; }
 		}
 
 		public ProjectileState State
 		{
-			get { return m_state; }
+			get => m_state;
 
 			set { m_state = value; }
 		}
 
-		public Int32 HitPauseCountdown
+		public int HitPauseCountdown
 		{
-			get { return m_hitpausecountdown; }
+			get => m_hitpausecountdown;
 
 			set { m_hitpausecountdown = value; }
 		}
@@ -301,40 +274,40 @@ namespace xnaMugen.Combat
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Character m_creator;
+		private readonly Character m_creator;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Character m_offsetcharacter;
+		private readonly Character m_offsetcharacter;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Drawing.SpriteManager m_spritemanager;
+		private readonly Drawing.SpriteManager m_spritemanager;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Animations.AnimationManager m_animationmanager;
+		private readonly Animations.AnimationManager m_animationmanager;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly ProjectileData m_data;
+		private readonly ProjectileData m_data;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Int32 m_gameticks;
+		private int m_gameticks;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Int32 m_hitcountdown;
+		private int m_hitcountdown;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Int32 m_totalhits;
+		private int m_totalhits;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Int32 m_currentpriority;
+		private int m_currentpriority;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		ProjectileState m_state;
+		private ProjectileState m_state;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly PaletteFx m_palfx;
+		private readonly PaletteFx m_palfx;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Int32 m_hitpausecountdown;
+		private int m_hitpausecountdown;
 
 		#endregion
 	}

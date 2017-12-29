@@ -5,25 +5,22 @@ using System.Diagnostics;
 namespace xnaMugen.StateMachine
 {
 	[AttributeUsage(AttributeTargets.Class)]
-	class StateControllerNameAttribute : Attribute
+	internal class StateControllerNameAttribute : Attribute
 	{
-		public StateControllerNameAttribute(params String[] names)
+		public StateControllerNameAttribute(params string[] names)
 		{
-			if (names == null) throw new ArgumentNullException("names");
+			if (names == null) throw new ArgumentNullException(nameof(names));
 			if(names.Length == 0) throw new ArgumentException("names");
 
 			m_names = new List<string>(names);
 		}
 
-		public Collections.ListIterator<String> Names
-		{
-			get { return new Collections.ListIterator<String>(m_names); }
-		}
+		public Collections.ListIterator<string> Names => new Collections.ListIterator<string>(m_names);
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly List<String> m_names;
+		private readonly List<string> m_names;
 
 		#endregion
 	}

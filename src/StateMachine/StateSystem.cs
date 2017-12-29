@@ -8,35 +8,33 @@ using xnaMugen.IO;
 
 namespace xnaMugen.StateMachine
 {
-	class StateSystem : SubSystem
+	internal class StateSystem : SubSystem
 	{
 		public StateSystem(SubSystems subsystems)
 			: base(subsystems)
 		{
-			m_statefiles = new Dictionary<String, ReadOnlyKeyedCollection<Int32, State>>(StringComparer.OrdinalIgnoreCase);
-			m_controllertitleregex = new Regex(@"^State\s+(\S.*)$", RegexOptions.IgnoreCase);
-			m_statertitleregex = new Regex("Statedef\\s*(-?\\d+).*", RegexOptions.IgnoreCase);
-			m_controllermap = BuildControllerMap();
-			m_internalstates = GetStates("xnaMugen.data.Internal.cns");
+			_statefiles = new Dictionary<string, ReadOnlyKeyedCollection<int, State>>(StringComparer.OrdinalIgnoreCase);
+			_controllertitleregex = new Regex(@"^State\s+(\S.*)$", RegexOptions.IgnoreCase);
+			_staterTitleRegex = new Regex("Statedef\\s*(-?\\d+).*", RegexOptions.IgnoreCase);
+			_controllermap = BuildControllerMap();
+			_internalstates = GetStates("xnaMugen.data.Internal.cns");
 		}
 
-		static ReadOnlyDictionary<String, Constructor> BuildControllerMap()
+		private static ReadOnlyDictionary<string, Constructor> BuildControllerMap()
 		{
-			Type attrib_type = typeof(StateControllerNameAttribute);
-			Type[] constructortypes = new Type[] { typeof(StateSystem), typeof(String), typeof(TextSection) };
+			var attribType = typeof(StateControllerNameAttribute);
+			var constructortypes = new[] { typeof(StateSystem), typeof(string), typeof(TextSection) };
 
-			Dictionary<String, Constructor> controllermap = new Dictionary<String, Constructor>(StringComparer.OrdinalIgnoreCase);
+			var controllermap = new Dictionary<string, Constructor>(StringComparer.OrdinalIgnoreCase);
 
-			foreach (Type t in Assembly.GetCallingAssembly().GetTypes())
+			foreach (var t in Assembly.GetCallingAssembly().GetTypes())
 			{
-				if (t.IsSubclassOf(typeof(StateController)) == false || Attribute.IsDefined(t, attrib_type) == false) continue;
-				StateControllerNameAttribute attrib = (StateControllerNameAttribute)Attribute.GetCustomAttribute(t, attrib_type);
+				if (t.IsSubclassOf(typeof(StateController)) == false || Attribute.IsDefined(t, attribType) == false) continue;
+				var attrib = (StateControllerNameAttribute)Attribute.GetCustomAttribute(t, attribType);
 
-				ConstructorInfo constrcutor = t.GetConstructor(constructortypes);
-
-				foreach (String name in attrib.Names)
+				foreach (var name in attrib.Names)
 				{
-					if (controllermap.ContainsKey(name) == true)
+					if (controllermap.ContainsKey(name))
 					{
 						Log.Write(LogLevel.Warning, LogSystem.StateSystem, "Duplicate definition found for state controller - {0}.", name);
 					}
@@ -47,15 +45,15 @@ namespace xnaMugen.StateMachine
 				}
 			}
 
-			return new ReadOnlyDictionary<String, Constructor>(controllermap);
+			return new ReadOnlyDictionary<string, Constructor>(controllermap);
 		}
 
-		static void AddStateToCollection(KeyedCollection<Int32, State> collection, State state)
+		private static void AddStateToCollection(KeyedCollection<int, State> collection, State state)
 		{
-			if (collection == null) throw new ArgumentNullException("collection");
-			if (state == null) throw new ArgumentNullException("state");
+			if (collection == null) throw new ArgumentNullException(nameof(collection));
+			if (state == null) throw new ArgumentNullException(nameof(state));
 
-			if (collection.Contains(state.Number) == true)
+			if (collection.Contains(state.Number))
 			{
 				Log.Write(LogLevel.Warning, LogSystem.StateSystem, "Duplicate state #{0}. Discarding duplicate", state.Number);
 			}
@@ -65,54 +63,51 @@ namespace xnaMugen.StateMachine
 			}
 		}
 
-		public StateManager CreateManager(Combat.Character character, ReadOnlyList<String> filepaths)
+		public StateManager CreateManager(Combat.Character character, ReadOnlyList<string> filepaths)
 		{
-			if (character == null) throw new ArgumentNullException("character");
-			if (filepaths == null) throw new ArgumentNullException("filepaths");
+			if (character == null) throw new ArgumentNullException(nameof(character));
+			if (filepaths == null) throw new ArgumentNullException(nameof(filepaths));
 
-			KeyedCollection<Int32, State> states = new KeyedCollection<Int32, State>(x => x.Number);
+			var states = new KeyedCollection<int, State>(x => x.Number);
 
-			foreach (String filepath in filepaths)
+			foreach (var filepath in filepaths)
 			{
-				ReadOnlyKeyedCollection<Int32, State> loadedstates = GetStates(filepath);
-				foreach (State state in loadedstates)
+				var loadedstates = GetStates(filepath);
+				foreach (var state in loadedstates)
 				{
-					if (states.Contains(state.Number) == true) states.Remove(state.Number);
+					if (states.Contains(state.Number)) states.Remove(state.Number);
 					states.Add(state);
 				}
 			}
 
-			foreach (State state in m_internalstates)
+			foreach (var state in _internalstates)
 			{
 				if (states.Contains(state.Number) == false) states.Add(state);
 			}
 
-			return new StateManager(this, character, new ReadOnlyKeyedCollection<Int32, State>(states));
+			return new StateManager(this, character, new ReadOnlyKeyedCollection<int, State>(states));
 		}
 
-		ReadOnlyKeyedCollection<Int32, State> GetStates(String filepath)
+		private ReadOnlyKeyedCollection<int, State> GetStates(string filepath)
 		{
-			if (filepath == null) throw new ArgumentNullException("filepath");
+			if (filepath == null) throw new ArgumentNullException(nameof(filepath));
 
-			if (m_statefiles.ContainsKey(filepath) == true) return m_statefiles[filepath];
+			if (_statefiles.ContainsKey(filepath)) return _statefiles[filepath];
 
-			KeyedCollection<Int32, State> states = new KeyedCollection<Int32, State>(x => x.Number);
-			TextFile textfile = GetSubSystem<IO.FileSystem>().OpenTextFile(filepath);
+			var states = new KeyedCollection<int, State>(x => x.Number);
+			var textfile = GetSubSystem<FileSystem>().OpenTextFile(filepath);
 
 			TextSection laststatesection = null;
 			List<StateController> controllers = null;
 
-			foreach (TextSection textsection in textfile)
+			foreach (var textsection in textfile)
 			{
-				if (m_statertitleregex.IsMatch(textsection.Title) == true)
+				if (_staterTitleRegex.IsMatch(textsection.Title))
 				{
 					if (laststatesection != null)
 					{
-						State newstate = CreateState(laststatesection, controllers);
+						var newstate = CreateState(laststatesection, controllers);
 						if (newstate != null) AddStateToCollection(states, newstate);
-
-						laststatesection = null;
-						controllers = null;
 					}
 
 					laststatesection = textsection;
@@ -120,61 +115,58 @@ namespace xnaMugen.StateMachine
 				}
 				else
 				{
-					StateController controller = CreateController(textsection);
-					if (controller != null && controllers != null) controllers.Add(controller);
+					var controller = CreateController(textsection);
+					if (controller != null) controllers?.Add(controller);
 				}
 			}
 
 			if (laststatesection != null)
 			{
-				State newstate = CreateState(laststatesection, controllers);
+				var newstate = CreateState(laststatesection, controllers);
 				if (newstate != null) AddStateToCollection(states, newstate);
-
-				laststatesection = null;
-				controllers = null;
 			}
 
-			ReadOnlyKeyedCollection<Int32, State> ro_states = new ReadOnlyKeyedCollection<Int32, State>(states);
-			m_statefiles.Add(filepath, ro_states);
-			return ro_states;
+			var roStates = new ReadOnlyKeyedCollection<int, State>(states);
+			_statefiles.Add(filepath, roStates);
+			return roStates;
 		}
 
-		State CreateState(TextSection textsection, List<StateController> controllers)
+		private State CreateState(TextSection textsection, List<StateController> controllers)
 		{
-			if (textsection == null) throw new ArgumentNullException("textsection");
-			if (controllers == null) throw new ArgumentNullException("controllers");
+			if (textsection == null) throw new ArgumentNullException(nameof(textsection));
+			if (controllers == null) throw new ArgumentNullException(nameof(controllers));
 
-			Match match = m_statertitleregex.Match(textsection.Title);
+			var match = _staterTitleRegex.Match(textsection.Title);
 			if (match.Success == false) return null;
 
-			Int32 statenumber = Int32.Parse(match.Groups[1].Value);
+			var statenumber = int.Parse(match.Groups[1].Value);
 
-			foreach (StateController controller in controllers)
+			foreach (var controller in controllers)
 			{
-				if (controller.IsValid() == true) continue;
+				if (controller.IsValid()) continue;
 
 				Log.Write(LogLevel.Warning, LogSystem.StateSystem, "Error parsing state #{0}, controller {1} - '{2}'", statenumber, controller.GetType().Name, controller.Label);
 			}
 
 			controllers.RemoveAll(x => x.IsValid() == false);
 
-			if (m_internalstates != null && m_internalstates.Contains(statenumber) == true)
+			if (_internalstates != null && _internalstates.Contains(statenumber))
 			{
-				controllers.AddRange(m_internalstates[statenumber].Controllers);
+				controllers.AddRange(_internalstates[statenumber].Controllers);
 			}
 
-			State state = new State(this, statenumber, textsection, controllers);
+			var state = new State(this, statenumber, textsection, controllers);
 			return state;
 		}
 
-		StateController CreateController(TextSection textsection)
+		private StateController CreateController(TextSection textsection)
 		{
-			if (textsection == null) throw new ArgumentNullException("textsection");
+			if (textsection == null) throw new ArgumentNullException(nameof(textsection));
 
-			Match match = m_controllertitleregex.Match(textsection.Title);
+			var match = _controllertitleregex.Match(textsection.Title);
 			if (match.Success == false) return null;
 
-			String typename = textsection.GetAttribute<String>("type", null);
+			var typename = textsection.GetAttribute<string>("type", null);
 
 			if (typename == null)
 			{
@@ -183,32 +175,32 @@ namespace xnaMugen.StateMachine
 			}
 
 
-			if (m_controllermap.ContainsKey(typename) == false)
+			if (_controllermap.ContainsKey(typename) == false)
 			{
 				Log.Write(LogLevel.Warning, LogSystem.StateSystem, "Controller '{0}' has invalid type - '{1}'.", textsection, typename);
 				return null;
 			}
 
-			StateController controller = (StateController)m_controllermap[typename](this, match.Groups[1].Value, textsection);
+			var controller = (StateController)_controllermap[typename](this, match.Groups[1].Value, textsection);
 			return controller;
 		}
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Dictionary<String, ReadOnlyKeyedCollection<Int32, State>> m_statefiles;
+		private readonly Dictionary<string, ReadOnlyKeyedCollection<int, State>> _statefiles;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly ReadOnlyDictionary<String, Constructor> m_controllermap;
+		private readonly ReadOnlyDictionary<string, Constructor> _controllermap;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Regex m_controllertitleregex;
+		private readonly Regex _controllertitleregex;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Regex m_statertitleregex;
+		private readonly Regex _staterTitleRegex;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly ReadOnlyKeyedCollection<Int32, State> m_internalstates;
+		private readonly ReadOnlyKeyedCollection<int, State> _internalstates;
 
 		#endregion
 	}

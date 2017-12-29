@@ -4,9 +4,9 @@ using Microsoft.Xna.Framework;
 
 namespace xnaMugen.Combat.Logic
 {
-	class CombatOver : Base
+	internal class CombatOver : Base
 	{
-		enum WinType { None, KO, DoubleKO, TimeOut, Draw }
+		private enum WinType { None, KO, DoubleKO, TimeOut, Draw }
 
 		public CombatOver(FightEngine engine)
 			: base(engine, RoundState.PreOver)
@@ -14,24 +14,24 @@ namespace xnaMugen.Combat.Logic
 			m_wintype = WinType.None;
 		}
 
-		void RemovePlayerControl(Player player)
+		private void RemovePlayerControl(Player player)
 		{
-			if (player == null) throw new ArgumentNullException("player");
+			if (player == null) throw new ArgumentNullException(nameof(player));
 
 			player.PlayerControl = PlayerControl.NoControl;
 		}
 
 		protected override void OnFirstTick()
 		{
-			if (Engine.Team1.VictoryStatus.LoseTime == true || Engine.Team2.VictoryStatus.LoseTime == true)
+			if (Engine.Team1.VictoryStatus.LoseTime || Engine.Team2.VictoryStatus.LoseTime)
 			{
 				m_wintype = WinType.TimeOut;
 			}
-			else if (Engine.Team1.VictoryStatus.Lose == true && Engine.Team2.VictoryStatus.Lose == true)
+			else if (Engine.Team1.VictoryStatus.Lose && Engine.Team2.VictoryStatus.Lose)
 			{
 				m_wintype = WinType.DoubleKO;
 			}
-			else if (Engine.Team1.VictoryStatus.Lose == true || Engine.Team2.VictoryStatus.Lose == true)
+			else if (Engine.Team1.VictoryStatus.Lose || Engine.Team2.VictoryStatus.Lose)
 			{
 				m_wintype = WinType.KO;
 			}
@@ -84,7 +84,7 @@ namespace xnaMugen.Combat.Logic
 			}
 		}
 
-		public override Boolean IsFinished()
+		public override bool IsFinished()
 		{
 			if (TickCount < Engine.RoundInformation.OverWaitTime) return false;
 
@@ -92,9 +92,9 @@ namespace xnaMugen.Combat.Logic
             return TickCount - Engine.RoundInformation.OverWaitTime > Engine.RoundInformation.WinTime;
 		}
 
-        Boolean IsReady(Team team)
+		private bool IsReady(Team team)
         {
-            if (team == null) throw new ArgumentNullException("team");
+            if (team == null) throw new ArgumentNullException(nameof(team));
 
             if (IsDone(team.MainPlayer) == false) return false;
             if (team.TeamMate != null && IsDone(team.TeamMate) == false) return false;
@@ -102,24 +102,22 @@ namespace xnaMugen.Combat.Logic
             return true;
         }
 
-        Boolean IsDone(Player player)
+		private bool IsDone(Player player)
         {
-            if (player == null) throw new ArgumentNullException("player");
+            if (player == null) throw new ArgumentNullException(nameof(player));
 
             if (player.Life > 0)
             {
                 return player.StateManager.CurrentState.Number == StateMachine.StateNumber.Standing;
             }
-            else
-            {
-                return player.StateManager.CurrentState.Number == StateMachine.StateNumber.HitLieDead && player.CurrentVelocity == Vector2.Zero;
-            }
+
+	        return player.StateManager.CurrentState.Number == StateMachine.StateNumber.HitLieDead && player.CurrentVelocity == Vector2.Zero;
         }
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		WinType m_wintype;
+		private WinType m_wintype;
 
 		#endregion
 	}

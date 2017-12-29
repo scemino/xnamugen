@@ -1,17 +1,14 @@
 using System;
 using System.Diagnostics;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System.Collections.Generic;
-using xnaMugen.StateMachine;
 
 namespace xnaMugen.Combat
 {
-	class CharacterBind
+	internal class CharacterBind
 	{
 		public CharacterBind(Character character)
 		{
-			if (character == null) throw new ArgumentNullException("character");
+			if (character == null) throw new ArgumentNullException(nameof(character));
 
 			m_character = character;
 			m_bindcharacter = null;
@@ -34,7 +31,7 @@ namespace xnaMugen.Combat
 
 		public void Update()
 		{
-			if (IsActive == true && (Time == -1 || Time > 0) && HelperCheck())
+			if (IsActive && (Time == -1 || Time > 0) && HelperCheck())
 			{
 				if (Time > 0) --m_time;
 
@@ -46,9 +43,9 @@ namespace xnaMugen.Combat
 			}
 		}
 
-		public void Set(Character bindcharacter, Vector2 offset, Int32 time, Int32 facingflag, Boolean targetbind)
+		public void Set(Character bindcharacter, Vector2 offset, int time, int facingflag, bool targetbind)
 		{
-			if (bindcharacter == null) throw new ArgumentNullException("bindcharacter");
+			if (bindcharacter == null) throw new ArgumentNullException(nameof(bindcharacter));
 
 			m_bindcharacter = bindcharacter;
 			m_time = time;
@@ -58,14 +55,14 @@ namespace xnaMugen.Combat
 			m_isactive = true;
 		}
 
-		Boolean HelperCheck()
+		private bool HelperCheck()
 		{
 			if (IsActive == false) return false;
 
-			Helper bindhelper = BindTo as Helper;
+			var bindhelper = BindTo as Helper;
 			if (bindhelper == null) return true;
 
-			if (bindhelper.RemoveCheck() == true)
+			if (bindhelper.RemoveCheck())
 			{
 				Reset();
 				return false;
@@ -74,7 +71,7 @@ namespace xnaMugen.Combat
 			return true;
 		}
 
-		void Bind()
+		private void Bind()
 		{
 			if (BindTo == null) throw new InvalidOperationException();
 
@@ -87,63 +84,42 @@ namespace xnaMugen.Combat
 			if (FacingFlag < 0) Character.CurrentFacing = Misc.FlipFacing(BindTo.CurrentFacing);
 		}
 
-		public Boolean IsActive
-		{
-			get { return m_isactive; }
-		}
+		public bool IsActive => m_isactive;
 
-		public Character Character
-		{
-			get { return m_character; }
-		}
+		public Character Character => m_character;
 
-		public Character BindTo
-		{
-			get { return m_bindcharacter; }
-		}
+		public Character BindTo => m_bindcharacter;
 
-		public Int32 Time
-		{
-			get { return m_time; }
-		}
+		public int Time => m_time;
 
-		public Vector2 Offset
-		{
-			get { return m_offset; }
-		}
+		public Vector2 Offset => m_offset;
 
-		public Int32 FacingFlag
-		{
-			get { return m_facingflag; }
-		}
+		public int FacingFlag => m_facingflag;
 
-		public Boolean IsTargetBind
-		{
-			get { return m_istargetbind; }
-		}
+		public bool IsTargetBind => m_istargetbind;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Character m_character;
+		private readonly Character m_character;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Boolean m_isactive;
+		private bool m_isactive;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Character m_bindcharacter;
+		private Character m_bindcharacter;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Int32 m_time;
+		private int m_time;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Vector2 m_offset;
+		private Vector2 m_offset;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Int32 m_facingflag;
+		private int m_facingflag;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Boolean m_istargetbind;
+		private bool m_istargetbind;
 
 		#endregion
 	}

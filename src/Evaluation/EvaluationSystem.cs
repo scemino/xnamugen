@@ -1,20 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Reflection;
-using System.Text;
 using xnaMugen.Collections;
 
 namespace xnaMugen.Evaluation
 {
-	class EvaluationException : Exception { }
+	internal class EvaluationException : Exception { }
 
-	class EvaluationSystem : SubSystem
+	internal class EvaluationSystem : SubSystem
 	{
 		public EvaluationSystem(SubSystems subsystems)
 			: base(subsystems)
 		{
-			m_expressioncache = new KeyedCollection<String, Expression>(x => x.ToString(), StringComparer.OrdinalIgnoreCase);
+			m_expressioncache = new KeyedCollection<string, Expression>(x => x.ToString(), StringComparer.OrdinalIgnoreCase);
 			m_tokenizer = new Tokenizer();
 			m_treebuilder = new TreeBuilder(this);
 			m_compiler = new Compiler();
@@ -23,11 +21,11 @@ namespace xnaMugen.Evaluation
 			//var result = exp.Evaluate(null);
 		}
 
-		public Expression CreateExpression(String input)
+		public Expression CreateExpression(string input)
 		{
-			if (input == null) throw new ArgumentNullException("input");
+			if (input == null) throw new ArgumentNullException(nameof(input));
 
-			Expression expression = BuildExpression(input);
+			var expression = BuildExpression(input);
 
 			if (expression.IsValid == false)
 			{
@@ -37,20 +35,20 @@ namespace xnaMugen.Evaluation
 			return expression;
 		}
 
-		public PrefixedExpression CreatePrefixedExpression(String input)
+		public PrefixedExpression CreatePrefixedExpression(string input)
 		{
-			if (input == null) throw new ArgumentNullException("input");
+			if (input == null) throw new ArgumentNullException(nameof(input));
 
-			Expression with = BuildExpression(input);
-			Char prefix = input[0];
-			Expression without = BuildExpression(input.Substring(1));
+			var with = BuildExpression(input);
+			var prefix = input[0];
+			var without = BuildExpression(input.Substring(1));
 
-			Boolean? common = null;
-			Expression expression = null;
+			bool? common;
+			Expression expression;
 
 			if (prefix == 's' || prefix == 'S')
 			{
-				if (without.IsValid == true)
+				if (without.IsValid)
 				{
 					common = false;
 					expression = without;
@@ -63,7 +61,7 @@ namespace xnaMugen.Evaluation
 			}
 			else if (prefix == 'f' || prefix == 'F')
 			{
-				if (without.IsValid == true)
+				if (without.IsValid)
 				{
 					common = true;
 					expression = without;
@@ -88,20 +86,20 @@ namespace xnaMugen.Evaluation
 			return new PrefixedExpression(expression, common);
 		}
 
-		Expression BuildExpression(String input)
+		private Expression BuildExpression(string input)
 		{
-			if (input == null) throw new ArgumentNullException("input");
+			if (input == null) throw new ArgumentNullException(nameof(input));
 
 			//Quoted strings must be case sensitive & cache is not case sensitive
-			if (input.IndexOf('"') == -1 && m_expressioncache.Contains(input) == true) return m_expressioncache[input];
+			if (input.IndexOf('"') == -1 && m_expressioncache.Contains(input)) return m_expressioncache[input];
 
-			List<Token> tokens = m_tokenizer.Tokenize(input);
-			List<Node> nodes = m_treebuilder.BuildTree(tokens);
+			var tokens = m_tokenizer.Tokenize(input);
+			var nodes = m_treebuilder.BuildTree(tokens);
 
-			List<EvaluationCallback> functions = new List<EvaluationCallback>();
-			foreach (Node node in nodes) functions.Add(m_compiler.Create(node));
+			var functions = new List<EvaluationCallback>();
+			foreach (var node in nodes) functions.Add(m_compiler.Create(node));
 
-			Expression expression = new Expression(input, functions);
+			var expression = new Expression(input, functions);
 
 			if (input.IndexOf('"') == -1) m_expressioncache.Add(expression);
 
@@ -111,16 +109,16 @@ namespace xnaMugen.Evaluation
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Tokenizer m_tokenizer;
+		private readonly Tokenizer m_tokenizer;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly TreeBuilder m_treebuilder;
+		private readonly TreeBuilder m_treebuilder;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Compiler m_compiler;
+		private readonly Compiler m_compiler;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly KeyedCollection<String, Expression> m_expressioncache;
+		private readonly KeyedCollection<string, Expression> m_expressioncache;
 
 		#endregion
 	}

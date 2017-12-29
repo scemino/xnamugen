@@ -1,13 +1,12 @@
-using System;
 using System.Diagnostics;
 using xnaMugen.IO;
 
 namespace xnaMugen.StateMachine.Controllers
 {
 	[StateControllerName("AngleAdd")]
-	class AngleAdd : StateController
+	internal class AngleAdd : StateController
 	{
-		public AngleAdd(StateSystem statesystem, String label, TextSection textsection)
+		public AngleAdd(StateSystem statesystem, string label, TextSection textsection)
 			: base(statesystem, label, textsection)
 		{
 			m_angle = textsection.GetAttribute<Evaluation.Expression>("value", null);
@@ -15,12 +14,12 @@ namespace xnaMugen.StateMachine.Controllers
 
 		public override void Run(Combat.Character character)
 		{
-			Single angle = EvaluationHelper.AsSingle(character, AngleAddition, 0);
+			var angle = EvaluationHelper.AsSingle(character, AngleAddition, 0);
 
 			character.DrawingAngle += angle;
 		}
 
-		public override Boolean IsValid()
+		public override bool IsValid()
 		{
 			if (base.IsValid() == false) return false;
 
@@ -29,15 +28,12 @@ namespace xnaMugen.StateMachine.Controllers
 			return true;
 		}
 
-		public Evaluation.Expression AngleAddition
-		{
-			get { return m_angle; }
-		}
+		public Evaluation.Expression AngleAddition => m_angle;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_angle;
+		private readonly Evaluation.Expression m_angle;
 
 		#endregion
 	}

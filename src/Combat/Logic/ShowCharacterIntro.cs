@@ -3,7 +3,7 @@ using System.Diagnostics;
 
 namespace xnaMugen.Combat.Logic
 {
-	class ShowCharacterIntro : Base
+	internal class ShowCharacterIntro : Base
 	{
 		public ShowCharacterIntro(FightEngine engine)
 			: base(engine, RoundState.Intro)
@@ -25,15 +25,15 @@ namespace xnaMugen.Combat.Logic
 			CheckForEarlyEnd();
 		}
 
-		void CheckForEarlyEnd()
+		private void CheckForEarlyEnd()
 		{
-			if (IsFinished() == true) return;
+			if (IsFinished()) return;
 
-			if (Engine.Team1.MainPlayer != null && PlayeInputSkip(Engine.Team1.MainPlayer) == true) m_finishearly = true;
-			if (Engine.Team1.TeamMate != null && PlayeInputSkip(Engine.Team1.TeamMate) == true) m_finishearly = true;
+			if (Engine.Team1.MainPlayer != null && PlayeInputSkip(Engine.Team1.MainPlayer)) m_finishearly = true;
+			if (Engine.Team1.TeamMate != null && PlayeInputSkip(Engine.Team1.TeamMate)) m_finishearly = true;
 
-			if (Engine.Team2.MainPlayer != null && PlayeInputSkip(Engine.Team2.MainPlayer) == true) m_finishearly = true;
-			if (Engine.Team2.TeamMate != null && PlayeInputSkip(Engine.Team2.TeamMate) == true) m_finishearly = true;
+			if (Engine.Team2.MainPlayer != null && PlayeInputSkip(Engine.Team2.MainPlayer)) m_finishearly = true;
+			if (Engine.Team2.TeamMate != null && PlayeInputSkip(Engine.Team2.TeamMate)) m_finishearly = true;
 
 			if (m_finishearly == false) return;
 
@@ -44,9 +44,9 @@ namespace xnaMugen.Combat.Logic
 			Engine.Team2.DoAction(SetPlayer);
 		}
 
-		void SetPlayer(Player player)
+		private void SetPlayer(Player player)
 		{
-			if (player == null) throw new ArgumentNullException("player");
+			if (player == null) throw new ArgumentNullException(nameof(player));
 
 			Engine.Entities.Add(player);
 
@@ -78,24 +78,24 @@ namespace xnaMugen.Combat.Logic
 			return null;
 		}
 
-		public override Boolean IsFinished()
+		public override bool IsFinished()
 		{
-			return m_finishearly == true || Engine.Assertions.Intro == false;
+			return m_finishearly || Engine.Assertions.Intro == false;
 		}
 
-		Boolean PlayeInputSkip(Player player)
+		private bool PlayeInputSkip(Player player)
 		{
-			if (player == null) throw new ArgumentNullException("player");
+			if (player == null) throw new ArgumentNullException(nameof(player));
 
-			if (player.CommandManager.IsActive("x") == true) return true;
-			if (player.CommandManager.IsActive("y") == true) return true;
-			if (player.CommandManager.IsActive("z") == true) return true;
+			if (player.CommandManager.IsActive("x")) return true;
+			if (player.CommandManager.IsActive("y")) return true;
+			if (player.CommandManager.IsActive("z")) return true;
 
-			if (player.CommandManager.IsActive("a") == true) return true;
-			if (player.CommandManager.IsActive("b") == true) return true;
-			if (player.CommandManager.IsActive("c") == true) return true;
+			if (player.CommandManager.IsActive("a")) return true;
+			if (player.CommandManager.IsActive("b")) return true;
+			if (player.CommandManager.IsActive("c")) return true;
 
-			if (player.CommandManager.IsActive("taunt") == true) return true;
+			if (player.CommandManager.IsActive("taunt")) return true;
 
 			return false;
 		}
@@ -103,7 +103,7 @@ namespace xnaMugen.Combat.Logic
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Boolean m_finishearly;
+		private bool m_finishearly;
 
 		#endregion
 	}

@@ -1,18 +1,17 @@
 ﻿using System;
-using System.Diagnostics;
 
 namespace xnaMugen.Combat.Logic
 {
-	class PreIntro : Base
+	internal class PreIntro : Base
 	{
 		public PreIntro(FightEngine engine)
 			: base(engine, RoundState.PreIntro)
 		{
 		}
 
-		void SetPlayer(Player player)
+		private void SetPlayer(Player player)
 		{
-			if (player == null) throw new ArgumentNullException("player");
+			if (player == null) throw new ArgumentNullException(nameof(player));
 
 			Engine.Entities.Add(player);
 
@@ -60,7 +59,7 @@ namespace xnaMugen.Combat.Logic
 			return null;
 		}
 
-		public override Boolean IsFinished()
+		public override bool IsFinished()
 		{
 			return TickCount == Engine.RoundInformation.IntroDelay;
 		}

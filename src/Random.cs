@@ -6,7 +6,7 @@ namespace xnaMugen
 	/// <summary>
 	/// A random number generator.
 	/// </summary>
-	class Random : SubSystem
+	internal class Random : SubSystem
 	{
 		/// <summary>
 		/// Initializes a new instance of this class with a time dependant seed.
@@ -21,7 +21,7 @@ namespace xnaMugen
 		/// Re-initializes random number generation with a specified seed.
 		/// </summary>
 		/// <param name="seed">Number used to start generation of random numbers.</param>
-		public void Seed(Int32 seed)
+		public void Seed(int seed)
 		{
 			m_seed = seed;
 			m_random = new System.Random(seed);
@@ -34,7 +34,7 @@ namespace xnaMugen
 		/// <param name="max">The highest number that can be generated, exclusive.</param>
 		/// <returns>An Int32 that is greater than or equal to min but less than max.</returns>
 		/// <exception cref="System.ArgumentOutOfRangeException">min is greater than max.</exception> 
-		public Int32 NewInt(Int32 min, Int32 max)
+		public int NewInt(int min, int max)
 		{
 			return m_random.Next(min, max);
 		}
@@ -43,23 +43,20 @@ namespace xnaMugen
 		/// Return a randomly generated number.
 		/// </summary>
 		/// <returns>A Single that is greater than or equal to 0.0f and less than 1.0f.</returns>
-		public Single NewSingle()
+		public float NewSingle()
 		{
-			return (Single)m_random.NextDouble();
+			return (float)m_random.NextDouble();
 		}
 
-		public Int32 CurrentSeed
-		{
-			get { return m_seed; }
-		}
+		public int CurrentSeed => m_seed;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		System.Random m_random;
+		private System.Random m_random;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Int32 m_seed;
+		private int m_seed;
 
 		#endregion
 	}

@@ -1,22 +1,19 @@
 ﻿using System;
 using System.Diagnostics;
-using xnaMugen.IO;
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using xnaMugen.Collections;
 using System.Collections.Generic;
-using System.Text;
 
 namespace xnaMugen.Combat
 {
 	[DebuggerDisplay("Player - #{Id} - {Profile.PlayerName}")]
-	class Player : Character
+	internal class Player : Character
 	{
 		public Player(FightEngine engine, PlayerProfile profile, Team team)
 			: base(engine)
 		{
-			if (profile == null) throw new ArgumentNullException("profile");
-			if (team == null) throw new ArgumentNullException("team");
+			if (profile == null) throw new ArgumentNullException(nameof(profile));
+			if (team == null) throw new ArgumentNullException(nameof(team));
 
 			m_profile = profile;
 			m_spritemanager = Engine.GetSubSystem<Drawing.SpriteSystem>().CreateManager(Profile.SpritePath);
@@ -31,9 +28,9 @@ namespace xnaMugen.Combat
 			m_power = 0;
 			m_palfx = new PaletteFx();
 			m_team = team;
-			m_helpers = new Dictionary<Int32, List<Helper>>();
+			m_helpers = new Dictionary<int, List<Helper>>();
 
-			if (Engine.GetSubSystem<InitializationSettings>().PreloadCharacterSprites == true)
+			if (Engine.GetSubSystem<InitializationSettings>().PreloadCharacterSprites)
 			{
 				SpriteManager.LoadAllSprites();
 			}
@@ -64,39 +61,39 @@ namespace xnaMugen.Combat
 			}
 		}
 
-		public override Boolean RemoveCheck()
+		public override bool RemoveCheck()
 		{
 			return false;
 		}
 
-		public override void RecieveInput(PlayerButton button, Boolean pressed)
+		public override void RecieveInput(PlayerButton button, bool pressed)
 		{
 			base.RecieveInput(button, pressed);
 
-			foreach (Entity entity in Engine.Entities)
+			foreach (var entity in Engine.Entities)
 			{
-				Helper helper = entity as Helper;
+				var helper = entity as Helper;
 				if (helper == null || helper.BasePlayer != this) continue;
 
 				helper.RecieveInput(button, pressed);
 			}
 		}
 
-		ReadOnlyList<Texture2D> BuildPalettes()
+		private ReadOnlyList<Texture2D> BuildPalettes()
 		{
-			List<Texture2D> palettes = new List<Texture2D>(12);
+			var palettes = new List<Texture2D>(12);
 
-			for (Int32 i = 0; i != 12; ++i)
+			for (var i = 0; i != 12; ++i)
 			{
-				String filepath = Profile.PaletteFiles[i];
-				if (String.Equals(filepath, String.Empty) == true)
+				var filepath = Profile.PaletteFiles[i];
+				if (string.Equals(filepath, string.Empty))
 				{
-					Texture2D palette = Engine.GetSubSystem<Video.VideoSystem>().CreatePaletteTexture();
+					var palette = Engine.GetSubSystem<Video.VideoSystem>().CreatePaletteTexture();
 					palettes.Add(palette);
 				}
 				else
 				{
-					Texture2D palette = Engine.GetSubSystem<Drawing.SpriteSystem>().LoadPaletteFile(filepath);
+					var palette = Engine.GetSubSystem<Drawing.SpriteSystem>().LoadPaletteFile(filepath);
 					palettes.Add(palette);
 				}
 			}
@@ -104,54 +101,30 @@ namespace xnaMugen.Combat
 			return new ReadOnlyList<Texture2D>(palettes);
 		}
 
-		public PlayerProfile Profile
-		{
-			get { return m_profile; }
-		}
+		public PlayerProfile Profile => m_profile;
 
-		public override Drawing.SpriteManager SpriteManager
-		{
-			get { return m_spritemanager; }
-		}
+		public override Drawing.SpriteManager SpriteManager => m_spritemanager;
 
-		public override Animations.AnimationManager AnimationManager
-		{
-			get { return m_animationmanager; }
-		}
+		public override Animations.AnimationManager AnimationManager => m_animationmanager;
 
 		//public override Audio.SoundManager SoundManager
 		//{
 		//	get { return m_soundmanager; }
 		//}
 
-		public override Commands.CommandManager CommandManager
-		{
-			get { return m_commandmanager; }
-		}
+		public override Commands.CommandManager CommandManager => m_commandmanager;
 
-		public override StateMachine.StateManager StateManager
-		{
-			get { return m_statemanager; }
-		}
+		public override StateMachine.StateManager StateManager => m_statemanager;
 
-		public PlayerConstants Constants
-		{
-			get { return m_constants; }
-		}
+		public PlayerConstants Constants => m_constants;
 
-		public override CharacterDimensions Dimensions
-		{
-			get { return m_dimensions; }
-		}
+		public override CharacterDimensions Dimensions => m_dimensions;
 
-		public ReadOnlyList<Texture2D> Palettes
-		{
-			get { return m_palettes; }
-		}
+		public ReadOnlyList<Texture2D> Palettes => m_palettes;
 
-		public Int32 PaletteNumber
+		public int PaletteNumber
 		{
-			get { return m_palettenumber; }
+			get => m_palettenumber;
 
 			set 
 			{ 
@@ -160,9 +133,9 @@ namespace xnaMugen.Combat
 			}
 		}
 
-		public Int32 Power
+		public int Power
 		{
-			get { return m_power; }
+			get => m_power;
 
 			set
 			{
@@ -185,69 +158,57 @@ namespace xnaMugen.Combat
 			}
 		}
 
-		public override PaletteFx PaletteFx
-		{
-			get { return m_palfx; }
-		}
+		public override PaletteFx PaletteFx => m_palfx;
 
-		public override Team Team
-		{
-			get { return m_team; }
-		}
+		public override Team Team => m_team;
 
-		public override Player BasePlayer
-		{
-			get { return this; }
-		}
+		public override Player BasePlayer => this;
 
-		public Dictionary<Int32, List<Helper>> Helpers
-		{
-			get { return m_helpers; }
-		}
+		public Dictionary<int, List<Helper>> Helpers => m_helpers;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly PlayerProfile m_profile;
+		private readonly PlayerProfile m_profile;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Drawing.SpriteManager m_spritemanager;
+		private readonly Drawing.SpriteManager m_spritemanager;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Animations.AnimationManager m_animationmanager;
+		private readonly Animations.AnimationManager m_animationmanager;
 
 		//[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		//readonly Audio.SoundManager m_soundmanager;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Commands.CommandManager m_commandmanager;
+		private readonly Commands.CommandManager m_commandmanager;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly PlayerConstants m_constants;
+		private readonly PlayerConstants m_constants;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly CharacterDimensions m_dimensions;
+		private readonly CharacterDimensions m_dimensions;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly ReadOnlyList<Texture2D> m_palettes;
+		private readonly ReadOnlyList<Texture2D> m_palettes;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Int32 m_palettenumber;
+		private int m_palettenumber;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly StateMachine.StateManager m_statemanager;
+		private readonly StateMachine.StateManager m_statemanager;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Int32 m_power;
+		private int m_power;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly PaletteFx m_palfx;
+		private readonly PaletteFx m_palfx;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Team m_team;
+		private readonly Team m_team;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Dictionary<Int32, List<Helper>> m_helpers;
+		private readonly Dictionary<int, List<Helper>> m_helpers;
 
 		#endregion
 	}

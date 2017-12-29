@@ -1,18 +1,17 @@
-using System;
 using System.Diagnostics;
 using xnaMugen.IO;
 
 namespace xnaMugen.StateMachine.Controllers
 {
 	[StateControllerName("StateTypeSet")]
-	class StateTypeSet : StateController
+	internal class StateTypeSet : StateController
 	{
-		public StateTypeSet(StateSystem statesystem, String label, TextSection textsection)
+		public StateTypeSet(StateSystem statesystem, string label, TextSection textsection)
 			: base(statesystem, label, textsection)
 		{
-			m_statetype = textsection.GetAttribute<StateType>("statetype", StateType.Unchanged);
-			m_movetype = textsection.GetAttribute<MoveType>("movetype", MoveType.Unchanged);
-			m_physics = textsection.GetAttribute<Physics>("Physics", Physics.Unchanged);
+			m_statetype = textsection.GetAttribute("statetype", StateType.Unchanged);
+			m_movetype = textsection.GetAttribute("movetype", MoveType.Unchanged);
+			m_physics = textsection.GetAttribute("Physics", Physics.Unchanged);
 		}
 
 		public override void Run(Combat.Character character)
@@ -22,31 +21,22 @@ namespace xnaMugen.StateMachine.Controllers
 			if (Physics != Physics.Unchanged) character.Physics = Physics;
 		}
 
-		public StateType StateType
-		{
-			get { return m_statetype; }
-		}
+		public StateType StateType => m_statetype;
 
-		public MoveType MoveType
-		{
-			get { return m_movetype; }
-		}
+		public MoveType MoveType => m_movetype;
 
-		public Physics Physics
-		{
-			get { return m_physics; }
-		}
+		public Physics Physics => m_physics;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly StateType m_statetype;
+		private readonly StateType m_statetype;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly MoveType m_movetype;
+		private readonly MoveType m_movetype;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Physics m_physics;
+		private readonly Physics m_physics;
 
 		#endregion
 	}

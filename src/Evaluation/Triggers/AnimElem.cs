@@ -1,90 +1,88 @@
-using System;
-
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("AnimElem")]
-	static class AnimElem
+	internal static class AnimElem
 	{
-		public static Boolean Evaluate(Object state, ref Boolean error, Int32 r1, Int32 rhs, Operator compare_type)
+		public static bool Evaluate(object state, ref bool error, int r1, int rhs, Operator compareType)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
 				return false;
 			}
 
-			Animations.Animation animation = character.AnimationManager.CurrentAnimation;
+			var animation = character.AnimationManager.CurrentAnimation;
 			if (animation == null)
 			{
 				error = true;
 				return false;
 			}
 
-			Int32 elementindex = r1 - 1;
+			var elementindex = r1 - 1;
 			if (elementindex < 0 || elementindex >= animation.Elements.Count)
 			{
 				error = true;
 				return false;
 			}
 
-			Int32 elementstarttime = animation.GetElementStartTime(elementindex);
-			Int32 animationtime = character.AnimationManager.TimeInAnimation;
+			var elementstarttime = animation.GetElementStartTime(elementindex);
+			var animationtime = character.AnimationManager.TimeInAnimation;
 			while (animation.TotalTime != -1 && animationtime >= animation.TotalTime)
 			{
-				Int32 looptime = animation.TotalTime - animation.GetElementStartTime(animation.Loopstart);
+				var looptime = animation.TotalTime - animation.GetElementStartTime(animation.Loopstart);
 				animationtime -= looptime;
 			}
 
-			Int32 timeoffset = animationtime - elementstarttime;
+			var timeoffset = animationtime - elementstarttime;
 
-			if (character.AnimationManager.IsAnimationFinished == true) return false;
+			if (character.AnimationManager.IsAnimationFinished) return false;
 
-			Boolean result = SpecialFunctions.LogicalOperation(compare_type, timeoffset, rhs);
-			return (compare_type == Operator.Equals) ? result && character.UpdatedAnimation : result;
+			var result = SpecialFunctions.LogicalOperation(compareType, timeoffset, rhs);
+			return compareType == Operator.Equals ? result && character.UpdatedAnimation : result;
 		}
 
-		public static Boolean Evaluate(Object state, ref Boolean error, Int32 r1, Int32 pre, Int32 post, Operator compare_type, Symbol pre_check, Symbol post_check)
+		public static bool Evaluate(object state, ref bool error, int r1, int pre, int post, Operator compareType, Symbol preCheck, Symbol postCheck)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
 				return false;
 			}
 
-			Animations.Animation animation = character.AnimationManager.CurrentAnimation;
+			var animation = character.AnimationManager.CurrentAnimation;
 			if (animation == null)
 			{
 				error = true;
 				return false;
 			}
 
-			Int32 elementindex = r1 - 1;
+			var elementindex = r1 - 1;
 			if (elementindex < 0 || elementindex >= animation.Elements.Count)
 			{
 				error = true;
 				return false;
 			}
 
-			Int32 elementstarttime = animation.GetElementStartTime(elementindex);
-			Int32 animationtime = character.AnimationManager.TimeInAnimation;
+			var elementstarttime = animation.GetElementStartTime(elementindex);
+			var animationtime = character.AnimationManager.TimeInAnimation;
 			while (animation.TotalTime != -1 && animationtime >= animation.TotalTime)
 			{
-				Int32 looptime = animation.TotalTime - animation.GetElementStartTime(animation.Loopstart);
+				var looptime = animation.TotalTime - animation.GetElementStartTime(animation.Loopstart);
 				animationtime -= looptime;
 			}
 
-			Int32 timeoffset = animationtime - elementstarttime;
+			var timeoffset = animationtime - elementstarttime;
 
-			if (character.AnimationManager.IsAnimationFinished == true) return false;
+			if (character.AnimationManager.IsAnimationFinished) return false;
 
-			return SpecialFunctions.Range(timeoffset, pre, post, compare_type, pre_check, post_check);
+			return SpecialFunctions.Range(timeoffset, pre, post, compareType, preCheck, postCheck);
 		}
 
 		public static Node Parse(ParseState state)
 		{
-			Operator initoperator = state.CurrentOperator;
+			var initoperator = state.CurrentOperator;
 			switch (initoperator)
 			{
 #warning Compatability. Equals should be the only one that works.
@@ -99,7 +97,7 @@ namespace xnaMugen.Evaluation.Triggers
 					return null;
 			}
 
-			Node arg1 = state.BuildNode(false);
+			var arg1 = state.BuildNode(false);
 			if (arg1 == null) return null;
 
 			state.BaseNode.Children.Add(arg1);
@@ -115,12 +113,12 @@ namespace xnaMugen.Evaluation.Triggers
 
 			++state.TokenIndex;
 
-			Operator @operator = state.CurrentOperator;
+			var @operator = state.CurrentOperator;
 			if (@operator == Operator.Equals || @operator == Operator.NotEquals)
 			{
 				++state.TokenIndex;
 
-				Node rangenode = state.BuildRangeNode();
+				var rangenode = state.BuildRangeNode();
 				if (rangenode != null)
 				{
 					state.BaseNode.Children.Add(rangenode.Children[1]);
@@ -150,7 +148,7 @@ namespace xnaMugen.Evaluation.Triggers
 					return null;
 			}
 
-			Node arg = state.BuildNode(false);
+			var arg = state.BuildNode(false);
 			if (arg == null) return null;
 
 			state.BaseNode.Arguments.Add(@operator);

@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Text.RegularExpressions;
 using System.Diagnostics;
 using System.Collections.Generic;
 using xnaMugen.IO;
-using Microsoft.Xna.Framework;
-using xnaMugen.Collections;
 
 namespace xnaMugen.Backgrounds
 {
@@ -12,7 +9,7 @@ namespace xnaMugen.Backgrounds
 	/// A collection of backgrounds that are updated and drawn as one.
 	/// </summary>
 	[DebuggerDisplay("Count = {m_backgrounds.Count}")]
-	class Collection
+	internal class Collection
 	{
 		/// <summary>
 		/// Initializes a new instance of this class.
@@ -21,8 +18,8 @@ namespace xnaMugen.Backgrounds
 		/// <param name="animationmanager">The xnaMugen.Animations.AnimationManager used by all backgrounds in this collection.</param>
 		public Collection(Drawing.SpriteManager spritemanager, Animations.AnimationManager animationmanager)
 		{
-			if (spritemanager == null) throw new ArgumentNullException("spritemanager");
-			if (animationmanager == null) throw new ArgumentNullException("animationmanager");
+			if (spritemanager == null) throw new ArgumentNullException(nameof(spritemanager));
+			if (animationmanager == null) throw new ArgumentNullException(nameof(animationmanager));
 
 			m_backgrounds = new List<Base>();
 			m_spritemanager = spritemanager;
@@ -34,11 +31,11 @@ namespace xnaMugen.Backgrounds
 		/// </summary>
 		/// <param name="section">A xnaMugen.IO.TextSection.</param>
 		/// <returns>true if a background can be created; false otherwise.</returns>
-		public Boolean CanCreateBackground(TextSection section)
+		public bool CanCreateBackground(TextSection section)
 		{
-			if (section == null) throw new ArgumentNullException("section");
+			if (section == null) throw new ArgumentNullException(nameof(section));
 
-			BackgroundType bgtype = section.GetAttribute<BackgroundType>("type");
+			var bgtype = section.GetAttribute<BackgroundType>("type");
 
 			return bgtype != BackgroundType.None;
 		}
@@ -50,10 +47,10 @@ namespace xnaMugen.Backgrounds
 		/// <returns>The created background, if it could be created; null otherwise.</returns>
 		public void CreateBackground(TextSection section)
 		{
-			if (section == null) throw new ArgumentNullException("section");
+			if (section == null) throw new ArgumentNullException(nameof(section));
 
-			BackgroundType bgtype = section.GetAttribute<BackgroundType>("type");
-			Base background = null;
+			var bgtype = section.GetAttribute<BackgroundType>("type");
+			Base background;
 
 			switch (bgtype)
 			{
@@ -69,7 +66,6 @@ namespace xnaMugen.Backgrounds
 					background = new Animated(section, m_spritemanager.Clone(), m_animationmanager.Clone());
 					break;
 
-				case BackgroundType.None:
 				default:
 					Log.Write(LogLevel.Error, LogSystem.BackgroundCollection, "Cannot create background with TextSection: {0}", section);
 					return;
@@ -84,7 +80,7 @@ namespace xnaMugen.Backgrounds
 		/// </summary>
 		public void Reset()
 		{
-			foreach (Base background in this) background.Reset();
+			foreach (var background in this) background.Reset();
 		}
 
 		/// <summary>
@@ -92,7 +88,7 @@ namespace xnaMugen.Backgrounds
 		/// </summary>
 		public void Update()
 		{
-			foreach (Base background in this)
+			foreach (var background in this)
 			{
 				if (background.IsPaused == false) background.Update();
 			}
@@ -103,9 +99,9 @@ namespace xnaMugen.Backgrounds
 		/// </summary>
 		public void Draw()
 		{
-			foreach (Base background in this)
+			foreach (var background in this)
 			{
-				if (background.IsVisible == true) background.Draw(null);
+				if (background.IsVisible) background.Draw(null);
 			}
 		}
 
@@ -116,9 +112,9 @@ namespace xnaMugen.Backgrounds
 		/// <param name="palettefx">The palette information used in drawing.</param>
 		public void Draw(BackgroundLayer layer, Combat.PaletteFx palettefx)
 		{
-			foreach (Backgrounds.Base background in this)
+			foreach (var background in this)
 			{
-				if (background.Layer == layer && background.IsVisible == true) background.Draw(palettefx);
+				if (background.Layer == layer && background.IsVisible) background.Draw(palettefx);
 			}
 		}
 
@@ -130,13 +126,13 @@ namespace xnaMugen.Backgrounds
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
-		readonly List<Base> m_backgrounds;
+		private readonly List<Base> m_backgrounds;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Drawing.SpriteManager m_spritemanager;
+		private readonly Drawing.SpriteManager m_spritemanager;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Animations.AnimationManager m_animationmanager;
+		private readonly Animations.AnimationManager m_animationmanager;
 
 		#endregion
 	}

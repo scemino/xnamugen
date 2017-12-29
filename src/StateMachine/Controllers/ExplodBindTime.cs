@@ -1,47 +1,40 @@
-using System;
 using System.Diagnostics;
 using xnaMugen.IO;
 
 namespace xnaMugen.StateMachine.Controllers
 {
 	[StateControllerName("ExplodBindTime")]
-	class ExplodBindTime : StateController
+	internal class ExplodBindTime : StateController
 	{
-		public ExplodBindTime(StateSystem statesystem, String label, TextSection textsection)
+		public ExplodBindTime(StateSystem statesystem, string label, TextSection textsection)
 			: base(statesystem, label, textsection)
 		{
 			m_id = textsection.GetAttribute<Evaluation.Expression>("id", null);
 
-			Evaluation.Expression exp_time = textsection.GetAttribute<Evaluation.Expression>("time", null);
-			Evaluation.Expression exp_value = textsection.GetAttribute<Evaluation.Expression>("value", null);
-			m_time = exp_time ?? exp_value;
+			var expTime = textsection.GetAttribute<Evaluation.Expression>("time", null);
+			var expValue = textsection.GetAttribute<Evaluation.Expression>("value", null);
+			m_time = expTime ?? expValue;
 		}
 
 		public override void Run(Combat.Character character)
 		{
-			Int32 explod_id = EvaluationHelper.AsInt32(character, Id, Int32.MinValue);
-			Int32 time = EvaluationHelper.AsInt32(character, Time, 1);
+			var explodId = EvaluationHelper.AsInt32(character, Id, int.MinValue);
+			var time = EvaluationHelper.AsInt32(character, Time, 1);
 
-			foreach (Combat.Explod explod in character.GetExplods(explod_id)) explod.Data.BindTime = time;
+			foreach (var explod in character.GetExplods(explodId)) explod.Data.BindTime = time;
 		}
 
-		public Evaluation.Expression Id
-		{
-			get { return m_id; }
-		}
+		public Evaluation.Expression Id => m_id;
 
-		public Evaluation.Expression Time
-		{
-			get { return m_time; }
-		}
+		public Evaluation.Expression Time => m_time;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_time;
+		private readonly Evaluation.Expression m_time;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_id;
+		private readonly Evaluation.Expression m_id;
 
 		#endregion
 	}

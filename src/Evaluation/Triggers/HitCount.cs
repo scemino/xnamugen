@@ -1,13 +1,11 @@
-using System;
-
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("HitCount")]
-	static class HitCount
+	internal static class HitCount
 	{
-		public static Int32 Evaluate(Object state, ref Boolean error)
+		public static int Evaluate(object state, ref bool error)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;

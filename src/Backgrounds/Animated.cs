@@ -1,24 +1,20 @@
 ﻿using System;
-using System.Text.RegularExpressions;
 using System.Diagnostics;
-using System.Collections.Generic;
 using xnaMugen.IO;
-using Microsoft.Xna.Framework;
-using xnaMugen.Collections;
 
 namespace xnaMugen.Backgrounds
 {
-	class Animated : Base
+	internal class Animated : Base
 	{
 		public Animated(TextSection textsection, Drawing.SpriteManager spritemanager, Animations.AnimationManager animationmanager)
 			: base(textsection)
 		{
-			if (spritemanager == null) throw new ArgumentNullException("spritemanager");
-			if (animationmanager == null) throw new ArgumentNullException("animationmanager");
+			if (spritemanager == null) throw new ArgumentNullException(nameof(spritemanager));
+			if (animationmanager == null) throw new ArgumentNullException(nameof(animationmanager));
 
 			m_spritemanager = spritemanager;
 			m_animationmanager = animationmanager;
-			m_animationnumber = textsection.GetAttribute<Int32>("actionno", Int32.MinValue);
+			m_animationnumber = textsection.GetAttribute("actionno", int.MinValue);
 		}
 
 		public override void Reset()
@@ -37,14 +33,14 @@ namespace xnaMugen.Backgrounds
 
 		public override void Draw(Combat.PaletteFx palettefx)
 		{
-			Drawing.Sprite sprite = SpriteManager.GetSprite(AnimationManager.CurrentElement.SpriteId);
+			var sprite = SpriteManager.GetSprite(AnimationManager.CurrentElement.SpriteId);
 			if (sprite == null) return;
 
 			Point tilestart;
 			Point tileend;
 			GetTileLength(sprite.Size, out tilestart, out tileend);
 
-			Video.DrawState drawstate = SpriteManager.DrawState;
+			var drawstate = SpriteManager.DrawState;
 			drawstate.Reset();
 			drawstate.Blending = Transparency;
 			drawstate.Set(sprite);
@@ -55,31 +51,22 @@ namespace xnaMugen.Backgrounds
 			drawstate.Use();
 		}
 
-		public Drawing.SpriteManager SpriteManager
-		{
-			get { return m_spritemanager; }
-		}
+		public Drawing.SpriteManager SpriteManager => m_spritemanager;
 
-		public Animations.AnimationManager AnimationManager
-		{
-			get { return m_animationmanager; }
-		}
+		public Animations.AnimationManager AnimationManager => m_animationmanager;
 
-		public Int32 AnimationNumber
-		{
-			get { return m_animationnumber; }
-		}
+		public int AnimationNumber => m_animationnumber;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Drawing.SpriteManager m_spritemanager;
+		private readonly Drawing.SpriteManager m_spritemanager;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Animations.AnimationManager m_animationmanager;
+		private readonly Animations.AnimationManager m_animationmanager;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Int32 m_animationnumber;
+		private readonly int m_animationnumber;
 
 		#endregion
 	}

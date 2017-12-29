@@ -3,16 +3,16 @@ using System;
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("Ceil")]
-	static class Ceil
+	internal static class Ceil
 	{
-		public static Int32 Evaluate(Object state, ref Boolean error, Int32 value)
+		public static int Evaluate(object state, ref bool error, int value)
 		{
 			return value;
 		}
 
-		public static Int32 Evaluate(Object state, ref Boolean error, Single value)
+		public static int Evaluate(object state, ref bool error, float value)
 		{
-			return (Int32)Math.Ceiling(value);
+			return (int)Math.Ceiling(value);
 		}
 
 		public static Node Parse(ParseState state)

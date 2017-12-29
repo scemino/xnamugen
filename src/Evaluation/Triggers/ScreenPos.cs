@@ -1,21 +1,20 @@
-using System;
 using Microsoft.Xna.Framework;
 
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("ScreenPos")]
-	static class ScreenPos
+	internal static class ScreenPos
 	{
-		public static Single Evaluate(Object state, ref Boolean error, Axis axis)
+		public static float Evaluate(object state, ref bool error, Axis axis)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
 				return 0;
 			}
 
-			Vector2 drawlocation = character.GetDrawLocation() - (Vector2)character.Engine.Camera.Location;
+			var drawlocation = character.GetDrawLocation() - (Vector2)character.Engine.Camera.Location;
 
 			switch (axis)
 			{
@@ -33,7 +32,7 @@ namespace xnaMugen.Evaluation.Triggers
 
 		public static Node Parse(ParseState parsestate)
 		{
-			Axis axis = parsestate.ConvertCurrentToken<Axis>();
+			var axis = parsestate.ConvertCurrentToken<Axis>();
 			if (axis == Axis.None) return null;
 
 			++parsestate.TokenIndex;

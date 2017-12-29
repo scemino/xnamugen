@@ -1,14 +1,11 @@
-using System;
-using System.Diagnostics;
 using xnaMugen.IO;
-using Microsoft.Xna.Framework;
 
 namespace xnaMugen.StateMachine.Controllers
 {
 	[StateControllerName("Turn")]
-	class Turn : StateController
+	internal class Turn : StateController
 	{
-		public Turn(StateSystem statesystem, String label, TextSection textsection)
+		public Turn(StateSystem statesystem, string label, TextSection textsection)
 			: base(statesystem, label, textsection)
 		{
 		}

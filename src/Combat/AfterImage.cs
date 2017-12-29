@@ -3,15 +3,14 @@ using System.Diagnostics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
-using xnaMugen.StateMachine;
 
 namespace xnaMugen.Combat
 {
-	struct AfterImageSubdata
+	internal struct AfterImageSubdata
 	{
 		public AfterImageSubdata(Entity entity)
 		{
-			if (entity == null) throw new ArgumentNullException("entity");
+			if (entity == null) throw new ArgumentNullException(nameof(entity));
 
 			m_location = entity.CurrentLocation;
 			m_element = entity.AnimationManager.CurrentElement;
@@ -19,86 +18,65 @@ namespace xnaMugen.Combat
             m_scale = entity.CurrentScale;
 			m_blending = entity.Transparency == new Blending() ? m_element.Blending : entity.Transparency;
 			m_facing = entity.CurrentFacing;
-			m_drawangle = (entity.AngleDraw == true) ? Misc.FaceScalar(entity.CurrentFacing, -entity.DrawingAngle) : 0;
+			m_drawangle = entity.AngleDraw ? Misc.FaceScalar(entity.CurrentFacing, -entity.DrawingAngle) : 0;
 
             if (entity is Character) m_scale *= (entity as Character).DrawScale;
 		}
 
-		public Animations.AnimationElement Element
-		{
-			get { return m_element; }
-		}
+		public Animations.AnimationElement Element => m_element;
 
-		public Vector2 Location
-		{
-			get { return m_location; }
-		}
+		public Vector2 Location => m_location;
 
-		public SpriteEffects Flip
-		{
-			get { return m_flip; }
-		}
+		public SpriteEffects Flip => m_flip;
 
-        public Vector2 Scale
-        {
-            get { return m_scale; }
-        }
+		public Vector2 Scale => m_scale;
 
-		public Blending Transparency
-		{
-			get { return m_blending; }
-		}
+		public Blending Transparency => m_blending;
 
-		public Facing Facing
-		{
-			get { return m_facing; }
-		}
+		public Facing Facing => m_facing;
 
-		public Single DrawAngle
-		{
-			get { return m_drawangle; }
-		}
+		public float DrawAngle => m_drawangle;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Animations.AnimationElement m_element;
+		private readonly Animations.AnimationElement m_element;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Vector2 m_location;
+		private readonly Vector2 m_location;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly SpriteEffects m_flip;
+		private readonly SpriteEffects m_flip;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        readonly Vector2 m_scale;
+        private readonly Vector2 m_scale;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Blending m_blending;
+		private readonly Blending m_blending;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Facing m_facing;
+		private readonly Facing m_facing;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Single m_drawangle;
+		private readonly float m_drawangle;
 
 		#endregion
 	}
 
-	class AfterImage
+	internal class AfterImage
 	{
 		public AfterImage(Entity entity)
 		{
-			if (entity == null) throw new ArgumentNullException("entity");
+			if (entity == null) throw new ArgumentNullException(nameof(entity));
 
 			m_entity = entity;
 			m_imagedata = new LinkedList<AfterImageSubdata>();
-			m_countdown = new Dictionary<Int32, Int32>();
+			m_countdown = new Dictionary<int, int>();
 
 			Reset();
 		}
 
-		public void ModifyDisplayTime(Int32 time)
+		public void ModifyDisplayTime(int time)
 		{
 			DisplayTime = time;
 			m_countdown.Clear();
@@ -139,25 +117,25 @@ namespace xnaMugen.Combat
 				while (m_imagedata.Count > m_numberofframes) m_imagedata.RemoveFirst();
 			}
 
-			Int32 image_index = 0;
-			Boolean isactive = false;
-			foreach (AfterImageSubdata data in m_imagedata)
+			var imageIndex = 0;
+			var isactive = false;
+			foreach (var data in m_imagedata)
 			{
-				if (TimeCheck_Update(image_index) == true) isactive = true;
-				++image_index;
+				if (TimeCheck_Update(imageIndex)) isactive = true;
+				++imageIndex;
 			}
 
-			if (isactive == false && m_firstcreated == true)
+			if (isactive == false && m_firstcreated)
 			{
 				Reset();
 			}
 		}
 
-		Boolean TimeCheck_Update(Int32 image_index)
+		private bool TimeCheck_Update(int image_index)
 		{
 			if (DisplayTime == -1) return true;
 
-			if (m_countdown.ContainsKey(image_index) == true)
+			if (m_countdown.ContainsKey(image_index))
 			{
 				if (m_countdown[image_index] <= 0) return false;
 
@@ -172,11 +150,11 @@ namespace xnaMugen.Combat
 			return true;
 		}
 
-		Boolean TimeCheck(Int32 image_index)
+		private bool TimeCheck(int image_index)
 		{
 			if (DisplayTime == -1) return true;
 
-			if (m_countdown.ContainsKey(image_index) == true)
+			if (m_countdown.ContainsKey(image_index))
 			{
 				if (m_countdown[image_index] <= 0) return false;
 			}
@@ -184,7 +162,7 @@ namespace xnaMugen.Combat
 			return true;
 		}
 
-		Boolean FrameGapCheck(Int32 index)
+		private bool FrameGapCheck(int index)
 		{
 			if (index <= 0) return false;
 
@@ -195,21 +173,21 @@ namespace xnaMugen.Combat
 		{
 			if (IsActive == false) return;
 
-			Int32 index = m_imagedata.Count;
-			foreach (AfterImageSubdata data in m_imagedata)
+			var index = m_imagedata.Count;
+			foreach (var data in m_imagedata)
 			{
 				--index;
 
 				if (FrameGapCheck(index) == false) continue;
 				if (TimeCheck(index) == false) continue;
 
-				Drawing.Sprite sprite = m_entity.SpriteManager.GetSprite(data.Element.SpriteId);
+				var sprite = m_entity.SpriteManager.GetSprite(data.Element.SpriteId);
 				if (sprite == null) continue;
 
-				Vector2 drawlocation = data.Location + new Vector2(Mugen.ScreenSize.X / 2, m_entity.Engine.Stage.ZOffset);
-				Vector2 drawoffset = Misc.GetOffset(Vector2.Zero, data.Facing, data.Element.Offset);
+				var drawlocation = data.Location + new Vector2(Mugen.ScreenSize.X / 2, m_entity.Engine.Stage.ZOffset);
+				var drawoffset = Misc.GetOffset(Vector2.Zero, data.Facing, data.Element.Offset);
 
-				Video.DrawState drawstate = m_entity.SpriteManager.SetupDrawing(data.Element.SpriteId, drawlocation, drawoffset, data.Scale, data.Flip);
+				var drawstate = m_entity.SpriteManager.SetupDrawing(data.Element.SpriteId, drawlocation, drawoffset, data.Scale, data.Flip);
 
 				drawstate.Rotation = data.DrawAngle;
 				drawstate.Blending = Transparency ?? data.Transparency;
@@ -228,93 +206,93 @@ namespace xnaMugen.Combat
 			}
 		}
 
-		public Boolean IsActive
+		public bool IsActive
 		{
-			get { return m_isactive; }
+			get => m_isactive;
 
 			set { m_isactive = value; }
 		}
 
-		public Int32 DisplayTime
+		public int DisplayTime
 		{
-			get { return m_displaytime; }
+			get => m_displaytime;
 
 			set { m_displaytime = value; }
 		}
 
-		public Int32 NumberOfFrames
+		public int NumberOfFrames
 		{
-			get { return m_numberofframes; }
+			get => m_numberofframes;
 
 			set { m_numberofframes = value; }
 		}
 
-		public Single BaseColor
+		public float BaseColor
 		{
-			get { return m_basecolor; }
+			get => m_basecolor;
 
 			set { m_basecolor = Misc.Clamp(value, 0.0f, 1.0f); }
 		}
 
-		public Boolean InvertColor
+		public bool InvertColor
 		{
-			get { return m_invertcolor; }
+			get => m_invertcolor;
 
 			set { m_invertcolor = value; }
 		}
 
 		public Vector3 ColorPreAdd
 		{
-			get { return m_preadd; }
+			get => m_preadd;
 
 			set { m_preadd = value; }
 		}
 
 		public Vector3 ColorContrast
 		{
-			get { return m_constrast; }
+			get => m_constrast;
 
 			set { m_constrast = value; }
 		}
 
 		public Vector3 ColorPostAdd
 		{
-			get { return m_postadd; }
+			get => m_postadd;
 
 			set { m_postadd = value; }
 		}
 
 		public Vector3 ColorPaletteAdd
 		{
-			get { return m_palettecoloradd; }
+			get => m_palettecoloradd;
 
 			set { m_palettecoloradd = value; }
 		}
 
 		public Vector3 ColorPaletteMultiply
 		{
-			get { return m_palettecolormul; }
+			get => m_palettecolormul;
 
 			set { m_palettecolormul = value; }
 		}
 
-		public Int32 TimeGap
+		public int TimeGap
 		{
-			get { return m_timegap; }
+			get => m_timegap;
 
 			set { m_timegap = value; }
 		}
 
-		public Int32 FrameGap
+		public int FrameGap
 		{
-			get { return m_framegap; }
+			get => m_framegap;
 
 			set { m_framegap = value; }
 		}
 
 		public Blending? Transparency
 		{
-			get { return m_transparency; }
+			get => m_transparency;
 
 			set { m_transparency = value; }
 		}
@@ -322,58 +300,58 @@ namespace xnaMugen.Combat
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Entity m_entity;
+		private readonly Entity m_entity;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly LinkedList<AfterImageSubdata> m_imagedata;
+		private readonly LinkedList<AfterImageSubdata> m_imagedata;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Dictionary<Int32, Int32> m_countdown;
+		private readonly Dictionary<int, int> m_countdown;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Boolean m_isactive;
+		private bool m_isactive;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Int32 m_displaytime;
+		private int m_displaytime;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Int32 m_numberofframes;
+		private int m_numberofframes;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Single m_basecolor;
+		private float m_basecolor;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Boolean m_invertcolor;
+		private bool m_invertcolor;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Vector3 m_preadd;
+		private Vector3 m_preadd;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Vector3 m_constrast;
+		private Vector3 m_constrast;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Vector3 m_postadd;
+		private Vector3 m_postadd;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Vector3 m_palettecoloradd;
+		private Vector3 m_palettecoloradd;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Vector3 m_palettecolormul;
+		private Vector3 m_palettecolormul;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Int32 m_timegap;
+		private int m_timegap;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Int32 m_framegap;
+		private int m_framegap;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Blending? m_transparency;
+		private Blending? m_transparency;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Int32 m_timegapcounter;
+		private int m_timegapcounter;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Boolean m_firstcreated;
+		private bool m_firstcreated;
 
 		#endregion
 	}

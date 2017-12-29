@@ -3,25 +3,25 @@ using System;
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("AuthorName")]
-	static class AuthorName
+	internal static class AuthorName
 	{
-		public static Boolean Evaluate(Object state, ref Boolean error, Operator @operator, String text)
+		public static bool Evaluate(object state, ref bool error, Operator @operator, string text)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
 				return false;
 			}
 
-			String authorname = character.BasePlayer.Profile.Author;
+			var authorname = character.BasePlayer.Profile.Author;
 			if (authorname == null)
 			{
 				error = true;
 				return false;
 			}
 
-			Boolean result = String.Equals(authorname, text, StringComparison.OrdinalIgnoreCase);
+			var result = string.Equals(authorname, text, StringComparison.OrdinalIgnoreCase);
 
 			switch (@operator)
 			{
@@ -39,11 +39,11 @@ namespace xnaMugen.Evaluation.Triggers
 
 		public static Node Parse(ParseState state)
 		{
-			Operator @operator = state.CurrentOperator;
+			var @operator = state.CurrentOperator;
 			if (@operator != Operator.Equals && @operator != Operator.NotEquals) return null;
 			++state.TokenIndex;
 
-			String text = state.CurrentText;
+			var text = state.CurrentText;
 			if (text == null) return null;
 			++state.TokenIndex;
 

@@ -3,43 +3,40 @@ using System.Diagnostics;
 using xnaMugen.IO;
 using System.Collections.Generic;
 using xnaMugen.Drawing;
-using xnaMugen.Collections;
-using System.Text.RegularExpressions;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace xnaMugen.Menus
 {
-	class MenuSystem : MainSystem
+	internal class MenuSystem : MainSystem
 	{
 		public MenuSystem(SubSystems subsystems)
 			: base(subsystems)
 		{
-			TextFile textfile = GetSubSystem<IO.FileSystem>().OpenTextFile(@"data/system.def");
-			TextSection info = textfile.GetSection("info");
-			TextSection files = textfile.GetSection("files");
+			var textfile = GetSubSystem<FileSystem>().OpenTextFile(@"data/system.def");
+			var info = textfile.GetSection("info");
+			var files = textfile.GetSection("files");
 
-			m_motifname = info.GetAttribute<String>("name", String.Empty);
-			m_motifauthor = info.GetAttribute<String>("author", String.Empty);
+			m_motifname = info.GetAttribute("name", string.Empty);
+			m_motifauthor = info.GetAttribute("author", string.Empty);
 
-			Dictionary<Int32, Font> fontmap = new Dictionary<Int32, Font>();
+			var fontmap = new Dictionary<int, Font>();
 
-			Drawing.SpriteSystem spritesystem = GetSubSystem<Drawing.SpriteSystem>();
+			var spritesystem = GetSubSystem<SpriteSystem>();
 
-			String fontpath1 = files.GetAttribute<String>("font1", null);
+			var fontpath1 = files.GetAttribute<string>("font1", null);
 			if (fontpath1 != null) fontmap[1] = spritesystem.LoadFont(fontpath1);
 
-			String fontpath2 = files.GetAttribute<String>("font2", null);
+			var fontpath2 = files.GetAttribute<string>("font2", null);
 			if (fontpath2 != null) fontmap[2] = spritesystem.LoadFont(fontpath2);
 
-			String fontpath3 = files.GetAttribute<String>("font3", null);
+			var fontpath3 = files.GetAttribute<string>("font3", null);
 			if (fontpath3 != null) fontmap[3] = spritesystem.LoadFont(fontpath3);
 
-			m_fontmap = new Drawing.FontMap(fontmap);
+			m_fontmap = new FontMap(fontmap);
 
-			String soundpath = @"data/" + files.GetAttribute<String>("snd");
-			String spritepath = @"data/" + files.GetAttribute<String>("spr");
-			String animpath = textfile.Filepath;
+			var soundpath = @"data/" + files.GetAttribute<string>("snd");
+			var spritepath = @"data/" + files.GetAttribute<string>("spr");
+			var animpath = textfile.Filepath;
 
 			m_titlescreen = new TitleScreen(this, textfile.GetSection("Title Info"), spritepath, animpath, soundpath);
 			m_titlescreen.LoadBackgrounds("Title", textfile);
@@ -62,14 +59,14 @@ namespace xnaMugen.Menus
 
 		public void PostEvent(Events.Base theevent)
 		{
-			if (theevent == null) throw new ArgumentNullException("theevent");
+			if (theevent == null) throw new ArgumentNullException(nameof(theevent));
 
 			m_eventqueue.Enqueue(theevent);
 		}
 
-		void SetScreen(Screen screen)
+		private void SetScreen(Screen screen)
 		{
-			if (screen == null) throw new ArgumentNullException("screen");
+			if (screen == null) throw new ArgumentNullException(nameof(screen));
 
 			if (m_currentscreen != null)
 			{
@@ -85,9 +82,9 @@ namespace xnaMugen.Menus
 			}
 		}
 
-		void FadeInScreen(Screen screen)
+		private void FadeInScreen(Screen screen)
 		{
-			if (screen == null) throw new ArgumentNullException("screen");
+			if (screen == null) throw new ArgumentNullException(nameof(screen));
 
 			screen.Reset();
 			screen.FadingIn();
@@ -96,16 +93,16 @@ namespace xnaMugen.Menus
 			m_fadespeed = screen.FadeInTime;
 		}
 
-		void FadedInScreen(Screen screen)
+		private void FadedInScreen(Screen screen)
 		{
-			if (screen == null) throw new ArgumentNullException("screen");
+			if (screen == null) throw new ArgumentNullException(nameof(screen));
 
 			screen.FadeInComplete();
 		}
 
-		void FadeOutScreen(Screen screen)
+		private void FadeOutScreen(Screen screen)
 		{
-			if (screen == null) throw new ArgumentNullException("screen");
+			if (screen == null) throw new ArgumentNullException(nameof(screen));
 
 			screen.FadingOut();
 
@@ -115,9 +112,9 @@ namespace xnaMugen.Menus
 			m_fadespeed = -screen.FadeOutTime;
 		}
 
-		void FadedOutScreen(Screen screen)
+		private void FadedOutScreen(Screen screen)
 		{
-			if (screen == null) throw new ArgumentNullException("screen");
+			if (screen == null) throw new ArgumentNullException(nameof(screen));
 
 			screen.FadeOutComplete();
 		}
@@ -130,16 +127,16 @@ namespace xnaMugen.Menus
 			CurrentScreen.Update(gametime);
 		}
 
-		public void Draw(Boolean debugdraw)
+		public void Draw(bool debugdraw)
 		{
 			m_currentscreen.Draw(debugdraw);
 		}
 
-		void RunEvents()
+		private void RunEvents()
 		{
 			while (m_eventqueue.Count > 0)
 			{
-				Events.Base e = m_eventqueue.Dequeue();
+				var e = m_eventqueue.Dequeue();
 
 				if (e is Events.LoadReplay)
 				{
@@ -204,7 +201,7 @@ namespace xnaMugen.Menus
 			}
 		}
 
-		void DoFading()
+		private void DoFading()
 		{
 			if (m_fadespeed == 0)
 			{
@@ -249,9 +246,9 @@ namespace xnaMugen.Menus
 			GetSubSystem<Video.VideoSystem>().Tint = new Color(new Vector4(m_fade, m_fade, m_fade, m_fade));
 		}
 
-		protected override void Dispose(Boolean disposing)
+		protected override void Dispose(bool disposing)
 		{
-			if (disposing == true)
+			if (disposing)
 			{
 				if (m_titlescreen != null) m_titlescreen.Dispose();
 
@@ -265,91 +262,64 @@ namespace xnaMugen.Menus
 			base.Dispose(disposing);
 		}
 
-		public String MotifName
-		{
-			get { return m_motifname; }
-		}
+		public string MotifName => m_motifname;
 
-		public String MotifAuthor
-		{
-			get { return m_motifauthor; }
-		}
+		public string MotifAuthor => m_motifauthor;
 
-		public Drawing.FontMap FontMap
-		{
-			get { return m_fontmap; }
-		}
+		public FontMap FontMap => m_fontmap;
 
-		public TitleScreen TitleScreen
-		{
-			get { return m_titlescreen; }
-		}
+		public TitleScreen TitleScreen => m_titlescreen;
 
-		public SelectScreen SelectScreen
-		{
-			get { return m_selectscreen; }
-		}
+		public SelectScreen SelectScreen => m_selectscreen;
 
-		public VersusScreen VersusScreen
-		{
-			get { return m_versusscreen; }
-		}
+		public VersusScreen VersusScreen => m_versusscreen;
 
-		public CombatScreen CombatScreen
-		{
-			get { return m_combatscreen; }
-		}
+		public CombatScreen CombatScreen => m_combatscreen;
 
-		public RecordedCombatScreen ReplayScreen
-		{
-			get { return m_replayscreen; }
-		}
+		public RecordedCombatScreen ReplayScreen => m_replayscreen;
 
-		public Screen CurrentScreen
-		{
-			get { return m_currentscreen; }
-		}
+		public Screen CurrentScreen => m_currentscreen;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly String m_motifname;
+		private readonly string m_motifname;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly String m_motifauthor;
+		private readonly string m_motifauthor;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Drawing.FontMap m_fontmap;
+		private readonly FontMap m_fontmap;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly TitleScreen m_titlescreen;
+		private readonly TitleScreen m_titlescreen;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly SelectScreen m_selectscreen;
+		private readonly SelectScreen m_selectscreen;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly VersusScreen m_versusscreen;
+		private readonly VersusScreen m_versusscreen;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly CombatScreen m_combatscreen;
+		private readonly CombatScreen m_combatscreen;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly RecordedCombatScreen m_replayscreen;
+		private readonly RecordedCombatScreen m_replayscreen;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Screen m_currentscreen;
+		private Screen m_currentscreen;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Screen m_newscreen;
+		private Screen m_newscreen;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Single m_fade;
+		private float m_fade;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Single m_fadespeed;
+		private float m_fadespeed;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Queue<Events.Base> m_eventqueue;
+		private readonly Queue<Events.Base> m_eventqueue;
 
 		#endregion
 	}

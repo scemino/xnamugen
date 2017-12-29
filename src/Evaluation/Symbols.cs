@@ -1,8 +1,6 @@
-using System;
-
 namespace xnaMugen.Evaluation
 {
-	enum Symbol
+	internal enum Symbol
 	{
 		None,
 

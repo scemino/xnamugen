@@ -1,20 +1,16 @@
 ﻿using System;
-using xnaMugen.IO;
 using System.Diagnostics;
-using System.Collections.Generic;
-using xnaMugen.Collections;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System.Text.RegularExpressions;
 
 namespace xnaMugen.Drawing
 {
 	[DebuggerDisplay("{SpriteFile.Filepath}")]
-	class SpriteManager
+	internal class SpriteManager
 	{
 		public SpriteManager(SpriteFile spritefile)
 		{
-			if (spritefile == null) throw new ArgumentNullException("spritefile");
+			if (spritefile == null) throw new ArgumentNullException(nameof(spritefile));
 
 			m_spritefile = spritefile;
 			m_drawstate = new Video.DrawState(m_spritefile.SpriteSystem.GetSubSystem<Video.VideoSystem>());
@@ -22,7 +18,7 @@ namespace xnaMugen.Drawing
 
 		public SpriteManager Clone()
 		{
-			SpriteManager clone = new SpriteManager(m_spritefile);
+			var clone = new SpriteManager(m_spritefile);
 			clone.OverridePalette = OverridePalette;
 			clone.UseOverride = UseOverride;
 
@@ -36,9 +32,9 @@ namespace xnaMugen.Drawing
 
 		public void LoadSprites(Animations.Animation animation)
 		{
-			if (animation == null) throw new ArgumentNullException("animation");
+			if (animation == null) throw new ArgumentNullException(nameof(animation));
 
-			foreach (Animations.AnimationElement element in animation)
+			foreach (var element in animation)
 			{
 				GetSprite(element.SpriteId);
 			}
@@ -56,7 +52,7 @@ namespace xnaMugen.Drawing
 
 		public Video.DrawState SetupDrawing(SpriteId id, Vector2 location, Vector2 offset, Vector2 scale, SpriteEffects flip)
 		{
-			Sprite sprite = GetSprite(id);
+			var sprite = GetSprite(id);
 
 			if ((flip & SpriteEffects.FlipHorizontally) == SpriteEffects.FlipHorizontally) offset.X = -offset.X;
 			if ((flip & SpriteEffects.FlipVertically) == SpriteEffects.FlipVertically) offset.Y = -offset.Y;
@@ -68,7 +64,7 @@ namespace xnaMugen.Drawing
 			m_drawstate.Flip = flip;
 			m_drawstate.Scale = scale;
 
-			if (UseOverride == true && sprite != null && sprite.PaletteOverride == true)
+			if (UseOverride && sprite != null && sprite.PaletteOverride)
 			{
 				if (OverridePalette != null)
 				{
@@ -76,7 +72,7 @@ namespace xnaMugen.Drawing
 				}
 				else
 				{
-					Texture2D newpalette = SpriteFile.GetFirstPalette();
+					var newpalette = SpriteFile.GetFirstPalette();
 					if (newpalette != null) m_drawstate.Palette = newpalette;
 				}
 			}
@@ -84,43 +80,37 @@ namespace xnaMugen.Drawing
 			return m_drawstate;
 		}
 
-		public Video.DrawState DrawState
-		{
-			get { return m_drawstate; }
-		}
+		public Video.DrawState DrawState => m_drawstate;
 
 		public Texture2D OverridePalette
 		{
-			get { return m_overridepalette; }
+			get => m_overridepalette;
 
 			set { m_overridepalette = value; }
 		}
 
-		public Boolean UseOverride
+		public bool UseOverride
 		{
-			get { return m_useoverride; }
+			get => m_useoverride;
 
 			set { m_useoverride = value; }
 		}
 
-		SpriteFile SpriteFile
-		{
-			get { return m_spritefile; }
-		}
+		private SpriteFile SpriteFile => m_spritefile;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly SpriteFile m_spritefile;
+		private readonly SpriteFile m_spritefile;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Video.DrawState m_drawstate;
+		private readonly Video.DrawState m_drawstate;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Texture2D m_overridepalette;
+		private Texture2D m_overridepalette;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Boolean m_useoverride;
+		private bool m_useoverride;
 
 		#endregion
 	}

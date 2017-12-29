@@ -3,40 +3,34 @@ using System.Diagnostics;
 
 namespace xnaMugen.Combat
 {
-	class VictoryStatus
+	internal class VictoryStatus
 	{
 		public VictoryStatus(Team team)
 		{
-			if (team == null) throw new ArgumentNullException("team");
+			if (team == null) throw new ArgumentNullException(nameof(team));
 
 			m_team = team;
 		}
 
-		public Boolean Win
-		{
-			get { return WinKO || WinTime; }
-		}
+		public bool Win => WinKO || WinTime;
 
-		public Boolean WinKO
-		{
-			get { return LoseKO == false && m_team.OtherTeam.VictoryStatus.LoseKO == true; }
-		}
+		public bool WinKO => LoseKO == false && m_team.OtherTeam.VictoryStatus.LoseKO;
 
-		public Boolean WinTime
+		public bool WinTime
 		{
 			get
 			{
-				if (WinKO == true) return false;
+				if (WinKO) return false;
 				if (m_team.Engine.Clock.Time != 0) return false;
 
-				Int32 mylife = m_team.MainPlayer.Life + (m_team.TeamMate != null ? m_team.TeamMate.Life : 0);
-				Int32 otherlife = m_team.OtherTeam.MainPlayer.Life + (m_team.OtherTeam.TeamMate != null ? m_team.OtherTeam.TeamMate.Life : 0);
+				var mylife = m_team.MainPlayer.Life + (m_team.TeamMate != null ? m_team.TeamMate.Life : 0);
+				var otherlife = m_team.OtherTeam.MainPlayer.Life + (m_team.OtherTeam.TeamMate != null ? m_team.OtherTeam.TeamMate.Life : 0);
 
 				return otherlife < mylife;
 			}
 		}
 
-		public Boolean WinPerfect
+		public bool WinPerfect
 		{
 			get 
 			{
@@ -47,25 +41,19 @@ namespace xnaMugen.Combat
 			}
 		}
 
-		public Boolean Lose
-		{
-			get { return LoseKO || LoseTime; }
-		}
+		public bool Lose => LoseKO || LoseTime;
 
-		public Boolean LoseKO
-		{
-			get { return m_team.MainPlayer.Life == 0 && (m_team.TeamMate == null || m_team.TeamMate.Life == 0); }
-		}
+		public bool LoseKO => m_team.MainPlayer.Life == 0 && (m_team.TeamMate == null || m_team.TeamMate.Life == 0);
 
-		public Boolean LoseTime
+		public bool LoseTime
 		{
 			get
 			{
-				if (LoseKO == true) return false;
+				if (LoseKO) return false;
 				if (m_team.Engine.Clock.Time != 0) return false;
 
-				Int32 mylife = m_team.MainPlayer.Life + (m_team.TeamMate != null ? m_team.TeamMate.Life : 0);
-				Int32 otherlife = m_team.OtherTeam.MainPlayer.Life + (m_team.OtherTeam.TeamMate != null ? m_team.OtherTeam.TeamMate.Life : 0);
+				var mylife = m_team.MainPlayer.Life + (m_team.TeamMate != null ? m_team.TeamMate.Life : 0);
+				var otherlife = m_team.OtherTeam.MainPlayer.Life + (m_team.OtherTeam.TeamMate != null ? m_team.OtherTeam.TeamMate.Life : 0);
 
 				return otherlife > mylife;
 			}
@@ -74,7 +62,7 @@ namespace xnaMugen.Combat
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Team m_team;
+		private readonly Team m_team;
 
 		#endregion
 	}

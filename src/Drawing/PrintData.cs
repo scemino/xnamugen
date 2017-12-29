@@ -1,18 +1,11 @@
-﻿using System;
-using xnaMugen.IO;
-using System.Diagnostics;
-using System.Collections.Generic;
-using xnaMugen.Collections;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System.Text.RegularExpressions;
+﻿using System.Diagnostics;
 
 namespace xnaMugen.Drawing
 {
 	[DebuggerDisplay("{Index} : {ColorIndex} : {Justification}")]
-	struct PrintData
+	internal struct PrintData
 	{
-		public PrintData(Int32 index, Int32 colorindex, PrintJustification justification)
+		public PrintData(int index, int colorindex, PrintJustification justification)
 		{
 			m_index = index;
 			m_colorindex = colorindex;
@@ -20,39 +13,27 @@ namespace xnaMugen.Drawing
 			m_isvalid = true;
 		}
 
-		public Int32 Index
-		{
-			get { return m_index; }
-		}
+		public int Index => m_index;
 
-		public Int32 ColorIndex
-		{
-			get { return m_colorindex; }
-		}
+		public int ColorIndex => m_colorindex;
 
-		public PrintJustification Justification
-		{
-			get { return m_justification; }
-		}
+		public PrintJustification Justification => m_justification;
 
-		public Boolean IsValid
-		{
-			get { return m_isvalid; }
-		}
+		public bool IsValid => m_isvalid;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Boolean m_isvalid;
+		private readonly bool m_isvalid;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Int32 m_index;
+		private readonly int m_index;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Int32 m_colorindex;
+		private readonly int m_colorindex;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly PrintJustification m_justification;
+		private readonly PrintJustification m_justification;
 
 		#endregion
 	}

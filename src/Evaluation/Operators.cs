@@ -1,8 +1,6 @@
-using System;
-
 namespace xnaMugen.Evaluation
 {
-	enum Operator
+	internal enum Operator
 	{
 		None,
 

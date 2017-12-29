@@ -1,15 +1,12 @@
 using System;
 using System.Diagnostics;
-using xnaMugen.IO;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using xnaMugen.Collections;
 using System.Collections.Generic;
 using System.Text;
 
 namespace xnaMugen.Combat
 {
-	abstract class Character : Entity
+	internal abstract class Character : Entity
 	{
 		protected Character(FightEngine engine)
 			: base(engine)
@@ -34,7 +31,7 @@ namespace xnaMugen.Combat
 			m_offensiveinfo = new OffensiveInfo(this);
 			m_defensiveinfo = new DefensiveInfo(this);
 			m_updatedanimation = false;
-			m_explods = new Dictionary<Int32, List<Explod>>();
+			m_explods = new Dictionary<int, List<Explod>>();
 		}
 
 		public override void Reset()
@@ -79,9 +76,9 @@ namespace xnaMugen.Combat
 		{
 			base.DebugDraw();
 
-			Video.DrawState drawstate = SpriteManager.DrawState;
+			var drawstate = SpriteManager.DrawState;
 
-			Vector2 offset = new Vector2(Mugen.ScreenSize.X / 2.0f, Engine.Stage.ZOffset);
+			var offset = new Vector2(Mugen.ScreenSize.X / 2.0f, Engine.Stage.ZOffset);
 
 			drawstate.Reset();
 			drawstate.Mode = DrawMode.Lines;
@@ -164,7 +161,7 @@ namespace xnaMugen.Combat
 
 		public override void UpdatePhsyics()
 		{
-			if (InHitPause == true || DefensiveInfo.HitShakeTime > 0) return;
+			if (InHitPause || DefensiveInfo.HitShakeTime > 0) return;
 
 			CurrentVelocity += CurrentAcceleration;
 
@@ -193,7 +190,7 @@ namespace xnaMugen.Combat
 			CommandManager.Update(m_currentinput, CurrentFacing, InHitPause);
 		}
 
-		public virtual void RecieveInput(PlayerButton button, Boolean pressed)
+		public virtual void RecieveInput(PlayerButton button, bool pressed)
 		{
 			if (pressed)
 			{
@@ -205,7 +202,7 @@ namespace xnaMugen.Combat
 			}
 		}
 
-		void DoFriction()
+		private void DoFriction()
 		{
 			switch (Physics)
 			{
@@ -225,21 +222,21 @@ namespace xnaMugen.Combat
 			}
 		}
 
-		void ZeroCheckVelocity()
+		private void ZeroCheckVelocity()
 		{
-			Vector2 velocity = CurrentVelocity;
+			var velocity = CurrentVelocity;
 
-			velocity.X = (velocity.X > -1.0f && velocity.X < 1.0f) ? 0 : velocity.X;
+			velocity.X = velocity.X > -1.0f && velocity.X < 1.0f ? 0 : velocity.X;
 
 			CurrentVelocity = velocity;
 		}
 
-		protected virtual Boolean HandleTurning()
+		protected virtual bool HandleTurning()
 		{
 			if (PlayerControl == PlayerControl.NoControl) return false;
 			//if (CurrentLocation.Y != 0 || PlayerControl == PlayerControl.NoControl) return false;
 
-			Player closest = GetOpponent();
+			var closest = GetOpponent();
 			if (closest == null) return false;
 			if (CurrentFacing == Facing.Right && CurrentLocation.X <= closest.CurrentLocation.X) return false;
 			if (CurrentFacing == Facing.Left && CurrentLocation.X >= closest.CurrentLocation.X) return false;
@@ -272,9 +269,9 @@ namespace xnaMugen.Combat
 		{
 			if (PushFlag == false) return;
 
-			foreach (Entity entity in Engine.Entities)
+			foreach (var entity in Engine.Entities)
 			{
-				Character c = FilterEntityAsCharacter(entity, AffectTeam.Enemy);
+				var c = FilterEntityAsCharacter(entity, AffectTeam.Enemy);
 				if (c == null) continue;
 
 				if (c.PushFlag == false) continue;
@@ -283,18 +280,18 @@ namespace xnaMugen.Combat
 
 				if (CurrentLocation.X >= c.CurrentLocation.X)
 				{
-					Single lhs_pos = GetLeftLocation();
-					Single rhs_pos = c.GetRightLocation();
+					var lhs_pos = GetLeftLocation();
+					var rhs_pos = c.GetRightLocation();
 
-					Single overlap = rhs_pos - lhs_pos;
+					var overlap = rhs_pos - lhs_pos;
 
 					if (overlap > 0)
 					{
-						Vector2 actualpush = c.MoveLeft(new Vector2(overlap, 0));
+						var actualpush = c.MoveLeft(new Vector2(overlap, 0));
 
 						if (actualpush.X != -overlap)
 						{
-							Single reversepush = overlap - actualpush.X;
+							var reversepush = overlap - actualpush.X;
 							MoveRight(new Vector2(reversepush, 0));
 						}
 					}
@@ -304,18 +301,18 @@ namespace xnaMugen.Combat
 				}
 				else
 				{
-					Single lhs_pos = GetRightLocation();
-					Single rhs_pos = c.GetLeftLocation();
+					var lhs_pos = GetRightLocation();
+					var rhs_pos = c.GetLeftLocation();
 
-					Single overlap = lhs_pos - rhs_pos;
+					var overlap = lhs_pos - rhs_pos;
 
 					if (overlap > 0)
 					{
-						Vector2 actualpush = c.MoveRight(new Vector2(overlap, 0));
+						var actualpush = c.MoveRight(new Vector2(overlap, 0));
 
 						if (actualpush.X != overlap)
 						{
-							Single reversepush = overlap - actualpush.X;
+							var reversepush = overlap - actualpush.X;
 							MoveLeft(new Vector2(reversepush, 0));
 						}
 					}
@@ -343,12 +340,12 @@ namespace xnaMugen.Combat
 
 			//CurrentLocation = FightEngine.Stage.PlayerBounds.Bound(CurrentLocation);
 
-			if (ScreenBound == true)
+			if (ScreenBound)
 			{
-				Rectangle screenrect = Engine.Camera.ScreenBounds;
+				var screenrect = Engine.Camera.ScreenBounds;
 
-				Single newleft = screenrect.Left - GetLeftEdgePosition(true);
-				Single newright = screenrect.Right - GetRightEdgePosition(true);
+				float newleft = screenrect.Left - GetLeftEdgePosition(true);
+				float newright = screenrect.Right - GetRightEdgePosition(true);
 
 				if (GetLeftEdgePosition(true) < screenrect.Left)
 				{
@@ -369,10 +366,9 @@ namespace xnaMugen.Combat
 
 		public Player GetOpponent()
 		{
-			foreach (Entity entity in Engine.Entities)
+			foreach (var entity in Engine.Entities)
 			{
-				Player player = entity as Player;
-				if (player == null) continue;
+				if (!(entity is Player player)) continue;
 
 				if (Team != player.Team) return player;
 			}
@@ -380,71 +376,61 @@ namespace xnaMugen.Combat
 			return null;
 		}
 
-		public Single GetLeftLocation()
+		public float GetLeftLocation()
 		{
 			if (CurrentFacing == Facing.Right)
 			{
 				return GetBackLocation();
 			}
-			else
-			{
-				return GetFrontLocation();
-			}
+
+			return GetFrontLocation();
 		}
 
-		public Single GetRightLocation()
+		public float GetRightLocation()
 		{
 			if (CurrentFacing == Facing.Right)
 			{
 				return GetFrontLocation();
 			}
-			else
-			{
-				return GetBackLocation();
-			}
+
+			return GetBackLocation();
 		}
 
-		public Single GetFrontLocation()
+		public float GetFrontLocation()
 		{
 			if (CurrentFacing == Facing.Right)
 			{
 				return CurrentLocation.X + Dimensions.GetFrontWidth(StateType);
 			}
-			else
-			{
 
-				return CurrentLocation.X - Dimensions.GetFrontWidth(StateType);
-			}
+			return CurrentLocation.X - Dimensions.GetFrontWidth(StateType);
 		}
 
-		public Single GetBackLocation()
+		public float GetBackLocation()
 		{
 			if (CurrentFacing == Facing.Right)
 			{
 
 				return CurrentLocation.X - Dimensions.GetBackWidth(StateType);
 			}
-			else
-			{
 
-				return CurrentLocation.X + Dimensions.GetBackWidth(StateType);
-			}
+			return CurrentLocation.X + Dimensions.GetBackWidth(StateType);
 		}
 
-		public Int32 GetLeftEdgePosition(Boolean body)
+		public int GetLeftEdgePosition(bool body)
 		{
 			if (CurrentFacing == Facing.Left)
 			{
-				Int32 position = (Int32)CurrentLocation.X - Engine.Stage.LeftEdgeDistance;
-				if (body == true) position -= Dimensions.FrontEdgeWidth;
+				var position = (int)CurrentLocation.X - Engine.Stage.LeftEdgeDistance;
+				if (body) position -= Dimensions.FrontEdgeWidth;
 
 				return position;
 			}
 
 			if (CurrentFacing == Facing.Right)
 			{
-				Int32 position = (Int32)CurrentLocation.X - Engine.Stage.LeftEdgeDistance;
-				if (body == true) position -= Dimensions.BackEdgeWidth;
+				var position = (int)CurrentLocation.X - Engine.Stage.LeftEdgeDistance;
+				if (body) position -= Dimensions.BackEdgeWidth;
 
 				return position;
 			}
@@ -452,20 +438,20 @@ namespace xnaMugen.Combat
 			return 0;
 		}
 
-		public Int32 GetRightEdgePosition(Boolean body)
+		public int GetRightEdgePosition(bool body)
 		{
 			if (CurrentFacing == Facing.Left)
 			{
-				Int32 position = (Int32)CurrentLocation.X + Engine.Stage.RightEdgeDistance;
-				if (body == true) position += Dimensions.BackEdgeWidth;
+				var position = (int)CurrentLocation.X + Engine.Stage.RightEdgeDistance;
+				if (body) position += Dimensions.BackEdgeWidth;
 
 				return position;
 			}
 
 			if (CurrentFacing == Facing.Right)
 			{
-				Int32 position = (Int32)CurrentLocation.X + Engine.Stage.RightEdgeDistance;
-				if (body == true) position += Dimensions.FrontEdgeWidth;
+				var position = (int)CurrentLocation.X + Engine.Stage.RightEdgeDistance;
+				if (body) position += Dimensions.FrontEdgeWidth;
 
 				return position;
 			}
@@ -475,38 +461,38 @@ namespace xnaMugen.Combat
 
 		public Character FilterEntityAsCharacter(Entity entity, AffectTeam team)
 		{
-			if (entity == null) throw new ArgumentNullException("entity");
+			if (entity == null) throw new ArgumentNullException(nameof(entity));
 
-			Character c = entity as Character;
+			var c = entity as Character;
 			if (c == null || c == this) return null;
 
-			if (((team & AffectTeam.Enemy) != AffectTeam.Enemy) && (Team != c.Team)) return null;
-			if (((team & AffectTeam.Friendly) != AffectTeam.Friendly) && (Team == c.Team)) return null;
+			if ((team & AffectTeam.Enemy) != AffectTeam.Enemy && Team != c.Team) return null;
+			if ((team & AffectTeam.Friendly) != AffectTeam.Friendly && Team == c.Team) return null;
 
 			return c;
 		}
 
-		public Projectile FilterEntityAsProjectile(Entity entity, Int32 projid)
+		public Projectile FilterEntityAsProjectile(Entity entity, int projid)
 		{
-			if (entity == null) throw new ArgumentNullException("entity");
+			if (entity == null) throw new ArgumentNullException(nameof(entity));
 
-			Projectile proj = entity as Projectile;
-			if (proj == null || proj.BasePlayer != this || (projid > 0 && proj.Data.ProjectileId != projid)) return null;
+			var proj = entity as Projectile;
+			if (proj == null || proj.BasePlayer != this || projid > 0 && proj.Data.ProjectileId != projid) return null;
 
 			return proj;
 		}
 
 		public Character FilterEntityAsPartner(Entity entity)
 		{
-			if (entity == null) throw new ArgumentNullException("entity");
+			if (entity == null) throw new ArgumentNullException(nameof(entity));
 
 			if (entity == this) return null;
-			if (entity == this.BasePlayer) return null;
+			if (entity == BasePlayer) return null;
 			if (entity.Team != Team) return null;
 
 			if (entity is Helper)
 			{
-				Helper helper = entity as Helper;
+				var helper = entity as Helper;
 				return helper.Data.Type == HelperType.Player ? helper : null;
 			}
 
@@ -518,11 +504,11 @@ namespace xnaMugen.Combat
 			return null;
 		}
 
-		public IEnumerable<Character> GetTargets(Int32 target_id)
+		public IEnumerable<Character> GetTargets(int target_id)
 		{
 			if (target_id >= 0)
 			{
-				foreach (Character character in OffensiveInfo.TargetList)
+				foreach (var character in OffensiveInfo.TargetList)
 				{
 					//if (character.AttackInfo.HitTime == 0) continue;
 					//if (character.MoveType != MoveType.BeingHit) continue;
@@ -533,18 +519,18 @@ namespace xnaMugen.Combat
 			}
 			else
 			{
-				foreach (Character character in OffensiveInfo.TargetList) yield return character;
+				foreach (var character in OffensiveInfo.TargetList) yield return character;
 			}
 		}
 
-		public IEnumerable<Explod> GetExplods(Int32 id)
+		public IEnumerable<Explod> GetExplods(int id)
 		{
 			if (id >= 0)
 			{
 				List<Explod> explods;
-				if (Explods.TryGetValue(id, out explods) == true)
+				if (Explods.TryGetValue(id, out explods))
 				{
-					foreach (Explod explod in explods) yield return explod;
+					foreach (var explod in explods) yield return explod;
 				}
 
 			}
@@ -552,16 +538,16 @@ namespace xnaMugen.Combat
 			{
 				foreach (var data in Explods)
 				{
-					foreach (Explod explod in data.Value) yield return explod;
+					foreach (var explod in data.Value) yield return explod;
 				}
 			}
 		}
 
-		void RemoveFromOthersTargetLists()
+		private void RemoveFromOthersTargetLists()
 		{
-			foreach (Entity entity in Engine.Entities)
+			foreach (var entity in Engine.Entities)
 			{
-				Character character = entity as Character;
+				var character = entity as Character;
 				if (character == null) continue;
 
 				character.OffensiveInfo.TargetList.Remove(this);
@@ -576,25 +562,22 @@ namespace xnaMugen.Combat
 
 		public abstract CharacterDimensions Dimensions { get; }
 
-		public override EntityUpdateOrder UpdateOrder
-		{
-			get { return EntityUpdateOrder.Character; }
-		}
+		public override EntityUpdateOrder UpdateOrder => EntityUpdateOrder.Character;
 
 		public Physics Physics
 		{
-			get { return m_physics; }
+			get => m_physics;
 
 			set { m_physics = value; }
 		}
 
 		public MoveType MoveType
 		{
-			get { return m_movetype; }
+			get => m_movetype;
 
 			set
 			{
-				if (value == MoveType.Unchanged) throw new ArgumentOutOfRangeException("value");
+				if (value == MoveType.Unchanged) throw new ArgumentOutOfRangeException(nameof(value));
 
 				if (m_movetype == MoveType.BeingHit && value != MoveType.BeingHit) RemoveFromOthersTargetLists();
 
@@ -604,28 +587,28 @@ namespace xnaMugen.Combat
 
 		public PlayerControl PlayerControl
 		{
-			get { return m_playercontrol; }
+			get => m_playercontrol;
 
 			set
 			{
 
-				if (value != PlayerControl.InControl && value != PlayerControl.NoControl) throw new ArgumentException("Value must be InControl or NoControl", "value");
+				if (value != PlayerControl.InControl && value != PlayerControl.NoControl) throw new ArgumentException("Value must be InControl or NoControl", nameof(value));
 				m_playercontrol = value;
 			}
 		}
 
 		public StateType StateType
 		{
-			get { return m_statetype; }
+			get => m_statetype;
 
 			set
 			{
-				if (value == StateType.None || value == StateType.Unchanged) throw new ArgumentOutOfRangeException("value");
+				if (value == StateType.None || value == StateType.Unchanged) throw new ArgumentOutOfRangeException(nameof(value));
 				m_statetype = value;
 			}
 		}
 
-		public Int32 Life
+		public int Life
 		{
 			get { return m_life; }
 
@@ -636,199 +619,175 @@ namespace xnaMugen.Combat
 			}
 		}
 
-		public Int32 Id
+		public int Id
 		{
-			get { return m_id; }
+			get => m_id;
 
 			set { m_id = value; }
 		}
 
 		public Vector2 DrawOffset
 		{
-			get { return m_drawoffset; }
+			get => m_drawoffset;
 
 			set { m_drawoffset = value; }
 		}
 
-		public Boolean PositionFreeze
+		public bool PositionFreeze
 		{
-			get { return m_positionfreeze; }
+			get => m_positionfreeze;
 
 			set { m_positionfreeze = value; }
 		}
 
-		public Int32 RoundsExisted
+		public int RoundsExisted
 		{
-			get { return m_roundsexisted; }
+			get => m_roundsexisted;
 
 			set { m_roundsexisted = value; }
 		}
 
-		public Boolean CameraFollowX
+		public bool CameraFollowX
 		{
-			get { return m_camerafollowx; }
+			get => m_camerafollowx;
 
 			set { m_camerafollowx = value; }
 		}
 
-		public Boolean CameraFollowY
+		public bool CameraFollowY
 		{
-			get { return m_camerafollowy; }
+			get => m_camerafollowy;
 
 			set { m_camerafollowy = value; }
 		}
 
-		public Boolean ScreenBound
+		public bool ScreenBound
 		{
-			get { return m_screenbound; }
+			get => m_screenbound;
 
 			set { m_screenbound = value; }
 		}
 
-		public Boolean InHitPause
+		public bool InHitPause
 		{
-			get { return m_inhitpause; }
+			get => m_inhitpause;
 
 			set { m_inhitpause = value; }
 		}
 
-		public CharacterBind Bind
-		{
-			get { return m_bind; }
-		}
+		public CharacterBind Bind => m_bind;
 
-		public CharacterAssertions Assertions
-		{
-			get { return m_assertions; }
-		}
+		public CharacterAssertions Assertions => m_assertions;
 
-		public Int32 JugglePoints
+		public int JugglePoints
 		{
-			get { return m_jugglepoints; }
+			get => m_jugglepoints;
 
 			set { m_jugglepoints = value; }
 		}
 
-		public CharacterVariables Variables
-		{
-			get { return m_variables; }
-		}
+		public CharacterVariables Variables => m_variables;
 
-		public StringBuilder Clipboard
-		{
-			get { return m_clipboard; }
-		}
+		public StringBuilder Clipboard => m_clipboard;
 
-		public Boolean PushFlag
+		public bool PushFlag
 		{
-			get { return m_pushflag; }
+			get => m_pushflag;
 
 			set { m_pushflag = value; }
 		}
 
 		public Vector2 DrawScale
 		{
-			get { return m_drawscale; }
+			get => m_drawscale;
 
 			set { m_drawscale = value; }
 		}
 
-		public OffensiveInfo OffensiveInfo
-		{
-			get { return m_offensiveinfo; }
-		}
+		public OffensiveInfo OffensiveInfo => m_offensiveinfo;
 
-		public DefensiveInfo DefensiveInfo
-		{
-			get { return m_defensiveinfo; }
-		}
+		public DefensiveInfo DefensiveInfo => m_defensiveinfo;
 
-		public Boolean UpdatedAnimation
-		{
-			get { return m_updatedanimation; }
-		}
+		public bool UpdatedAnimation => m_updatedanimation;
 
-		public Dictionary<Int32, List<Explod>> Explods
-		{
-			get { return m_explods; }
-		}
+		public Dictionary<int, List<Explod>> Explods => m_explods;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		PlayerButton m_currentinput;
+		private PlayerButton m_currentinput;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Physics m_physics;
+		private Physics m_physics;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		MoveType m_movetype;
+		private MoveType m_movetype;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		PlayerControl m_playercontrol;
+		private PlayerControl m_playercontrol;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		StateType m_statetype;
+		private StateType m_statetype;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Int32 m_life;
+		private int m_life;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Int32 m_id;
+		private int m_id;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Vector2 m_drawoffset;
+		private Vector2 m_drawoffset;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Boolean m_positionfreeze;
+		private bool m_positionfreeze;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Int32 m_roundsexisted;
+		private int m_roundsexisted;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Boolean m_camerafollowx;
+		private bool m_camerafollowx;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Boolean m_camerafollowy;
+		private bool m_camerafollowy;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Boolean m_screenbound;
+		private bool m_screenbound;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Boolean m_inhitpause;
+		private bool m_inhitpause;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly CharacterBind m_bind;
+		private readonly CharacterBind m_bind;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly CharacterAssertions m_assertions;
+		private readonly CharacterAssertions m_assertions;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Int32 m_jugglepoints;
+		private int m_jugglepoints;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly CharacterVariables m_variables;
+		private readonly CharacterVariables m_variables;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly StringBuilder m_clipboard;
+		private readonly StringBuilder m_clipboard;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Boolean m_pushflag;
+		private bool m_pushflag;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Vector2 m_drawscale;
+		private Vector2 m_drawscale;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly OffensiveInfo m_offensiveinfo;
+		private readonly OffensiveInfo m_offensiveinfo;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly DefensiveInfo m_defensiveinfo;
+		private readonly DefensiveInfo m_defensiveinfo;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Boolean m_updatedanimation;
+		private bool m_updatedanimation;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Dictionary<Int32, List<Explod>> m_explods;
+		private readonly Dictionary<int, List<Explod>> m_explods;
 
 		#endregion
 	}

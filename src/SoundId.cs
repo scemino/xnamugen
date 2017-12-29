@@ -14,7 +14,7 @@ namespace xnaMugen
 		/// <param name="group">The group number of the identified sound.</param>
 		/// <param name="sample">The sample number of the identified sound.</param>
 		[DebuggerStepThrough]
-		public SoundId(Int32 group, Int32 sample)
+		public SoundId(int group, int sample)
 		{
 			m_group = group;
 			m_sample = sample;
@@ -26,7 +26,7 @@ namespace xnaMugen
 		/// <param name="obj">The SoundId to be compared to the current instance.</param>
 		/// <returns>true if the supplied SoundId is equal to this instance; false otherwise.</returns>
 		[DebuggerStepThrough]
-		public Boolean Equals(SoundId other)
+		public bool Equals(SoundId other)
 		{
 			return this == other;
 		}
@@ -37,9 +37,9 @@ namespace xnaMugen
 		/// <param name="obj">The object to be compared to the current instance.</param>
 		/// <returns>true if the supplied object is equal to this instance; false otherwise.</returns>
 		[DebuggerStepThrough]
-		public override Boolean Equals(Object obj)
+		public override bool Equals(object obj)
 		{
-			if (obj == null || obj.GetType() != this.GetType()) return false;
+			if (obj == null || obj.GetType() != GetType()) return false;
 
 			return this == (SoundId)obj;
 		}
@@ -51,7 +51,7 @@ namespace xnaMugen
 		/// <param name="rhs">The second SoundId to be compared.</param>
 		/// <returns>true if the two SoundIds identify the same sound; false otherwise.</returns>
 		[DebuggerStepThrough]
-		public static Boolean operator ==(SoundId lhs, SoundId rhs)
+		public static bool operator ==(SoundId lhs, SoundId rhs)
 		{
 			return lhs.Group == rhs.Group && lhs.Sample == rhs.Sample;
 		}
@@ -63,7 +63,7 @@ namespace xnaMugen
 		/// <param name="rhs">The second SoundId to be compared.</param>
 		/// <returns>true if the two SoundIds do not identify the same sound; false otherwise.</returns>
 		[DebuggerStepThrough]
-		public static Boolean operator !=(SoundId lhs, SoundId rhs)
+		public static bool operator !=(SoundId lhs, SoundId rhs)
 		{
 			return lhs.Group != rhs.Group || lhs.Sample != rhs.Sample;
 		}
@@ -73,7 +73,7 @@ namespace xnaMugen
 		/// </summary>
 		/// <returns>The hash code of this instance.</returns>
 		[DebuggerStepThrough]
-		public override Int32 GetHashCode()
+		public override int GetHashCode()
 		{
 			return Group ^ Sample;
 		}
@@ -83,45 +83,36 @@ namespace xnaMugen
 		/// </summary>
 		/// <returns>A System.String representation of this instance.</returns>
 		[DebuggerStepThrough]
-		public override String ToString()
+		public override string ToString()
 		{
-			return (this != Invalid) ? Group + ", " + Sample : "Invalid";
+			return this != Invalid ? Group + ", " + Sample : "Invalid";
 		}
 
 		/// <summary>
 		/// The Group number of this instance.
 		/// </summary>
 		/// <returns>The Group number.</returns>
-		public Int32 Group
-		{
-			get { return m_group; }
-		}
+		public int Group => m_group;
 
 		/// <summary>
 		/// The Group Sample of this instance.
 		/// </summary>
 		/// <returns>The Sample number.</returns>
-		public Int32 Sample
-		{
-			get { return m_sample; }
-		}
+		public int Sample => m_sample;
 
 		/// <summary>
 		/// A SoundId that does not identify a sound.
 		/// </summary>
 		/// <returns>A SoundId that does not identify a sound.</returns>
-		public static SoundId Invalid
-		{
-			get { return new SoundId(Int32.MinValue, Int32.MinValue); }
-		}
+		public static SoundId Invalid => new SoundId(int.MinValue, int.MinValue);
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Int32 m_group;
+		private int m_group;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Int32 m_sample;
+		private int m_sample;
 
 		#endregion
 	}

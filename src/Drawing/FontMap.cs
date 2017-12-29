@@ -1,26 +1,22 @@
 ﻿using System;
-using xnaMugen.IO;
 using System.Diagnostics;
 using System.Collections.Generic;
-using xnaMugen.Collections;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System.Text.RegularExpressions;
 
 namespace xnaMugen.Drawing
 {
-	class FontMap : Resource
+	internal class FontMap : Resource
 	{
-		public FontMap(Dictionary<Int32, Font> fonts)
+		public FontMap(Dictionary<int, Font> fonts)
 		{
-			if (fonts == null) throw new ArgumentNullException("fonts");
+			if (fonts == null) throw new ArgumentNullException(nameof(fonts));
 
 			m_fonts = fonts;
 		}
 
-        public Font GetFont(Int32 index)
+        public Font GetFont(int index)
         {
-            if (index < 0) throw new ArgumentNullException("index");
+            if (index < 0) throw new ArgumentNullException(nameof(index));
 
             Font font;
             if (m_fonts.TryGetValue(index, out font) == false) return null;
@@ -28,9 +24,9 @@ namespace xnaMugen.Drawing
             return font;
         }
 
-		public void Print(PrintData data, Vector2 location, String text, Rectangle? scissor)
+		public void Print(PrintData data, Vector2 location, string text, Rectangle? scissor)
 		{
-			if (text == null) throw new ArgumentNullException("text");
+			if (text == null) throw new ArgumentNullException(nameof(text));
 
 			if (data.IsValid == false) return;
 
@@ -40,13 +36,13 @@ namespace xnaMugen.Drawing
 			font.Print(location, data.ColorIndex, data.Justification, text, scissor);
 		}
 
-		protected override void Dispose(Boolean disposing)
+		protected override void Dispose(bool disposing)
 		{
-			if (disposing == true)
+			if (disposing)
 			{
 				if (m_fonts != null)
 				{
-					foreach (Font font in m_fonts.Values) if (font != null) font.Dispose();
+					foreach (var font in m_fonts.Values) if (font != null) font.Dispose();
 					m_fonts.Clear();
 				}
 			}
@@ -57,7 +53,7 @@ namespace xnaMugen.Drawing
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
-		readonly Dictionary<Int32, Font> m_fonts;
+		private readonly Dictionary<int, Font> m_fonts;
 
 		#endregion
 	}

@@ -1,4 +1,3 @@
-using System;
 using System.Diagnostics;
 using xnaMugen.IO;
 using Microsoft.Xna.Framework;
@@ -6,38 +5,37 @@ using Microsoft.Xna.Framework;
 namespace xnaMugen.StateMachine.Controllers
 {
 	[StateControllerName("BindToTarget")]
-	class BindToTarget : StateController
+	internal class BindToTarget : StateController
 	{
-		public BindToTarget(StateSystem statesystem, String label, TextSection textsection)
+		public BindToTarget(StateSystem statesystem, string label, TextSection textsection)
 			: base(statesystem, label, textsection)
 		{
 			m_time = textsection.GetAttribute<Evaluation.Expression>("time", null);
 			m_targetid = textsection.GetAttribute<Evaluation.Expression>("id", null);
 
-			ParsePositionString(textsection.GetAttribute<String>("pos", null), out m_position, out m_bindpos);
+			ParsePositionString(textsection.GetAttribute<string>("pos", null), out m_position, out m_bindpos);
 		}
 
-		void ParsePositionString(String input, out Evaluation.Expression expression, out BindToTargetPostion postype)
+		private void ParsePositionString(string input, out Evaluation.Expression expression, out BindToTargetPostion postype)
 		{
 			expression = null;
 			postype = BindToTargetPostion.None;
 
 			if (input == null) return;
 
-			Int32 sep_index = input.LastIndexOf(',');
-			if (sep_index == -1)
+			var sepIndex = input.LastIndexOf(',');
+			if (sepIndex == -1)
 			{
 				expression = StateSystem.GetSubSystem<Evaluation.EvaluationSystem>().CreateExpression(input);
 				return;
 			}
 
-			String str_exp = input.Substring(0, sep_index).Trim();
-			String str_postype = input.Substring(sep_index + 1).Trim();
+			var strExp = input.Substring(0, sepIndex).Trim();
+			var strPostype = input.Substring(sepIndex + 1).Trim();
 
-			BindToTargetPostion bttp;
-			if (StateSystem.GetSubSystem<StringConverter>().TryConvert(str_postype, out bttp) == true)
+			if (StateSystem.GetSubSystem<StringConverter>().TryConvert(strPostype, out BindToTargetPostion bttp))
 			{
-				expression = StateSystem.GetSubSystem<Evaluation.EvaluationSystem>().CreateExpression(str_exp);
+				expression = StateSystem.GetSubSystem<Evaluation.EvaluationSystem>().CreateExpression(strExp);
 				postype = bttp;
 			}
 			else
@@ -48,11 +46,11 @@ namespace xnaMugen.StateMachine.Controllers
 
 		public override void Run(Combat.Character character)
 		{
-			Int32 time = EvaluationHelper.AsInt32(character, Time, 1);
-			Int32 target_id = EvaluationHelper.AsInt32(character, TargetId, Int32.MinValue);
-			Vector2 offset = EvaluationHelper.AsVector2(character, Position, new Vector2(0, 0));
+			var time = EvaluationHelper.AsInt32(character, Time, 1);
+			var targetId = EvaluationHelper.AsInt32(character, TargetId, int.MinValue);
+			var offset = EvaluationHelper.AsVector2(character, Position, new Vector2(0, 0));
 
-			foreach (Combat.Character target in character.GetTargets(target_id))
+			foreach (var target in character.GetTargets(targetId))
 			{
 				switch (BindPosition)
 				{
@@ -63,11 +61,6 @@ namespace xnaMugen.StateMachine.Controllers
 					case BindToTargetPostion.Head:
 						offset += target.BasePlayer.Constants.Headposition;
 						break;
-
-					case BindToTargetPostion.None:
-					case BindToTargetPostion.Foot:
-					default:
-						break;
 				}
 
 				character.Bind.Set(target, offset, time, 0, false);
@@ -75,39 +68,27 @@ namespace xnaMugen.StateMachine.Controllers
 			}
 		}
 
-		public Evaluation.Expression Time
-		{
-			get { return m_time; }
-		}
+		public Evaluation.Expression Time => m_time;
 
-		public Evaluation.Expression TargetId
-		{
-			get { return m_targetid; }
-		}
+		public Evaluation.Expression TargetId => m_targetid;
 
-		public Evaluation.Expression Position
-		{
-			get { return m_position; }
-		}
+		public Evaluation.Expression Position => m_position;
 
-		public BindToTargetPostion BindPosition
-		{
-			get { return m_bindpos; }
-		}
+		public BindToTargetPostion BindPosition => m_bindpos;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_time;
+		private readonly Evaluation.Expression m_time;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_targetid;
+		private readonly Evaluation.Expression m_targetid;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly BindToTargetPostion m_bindpos;
+		private readonly BindToTargetPostion m_bindpos;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_position;
+		private readonly Evaluation.Expression m_position;
 
 		#endregion
 	}

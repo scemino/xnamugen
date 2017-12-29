@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework;
 
 namespace xnaMugen.Menus
 {
-	class RecordedCombatScreen : Screen
+	internal class RecordedCombatScreen : Screen
 	{
 		public RecordedCombatScreen(MenuSystem menusystem)
 			: base(menusystem)
@@ -15,24 +15,19 @@ namespace xnaMugen.Menus
 
 		public void SetReplay(Replay.Recording recording)
 		{
-			if (recording == null) throw new ArgumentNullException("recording");
+			if (recording == null) throw new ArgumentNullException(nameof(recording));
 
 			m_recording = recording;
 		}
 
-		void CancelCombat(Boolean pressed)
+		private void CancelCombat(bool pressed)
 		{
-			if (pressed == true)
+			if (pressed)
 			{
 				Pause = PauseState.Unpaused;
 
 				MenuSystem.PostEvent(new Events.FadeScreen(FadeDirection.Out));
 			}
-		}
-
-		public override void FadingIn()
-		{
-			base.FadingIn();
 		}
 
 		public override void FadeOutComplete()
@@ -65,11 +60,11 @@ namespace xnaMugen.Menus
 		{
 			base.Update(gametime);
 
-			if (m_over == true) return;
+			if (m_over) return;
 
 			if (FightEngine.TickCount >= m_recording.Data.Count)
 			{
-				if (MenuSystem.GetSubSystem<InitializationSettings>().QuitAfterReplay == true)
+				if (MenuSystem.GetSubSystem<InitializationSettings>().QuitAfterReplay)
 				{
 					MenuSystem.PostEvent(new Events.FadeScreen(FadeDirection.Out));
 				}
@@ -88,41 +83,41 @@ namespace xnaMugen.Menus
 			if (Pause == PauseState.PauseStep) m_pause = PauseState.Paused;
 		}
 
-		void InjectRecordingInput()
+		private void InjectRecordingInput()
 		{
-			Replay.RecordingData data = m_recording.Data[FightEngine.TickCount];
+			var data = m_recording.Data[FightEngine.TickCount];
 
-			Combat.Player p1 = FightEngine.Team1.MainPlayer;
-			Combat.Player p2 = FightEngine.Team2.MainPlayer;
-			Combat.Player p3 = FightEngine.Team1.TeamMate;
-			Combat.Player p4 = FightEngine.Team2.TeamMate;
+			var p1 = FightEngine.Team1.MainPlayer;
+			var p2 = FightEngine.Team2.MainPlayer;
+			var p3 = FightEngine.Team1.TeamMate;
+			var p4 = FightEngine.Team2.TeamMate;
 
 			if (p1 != null)
 			{
-				p1.RecieveInput((PlayerButton)Int32.MaxValue, false);
+				p1.RecieveInput((PlayerButton)int.MaxValue, false);
 				p1.RecieveInput(data.Player1Input, true);
 			}
 
 			if (p2 != null)
 			{
-				p2.RecieveInput((PlayerButton)Int32.MaxValue, false);
+				p2.RecieveInput((PlayerButton)int.MaxValue, false);
 				p2.RecieveInput(data.Player2Input, true);
 			}
 
 			if (p3 != null)
 			{
-				p3.RecieveInput((PlayerButton)Int32.MaxValue, false);
+				p3.RecieveInput((PlayerButton)int.MaxValue, false);
 				p3.RecieveInput(data.Player3Input, true);
 			}
 
 			if (p4 != null)
 			{
-				p4.RecieveInput((PlayerButton)Int32.MaxValue, false);
+				p4.RecieveInput((PlayerButton)int.MaxValue, false);
 				p4.RecieveInput(data.Player4Input, true);
 			}
 		}
 
-		public override void Draw(Boolean debugdraw)
+		public override void Draw(bool debugdraw)
 		{
 			base.Draw(debugdraw);
 
@@ -133,9 +128,9 @@ namespace xnaMugen.Menus
 		/// Input handler for toggling pause state.
 		/// </summary>
 		/// <param name="pressed">Whether the button is pressed or released.</param>
-		void TogglePause(Boolean pressed)
+		private void TogglePause(bool pressed)
 		{
-			if (pressed == true)
+			if (pressed)
 			{
 				if (Pause == PauseState.Paused || Pause == PauseState.PauseStep)
 				{
@@ -154,28 +149,19 @@ namespace xnaMugen.Menus
 		/// Input handler for toggling pause step state.
 		/// </summary>
 		/// <param name="pressed">Whether the button is pressed or released.</param>
-		void TogglePauseStep(Boolean pressed)
+		private void TogglePauseStep(bool pressed)
 		{
-			if (pressed == true)
+			if (pressed)
 			{
 				if (Pause == PauseState.Paused) m_pause = PauseState.PauseStep;
 			}
 		}
 
-		public Combat.FightEngine FightEngine
-		{
-			get { return MenuSystem.GetMainSystem<Combat.FightEngine>(); }
-		}
+		public Combat.FightEngine FightEngine => MenuSystem.GetMainSystem<Combat.FightEngine>();
 
-		public override Int32 FadeInTime
-		{
-			get { return FightEngine.RoundInformation.IntroDelay; }
-		}
+		public override int FadeInTime => FightEngine.RoundInformation.IntroDelay;
 
-		public override Int32 FadeOutTime
-		{
-			get { return 20; }
-		}
+		public override int FadeOutTime => 20;
 
 		/// <summary>
 		/// Gets or set whether and how the game is paused.
@@ -183,7 +169,7 @@ namespace xnaMugen.Menus
 		/// <returns>Unpaused if the game is not paused; Paused if the game is paused; PauseStep if the game is paused but will still run for one tick.</returns>
 		public PauseState Pause
 		{
-			get { return m_pause; }
+			get => m_pause;
 
 			set { m_pause = value; }
 		}
@@ -191,13 +177,13 @@ namespace xnaMugen.Menus
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Replay.Recording m_recording;
+		private Replay.Recording m_recording;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		PauseState m_pause;
+		private PauseState m_pause;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Boolean m_over;
+		private bool m_over;
 
 		#endregion;
 	}

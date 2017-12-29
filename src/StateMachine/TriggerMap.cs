@@ -1,16 +1,11 @@
 ﻿using System;
 using System.Diagnostics;
-using xnaMugen.Collections;
 using System.Collections.Generic;
-using xnaMugen.IO;
-using System.Reflection;
-using System.Text.RegularExpressions;
-using Microsoft.Xna.Framework;
 
 namespace xnaMugen.StateMachine
 {
 	//[DebuggerTypeProxy(typeof(TriggerMap.DebuggerProxy))]
-	class TriggerMap
+	internal class TriggerMap
 	{
 		/*
 		class DebuggerProxy
@@ -31,19 +26,19 @@ namespace xnaMugen.StateMachine
 		}
 		*/
 
-		public TriggerMap(SortedDictionary<Int32, List<Evaluation.Expression>> triggers)
+		public TriggerMap(SortedDictionary<int, List<Evaluation.Expression>> triggers)
 		{
-			if (triggers == null) throw new ArgumentNullException("triggers");
+			if (triggers == null) throw new ArgumentNullException(nameof(triggers));
 
 			m_triggers = triggers;
 			m_isvalid = ValidCheck();
 		}
 
-		Boolean ValidCheck()
+		private bool ValidCheck()
 		{
 			if (m_triggers.Count == 0) return false;
 
-			Int32 indexnumber = 0;
+			var indexnumber = 0;
 			foreach (var trigger in m_triggers)
 			{
 				if (trigger.Key == indexnumber)
@@ -63,14 +58,14 @@ namespace xnaMugen.StateMachine
 			return true;
 		}
 
-		public Boolean Trigger(Combat.Character character)
+		public bool Trigger(Combat.Character character)
 		{
-			if (character == null) throw new ArgumentNullException("character");
+			if (character == null) throw new ArgumentNullException(nameof(character));
 
 			foreach (var trigger in m_triggers)
 			{
-				Boolean ok = true;
-				foreach (Evaluation.Expression exp in trigger.Value)
+				var ok = true;
+				foreach (var exp in trigger.Value)
 				{
 					if(exp.EvaluateFirst(character).BooleanValue == false)
 					{
@@ -79,7 +74,7 @@ namespace xnaMugen.StateMachine
 					}
 				}
 
-				if (ok == true)
+				if (ok)
 				{
 					if (trigger.Key != 0) return true;
 				}
@@ -92,18 +87,15 @@ namespace xnaMugen.StateMachine
 			return false;
 		}
 
-		public Boolean IsValid
-		{
-			get { return m_isvalid; }
-		}
+		public bool IsValid => m_isvalid;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Boolean m_isvalid;
+		private readonly bool m_isvalid;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly SortedDictionary<Int32, List<Evaluation.Expression>> m_triggers;
+		private readonly SortedDictionary<int, List<Evaluation.Expression>> m_triggers;
 
 		#endregion
 	}

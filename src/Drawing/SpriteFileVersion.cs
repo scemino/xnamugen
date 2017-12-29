@@ -3,9 +3,9 @@ using System.Diagnostics;
 
 namespace xnaMugen.Drawing
 {
-	struct SpriteFileVersion
+	internal struct SpriteFileVersion
 	{
-		public SpriteFileVersion(Byte high, Byte low1, Byte low2, Byte low3)
+		public SpriteFileVersion(byte high, byte low1, byte low2, byte low3)
 		{
 			m_high = high;
 			m_low1 = low1;
@@ -13,10 +13,10 @@ namespace xnaMugen.Drawing
 			m_low3 = low3;
 		}
 
-		public SpriteFileVersion(Byte[] bytes)
+		public SpriteFileVersion(byte[] bytes)
 		{
-			if (bytes == null) throw new ArgumentNullException("bytes");
-			if (bytes.Length != 4) throw new ArgumentException("Array length must be 4.", "bytes");
+			if (bytes == null) throw new ArgumentNullException(nameof(bytes));
+			if (bytes.Length != 4) throw new ArgumentException("Array length must be 4.", nameof(bytes));
 
 			m_high = bytes[0];
 			m_low1 = bytes[1];
@@ -24,44 +24,32 @@ namespace xnaMugen.Drawing
 			m_low3 = bytes[4];
 		}
 
-		public override String ToString()
+		public override string ToString()
 		{
-			return String.Format("{0} {1} {2} {3}", m_high, m_low1, m_low2, m_low3);
+			return string.Format("{0} {1} {2} {3}", m_high, m_low1, m_low2, m_low3);
 		}
 
-		public Byte High
-		{
-			get { return m_high; }
-		}
+		public byte High => m_high;
 
-		public Byte Low1
-		{
-			get { return m_low1; }
-		}
+		public byte Low1 => m_low1;
 
-		public Byte Low2
-		{
-			get { return m_low2; }
-		}
+		public byte Low2 => m_low2;
 
-		public Byte Low3
-		{
-			get { return m_low3; }
-		}
+		public byte Low3 => m_low3;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Byte m_high;
+		private readonly byte m_high;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Byte m_low1;
+		private readonly byte m_low1;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Byte m_low2;
+		private readonly byte m_low2;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Byte m_low3;
+		private readonly byte m_low3;
 
 		#endregion
 	}

@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Windows.Forms;
-using System.Diagnostics;
 using System.Text;
 
 namespace xnaMugen.Diagnostics
 {
-	class GeneralPanel : Panel
+	internal class GeneralPanel : Panel
 	{
 		public GeneralPanel()
 		{
@@ -14,12 +13,12 @@ namespace xnaMugen.Diagnostics
 			m_text = new Label();
 			m_text.AutoSize = true;
 
-			this.Controls.Add(m_text);
+			Controls.Add(m_text);
 		}
 
 		public void Set(Combat.FightEngine engine)
 		{
-			if (engine == null) throw new ArgumentNullException("engine");
+			if (engine == null) throw new ArgumentNullException(nameof(engine));
 
 			m_stringbuilder.Length = 0;
 
@@ -31,11 +30,11 @@ namespace xnaMugen.Diagnostics
 			m_text.Text = m_stringbuilder.ToString();
 		}
 
-		void BuildEntityText(Combat.EntityCollection collection)
+		private void BuildEntityText(Combat.EntityCollection collection)
 		{
-			if (collection == null) throw new ArgumentNullException("collection");
+			if (collection == null) throw new ArgumentNullException(nameof(collection));
 
-			Int32 players, helpers, explods, projectiles;
+			int players, helpers, explods, projectiles;
 			collection.CountEntities(out players, out helpers, out explods, out projectiles);
 
 			m_stringbuilder.AppendFormat("Entity Count: {0}{1}", players + helpers + explods + projectiles, Environment.NewLine);
@@ -44,7 +43,7 @@ namespace xnaMugen.Diagnostics
 			m_stringbuilder.AppendLine();
 		}
 
-		void BuildStageText(Combat.Stage stage)
+		private void BuildStageText(Combat.Stage stage)
 		{
 			if (stage != null)
 			{
@@ -59,7 +58,7 @@ namespace xnaMugen.Diagnostics
 			m_stringbuilder.AppendLine();
 		}
 
-		void BuildPlayerText(Combat.Player player, Int32 playernumber)
+		private void BuildPlayerText(Combat.Player player, int playernumber)
 		{
 			if (player != null)
 			{
@@ -81,8 +80,8 @@ namespace xnaMugen.Diagnostics
 			m_stringbuilder.AppendLine();
 		}
 
-		readonly Label m_text;
+		private readonly Label m_text;
 
-		readonly StringBuilder m_stringbuilder;
+		private readonly StringBuilder m_stringbuilder;
 	}
 }

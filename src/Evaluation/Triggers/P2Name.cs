@@ -3,26 +3,26 @@ using System;
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("P2Name")]
-	static class P2Name
+	internal static class P2Name
 	{
-		public static Boolean Evaluate(Object state, ref Boolean error, Operator @operator, String text)
+		public static bool Evaluate(object state, ref bool error, Operator @operator, string text)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
 				return false;
 			}
 
-			Combat.Player p2 = character.Team.OtherTeam.MainPlayer;
+			var p2 = character.Team.OtherTeam.MainPlayer;
 
 			switch (@operator)
 			{
 				case Operator.Equals:
-					return (p2 != null) ? String.Equals(p2.Profile.PlayerName, text, StringComparison.OrdinalIgnoreCase) : false;
+					return p2 != null ? string.Equals(p2.Profile.PlayerName, text, StringComparison.OrdinalIgnoreCase) : false;
 
 				case Operator.NotEquals:
-					return (p2 != null) ? !String.Equals(p2.Profile.PlayerName, text, StringComparison.OrdinalIgnoreCase) : true;
+					return p2 != null ? !string.Equals(p2.Profile.PlayerName, text, StringComparison.OrdinalIgnoreCase) : true;
 
 				default:
 					error = true;
@@ -32,11 +32,11 @@ namespace xnaMugen.Evaluation.Triggers
 
 		public static Node Parse(ParseState parsestate)
 		{
-			Operator @operator = parsestate.CurrentOperator;
+			var @operator = parsestate.CurrentOperator;
 			if (@operator != Operator.Equals && @operator != Operator.NotEquals) return null;
 			++parsestate.TokenIndex;
 
-			String text = parsestate.CurrentText;
+			var text = parsestate.CurrentText;
 			if (text == null) return null;
 			++parsestate.TokenIndex;
 

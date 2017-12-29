@@ -3,24 +3,21 @@ using System.Diagnostics;
 
 namespace xnaMugen.Events
 {
-	class SwitchScreen : Base
+	internal class SwitchScreen : Base
 	{
 		public SwitchScreen(ScreenType screen)
 		{
-			if (screen == ScreenType.None) throw new ArgumentNullException("screen");
+			if (screen == ScreenType.None) throw new ArgumentNullException(nameof(screen));
 
 			m_screen = screen;
 		}
 
-		public ScreenType Screen
-		{
-			get { return m_screen; }
-		}
+		public ScreenType Screen => m_screen;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly ScreenType m_screen;
+		private readonly ScreenType m_screen;
 
 		#endregion
 	}

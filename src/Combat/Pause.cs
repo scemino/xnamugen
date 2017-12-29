@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Diagnostics;
-using Microsoft.Xna.Framework;
 using System.Collections.Generic;
-using xnaMugen.Collections;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace xnaMugen.Combat
 {
-	class Pause : EngineObject
+	internal class Pause : EngineObject
 	{
-		public Pause(FightEngine fightengine, Boolean superpause)
+		public Pause(FightEngine fightengine, bool superpause)
 			: base(fightengine)
 		{
 			m_issuperpause = superpause;
@@ -37,7 +34,7 @@ namespace xnaMugen.Combat
 
 		public void Update()
 		{
-			if (IsActive == true)
+			if (IsActive)
 			{
 				++m_elapsedtime;
 			}
@@ -47,9 +44,9 @@ namespace xnaMugen.Combat
 			}
 		}
 
-		public void Set(Character creator, Int32 time, Int32 buffertime, Int32 movetime, Boolean hitpause, Boolean pausebackgrounds)
+		public void Set(Character creator, int time, int buffertime, int movetime, bool hitpause, bool pausebackgrounds)
 		{
-			if (creator == null) throw new ArgumentNullException("creator");
+			if (creator == null) throw new ArgumentNullException(nameof(creator));
 
 			Reset();
 
@@ -61,80 +58,65 @@ namespace xnaMugen.Combat
 			m_hitpause = hitpause;
 			m_pausebackgrounds = pausebackgrounds;
 
-			foreach (Entity entity in Engine.Entities) m_pausedentities.Add(entity);
+			foreach (var entity in Engine.Entities) m_pausedentities.Add(entity);
 		}
 
-		public Boolean IsPaused(Entity entity)
+		public bool IsPaused(Entity entity)
 		{
-			if (entity == null) throw new ArgumentNullException("entity");
+			if (entity == null) throw new ArgumentNullException(nameof(entity));
 
 			if (m_pausedentities.Contains(entity) == false) return false;
 
 			return entity.IsPaused(this);
 		}
 
-		public Boolean IsPaused(Stage stage)
+		public bool IsPaused(Stage stage)
 		{
-			if (stage == null) throw new ArgumentNullException("stage");
+			if (stage == null) throw new ArgumentNullException(nameof(stage));
 
 			if (IsActive == false) return false;
 
 			return m_pausebackgrounds;
 		}
 
-		public Boolean IsActive
-		{
-			get { return m_elapsedtime >= 0 && m_elapsedtime <= m_totaltime; }
-		}
+		public bool IsActive => m_elapsedtime >= 0 && m_elapsedtime <= m_totaltime;
 
-		public Boolean IsSuperPause
-		{
-			get { return m_issuperpause; }
-		}
+		public bool IsSuperPause => m_issuperpause;
 
-		public Character Creator
-		{
-			get { return m_creator; }
-		}
+		public Character Creator => m_creator;
 
-		public Int32 MoveTime
-		{
-			get { return m_movetime; }
-		}
+		public int MoveTime => m_movetime;
 
-		public Int32 ElapsedTime
-		{
-			get { return m_elapsedtime; }
-		}
+		public int ElapsedTime => m_elapsedtime;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Boolean m_issuperpause;
+		private readonly bool m_issuperpause;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Character m_creator;
+		private Character m_creator;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Int32 m_totaltime;
+		private int m_totaltime;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Int32 m_elapsedtime;
+		private int m_elapsedtime;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Int32 m_commandbuffertime;
+		private int m_commandbuffertime;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Int32 m_movetime;
+		private int m_movetime;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Boolean m_hitpause;
+		private bool m_hitpause;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Boolean m_pausebackgrounds;
+		private bool m_pausebackgrounds;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly List<Entity> m_pausedentities;
+		private readonly List<Entity> m_pausedentities;
 
 		#endregion
 	}

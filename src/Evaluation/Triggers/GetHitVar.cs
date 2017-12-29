@@ -1,15 +1,12 @@
-using System;
-using System.Collections.Generic;
-
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("GetHitVar")]
-	static class GetHitVar
+	internal static class GetHitVar
 	{
 		[Tag("fall.envshake.time")]
-		public static Int32 GetFallShakeTime(Object state, ref Boolean error)
+		public static int GetFallShakeTime(object state, ref bool error)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
@@ -20,9 +17,9 @@ namespace xnaMugen.Evaluation.Triggers
 		}
 
 		[Tag("fall.envshake.freq")]
-		public static Single GetFallShakeFreq(Object state, ref Boolean error)
+		public static float GetFallShakeFreq(object state, ref bool error)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
@@ -33,9 +30,9 @@ namespace xnaMugen.Evaluation.Triggers
 		}
 
 		[Tag("fall.envshake.ampl")]
-		public static Single GetFallShakeAmpl(Object state, ref Boolean error)
+		public static float GetFallShakeAmpl(object state, ref bool error)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
@@ -46,9 +43,9 @@ namespace xnaMugen.Evaluation.Triggers
 		}
 
 		[Tag("fall.envshake.phase")]
-		public static Single GetFallShakePhase(Object state, ref Boolean error)
+		public static float GetFallShakePhase(object state, ref bool error)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
@@ -60,9 +57,9 @@ namespace xnaMugen.Evaluation.Triggers
 
 
 		[Tag("guarded")]
-		public static Boolean GetGuarded(Object state, ref Boolean error)
+		public static bool GetGuarded(object state, ref bool error)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
@@ -73,9 +70,9 @@ namespace xnaMugen.Evaluation.Triggers
 		}
 
 		[Tag("chainid")]
-		public static Int32 GetChainId(Object state, ref Boolean error)
+		public static int GetChainId(object state, ref bool error)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
@@ -86,9 +83,9 @@ namespace xnaMugen.Evaluation.Triggers
 		}
 
 		[Tag("fall")]
-		public static Boolean GetFalling(Object state, ref Boolean error)
+		public static bool GetFalling(object state, ref bool error)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
@@ -99,9 +96,9 @@ namespace xnaMugen.Evaluation.Triggers
 		}
 
 		[Tag("fall.damage")]
-		public static Int32 GetFallDamage(Object state, ref Boolean error)
+		public static int GetFallDamage(object state, ref bool error)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
@@ -112,9 +109,9 @@ namespace xnaMugen.Evaluation.Triggers
 		}
 
 		[Tag("fall.recover")]
-		public static Boolean GetCanFallRecover(Object state, ref Boolean error)
+		public static bool GetCanFallRecover(object state, ref bool error)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
@@ -125,9 +122,9 @@ namespace xnaMugen.Evaluation.Triggers
 		}
 
 		[Tag("fall.kill")]
-		public static Boolean GetCanFallKill(Object state, ref Boolean error)
+		public static bool GetCanFallKill(object state, ref bool error)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
@@ -138,9 +135,9 @@ namespace xnaMugen.Evaluation.Triggers
 		}
 
 		[Tag("fall.recovertime")]
-		public static Int32 GetFallRecoverTime(Object state, ref Boolean error)
+		public static int GetFallRecoverTime(object state, ref bool error)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
@@ -151,9 +148,9 @@ namespace xnaMugen.Evaluation.Triggers
 		}
 
 		[Tag("fall.xvel")]
-		public static Single GetFallVelocityX(Object state, ref Boolean error)
+		public static float GetFallVelocityX(object state, ref bool error)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
@@ -164,9 +161,9 @@ namespace xnaMugen.Evaluation.Triggers
 		}
 
 		[Tag("fall.yvel")]
-		public static Single GetFallVelocityY(Object state, ref Boolean error)
+		public static float GetFallVelocityY(object state, ref bool error)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
@@ -177,37 +174,37 @@ namespace xnaMugen.Evaluation.Triggers
 		}
 
 		[Tag("xveladd")]
-		public static Int32 GetVelocityAddX(Object state, ref Boolean error)
+		public static int GetVelocityAddX(object state, ref bool error)
 		{
 			error = true;
 			return 0;
 		}
 
 		[Tag("yveladd")]
-		public static Int32 GetVelocityAddY(Object state, ref Boolean error)
+		public static int GetVelocityAddY(object state, ref bool error)
 		{
 			error = true;
 			return 0;
 		}
 
 		[Tag("fallcount")]
-		public static Int32 GetFallCount(Object state, ref Boolean error)
+		public static int GetFallCount(object state, ref bool error)
 		{
 			error = true;
 			return 0;
 		}
 
 		[Tag("recovertime")]
-		public static Int32 GetRecoverTime(Object state, ref Boolean error)
+		public static int GetRecoverTime(object state, ref bool error)
 		{
 			error = true;
 			return 0;
 		}
 
 		[Tag("hitcount")]
-		public static Int32 GetHitCount(Object state, ref Boolean error)
+		public static int GetHitCount(object state, ref bool error)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
@@ -218,9 +215,9 @@ namespace xnaMugen.Evaluation.Triggers
 		}
 
 		[Tag("xvel")]
-		public static Single GetHitVelocityX(Object state, ref Boolean error)
+		public static float GetHitVelocityX(object state, ref bool error)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
@@ -231,9 +228,9 @@ namespace xnaMugen.Evaluation.Triggers
 		}
 
 		[Tag("yvel")]
-		public static Single GetHitVelocityY(Object state, ref Boolean error)
+		public static float GetHitVelocityY(object state, ref bool error)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
@@ -244,9 +241,9 @@ namespace xnaMugen.Evaluation.Triggers
 		}
 
 		[Tag("type")]
-		public static Int32 GetHitType(Object state, ref Boolean error)
+		public static int GetHitType(object state, ref bool error)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
@@ -255,22 +252,22 @@ namespace xnaMugen.Evaluation.Triggers
 
 			if (character.Life == 0) return 3;
 
-			return (character.DefensiveInfo.HitStateType == xnaMugen.StateType.Airborne) ? GetAirHitType(state, ref error) : GetGroundHitType(state, ref error);
+			return character.DefensiveInfo.HitStateType == xnaMugen.StateType.Airborne ? GetAirHitType(state, ref error) : GetGroundHitType(state, ref error);
 		}
 
 		[Tag("animtype")]
-		public static Int32 GetAnimType(Object state, ref Boolean error)
+		public static int GetAnimType(object state, ref bool error)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
 				return 0;
 			}
 
-			HitAnimationType hat = HitAnimationType.Light;
+			var hat = HitAnimationType.Light;
 
-			if (character.DefensiveInfo.IsFalling == true) hat = character.DefensiveInfo.HitDef.FallAnimationType;
+			if (character.DefensiveInfo.IsFalling) hat = character.DefensiveInfo.HitDef.FallAnimationType;
 			else if (character.DefensiveInfo.HitStateType == xnaMugen.StateType.Airborne) hat = character.DefensiveInfo.HitDef.AirAnimationType;
 			else hat = character.DefensiveInfo.HitDef.GroundAnimationType;
 
@@ -301,9 +298,9 @@ namespace xnaMugen.Evaluation.Triggers
 		}
 
 		[Tag("airtype")]
-		public static Int32 GetAirHitType(Object state, ref Boolean error)
+		public static int GetAirHitType(object state, ref bool error)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
@@ -327,9 +324,9 @@ namespace xnaMugen.Evaluation.Triggers
 		}
 
 		[Tag("groundtype")]
-		public static Int32 GetGroundHitType(Object state, ref Boolean error)
+		public static int GetGroundHitType(object state, ref bool error)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
@@ -353,22 +350,22 @@ namespace xnaMugen.Evaluation.Triggers
 		}
 
 		[Tag("damage")]
-		public static Int32 GetDamage(Object state, ref Boolean error)
+		public static int GetDamage(object state, ref bool error)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
 				return 0;
 			}
 
-			return (character.DefensiveInfo.Blocked == true) ? character.DefensiveInfo.HitDef.GuardDamage : character.DefensiveInfo.HitDef.HitDamage;
+			return character.DefensiveInfo.Blocked ? character.DefensiveInfo.HitDef.GuardDamage : character.DefensiveInfo.HitDef.HitDamage;
 		}
 
 		[Tag("hitshaketime")]
-		public static Int32 GetHitShakeTime(Object state, ref Boolean error)
+		public static int GetHitShakeTime(object state, ref bool error)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
@@ -379,9 +376,9 @@ namespace xnaMugen.Evaluation.Triggers
 		}
 
 		[Tag("hittime")]
-		public static Int32 GetHitTime(Object state, ref Boolean error)
+		public static int GetHitTime(object state, ref bool error)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
@@ -392,22 +389,22 @@ namespace xnaMugen.Evaluation.Triggers
 		}
 
 		[Tag("slidetime")]
-		public static Int32 GetSlideTime(Object state, ref Boolean error)
+		public static int GetSlideTime(object state, ref bool error)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
 				return 0;
 			}
 
-			return (character.DefensiveInfo.Blocked == true) ? character.DefensiveInfo.HitDef.GuardSlideTime : character.DefensiveInfo.HitDef.GroundSlideTime;
+			return character.DefensiveInfo.Blocked ? character.DefensiveInfo.HitDef.GuardSlideTime : character.DefensiveInfo.HitDef.GroundSlideTime;
 		}
 
 		[Tag("ctrltime")]
-		public static Int32 GetGuardControlTime(Object state, ref Boolean error)
+		public static int GetGuardControlTime(object state, ref bool error)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
@@ -425,16 +422,16 @@ namespace xnaMugen.Evaluation.Triggers
 		}
 
 		[Tag("xoff")]
-		public static Int32 GetSnapX(Object state, ref Boolean error)
+		public static int GetSnapX(object state, ref bool error)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
 				return 0;
 			}
 
-			Point? location = character.DefensiveInfo.HitDef.SnapLocation;
+			var location = character.DefensiveInfo.HitDef.SnapLocation;
 			if (location.HasValue == false)
 			{
 				error = true;
@@ -445,16 +442,16 @@ namespace xnaMugen.Evaluation.Triggers
 		}
 
 		[Tag("yoff")]
-		public static Int32 GetSnapY(Object state, ref Boolean error)
+		public static int GetSnapY(object state, ref bool error)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
 				return 0;
 			}
 
-			Point? location = character.DefensiveInfo.HitDef.SnapLocation;
+			var location = character.DefensiveInfo.HitDef.SnapLocation;
 			if (location.HasValue == false)
 			{
 				error = true;
@@ -465,16 +462,16 @@ namespace xnaMugen.Evaluation.Triggers
 		}
 
 		[Tag("zoff")]
-		public static Int32 GetSnapZ(Object state, ref Boolean error)
+		public static int GetSnapZ(object state, ref bool error)
 		{
 			error = true;
 			return 0;
 		}
 
 		[Tag("yaccel")]
-		public static Single GetYAccleration(Object state, ref Boolean error)
+		public static float GetYAccleration(object state, ref bool error)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
@@ -485,18 +482,18 @@ namespace xnaMugen.Evaluation.Triggers
 		}
 
 		[Tag("isbound")]
-		public static Boolean GetIsBound(Object state, ref Boolean error)
+		public static bool GetIsBound(object state, ref bool error)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
 				return false;
 			}
 
-			Combat.CharacterBind bind = character.Bind;
+			var bind = character.Bind;
 
-			return bind.IsActive == true && bind.IsTargetBind == true;
+			return bind.IsActive && bind.IsTargetBind;
 		}
 
 		public static Node Parse(ParseState parsestate)
@@ -505,7 +502,7 @@ namespace xnaMugen.Evaluation.Triggers
 			++parsestate.TokenIndex;
 
 			if (parsestate.CurrentToken == null) return null;
-			String constant = parsestate.CurrentToken.ToString();
+			var constant = parsestate.CurrentToken.ToString();
 
 			parsestate.BaseNode.Arguments.Add(constant);
 			++parsestate.TokenIndex;

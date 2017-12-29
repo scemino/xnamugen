@@ -3,14 +3,14 @@ using System;
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("Abs")]
-	static class Abs
+	internal static class Abs
 	{
-		public static Int32 Evaluate(Object state, ref Boolean error, Int32 value)
+		public static int Evaluate(object state, ref bool error, int value)
 		{
 			return Math.Abs(value);
 		}
 
-		public static Single Evaluate(Object state, ref Boolean error, Single value)
+		public static float Evaluate(object state, ref bool error, float value)
 		{
 			return Math.Abs(value);
 		}

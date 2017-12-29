@@ -4,18 +4,18 @@ using System.Collections.Generic;
 namespace xnaMugen.Evaluation.Triggers.Redirection
 {
 	[StateRedirection("Parent")]
-	static class Parent
+	internal static class Parent
 	{
-		public static Object RedirectState(Object state, ref Boolean error)
+		public static object RedirectState(object state, ref bool error)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
 				return null;
 			}
 
-			Combat.Helper helper = character as Combat.Helper;
+			var helper = character as Combat.Helper;
 			if (helper == null)
 			{
 				error = true;
@@ -30,7 +30,7 @@ namespace xnaMugen.Evaluation.Triggers.Redirection
 			if (parsestate.CurrentSymbol != Symbol.Comma) return null;
 			++parsestate.TokenIndex;
 
-			Node child = parsestate.BuildNode(false);
+			var child = parsestate.BuildNode(false);
 			if (child == null) return null;
 			parsestate.BaseNode.Children.Add(child);
 
@@ -39,18 +39,18 @@ namespace xnaMugen.Evaluation.Triggers.Redirection
 	}
 
 	[StateRedirection("Root")]
-	static class Root
+	internal static class Root
 	{
-		public static Object RedirectState(Object state, ref Boolean error)
+		public static object RedirectState(object state, ref bool error)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
 				return null;
 			}
 
-			Combat.Helper helper = character as Combat.Helper;
+			var helper = character as Combat.Helper;
 			if (helper == null)
 			{
 				error = true;
@@ -65,7 +65,7 @@ namespace xnaMugen.Evaluation.Triggers.Redirection
 			if (parsestate.CurrentSymbol != Symbol.Comma) return null;
 			++parsestate.TokenIndex;
 
-			Node child = parsestate.BuildNode(false);
+			var child = parsestate.BuildNode(false);
 			if (child == null) return null;
 			parsestate.BaseNode.Children.Add(child);
 
@@ -74,11 +74,11 @@ namespace xnaMugen.Evaluation.Triggers.Redirection
 	}
 
 	[StateRedirection("Helper")]
-	static class Helper
+	internal static class Helper
 	{
-		public static Object RedirectState(Object state, ref Boolean error, Int32 helper_id)
+		public static object RedirectState(object state, ref bool error, int helperId)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
@@ -86,7 +86,7 @@ namespace xnaMugen.Evaluation.Triggers.Redirection
 			}
 
 			List<Combat.Helper> helpers;
-			if (character.BasePlayer.Helpers.TryGetValue(helper_id, out helpers) == true && helpers.Count > 0) return helpers[0];
+			if (character.BasePlayer.Helpers.TryGetValue(helperId, out helpers) && helpers.Count > 0) return helpers[0];
 
 			error = true;
 			return null;
@@ -94,7 +94,7 @@ namespace xnaMugen.Evaluation.Triggers.Redirection
 
 		public static Node Parse(ParseState parsestate)
 		{
-			Node node = parsestate.BuildParenNumberNode(true);
+			var node = parsestate.BuildParenNumberNode(true);
 			if (node == null)
 			{
 				node = parsestate.BaseNode;
@@ -106,7 +106,7 @@ namespace xnaMugen.Evaluation.Triggers.Redirection
 			if (parsestate.CurrentSymbol != Symbol.Comma) return null;
 			++parsestate.TokenIndex;
 
-			Node child = parsestate.BuildNode(false);
+			var child = parsestate.BuildNode(false);
 			if (child == null) return null;
 
 			node.Children.Add(child);
@@ -116,18 +116,18 @@ namespace xnaMugen.Evaluation.Triggers.Redirection
 	}
 
 	[StateRedirection("Target")]
-	static class Target
+	internal static class Target
 	{
-		public static Object RedirectState(Object state, ref Boolean error, Int32 target_id)
+		public static object RedirectState(object state, ref bool error, int target_id)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
 				return null;
 			}
 
-			foreach (Combat.Character target in character.GetTargets(target_id))
+			foreach (var target in character.GetTargets(target_id))
 			{
 				return target;
 			}
@@ -138,7 +138,7 @@ namespace xnaMugen.Evaluation.Triggers.Redirection
 
 		public static Node Parse(ParseState parsestate)
 		{
-			Node node = parsestate.BuildParenNumberNode(true);
+			var node = parsestate.BuildParenNumberNode(true);
 			if (node == null)
 			{
 				node = parsestate.BaseNode;
@@ -150,7 +150,7 @@ namespace xnaMugen.Evaluation.Triggers.Redirection
 			if (parsestate.CurrentSymbol != Symbol.Comma) return null;
 			++parsestate.TokenIndex;
 
-			Node child = parsestate.BuildNode(false);
+			var child = parsestate.BuildNode(false);
 			if (child == null) return null;
 
 			node.Children.Add(child);
@@ -160,11 +160,11 @@ namespace xnaMugen.Evaluation.Triggers.Redirection
 	}
 
 	[StateRedirection("Partner")]
-	static class Partner
+	internal static class Partner
 	{
-		public static Object RedirectState(Object state, ref Boolean error)
+		public static object RedirectState(object state, ref bool error)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
@@ -172,7 +172,7 @@ namespace xnaMugen.Evaluation.Triggers.Redirection
 			}
 
 
-			Combat.Player partner = GetTeamMate(character);
+			var partner = GetTeamMate(character);
 			if (partner == null)
 			{
 				error = true;
@@ -182,18 +182,16 @@ namespace xnaMugen.Evaluation.Triggers.Redirection
 			return partner;
 		}
 
-		static Combat.Player GetTeamMate(Combat.Character character)
+		private static Combat.Player GetTeamMate(Combat.Character character)
 		{
-			if (character == null) throw new ArgumentNullException("character");
+			if (character == null) throw new ArgumentNullException(nameof(character));
 
 			if (character.BasePlayer == character.Team.MainPlayer)
 			{
 				return character.Team.TeamMate;
 			}
-			else
-			{
-				return character.Team.MainPlayer;
-			}
+
+			return character.Team.MainPlayer;
 		}
 
 		public static Node Parse(ParseState parsestate)
@@ -201,7 +199,7 @@ namespace xnaMugen.Evaluation.Triggers.Redirection
 			if (parsestate.CurrentSymbol != Symbol.Comma) return null;
 			++parsestate.TokenIndex;
 
-			Node child = parsestate.BuildNode(false);
+			var child = parsestate.BuildNode(false);
 			if (child == null) return null;
 			parsestate.BaseNode.Children.Add(child);
 
@@ -210,24 +208,24 @@ namespace xnaMugen.Evaluation.Triggers.Redirection
 	}
 
 	[StateRedirection("Enemy")]
-	static class Enemy
+	internal static class Enemy
 	{
-		public static Object RedirectState(Object state, ref Boolean error, Int32 nth)
+		public static object RedirectState(object state, ref bool error, int nth)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
 				return null;
 			}
 
-			Int32 count = 0;
-			foreach (Combat.Entity entity in character.Engine.Entities)
+			var count = 0;
+			foreach (var entity in character.Engine.Entities)
 			{
-				Combat.Character enemy = character.FilterEntityAsCharacter(entity, AffectTeam.Enemy);
+				var enemy = character.FilterEntityAsCharacter(entity, AffectTeam.Enemy);
 				if (enemy == null) continue;
 
-				Combat.Player enemyplayer = enemy as Combat.Player;
+				var enemyplayer = enemy as Combat.Player;
 				if (enemyplayer == null) continue;
 
 				if (count != nth)
@@ -245,7 +243,7 @@ namespace xnaMugen.Evaluation.Triggers.Redirection
 
 		public static Node Parse(ParseState parsestate)
 		{
-			Node node = parsestate.BuildParenNumberNode(true);
+			var node = parsestate.BuildParenNumberNode(true);
 			if (node == null)
 			{
 				node = parsestate.BaseNode;
@@ -257,7 +255,7 @@ namespace xnaMugen.Evaluation.Triggers.Redirection
 			if (parsestate.CurrentSymbol != Symbol.Comma) return null;
 			++parsestate.TokenIndex;
 
-			Node child = parsestate.BuildNode(false);
+			var child = parsestate.BuildNode(false);
 			if (child == null) return null;
 
 			node.Children.Add(child);
@@ -267,18 +265,18 @@ namespace xnaMugen.Evaluation.Triggers.Redirection
 	}
 
 	[StateRedirection("EnemyNear")]
-	static class EnemyNear
+	internal static class EnemyNear
 	{
-		public static Object RedirectState(Object state, ref Boolean error, Int32 nth)
+		public static object RedirectState(object state, ref bool error, int nth)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
 				return null;
 			}
 
-			List<Combat.Player> playerlist = BuildPlayerList(character);
+			var playerlist = BuildPlayerList(character);
 
 			//SortPlayerList(character);
 
@@ -291,17 +289,17 @@ namespace xnaMugen.Evaluation.Triggers.Redirection
 			return playerlist[nth];
 		}
 
-		static void SortPlayerList(Combat.Character character)
+		private static void SortPlayerList(Combat.Character character)
 		{
 		}
 
-		static List<Combat.Player> BuildPlayerList(Combat.Character character)
+		private static List<Combat.Player> BuildPlayerList(Combat.Character character)
 		{
-			if (character == null) throw new ArgumentNullException("character");
+			if (character == null) throw new ArgumentNullException(nameof(character));
 
-			Combat.Team otherteam = character.Team.OtherTeam;
+			var otherteam = character.Team.OtherTeam;
 
-			List<Combat.Player> players = new List<Combat.Player>();
+			var players = new List<Combat.Player>();
 			if (otherteam.MainPlayer != null) players.Add(otherteam.MainPlayer);
 			if (otherteam.TeamMate != null) players.Add(otherteam.TeamMate);
 
@@ -310,7 +308,7 @@ namespace xnaMugen.Evaluation.Triggers.Redirection
 
 		public static Node Parse(ParseState parsestate)
 		{
-			Node node = parsestate.BuildParenNumberNode(true);
+			var node = parsestate.BuildParenNumberNode(true);
 			if (node == null)
 			{
 				node = parsestate.BaseNode;
@@ -322,7 +320,7 @@ namespace xnaMugen.Evaluation.Triggers.Redirection
 			if (parsestate.CurrentSymbol != Symbol.Comma) return null;
 			++parsestate.TokenIndex;
 
-			Node child = parsestate.BuildNode(false);
+			var child = parsestate.BuildNode(false);
 			if (child == null) return null;
 
 			node.Children.Add(child);
@@ -332,21 +330,21 @@ namespace xnaMugen.Evaluation.Triggers.Redirection
 	}
 
 	[StateRedirection("PlayerID")]
-	static class PlayerID
+	internal static class PlayerID
 	{
-		public static Object RedirectState(Object state, ref Boolean error, Int32 character_id)
+		public static object RedirectState(object state, ref bool error, int characterId)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
 				return null;
 			}
 
-			foreach (Combat.Entity entity in character.Engine.Entities)
+			foreach (var entity in character.Engine.Entities)
 			{
-				Combat.Character character2 = entity as Combat.Character;
-				if (character2 == null || character2.Id != character_id) continue;
+				var character2 = entity as Combat.Character;
+				if (character2 == null || character2.Id != characterId) continue;
 
 				return character2;
 			}
@@ -357,13 +355,13 @@ namespace xnaMugen.Evaluation.Triggers.Redirection
 
 		public static Node Parse(ParseState parsestate)
 		{
-			Node node = parsestate.BuildParenNumberNode(true);
+			var node = parsestate.BuildParenNumberNode(true);
 			if (node == null) return null;
 
 			if (parsestate.CurrentSymbol != Symbol.Comma) return null;
 			++parsestate.TokenIndex;
 
-			Node child = parsestate.BuildNode(false);
+			var child = parsestate.BuildNode(false);
 			if (child == null) return null;
 
 			node.Children.Add(child);

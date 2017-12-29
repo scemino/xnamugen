@@ -4,11 +4,11 @@ using System.Diagnostics;
 
 namespace xnaMugen.Collections
 {
-	[DebuggerDisplay("Size = {Size}")]
+	[DebuggerDisplay("Size = {" + nameof(Size) + "}")]
 	[DebuggerTypeProxy(typeof(CircularBuffer<>.DebuggerProxy))]
-	class CircularBuffer<T>
+	internal class CircularBuffer<T>
 	{
-		class DebuggerProxy
+		private class DebuggerProxy
 		{
 			public DebuggerProxy(CircularBuffer<T> data)
 			{
@@ -16,21 +16,15 @@ namespace xnaMugen.Collections
 			}
 
 			[DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
-			public T[] Items
-			{
-				get
-				{
-					return m_data.GetCurrentBuffer();
-				}
-			}
+			public T[] Items => m_data.GetCurrentBuffer();
 
 			[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-			readonly CircularBuffer<T> m_data;
+			private readonly CircularBuffer<T> m_data;
 		}
 
-		public CircularBuffer(Int32 capacity)
+		public CircularBuffer(int capacity)
 		{
-			if (capacity <= 0) throw new ArgumentOutOfRangeException("Capacity must be greater than zero");
+			if (capacity <= 0) throw new ArgumentOutOfRangeException(nameof(capacity), "Capacity must be greater than zero");
 
 			m_capacity = capacity;
 			m_data = new T[m_capacity];
@@ -68,14 +62,14 @@ namespace xnaMugen.Collections
 			}
 		}
 
-		public T Get(Int32 index)
+		public T Get(int index)
 		{
 			if (index < 0 || index >= m_size) throw new ArgumentOutOfRangeException();
 
 			return m_data[(index + m_readposition) % m_capacity];
 		}
 
-		public T ReverseGet(Int32 index)
+		public T ReverseGet(int index)
 		{
 			if (index < 0 || index >= m_size) throw new ArgumentOutOfRangeException();
 
@@ -84,7 +78,7 @@ namespace xnaMugen.Collections
 
 		public IEnumerator<T> GetEnumerator()
 		{
-			for (Int32 i = 0; i != m_size; ++i)
+			for (var i = 0; i != m_size; ++i)
 			{
 				yield return Get(i);
 			}
@@ -92,7 +86,7 @@ namespace xnaMugen.Collections
 
 		public IEnumerator<T> ReverseOrder()
 		{
-			for (Int32 i = 0; i != m_size; ++i)
+			for (var i = 0; i != m_size; ++i)
 			{
 				yield return ReverseGet(i);
 			}
@@ -100,51 +94,45 @@ namespace xnaMugen.Collections
 
 		public T[] GetCurrentBuffer()
 		{
-			T[] buffer = new T[m_size];
+			var buffer = new T[m_size];
 
-			for (Int32 i = 0; i != m_size; ++i) buffer[i] = Get(i);
+			for (var i = 0; i != m_size; ++i) buffer[i] = Get(i);
 
 			return buffer;
 		}
 
 		public T[] GetCurrentReversedBuffer()
 		{
-			T[] buffer = new T[m_size];
+			var buffer = new T[m_size];
 
-			for (Int32 i = 0; i != m_size; ++i) buffer[i] = ReverseGet(i);
+			for (var i = 0; i != m_size; ++i) buffer[i] = ReverseGet(i);
 
 			return buffer;
 		}
 
-		public Int32 Size
-		{
-			get { return m_size; }
-		}
+		public int Size => m_size;
 
-		public Int32 Capacity
-		{
-			get { return m_capacity; }
-		}
+		public int Capacity => m_capacity;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Int32 m_capacity;
+		private readonly int m_capacity;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		T[] m_data;
+		private T[] m_data;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Boolean m_wraparound;
+		private bool m_wraparound;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Int32 m_readposition;
+		private int m_readposition;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Int32 m_writeposition;
+		private int m_writeposition;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Int32 m_size;
+		private int m_size;
 
 		#endregion
 	}

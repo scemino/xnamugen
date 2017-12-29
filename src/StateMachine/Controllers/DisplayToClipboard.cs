@@ -1,17 +1,16 @@
 using System;
 using System.Diagnostics;
 using xnaMugen.IO;
-using System.Collections.Generic;
 
 namespace xnaMugen.StateMachine.Controllers
 {
 	[StateControllerName("DisplayToClipboard")]
-	class DisplayToClipboard : StateController
+	internal class DisplayToClipboard : StateController
 	{
-		public DisplayToClipboard(StateSystem statesystem, String label, TextSection textsection)
+		public DisplayToClipboard(StateSystem statesystem, string label, TextSection textsection)
 			: base(statesystem, label, textsection)
 		{
-			m_formatstring = textsection.GetAttribute<String>("text", null);
+			m_formatstring = textsection.GetAttribute<string>("text", null);
 			m_params = textsection.GetAttribute<Evaluation.Expression>("params", null);
 		}
 
@@ -29,14 +28,14 @@ namespace xnaMugen.StateMachine.Controllers
 			}
 		}
 
-		protected String BuildString(Evaluation.Number[] args)
+		protected string BuildString(Evaluation.Number[] args)
 		{
-			if (args == null) throw new ArgumentNullException("args");
+			if (args == null) throw new ArgumentNullException(nameof(args));
 
 			return StateSystem.GetSubSystem<StringFormatter>().BuildString(FormatString, args);
 		}
 
-		public override Boolean IsValid()
+		public override bool IsValid()
 		{
 			if (base.IsValid() == false) return false;
 
@@ -45,23 +44,17 @@ namespace xnaMugen.StateMachine.Controllers
 			return true;
 		}
 
-		public String FormatString
-		{
-			get { return m_formatstring; }
-		}
+		public string FormatString => m_formatstring;
 
-		public Evaluation.Expression Parameters
-		{
-			get { return m_params; }
-		}
+		public Evaluation.Expression Parameters => m_params;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly String m_formatstring;
+		private readonly string m_formatstring;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_params;
+		private readonly Evaluation.Expression m_params;
 
 		#endregion
 	}

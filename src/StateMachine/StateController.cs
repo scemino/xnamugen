@@ -1,60 +1,55 @@
 ﻿using System;
 using System.Diagnostics;
-using xnaMugen.Collections;
 using System.Collections.Generic;
 using xnaMugen.IO;
-using System.Reflection;
-using System.Text.RegularExpressions;
-using Microsoft.Xna.Framework;
 
 namespace xnaMugen.StateMachine
 {
-	abstract class StateController
+	internal abstract class StateController
 	{
-		protected StateController(StateSystem statesystem, String label, TextSection textsection)
+		protected StateController(StateSystem statesystem, string label, TextSection textsection)
 		{
-			if (statesystem == null) throw new ArgumentNullException("statesystem");
-			if (label == null) throw new ArgumentNullException("label");
-			if (textsection == null) throw new ArgumentNullException("textsection");
+			if (statesystem == null) throw new ArgumentNullException(nameof(statesystem));
+			if (label == null) throw new ArgumentNullException(nameof(label));
+			if (textsection == null) throw new ArgumentNullException(nameof(textsection));
 
 			m_statesystem = statesystem;
 			m_textsection = textsection;
-            m_persistence = textsection.GetAttribute<Int32>("persistent", 1);
-			m_ignorehitpause = textsection.GetAttribute<Boolean>("ignorehitpause", false);
+            m_persistence = textsection.GetAttribute("persistent", 1);
+			m_ignorehitpause = textsection.GetAttribute("ignorehitpause", false);
 			m_triggers = BuildTriggers(textsection);
 			m_label = label;
 		}
 
-		public virtual Boolean IsValid()
+		public virtual bool IsValid()
 		{
 			return Triggers.IsValid;
 		}
 
-		public override Int32 GetHashCode()
+		public override int GetHashCode()
 		{
 			return GetType().GetHashCode() ^ Label.GetHashCode();
 		}
 
 		public abstract void Run(Combat.Character character);
 
-		TriggerMap BuildTriggers(TextSection textsection)
+		private TriggerMap BuildTriggers(TextSection textsection)
 		{
-			if (textsection == null) throw new ArgumentNullException("textsection");
+			if (textsection == null) throw new ArgumentNullException(nameof(textsection));
 
-			StringComparer sc = StringComparer.OrdinalIgnoreCase;
-			var triggers = new SortedDictionary<Int32, List<Evaluation.Expression>>();
+			var triggers = new SortedDictionary<int, List<Evaluation.Expression>>();
 
 			var evalsystem = StateSystem.GetSubSystem<Evaluation.EvaluationSystem>();
 
-			foreach (KeyValuePair<String, String> parsedline in textsection.ParsedLines)
+			foreach (var parsedline in textsection.ParsedLines)
 			{
-				if (String.Compare(parsedline.Key, 0, "trigger", 0, 7, StringComparison.OrdinalIgnoreCase) != 0) continue;
+				if (string.Compare(parsedline.Key, 0, "trigger", 0, 7, StringComparison.OrdinalIgnoreCase) != 0) continue;
 
-				Int32 triggernumber = 0;
-				if (String.Compare(parsedline.Key, 7, "all", 0, 3, StringComparison.OrdinalIgnoreCase) == 0) triggernumber = 0;
-				else if (Int32.TryParse(parsedline.Key.Substring(7), out triggernumber) == false) continue;
+				int triggernumber;
+				if (string.Compare(parsedline.Key, 7, "all", 0, 3, StringComparison.OrdinalIgnoreCase) == 0) triggernumber = 0;
+				else if (int.TryParse(parsedline.Key.Substring(7), out triggernumber) == false) continue;
 
-				Evaluation.Expression trigger = evalsystem.CreateExpression(parsedline.Value);
+				var trigger = evalsystem.CreateExpression(parsedline.Value);
 
 				if (triggers.ContainsKey(triggernumber) == false) triggers.Add(triggernumber, new List<Evaluation.Expression>());
 				triggers[triggernumber].Add(trigger);
@@ -63,60 +58,42 @@ namespace xnaMugen.StateMachine
 			return new TriggerMap(triggers);
 		}
 
-		public override String ToString()
+		public override string ToString()
 		{
-			return String.Format("{0} - {1}", GetType().Name, Label);
+			return string.Format("{0} - {1}", GetType().Name, Label);
 		}
 
-		public StateSystem StateSystem
-		{
-			get { return m_statesystem; }
-		}
+		public StateSystem StateSystem => m_statesystem;
 
-		public IO.TextSection Text
-		{
-			get { return m_textsection; }
-		}
+		public TextSection Text => m_textsection;
 
-        public Int32 Persistence
-		{
-			get { return m_persistence; }
-		}
+		public int Persistence => m_persistence;
 
-		public Boolean IgnoreHitPause
-		{
-			get { return m_ignorehitpause; }
-		}
+		public bool IgnoreHitPause => m_ignorehitpause;
 
-		public TriggerMap Triggers
-		{
-			get { return m_triggers; }
-		}
+		public TriggerMap Triggers => m_triggers;
 
-		public String Label
-		{
-			get { return m_label; }
-		}
+		public string Label => m_label;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly StateSystem m_statesystem;
+		private readonly StateSystem m_statesystem;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly IO.TextSection m_textsection;
+		private readonly TextSection m_textsection;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Int32 m_persistence;
+		private readonly int m_persistence;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Boolean m_ignorehitpause;
+		private readonly bool m_ignorehitpause;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly TriggerMap m_triggers;
+		private readonly TriggerMap m_triggers;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly String m_label;
+		private readonly string m_label;
 
 		#endregion
 	}

@@ -1,13 +1,12 @@
-using System;
 using System.Diagnostics;
 using xnaMugen.IO;
 
 namespace xnaMugen.StateMachine.Controllers
 {
 	[StateControllerName("ReversalDef")]
-	class ReversalDef : StateController
+	internal class ReversalDef : StateController
 	{
-		public ReversalDef(StateSystem statesystem, String label, TextSection textsection)
+		public ReversalDef(StateSystem statesystem, string label, TextSection textsection)
 			: base(statesystem, label, textsection)
 		{
 			m_pausetime = textsection.GetAttribute<Evaluation.Expression>("pausetime", null);
@@ -22,55 +21,37 @@ namespace xnaMugen.StateMachine.Controllers
 		{
 		}
 
-		public Evaluation.Expression PauseTime
-		{
-			get { return m_pausetime; }
-		}
+		public Evaluation.Expression PauseTime => m_pausetime;
 
-		public Evaluation.PrefixedExpression SparkNumber
-		{
-			get { return m_sparknumber; }
-		}
+		public Evaluation.PrefixedExpression SparkNumber => m_sparknumber;
 
-		public Evaluation.PrefixedExpression HitSound
-		{
-			get { return m_hitsound; }
-		}
+		public Evaluation.PrefixedExpression HitSound => m_hitsound;
 
-		public Evaluation.Expression P1StateNumber
-		{
-			get { return m_p1statenumber; }
-		}
+		public Evaluation.Expression P1StateNumber => m_p1statenumber;
 
-		public Evaluation.Expression P2StateNumber
-		{
-			get { return m_p2statenumber; }
-		}
+		public Evaluation.Expression P2StateNumber => m_p2statenumber;
 
-		public Combat.HitAttribute ReversalHitAttribute
-		{
-			get { return m_hitattr; }
-		}
+		public Combat.HitAttribute ReversalHitAttribute => m_hitattr;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Evaluation.Expression m_pausetime;
+		private Evaluation.Expression m_pausetime;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.PrefixedExpression m_sparknumber;
+		private readonly Evaluation.PrefixedExpression m_sparknumber;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.PrefixedExpression m_hitsound;
+		private readonly Evaluation.PrefixedExpression m_hitsound;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_p1statenumber;
+		private readonly Evaluation.Expression m_p1statenumber;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_p2statenumber;
+		private readonly Evaluation.Expression m_p2statenumber;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Combat.HitAttribute m_hitattr;
+		private readonly Combat.HitAttribute m_hitattr;
 
 		#endregion
 	}

@@ -4,23 +4,23 @@ using Microsoft.Xna.Framework;
 
 namespace xnaMugen.Combat
 {
-    class TeamDisplay
+    internal class TeamDisplay
     {
         public TeamDisplay(Team team)
         {
-            if (team == null) throw new ArgumentNullException("team");
+            if (team == null) throw new ArgumentNullException(nameof(team));
 
             m_team = team;
             m_combocounter = new ComboCounter(team);
 
-            IO.TextFile textfile = m_team.Engine.GetSubSystem<IO.FileSystem>().OpenTextFile(@"data/fight.def");
-            IO.TextSection lifebar = textfile.GetSection("Lifebar");
-            IO.TextSection powerbar = textfile.GetSection("Powerbar");
-            IO.TextSection face = textfile.GetSection("Face");
-            IO.TextSection name = textfile.GetSection("Name");
-            IO.TextSection winicon = textfile.GetSection("WinIcon");
+            var textfile = m_team.Engine.GetSubSystem<IO.FileSystem>().OpenTextFile(@"data/fight.def");
+            var lifebar = textfile.GetSection("Lifebar");
+            var powerbar = textfile.GetSection("Powerbar");
+            var face = textfile.GetSection("Face");
+            var name = textfile.GetSection("Name");
+            var winicon = textfile.GetSection("WinIcon");
 
-            String prefix = Misc.GetPrefix(m_team.Side);
+            var prefix = Misc.GetPrefix(m_team.Side);
             var elements = m_team.Engine.Elements;
 
             m_lifebg0 = elements.Build(prefix + "lifebar.bg0", lifebar, prefix + ".bg0");
@@ -80,11 +80,11 @@ namespace xnaMugen.Combat
             DrawWinIcons();
         }
 
-        void DrawWinIcons()
+        private void DrawWinIcons()
         {
-            Vector2 location = m_winiconposition;
+            var location = m_winiconposition;
 
-            foreach (Win win in m_team.Wins)
+            foreach (var win in m_team.Wins)
             {
                 switch (win.Victory)
                 {
@@ -121,15 +121,15 @@ namespace xnaMugen.Combat
                         break;
                 }
 
-                if (win.IsPerfectVictory == true) m_winiconperfect.Draw(location);
+                if (win.IsPerfectVictory) m_winiconperfect.Draw(location);
 
                 location += m_winiconoffset;
             }
         }
 
-        void DrawLifebar(Player player)
+        private void DrawLifebar(Player player)
         {
-            if (player == null) throw new ArgumentNullException("player");
+            if (player == null) throw new ArgumentNullException(nameof(player));
 
             if (m_lifebg0.DataMap.Type == ElementType.Static || m_lifebg0.DataMap.Type == ElementType.Animation)
             {
@@ -148,7 +148,7 @@ namespace xnaMugen.Combat
 
             if (m_lifefront.DataMap.Type == ElementType.Static)
             {
-                Single life_percentage = Math.Max(0.0f, (Single)player.Life / (Single)player.Constants.MaximumLife);
+                var life_percentage = Math.Max(0.0f, player.Life / (float)player.Constants.MaximumLife);
 
                 var drawstate = m_lifefront.SpriteManager.SetupDrawing(m_lifefront.DataMap.SpriteId, m_lifebarposition, Vector2.Zero, m_lifefront.DataMap.Scale, m_lifefront.DataMap.Flip);
                 drawstate.ScissorRectangle = CreateBarScissorRectangle(m_lifefront, m_lifebarposition, life_percentage, m_lifebarrange);
@@ -156,9 +156,9 @@ namespace xnaMugen.Combat
             }
         }
 
-        void DrawPowerbar(Player player)
+        private void DrawPowerbar(Player player)
         {
-            if (player == null) throw new ArgumentNullException("player");
+            if (player == null) throw new ArgumentNullException(nameof(player));
 
             if (m_powerbg0.DataMap.Type == ElementType.Static || m_powerbg0.DataMap.Type == ElementType.Animation)
             {
@@ -177,7 +177,7 @@ namespace xnaMugen.Combat
 
             if (m_powerfront != null && m_powerfront.DataMap.Type == ElementType.Static)
             {
-                Single power_percentage = Math.Max(0.0f, (Single)player.Power / (Single)player.Constants.MaximumPower);
+                var power_percentage = Math.Max(0.0f, player.Power / (float)player.Constants.MaximumPower);
 
                 var drawstate = m_powerfront.SpriteManager.SetupDrawing(m_powerfront.DataMap.SpriteId, m_powerbarposition, Vector2.Zero, m_powerfront.DataMap.Scale, m_powerfront.DataMap.Flip);
                 drawstate.ScissorRectangle = CreateBarScissorRectangle(m_powerfront, m_powerbarposition, power_percentage, m_powerbarrange);
@@ -186,14 +186,14 @@ namespace xnaMugen.Combat
 
 			if (m_powercounter.DataMap.Type == ElementType.Text)
 			{
-				String powertext = (player.Power / 1000).ToString();
+				var powertext = (player.Power / 1000).ToString();
 				m_team.Engine.Print(m_powercounter.DataMap.FontData, m_powerbarposition + m_powercounter.DataMap.Offset, powertext, null);
 			}
         }
 
-        void DrawFace(Player player)
+        private void DrawFace(Player player)
         {
-            if (player == null) throw new ArgumentNullException("player");
+            if (player == null) throw new ArgumentNullException(nameof(player));
 
             if (m_facebg.DataMap.Type == ElementType.Static || m_facebg.DataMap.Type == ElementType.Animation)
             {
@@ -210,9 +210,9 @@ namespace xnaMugen.Combat
             }
         }
 
-        void PrintName(Player player)
+        private void PrintName(Player player)
         {
-            if (player == null) throw new ArgumentNullException("player");
+            if (player == null) throw new ArgumentNullException(nameof(player));
 
             if (m_namelement.DataMap.Type == ElementType.Text)
             {
@@ -220,22 +220,22 @@ namespace xnaMugen.Combat
             }
         }
 
-        Rectangle CreateBarScissorRectangle(Elements.Base element, Vector2 location, Single percentage, Point range)
+        private Rectangle CreateBarScissorRectangle(Elements.Base element, Vector2 location, float percentage, Point range)
         {
-            if (element == null) throw new ArgumentNullException("element");
+            if (element == null) throw new ArgumentNullException(nameof(element));
 
-            Drawing.Sprite sprite = element.SpriteManager.GetSprite(element.DataMap.SpriteId);
+            var sprite = element.SpriteManager.GetSprite(element.DataMap.SpriteId);
             if (sprite == null) return new Rectangle();
 
-            Point drawlocation = (Point)Video.Renderer.GetDrawLocation(sprite.Size, (Vector2)location, (Vector2)sprite.Axis, element.DataMap.Scale, element.DataMap.Flip);
+            var drawlocation = (Point)Video.Renderer.GetDrawLocation(sprite.Size, location, (Vector2)sprite.Axis, element.DataMap.Scale, element.DataMap.Flip);
 
-            Rectangle rectangle = new Rectangle();
-            rectangle.X = (Int32)element.DataMap.Offset.X + drawlocation.X + 1;
-            rectangle.Y = (Int32)element.DataMap.Offset.Y + drawlocation.Y;
+            var rectangle = new Rectangle();
+            rectangle.X = (int)element.DataMap.Offset.X + drawlocation.X + 1;
+            rectangle.Y = (int)element.DataMap.Offset.Y + drawlocation.Y;
             rectangle.Height = sprite.Size.Y + 1;
             rectangle.Width = sprite.Size.X + 1;
 
-            Int32 position = (Int32)MathHelper.Lerp(range.X, range.Y, percentage);
+            var position = (int)MathHelper.Lerp(range.X, range.Y, percentage);
             if (position > 0)
             {
                 rectangle.Width = position + 2;
@@ -254,111 +254,108 @@ namespace xnaMugen.Combat
             return rectangle;
         }
 
-        public ComboCounter ComboCounter
-        {
-            get { return m_combocounter; }
-        }
+        public ComboCounter ComboCounter => m_combocounter;
 
         #region Fields
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        readonly Team m_team;
+        private readonly Team m_team;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        readonly Vector2 m_lifebarposition;
+        private readonly Vector2 m_lifebarposition;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        readonly Point m_lifebarrange;
+        private readonly Point m_lifebarrange;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        readonly Vector2 m_powerbarposition;
+        private readonly Vector2 m_powerbarposition;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        readonly Point m_powerbarrange;
+        private readonly Point m_powerbarrange;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        readonly Vector2 m_faceposition;
+        private readonly Vector2 m_faceposition;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        readonly Vector2 m_nameposition;
+        private readonly Vector2 m_nameposition;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        readonly Vector2 m_winiconposition;
+        private readonly Vector2 m_winiconposition;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        readonly Vector2 m_winiconoffset;
+        private readonly Vector2 m_winiconoffset;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        readonly ComboCounter m_combocounter;
+        private readonly ComboCounter m_combocounter;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        readonly Elements.Base m_lifebg0;
+        private readonly Elements.Base m_lifebg0;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        readonly Elements.Base m_lifebg1;
+        private readonly Elements.Base m_lifebg1;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        readonly Elements.Base m_lifebg2;
+        private readonly Elements.Base m_lifebg2;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        readonly Elements.Base m_lifemid;
+        private readonly Elements.Base m_lifemid;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        readonly Elements.Base m_lifefront;
+        private readonly Elements.Base m_lifefront;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        readonly Elements.Base m_powerbg0;
+        private readonly Elements.Base m_powerbg0;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        readonly Elements.Base m_powerbg1;
+        private readonly Elements.Base m_powerbg1;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        readonly Elements.Base m_powerbg2;
+        private readonly Elements.Base m_powerbg2;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        readonly Elements.Base m_powermid;
+        private readonly Elements.Base m_powermid;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        readonly Elements.Base m_powerfront;
+        private readonly Elements.Base m_powerfront;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        readonly Elements.Base m_powercounter;
+        private readonly Elements.Base m_powercounter;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        readonly Elements.Base m_facebg;
+        private readonly Elements.Base m_facebg;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        readonly Elements.Base m_faceimage;
+        private readonly Elements.Base m_faceimage;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        readonly Elements.Base m_namelement;
+        private readonly Elements.Base m_namelement;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        readonly Elements.Base m_winiconnormal;
+        private readonly Elements.Base m_winiconnormal;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        readonly Elements.Base m_winiconspecial;
+        private readonly Elements.Base m_winiconspecial;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        readonly Elements.Base m_winiconhyper;
+        private readonly Elements.Base m_winiconhyper;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        readonly Elements.Base m_winiconthrow;
+        private readonly Elements.Base m_winiconthrow;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        readonly Elements.Base m_winiconcheese;
+        private readonly Elements.Base m_winiconcheese;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        readonly Elements.Base m_winicontime;
+        private readonly Elements.Base m_winicontime;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        readonly Elements.Base m_winiconsuicide;
+        private readonly Elements.Base m_winiconsuicide;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        readonly Elements.Base m_winiconteammate;
+        private readonly Elements.Base m_winiconteammate;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        readonly Elements.Base m_winiconperfect;
+        private readonly Elements.Base m_winiconperfect;
 
         #endregion
     }

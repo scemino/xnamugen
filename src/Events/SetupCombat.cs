@@ -3,24 +3,21 @@ using System.Diagnostics;
 
 namespace xnaMugen.Events
 {
-	class SetupCombat : Base
+	internal class SetupCombat : Base
 	{
 		public SetupCombat(Combat.EngineInitialization initialization)
 		{
-			if (initialization == null) throw new ArgumentNullException("initialization");
+			if (initialization == null) throw new ArgumentNullException(nameof(initialization));
 
 			m_initialization = initialization;
 		}
 
-		public Combat.EngineInitialization Initialization
-		{
-			get { return m_initialization; }
-		}
+		public Combat.EngineInitialization Initialization => m_initialization;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Combat.EngineInitialization m_initialization;
+		private readonly Combat.EngineInitialization m_initialization;
 
 		#endregion
 	}

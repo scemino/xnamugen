@@ -3,14 +3,14 @@ using System.Diagnostics;
 
 namespace xnaMugen.IO.FileHeaders
 {
-	class SpriteFileHeader
+	internal class SpriteFileHeader
 	{
 		public SpriteFileHeader(File file)
 		{
-			if (file == null) throw new ArgumentNullException("file");
+			if (file == null) throw new ArgumentNullException(nameof(file));
 
-			Byte[] data = file.ReadBytes(33);
-			if (data.Length != 33) throw new ArgumentException("File is not long enough", "file");
+			var data = file.ReadBytes(33);
+			if (data.Length != 33) throw new ArgumentException("File is not long enough", nameof(file));
 
 			m_signature = System.Text.Encoding.Default.GetString(data, 0, 11);
 			m_version = new Drawing.SpriteFileVersion(data[12], data[13], data[14], data[15]);
@@ -21,63 +21,42 @@ namespace xnaMugen.IO.FileHeaders
 			m_sharedpalette = data[32] > 0;
 		}
 
-		public String Signature
-		{
-			get { return m_signature; }
-		}
+		public string Signature => m_signature;
 
-		public Drawing.SpriteFileVersion Version
-		{
-			get { return m_version; }
-		}
+		public Drawing.SpriteFileVersion Version => m_version;
 
-		public Int32 NumberOfGroups
-		{
-			get { return m_numberofgroups; }
-		}
+		public int NumberOfGroups => m_numberofgroups;
 
-		public Int32 NumberOfImages
-		{
-			get { return m_numberofimages; }
-		}
+		public int NumberOfImages => m_numberofimages;
 
-		public Int32 SubheaderOffset
-		{
-			get { return m_subheaderoffset; }
-		}
+		public int SubheaderOffset => m_subheaderoffset;
 
-		public Int32 SubheaderSize
-		{
-			get { return m_subheadersize; }
-		}
+		public int SubheaderSize => m_subheadersize;
 
-		public Boolean SharedPalette
-		{
-			get { return m_sharedpalette; }
-		}
+		public bool SharedPalette => m_sharedpalette;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly String m_signature;
+		private readonly string m_signature;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Drawing.SpriteFileVersion m_version;
+		private readonly Drawing.SpriteFileVersion m_version;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Int32 m_numberofgroups;
+		private readonly int m_numberofgroups;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Int32 m_numberofimages;
+		private readonly int m_numberofimages;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Int32 m_subheaderoffset;
+		private readonly int m_subheaderoffset;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Int32 m_subheadersize;
+		private readonly int m_subheadersize;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Boolean m_sharedpalette;
+		private readonly bool m_sharedpalette;
 
 		#endregion
 	}

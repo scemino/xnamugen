@@ -1,18 +1,17 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
-using System.Diagnostics;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace xnaMugen
 {
-	class MugenTest : Game
+	internal class MugenTest : Game
 	{
 		public MugenTest()
 		{
 			IsFixedTimeStep = true;
 			TargetElapsedTime = TimeSpan.FromSeconds(1.0 / 60.0);
 
-			GraphicsDeviceManager graphics = new GraphicsDeviceManager(this);
+			var graphics = new GraphicsDeviceManager(this);
 			graphics.PreferredBackBufferWidth = Mugen.ScreenSize.X * 3;
 			graphics.PreferredBackBufferHeight = Mugen.ScreenSize.Y * 3;
 			graphics.ApplyChanges();
@@ -36,7 +35,7 @@ namespace xnaMugen
             m_animations.SetLocalAnimation(0, 0);
 			m_sprites.LoadSprites(m_animations.CurrentAnimation);
 
-			m_subsystems.GetSubSystem<Input.InputSystem>().CurrentInput[0].Add(SystemButton.DebugDraw, this.Click);
+			m_subsystems.GetSubSystem<Input.InputSystem>().CurrentInput[0].Add(SystemButton.DebugDraw, Click);
 
 			base.Initialize();
 		}
@@ -53,19 +52,19 @@ namespace xnaMugen
 		{
 			m_subsystems.GetSubSystem<Video.VideoSystem>().ClearScreen(Color.CornflowerBlue);
 
-			Animations.AnimationElement currentelement = m_animations.CurrentElement;
-			Vector2 location = (Vector2)Mugen.ScreenSize / 2;
+			var currentelement = m_animations.CurrentElement;
+			var location = (Vector2)Mugen.ScreenSize / 2;
 
 			DrawElement(location, currentelement);
 		}
 
-		void DrawElement(Vector2 location, Animations.AnimationElement element)
+		private void DrawElement(Vector2 location, Animations.AnimationElement element)
 		{
-			if (element == null) throw new ArgumentNullException("element");
+			if (element == null) throw new ArgumentNullException(nameof(element));
 
-			Vector2 scale = new Vector2(1, 1);
+			var scale = new Vector2(1, 1);
 
-			Video.DrawState drawstate = m_sprites.SetupDrawing(element.SpriteId, location, element.Offset, scale, SpriteEffects.None);
+			var drawstate = m_sprites.SetupDrawing(element.SpriteId, location, element.Offset, scale, SpriteEffects.None);
 			drawstate.Blending = element.Blending;
 			drawstate.Use();
 
@@ -114,18 +113,18 @@ namespace xnaMugen
 			*/
 		}
 
-		void Click(Boolean pressed)
+		private void Click(bool pressed)
 		{
-			if (pressed == true)
+			if (pressed)
 			{
 				//m_animations.Update();
 				//m_animations.SetLocalAnimation(m_animations.CurrentAnimation.Number, 0);
 			}
 		}
 
-		SubSystems m_subsystems;
-		Drawing.SpriteManager m_sprites;
-		Animations.AnimationManager m_animations;
-		Drawing.Font m_font;
+		private SubSystems m_subsystems;
+		private Drawing.SpriteManager m_sprites;
+		private Animations.AnimationManager m_animations;
+		private Drawing.Font m_font;
 	}
 }

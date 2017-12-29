@@ -1,4 +1,3 @@
-using System;
 using System.Diagnostics;
 using xnaMugen.IO;
 using Microsoft.Xna.Framework;
@@ -6,9 +5,9 @@ using Microsoft.Xna.Framework;
 namespace xnaMugen.StateMachine.Controllers
 {
 	[StateControllerName("TargetVelAdd")]
-	class TargetVelAdd : StateController
+	internal class TargetVelAdd : StateController
 	{
-		public TargetVelAdd(StateSystem statesystem, String label, TextSection textsection)
+		public TargetVelAdd(StateSystem statesystem, string label, TextSection textsection)
 			: base(statesystem, label, textsection)
 		{
 			m_targetid = textsection.GetAttribute<Evaluation.Expression>("id", null);
@@ -18,13 +17,13 @@ namespace xnaMugen.StateMachine.Controllers
 
 		public override void Run(Combat.Character character)
 		{
-			Single? x = EvaluationHelper.AsSingle(character, X, null);
-			Single? y = EvaluationHelper.AsSingle(character, Y, null);
-			Int32 target_id = EvaluationHelper.AsInt32(character, TargetId, Int32.MinValue);
+			var x = EvaluationHelper.AsSingle(character, X, null);
+			var y = EvaluationHelper.AsSingle(character, Y, null);
+			var targetId = EvaluationHelper.AsInt32(character, TargetId, int.MinValue);
 
-			foreach (Combat.Character target in character.GetTargets(target_id))
+			foreach (var target in character.GetTargets(targetId))
 			{
-				Vector2 velocity = new Vector2(0, 0);
+				var velocity = new Vector2(0, 0);
 
 				if (x != null) velocity.X = x.Value;
 				if (y != null) velocity.Y = y.Value;
@@ -33,31 +32,22 @@ namespace xnaMugen.StateMachine.Controllers
 			}
 		}
 
-		public Evaluation.Expression TargetId
-		{
-			get { return m_targetid; }
-		}
+		public Evaluation.Expression TargetId => m_targetid;
 
-		public Evaluation.Expression X
-		{
-			get { return m_x; }
-		}
+		public Evaluation.Expression X => m_x;
 
-		public Evaluation.Expression Y
-		{
-			get { return m_y; }
-		}
+		public Evaluation.Expression Y => m_y;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_targetid;
+		private readonly Evaluation.Expression m_targetid;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_x;
+		private readonly Evaluation.Expression m_x;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_y;
+		private readonly Evaluation.Expression m_y;
 
 		#endregion
 	}

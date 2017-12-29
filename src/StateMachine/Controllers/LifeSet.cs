@@ -1,13 +1,12 @@
-using System;
 using System.Diagnostics;
 using xnaMugen.IO;
 
 namespace xnaMugen.StateMachine.Controllers
 {
 	[StateControllerName("LifeSet")]
-	class LifeSet : StateController
+	internal class LifeSet : StateController
 	{
-		public LifeSet(StateSystem statesystem, String label, TextSection textsection)
+		public LifeSet(StateSystem statesystem, string label, TextSection textsection)
 			: base(statesystem, label, textsection)
 		{
 			m_life = textsection.GetAttribute<Evaluation.Expression>("value", null);
@@ -15,14 +14,14 @@ namespace xnaMugen.StateMachine.Controllers
 
 		public override void Run(Combat.Character character)
 		{
-			Int32? amount = EvaluationHelper.AsInt32(character, Amount, null);
+			var amount = EvaluationHelper.AsInt32(character, Amount, null);
 
 			if (amount == null) return;
 
 			character.Life = amount.Value;
 		}
 
-		public override Boolean IsValid()
+		public override bool IsValid()
 		{
 			if (base.IsValid() == false) return false;
 
@@ -31,15 +30,12 @@ namespace xnaMugen.StateMachine.Controllers
 			return true;
 		}
 
-		public Evaluation.Expression Amount
-		{
-			get { return m_life; }
-		}
+		public Evaluation.Expression Amount => m_life;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_life;
+		private readonly Evaluation.Expression m_life;
 
 		#endregion
 	}

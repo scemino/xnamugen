@@ -5,11 +5,11 @@ using System.Text;
 
 namespace xnaMugen
 {
-	enum LogLevel { Normal, Warning, Error }
+	internal enum LogLevel { Normal, Warning, Error }
 
-	enum LogSystem { Main, FileSystem, AnimationSystem, EvaluationSystem, StringConverter, StateSystem, BackgroundCollection, SpriteSystem, CommandSystem, SoundSystem, InputSystem }
+	internal enum LogSystem { Main, FileSystem, AnimationSystem, EvaluationSystem, StringConverter, StateSystem, BackgroundCollection, SpriteSystem, CommandSystem, SoundSystem, InputSystem }
 
-	static class Log
+	internal static class Log
 	{
 		static Log()
 		{
@@ -20,7 +20,7 @@ namespace xnaMugen
 		{
 			if (Debugger.IsAttached == false)
 			{
-				String logfilename = String.Format("{0:u}.txt", DateTime.Now).Replace(':', '-');
+				var logfilename = string.Format("{0:u}.txt", DateTime.Now).Replace(':', '-');
 				s_logfile = new StreamWriter(logfilename);
 				s_logfile.AutoFlush = true;
 			}
@@ -34,7 +34,7 @@ namespace xnaMugen
 		{
 			if (s_logfile == null) return;
 
-			String filepath = (s_logfile.BaseStream as FileStream).Name;
+			var filepath = (s_logfile.BaseStream as FileStream).Name;
 
 			s_logfile.Dispose();
 			s_logfile = null;
@@ -46,31 +46,31 @@ namespace xnaMugen
 		{
 			if (exception == null)
 			{
-				WriteLine(String.Empty);
+				WriteLine(string.Empty);
 				WriteLine("Unhandled exception: NULL");
-				WriteLine(String.Empty);
+				WriteLine(string.Empty);
 				WriteLine("Stace Trace:");
 				WriteLine(Environment.StackTrace); 
 				
 				return;
 			}
 
-			WriteLine(String.Empty);
+			WriteLine(string.Empty);
 			WriteLine(exception.ToString());
 		}
 
-		public static void Write(LogLevel level, LogSystem system, String message)
+		public static void Write(LogLevel level, LogSystem system, string message)
 		{
 			if (message == null) return;
 
 			s_stringbuilder.Length = 0;
 			s_stringbuilder.AppendFormat("{0, -25:u}{1, -10}{2, -23}{3}", DateTime.Now, level, system, message);
 
-			String line = s_stringbuilder.ToString();
+			var line = s_stringbuilder.ToString();
 			WriteLine(line);
 		}
 
-		public static void Write(LogLevel level, LogSystem system, String format, params Object[] args)
+		public static void Write(LogLevel level, LogSystem system, string format, params object[] args)
 		{
 			if (format == null || args == null) return;
 
@@ -78,15 +78,15 @@ namespace xnaMugen
 			s_stringbuilder.AppendFormat("{0, -25:u}{1, -10}{2, -23}", DateTime.Now, level, system);
 			s_stringbuilder.AppendFormat(format, args);
 
-			String line = s_stringbuilder.ToString();
+			var line = s_stringbuilder.ToString();
 			WriteLine(line);
 		}
 
-		static void WriteLine(String text)
+		private static void WriteLine(string text)
 		{
 			if (text == null) return;
 
-			if (Debugger.IsAttached == true)
+			if (Debugger.IsAttached)
 			{
 				Debug.WriteLine(text);
 			}
@@ -97,9 +97,9 @@ namespace xnaMugen
 		}
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		static StreamWriter s_logfile;
+		private static StreamWriter s_logfile;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		static StringBuilder s_stringbuilder;
+		private static readonly StringBuilder s_stringbuilder;
 	}
 }

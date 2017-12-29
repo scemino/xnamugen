@@ -5,21 +5,21 @@ using System.Windows.Forms;
 
 namespace xnaMugen.Diagnostics
 {
-    class DiagnosticSystem : SubSystem
+    internal class DiagnosticSystem : SubSystem
     {
         public DiagnosticSystem(SubSystems subsystems)
             : base(subsystems)
         {
             m_form = new DiagnosticForm();
             m_formthread = new Thread(StartFormThread);
-            m_lock = new Object();
+            m_lock = new object();
         }
 
         public override void Initialize()
         {
-            InitializationSettings settings = GetSubSystem<InitializationSettings>();
+            var settings = GetSubSystem<InitializationSettings>();
 
-            if (settings.ShowDiagnosticWindow == true || Debugger.IsAttached == true)
+            if (settings.ShowDiagnosticWindow || Debugger.IsAttached)
             {
                 Start();
             }
@@ -27,7 +27,7 @@ namespace xnaMugen.Diagnostics
 
         protected override void Dispose(bool disposing)
         {
-            if (disposing == true)
+            if (disposing)
             {
                 Stop();
             }
@@ -50,7 +50,7 @@ namespace xnaMugen.Diagnostics
         {
             lock (m_lock)
             {
-                if (m_formthread.IsAlive == true)
+                if (m_formthread.IsAlive)
                 {
                     ThreadStart func = StopFormThread;
                     m_form.Invoke(func);
@@ -62,11 +62,11 @@ namespace xnaMugen.Diagnostics
 
         public void Update(Combat.FightEngine engine)
         {
-            if (engine == null) throw new ArgumentNullException("engine");
+            if (engine == null) throw new ArgumentNullException(nameof(engine));
 
             lock (m_lock)
             {
-                if (m_formthread.IsAlive == true)
+                if (m_formthread.IsAlive)
                 {
                     Action<Combat.FightEngine> func = UpdateForm;
                     m_form.Invoke(func, engine);
@@ -74,30 +74,30 @@ namespace xnaMugen.Diagnostics
             }
         }
 
-        void StartFormThread()
+        private void StartFormThread()
         {
             Application.Run(m_form);
         }
 
-        void StopFormThread()
+        private void StopFormThread()
         {
             Application.ExitThread();
         }
 
-        void UpdateForm(Combat.FightEngine engine)
+        private void UpdateForm(Combat.FightEngine engine)
         {
-            if (engine == null) throw new ArgumentNullException("engine");
+            if (engine == null) throw new ArgumentNullException(nameof(engine));
 
             m_form.Set(engine);
         }
 
         #region Fields
 
-        readonly DiagnosticForm m_form;
+        private readonly DiagnosticForm m_form;
 
-        readonly Thread m_formthread;
+        private readonly Thread m_formthread;
 
-        readonly Object m_lock;
+        private readonly object m_lock;
 
         #endregion
     }

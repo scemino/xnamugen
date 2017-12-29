@@ -1,9 +1,6 @@
-﻿using System;
-using System.Diagnostics;
-
-namespace xnaMugen.Combat.Logic
+﻿namespace xnaMugen.Combat.Logic
 {
-	class ShowFight : Base
+	internal class ShowFight : Base
 	{
 		public ShowFight(FightEngine engine)
 			: base(engine, RoundState.Intro)
@@ -15,7 +12,7 @@ namespace xnaMugen.Combat.Logic
 			return Engine.Elements.GetElement("fight");
 		}
 
-		public override Boolean IsFinished()
+		public override bool IsFinished()
 		{
 			return CurrentElement == null;
 		}

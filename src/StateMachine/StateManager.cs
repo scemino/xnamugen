@@ -2,25 +2,21 @@
 using System.Diagnostics;
 using xnaMugen.Collections;
 using System.Collections.Generic;
-using xnaMugen.IO;
-using System.Reflection;
-using System.Text.RegularExpressions;
-using Microsoft.Xna.Framework;
 
 namespace xnaMugen.StateMachine
 {
-	class StateManager
+	internal class StateManager
 	{
-		public StateManager(StateSystem statesystem, Combat.Character character, ReadOnlyKeyedCollection<Int32, State> states)
+		public StateManager(StateSystem statesystem, Combat.Character character, ReadOnlyKeyedCollection<int, State> states)
 		{
-			if (statesystem == null) throw new ArgumentNullException("statesystem");
-			if (character == null) throw new ArgumentNullException("character");
-			if (states == null) throw new ArgumentNullException("states");
+			if (statesystem == null) throw new ArgumentNullException(nameof(statesystem));
+			if (character == null) throw new ArgumentNullException(nameof(character));
+			if (states == null) throw new ArgumentNullException(nameof(states));
 
 			m_statesystem = statesystem;
 			m_character = character;
 			m_states = states;
-			m_persistencemap = new Dictionary<StateController, Int32>();
+			m_persistencemap = new Dictionary<StateController, int>();
 			m_foreignmanager = null;
 			m_statetime = 0;
 
@@ -48,14 +44,14 @@ namespace xnaMugen.StateMachine
 
 		public StateManager Clone(Combat.Character character)
 		{
-			if (character == null) throw new ArgumentNullException("character");
+			if (character == null) throw new ArgumentNullException(nameof(character));
 
 			return new StateManager(StateSystem, character, States);
 		}
 
-		void ApplyState(State state)
+		private void ApplyState(State state)
 		{
-			if (state == null) throw new ArgumentNullException("state");
+			if (state == null) throw new ArgumentNullException(nameof(state));
 
 			m_persistencemap.Clear();
 
@@ -63,29 +59,29 @@ namespace xnaMugen.StateMachine
 			if (state.StateType != StateType.Unchanged) Character.StateType = state.StateType;
 			if (state.MoveType != MoveType.Unchanged) Character.MoveType = state.MoveType;
 
-			Int32? playercontrol = EvaluationHelper.AsInt32(m_character, state.PlayerControl, null);
-			if (playercontrol != null) Character.PlayerControl = (playercontrol > 0) ? PlayerControl.InControl : PlayerControl.NoControl;
+			var playercontrol = EvaluationHelper.AsInt32(m_character, state.PlayerControl, null);
+			if (playercontrol != null) Character.PlayerControl = playercontrol > 0 ? PlayerControl.InControl : PlayerControl.NoControl;
 
-			Int32? animationnumber = EvaluationHelper.AsInt32(m_character, state.AnimationNumber, null);
+			var animationnumber = EvaluationHelper.AsInt32(m_character, state.AnimationNumber, null);
 			if (animationnumber != null) Character.SetLocalAnimation(animationnumber.Value, 0);
 
-			Int32? spritepriority = EvaluationHelper.AsInt32(m_character, state.SpritePriority, null);
+			var spritepriority = EvaluationHelper.AsInt32(m_character, state.SpritePriority, null);
 			if (spritepriority != null) Character.DrawOrder = spritepriority.Value;
 
-			Int32? power = EvaluationHelper.AsInt32(m_character, state.Power, null);
+			var power = EvaluationHelper.AsInt32(m_character, state.Power, null);
 			if (power != null) Character.BasePlayer.Power += power.Value;
 
-			Vector2? velocity = EvaluationHelper.AsVector2(m_character, state.Velocity, null);
+			var velocity = EvaluationHelper.AsVector2(m_character, state.Velocity, null);
 			if (velocity != null) Character.CurrentVelocity = velocity.Value;
 
-			Boolean hitdefpersistance = EvaluationHelper.AsBoolean(m_character, state.HitdefPersistance, false);
+			var hitdefpersistance = EvaluationHelper.AsBoolean(m_character, state.HitdefPersistance, false);
 			if (hitdefpersistance == false)
 			{
 				Character.OffensiveInfo.ActiveHitDef = false;
 				Character.OffensiveInfo.HitPauseTime = 0;
 			}
 
-			Boolean movehitpersistance = EvaluationHelper.AsBoolean(m_character, state.MovehitPersistance, false);
+			var movehitpersistance = EvaluationHelper.AsBoolean(m_character, state.MovehitPersistance, false);
 			if (movehitpersistance == false)
 			{
 				Character.OffensiveInfo.MoveReversed = 0;
@@ -94,7 +90,7 @@ namespace xnaMugen.StateMachine
 				Character.OffensiveInfo.MoveContact = 0;
 			}
 
-			Boolean hitcountpersistance = EvaluationHelper.AsBoolean(m_character, state.HitCountPersistance, false);
+			var hitcountpersistance = EvaluationHelper.AsBoolean(m_character, state.HitCountPersistance, false);
 			if (hitcountpersistance == false)
 			{
 				Character.OffensiveInfo.HitCount = 0;
@@ -102,11 +98,11 @@ namespace xnaMugen.StateMachine
 			}
 		}
 
-		public Boolean ChangeState(Int32 statenumber)
+		public bool ChangeState(int statenumber)
 		{
-			if (statenumber < 0) throw new ArgumentOutOfRangeException("statenumber", "Cannot change to state with number less than zero");
+			if (statenumber < 0) throw new ArgumentOutOfRangeException(nameof(statenumber), "Cannot change to state with number less than zero");
 
-			State state = GetState(statenumber, false);
+			var state = GetState(statenumber, false);
 
 			if (state == null)
 			{
@@ -123,7 +119,7 @@ namespace xnaMugen.StateMachine
 			return true;
 		}
 
-		void RunCurrentStateLoop(Boolean hitpause)
+		private void RunCurrentStateLoop(bool hitpause)
 		{
 			while (true)
 			{
@@ -137,11 +133,11 @@ namespace xnaMugen.StateMachine
 			}
 		}
 
-		public void Run(Boolean hitpause)
+		public void Run(bool hitpause)
 		{
 			if (Character is Combat.Helper)
 			{
-				if ((Character as Combat.Helper).Data.KeyControl == true)
+				if ((Character as Combat.Helper).Data.KeyControl)
 				{
 					RunState(-1, true, hitpause);
 				}
@@ -161,33 +157,33 @@ namespace xnaMugen.StateMachine
 			}
 		}
 
-		Boolean RunState(Int32 statenumber, Boolean forcelocal, Boolean hitpause)
+		private bool RunState(int statenumber, bool forcelocal, bool hitpause)
 		{
-			State state = GetState(statenumber, forcelocal);
+			var state = GetState(statenumber, forcelocal);
 			if (state != null) return RunState(state, hitpause);
 
 			return false;
 		}
 
-		State GetState(Int32 statenumber, Boolean forcelocal)
+		private State GetState(int statenumber, bool forcelocal)
 		{
 			if (ForeignManager != null && forcelocal == false) return ForeignManager.GetState(statenumber, true);
 
-			return (States.Contains(statenumber) == true) ? States[statenumber] : null;
+			return States.Contains(statenumber) ? States[statenumber] : null;
 		}
 
-		Boolean RunState(State state, Boolean hitpause)
+		private bool RunState(State state, bool hitpause)
 		{
-			if (state == null) throw new ArgumentNullException("state");
+			if (state == null) throw new ArgumentNullException(nameof(state));
 
-			foreach (StateController controller in state.Controllers)
+			foreach (var controller in state.Controllers)
 			{
-				if (hitpause == true && controller.IgnoreHitPause == false) continue;
+				if (hitpause && controller.IgnoreHitPause == false) continue;
 
-                Boolean persistencecheck = state.Number < 0 || PersistenceCheck(controller, controller.Persistence);
+                var persistencecheck = state.Number < 0 || PersistenceCheck(controller, controller.Persistence);
 				if (persistencecheck == false) continue;
 
-				Boolean triggercheck = controller.Triggers.Trigger(m_character);
+				var triggercheck = controller.Triggers.Trigger(m_character);
 				if (triggercheck == false) continue;
 
                 if (controller.Persistence == 0 || controller.Persistence > 1) m_persistencemap[controller] = controller.Persistence;
@@ -200,9 +196,9 @@ namespace xnaMugen.StateMachine
 			return false;
 		}
 
-		Boolean PersistenceCheck(StateController controller, Int32 persistence)
+		private bool PersistenceCheck(StateController controller, int persistence)
 		{
-			if (controller == null) throw new ArgumentNullException("controller");
+			if (controller == null) throw new ArgumentNullException(nameof(controller));
 
 			if (m_persistencemap.ContainsKey(controller) == false) return true;
 
@@ -210,48 +206,36 @@ namespace xnaMugen.StateMachine
 			{
 				return false;
 			}
-			else if (persistence == 1)
+
+			if (persistence == 1)
 			{
 				return true;
 			}
-			else if (persistence > 1)
+
+			if (persistence > 1)
 			{
 				m_persistencemap[controller] += -1;
 
 				return m_persistencemap[controller] <= 0;
 			}
-			else
-			{
-				return false;
-			}
+
+			return false;
 		}
 
-		public StateSystem StateSystem
-		{
-			get { return m_statesystem; }
-		}
+		public StateSystem StateSystem => m_statesystem;
 
-		public Combat.Character Character
-		{
-			get { return m_character; }
-		}
+		public Combat.Character Character => m_character;
 
-		ReadOnlyKeyedCollection<Int32, State> States
-		{
-			get { return m_states; }
-		}
+		private ReadOnlyKeyedCollection<int, State> States => m_states;
 
-		public Int32 StateTime
-		{
-			get { return m_statetime; }
-		}
+		public int StateTime => m_statetime;
 
 		public State CurrentState
 		{
 			get 
 			{
 #if DEBUG
-				return (StateOrder.Size > 0) ? StateOrder.ReverseGet(0) : null; 
+				return StateOrder.Size > 0 ? StateOrder.ReverseGet(0) : null; 
 #else
 				return m_currentstate;
 #endif
@@ -263,7 +247,7 @@ namespace xnaMugen.StateMachine
 			get
 			{
 #if DEBUG
-				return (StateOrder.Size > 1) ? StateOrder.ReverseGet(1) : null; 
+				return StateOrder.Size > 1 ? StateOrder.ReverseGet(1) : null; 
 #else
 				return m_previousstate;
 #endif
@@ -271,15 +255,12 @@ namespace xnaMugen.StateMachine
 		}
 
 #if DEBUG
-		CircularBuffer<State> StateOrder
-		{
-			get { return m_stateorder; }
-		}
+		private CircularBuffer<State> StateOrder => m_stateorder;
 #endif
 
 		public StateManager ForeignManager
 		{
-			get { return m_foreignmanager; }
+			get => m_foreignmanager;
 
 			set { m_foreignmanager = value; }
 		}
@@ -287,20 +268,20 @@ namespace xnaMugen.StateMachine
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly StateSystem m_statesystem;
+		private readonly StateSystem m_statesystem;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Combat.Character m_character;
+		private readonly Combat.Character m_character;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly ReadOnlyKeyedCollection<Int32, State> m_states;
+		private readonly ReadOnlyKeyedCollection<int, State> m_states;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Dictionary<StateController, Int32> m_persistencemap;
+		private readonly Dictionary<StateController, int> m_persistencemap;
 
 #if DEBUG
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly CircularBuffer<State> m_stateorder;
+		private readonly CircularBuffer<State> m_stateorder;
 #else
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		State m_currentstate;
@@ -310,10 +291,10 @@ namespace xnaMugen.StateMachine
 #endif
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		StateManager m_foreignmanager;
+		private StateManager m_foreignmanager;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Int32 m_statetime;
+		private int m_statetime;
 
 		#endregion
 	}

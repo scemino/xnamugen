@@ -15,7 +15,7 @@ namespace xnaMugen
 		/// <param name="x">X coordinate of point.</param>
 		/// <param name="y">Y coordinate of point.</param>
 		[DebuggerStepThrough]
-		public Point(Int32 x, Int32 y): this()
+		public Point(int x, int y): this()
 		{
 			X = x;
 			Y = y;
@@ -40,7 +40,7 @@ namespace xnaMugen
 		[DebuggerStepThrough]
 		public static explicit operator Point(Vector2 vector)
 		{
-			return new Point((Int32)vector.X, (Int32)vector.Y);
+			return new Point((int)vector.X, (int)vector.Y);
 		}
 
 		/// <summary>
@@ -49,15 +49,15 @@ namespace xnaMugen
 		/// <param name="obj">The object to be compared.</param>
 		/// <returns>true if the supplied object is equal to this instance; false otherwise.</returns>
 		[DebuggerStepThrough]
-		public override Boolean Equals(Object obj)
+		public override bool Equals(object obj)
 		{
-			if (obj == null || obj.GetType() != this.GetType()) return false;
+			if (obj == null || obj.GetType() != GetType()) return false;
 
 			return this == (Point)obj;
 		}
 
 		[DebuggerStepThrough]
-		public Boolean Equals(Point other)
+		public bool Equals(Point other)
 		{
 			return this == other;
 		}
@@ -69,7 +69,7 @@ namespace xnaMugen
 		/// <param name="rhs">The second Point to be compared.</param>
 		/// <returns>true if the two Points represent the same location; false otherwise.</returns>
 		[DebuggerStepThrough]
-		public static Boolean operator ==(Point lhs, Point rhs)
+		public static bool operator ==(Point lhs, Point rhs)
 		{
 			return lhs.X == rhs.X && lhs.Y == rhs.Y;
 		}
@@ -81,7 +81,7 @@ namespace xnaMugen
 		/// <param name="rhs">The second Point to be compared.</param>
 		/// <returns>true if the two Points do not represent the same location; false otherwise.</returns>
 		[DebuggerStepThrough]
-		public static Boolean operator !=(Point lhs, Point rhs)
+		public static bool operator !=(Point lhs, Point rhs)
 		{
 			return lhs.X != rhs.X || lhs.Y != rhs.Y;
 		}
@@ -117,7 +117,7 @@ namespace xnaMugen
 		/// <param name="scalar">The scalar value.</param>
 		/// <returns>A new instance of this class with each coordinate equal to the same coordinate of the supplied Point mulitplied by the scalar value.</returns>
 		[DebuggerStepThrough]
-		public static Point operator *(Point lhs, Int32 scalar)
+		public static Point operator *(Point lhs, int scalar)
 		{
 			return new Point(lhs.X * scalar, lhs.Y * scalar);
 		}
@@ -129,7 +129,7 @@ namespace xnaMugen
 		/// <param name="scalar">The scalar value.</param>
 		/// <returns>A new instance of this class with each coordinate equal to the same coordinate of the supplied Point divided by the scalar value.</returns>
 		[DebuggerStepThrough]
-		public static Point operator /(Point lhs, Int32 scalar)
+		public static Point operator /(Point lhs, int scalar)
 		{
 			return new Point(lhs.X / scalar, lhs.Y / scalar);
 		}
@@ -139,7 +139,7 @@ namespace xnaMugen
 		/// </summary>
 		/// <returns>The hash code of this instance.</returns>
 		[DebuggerStepThrough]
-		public override Int32 GetHashCode()
+		public override int GetHashCode()
 		{
 			return X ^ Y;
 		}
@@ -149,7 +149,7 @@ namespace xnaMugen
 		/// </summary>
 		/// <returns>A System.String representation of this instance.</returns>
 		[DebuggerStepThrough]
-		public override String ToString()
+		public override string ToString()
 		{
 			return X + ", " + Y;
 		}
@@ -158,12 +158,12 @@ namespace xnaMugen
 		/// The X coordinate of the location this instance represents in space.
 		/// </summary>
 		/// <returns>The X coordinate.</returns>
-		public Int32 X;
+		public int X;
 
 		/// <summary>
 		/// The Y coordinate of the location this instance represents in space.
 		/// </summary>
 		/// <returns>The Y coordinate.</returns>
-		public Int32 Y;
+		public int Y;
 	}
 }

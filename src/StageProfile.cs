@@ -3,12 +3,12 @@ using System.Diagnostics;
 
 namespace xnaMugen
 {
-	class StageProfile
+	internal class StageProfile
 	{
-		public StageProfile(String filepath, String name)
+		public StageProfile(string filepath, string name)
 		{
-			if (filepath == null) throw new ArgumentNullException("filepath");
-			if (name == null) throw new ArgumentNullException("name");
+			if (filepath == null) throw new ArgumentNullException(nameof(filepath));
+			if (name == null) throw new ArgumentNullException(nameof(name));
 
 			m_filepath = filepath;
 			m_name = name;
@@ -19,23 +19,17 @@ namespace xnaMugen
 			return Name;
 		}
 
-		public String Filepath
-		{
-			get { return m_filepath; }
-		}
+		public string Filepath => m_filepath;
 
-		public String Name
-		{
-			get { return m_name; }
-		}
+		public string Name => m_name;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly String m_filepath;
+		private readonly string m_filepath;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly String m_name;
+		private readonly string m_name;
 
 		#endregion
 	}

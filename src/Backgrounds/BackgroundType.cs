@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace xnaMugen.Backgrounds
+﻿namespace xnaMugen.Backgrounds
 {
-	enum BackgroundType { None, Static, Parallax, Animated }
+	internal enum BackgroundType { None, Static, Parallax, Animated }
 }

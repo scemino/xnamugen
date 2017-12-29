@@ -4,32 +4,26 @@ using System.Diagnostics;
 
 namespace xnaMugen.Collections
 {
-	[DebuggerDisplay("Count = {Count}")]
+	[DebuggerDisplay("Count = {" + nameof(Count) + "}")]
 	[DebuggerTypeProxy(typeof(ReadOnlyList<>.DebuggerProxy))]
-	class ReadOnlyList<T> : IList<T>
+	internal class ReadOnlyList<T> : IList<T>
 	{
-		class DebuggerProxy
+		private class DebuggerProxy
 		{
 			public DebuggerProxy(ReadOnlyList<T> collection)
 			{
-				if (collection == null) throw new ArgumentNullException("collection");
+				if (collection == null) throw new ArgumentNullException(nameof(collection));
 
 				m_collection = collection;
 			}
 
 			[DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
-			public T[] Items
-			{
-				get
-				{
-					return m_collection.m_list.ToArray();
-				}
-			}
+			public T[] Items => m_collection.m_list.ToArray();
 
 			#region Fields
 
 			[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-			readonly ReadOnlyList<T> m_collection;
+			private readonly ReadOnlyList<T> m_collection;
 
 			#endregion
 		}
@@ -43,7 +37,7 @@ namespace xnaMugen.Collections
 		[DebuggerStepThrough]
 		public ReadOnlyList(List<T> list)
 		{
-			if (list == null) throw new ArgumentNullException("list");
+			if (list == null) throw new ArgumentNullException(nameof(list));
 
 			m_list = list;
 		}
@@ -51,7 +45,7 @@ namespace xnaMugen.Collections
 		[DebuggerStepThrough]
 		public ReadOnlyList(IEnumerable<T> input)
 		{
-			if (input == null) throw new ArgumentNullException("input");
+			if (input == null) throw new ArgumentNullException(nameof(input));
 
 			m_list = new List<T>(input);
 		}
@@ -65,26 +59,26 @@ namespace xnaMugen.Collections
 		#region IList<T> Members
 
 		[DebuggerStepThrough]
-		public Int32 IndexOf(T item)
+		public int IndexOf(T item)
 		{
 			return m_list.IndexOf(item);
 		}
 
 		[DebuggerStepThrough]
-		public void Insert(Int32 index, T item)
+		public void Insert(int index, T item)
 		{
 			throw new NotImplementedException();
 		}
 
 		[DebuggerStepThrough]
-		public void RemoveAt(Int32 index)
+		public void RemoveAt(int index)
 		{
 			throw new NotImplementedException();
 		}
 
-		public T this[Int32 index]
+		public T this[int index]
 		{
-			get { return m_list[index]; }
+			get => m_list[index];
 
 			set { throw new NotImplementedException(); }
 		}
@@ -106,29 +100,23 @@ namespace xnaMugen.Collections
 		}
 
 		[DebuggerStepThrough]
-		public Boolean Contains(T item)
+		public bool Contains(T item)
 		{
 			return m_list.Contains(item);
 		}
 
 		[DebuggerStepThrough]
-		public void CopyTo(T[] array, Int32 arrayIndex)
+		public void CopyTo(T[] array, int arrayIndex)
 		{
 			m_list.CopyTo(array, arrayIndex);
 		}
 
-		public Int32 Count
-		{
-			get { return m_list.Count; }
-		}
+		public int Count => m_list.Count;
 
-		public Boolean IsReadOnly
-		{
-			get { return true; }
-		}
+		public bool IsReadOnly => true;
 
 		[DebuggerStepThrough]
-		public Boolean Remove(T item)
+		public bool Remove(T item)
 		{
 			throw new NotImplementedException();
 		}
@@ -158,7 +146,7 @@ namespace xnaMugen.Collections
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly List<T> m_list;
+		private readonly List<T> m_list;
 
 		#endregion
 	}

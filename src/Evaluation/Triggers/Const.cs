@@ -1,14 +1,12 @@
-using System;
-
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("Const")]
-	static class Const
+	internal static class Const
 	{
 		[Tag("data.life")]
-		public static Int32 Data_Life(Object state, ref Boolean error)
+		public static int Data_Life(object state, ref bool error)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
@@ -19,9 +17,9 @@ namespace xnaMugen.Evaluation.Triggers
 		}
 
 		[Tag("data.attack")]
-		public static Int32 Data_Attack(Object state, ref Boolean error)
+		public static int Data_Attack(object state, ref bool error)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
@@ -32,9 +30,9 @@ namespace xnaMugen.Evaluation.Triggers
 		}
 
 		[Tag("data.defence")]
-		public static Int32 Data_Defence(Object state, ref Boolean error)
+		public static int Data_Defence(object state, ref bool error)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
@@ -45,9 +43,9 @@ namespace xnaMugen.Evaluation.Triggers
 		}
 
 		[Tag("data.fall.defence_mul")]
-		public static Single Data_Fall_Defence_Mul(Object state, ref Boolean error)
+		public static float Data_Fall_Defence_Mul(object state, ref bool error)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
@@ -58,9 +56,9 @@ namespace xnaMugen.Evaluation.Triggers
 		}
 
 		[Tag("data.liedown.time")]
-		public static Int32 Data_Liedown_Time(Object state, ref Boolean error)
+		public static int Data_Liedown_Time(object state, ref bool error)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
@@ -71,9 +69,9 @@ namespace xnaMugen.Evaluation.Triggers
 		}
 
 		[Tag("data.airjuggle")]
-		public static Int32 Data_Airjuggle(Object state, ref Boolean error)
+		public static int Data_Airjuggle(object state, ref bool error)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
@@ -84,9 +82,9 @@ namespace xnaMugen.Evaluation.Triggers
 		}
 
 		[Tag("data.sparkno")]
-		public static Int32 Data_Sparkno(Object state, ref Boolean error)
+		public static int Data_Sparkno(object state, ref bool error)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
@@ -97,9 +95,9 @@ namespace xnaMugen.Evaluation.Triggers
 		}
 
 		[Tag("data.guard.sparkno")]
-		public static Int32 Data_Guard_Sparkno(Object state, ref Boolean error)
+		public static int Data_Guard_Sparkno(object state, ref bool error)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
@@ -110,9 +108,9 @@ namespace xnaMugen.Evaluation.Triggers
 		}
 
 		[Tag("data.KO.echo")]
-		public static Boolean Data_Ko_Echo(Object state, ref Boolean error)
+		public static bool Data_Ko_Echo(object state, ref bool error)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
@@ -123,9 +121,9 @@ namespace xnaMugen.Evaluation.Triggers
 		}
 
 		[Tag("data.IntPersistIndex")]
-		public static Int32 Data_IntPersistIndex(Object state, ref Boolean error)
+		public static int Data_IntPersistIndex(object state, ref bool error)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
@@ -136,9 +134,9 @@ namespace xnaMugen.Evaluation.Triggers
 		}
 
 		[Tag("data.FloatPersistIndex")]
-		public static Int32 Data_FloatPersistIndex(Object state, ref Boolean error)
+		public static int Data_FloatPersistIndex(object state, ref bool error)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
@@ -149,9 +147,9 @@ namespace xnaMugen.Evaluation.Triggers
 		}
 
 		[Tag("size.draw.offset.x")]
-		public static Int32 Size_Draw_Offset_X(Object state, ref Boolean error)
+		public static int Size_Draw_Offset_X(object state, ref bool error)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
@@ -162,9 +160,9 @@ namespace xnaMugen.Evaluation.Triggers
 		}
 
 		[Tag("size.draw.offset.y")]
-		public static Int32 Size_Draw_Offset_Y(Object state, ref Boolean error)
+		public static int Size_Draw_Offset_Y(object state, ref bool error)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
@@ -175,12 +173,12 @@ namespace xnaMugen.Evaluation.Triggers
 		}
 
 		[Tag("size.xscale")]
-		public static Single Size_Xscale(Object state, ref Boolean error)
+		public static float Size_Xscale(object state, ref bool error)
 		{
-			Combat.Player player = state as Combat.Player;
+			var player = state as Combat.Player;
 			if (player != null) return player.Constants.Scale.X;
 
-			Combat.Helper helper = state as Combat.Helper;
+			var helper = state as Combat.Helper;
 			if (helper != null) return helper.Data.Scale.X;
 
 			error = true;
@@ -188,12 +186,12 @@ namespace xnaMugen.Evaluation.Triggers
 		}
 
 		[Tag("size.yscale")]
-		public static Single Size_Yscale(Object state, ref Boolean error)
+		public static float Size_Yscale(object state, ref bool error)
 		{
-			Combat.Player player = state as Combat.Player;
+			var player = state as Combat.Player;
 			if (player != null) return player.Constants.Scale.Y;
 
-			Combat.Helper helper = state as Combat.Helper;
+			var helper = state as Combat.Helper;
 			if (helper != null) return helper.Data.Scale.Y;
 
 			error = true;
@@ -201,9 +199,9 @@ namespace xnaMugen.Evaluation.Triggers
 		}
 
 		[Tag("size.ground.back")]
-		public static Int32 Size_Ground_Back(Object state, ref Boolean error)
+		public static int Size_Ground_Back(object state, ref bool error)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
@@ -214,9 +212,9 @@ namespace xnaMugen.Evaluation.Triggers
 		}
 
 		[Tag("size.ground.front")]
-		public static Int32 Size_Ground_Front(Object state, ref Boolean error)
+		public static int Size_Ground_Front(object state, ref bool error)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
@@ -227,9 +225,9 @@ namespace xnaMugen.Evaluation.Triggers
 		}
 
 		[Tag("Size.Air.Back")]
-		public static Int32 Size_Air_Back(Object state, ref Boolean error)
+		public static int Size_Air_Back(object state, ref bool error)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
@@ -240,9 +238,9 @@ namespace xnaMugen.Evaluation.Triggers
 		}
 
 		[Tag("Size.Air.Front")]
-		public static Int32 Size_Air_Front(Object state, ref Boolean error)
+		public static int Size_Air_Front(object state, ref bool error)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
@@ -253,9 +251,9 @@ namespace xnaMugen.Evaluation.Triggers
 		}
 
 		[Tag("Size.Height")]
-		public static Int32 Size_Height(Object state, ref Boolean error)
+		public static int Size_Height(object state, ref bool error)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
@@ -266,9 +264,9 @@ namespace xnaMugen.Evaluation.Triggers
 		}
 
 		[Tag("Size.Attack.Dist")]
-		public static Int32 Size_Attack_Dist(Object state, ref Boolean error)
+		public static int Size_Attack_Dist(object state, ref bool error)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
@@ -279,9 +277,9 @@ namespace xnaMugen.Evaluation.Triggers
 		}
 
 		[Tag("Size.Proj.Attack.Dist")]
-		public static Int32 Size_Proj_Attack_Dist(Object state, ref Boolean error)
+		public static int Size_Proj_Attack_Dist(object state, ref bool error)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
@@ -292,12 +290,12 @@ namespace xnaMugen.Evaluation.Triggers
 		}
 
 		[Tag("Size.Proj.Doscale")]
-		public static Boolean Size_Proj_Doscale(Object state, ref Boolean error)
+		public static bool Size_Proj_Doscale(object state, ref bool error)
 		{
-			Combat.Player player = state as Combat.Player;
+			var player = state as Combat.Player;
 			if (player != null) return player.Constants.ProjectileScaling;
 
-			Combat.Helper helper = state as Combat.Helper;
+			var helper = state as Combat.Helper;
 			if (helper != null) return helper.Data.ProjectileScaling;
 
 			error = true;
@@ -305,12 +303,12 @@ namespace xnaMugen.Evaluation.Triggers
 		}
 
 		[Tag("Size.Head.Pos.X")]
-		public static Single Size_Head_Pos_X(Object state, ref Boolean error)
+		public static float Size_Head_Pos_X(object state, ref bool error)
 		{
-			Combat.Player player = state as Combat.Player;
+			var player = state as Combat.Player;
 			if (player != null) return player.Constants.Headposition.X;
 
-			Combat.Helper helper = state as Combat.Helper;
+			var helper = state as Combat.Helper;
 			if (helper != null) return helper.Data.HeadPosition.X;
 
 			error = true;
@@ -318,12 +316,12 @@ namespace xnaMugen.Evaluation.Triggers
 		}
 
 		[Tag("Size.Head.Pos.Y")]
-		public static Single Size_Head_Pos_Y(Object state, ref Boolean error)
+		public static float Size_Head_Pos_Y(object state, ref bool error)
 		{
-			Combat.Player player = state as Combat.Player;
+			var player = state as Combat.Player;
 			if (player != null) return player.Constants.Headposition.Y;
 
-			Combat.Helper helper = state as Combat.Helper;
+			var helper = state as Combat.Helper;
 			if (helper != null) return helper.Data.HeadPosition.Y;
 
 			error = true;
@@ -331,12 +329,12 @@ namespace xnaMugen.Evaluation.Triggers
 		}
 
 		[Tag("size.mid.pos.x")]
-		public static Single Size_Mid_Pos_X(Object state, ref Boolean error)
+		public static float Size_Mid_Pos_X(object state, ref bool error)
 		{
-			Combat.Player player = state as Combat.Player;
+			var player = state as Combat.Player;
 			if (player != null) return player.Constants.Midposition.X;
 
-			Combat.Helper helper = state as Combat.Helper;
+			var helper = state as Combat.Helper;
 			if (helper != null) return helper.Data.MidPosition.X;
 
 			error = true;
@@ -344,12 +342,12 @@ namespace xnaMugen.Evaluation.Triggers
 		}
 
 		[Tag("size.mid.pos.y")]
-		public static Single Size_Mid_Pos_Y(Object state, ref Boolean error)
+		public static float Size_Mid_Pos_Y(object state, ref bool error)
 		{
-			Combat.Player player = state as Combat.Player;
+			var player = state as Combat.Player;
 			if (player != null) return player.Constants.Midposition.Y;
 
-			Combat.Helper helper = state as Combat.Helper;
+			var helper = state as Combat.Helper;
 			if (helper != null) return helper.Data.MidPosition.Y;
 
 			error = true;
@@ -357,12 +355,12 @@ namespace xnaMugen.Evaluation.Triggers
 		}
 
 		[Tag("Size.Shadowoffset")]
-		public static Int32 Size_Shadowoffset(Object state, ref Boolean error)
+		public static int Size_Shadowoffset(object state, ref bool error)
 		{
-			Combat.Player player = state as Combat.Player;
+			var player = state as Combat.Player;
 			if (player != null) return player.Constants.Shadowoffset;
 
-			Combat.Helper helper = state as Combat.Helper;
+			var helper = state as Combat.Helper;
 			if (helper != null) return helper.Data.ShadowOffset;
 
 			error = true;
@@ -370,9 +368,9 @@ namespace xnaMugen.Evaluation.Triggers
 		}
 
 		[Tag("Velocity.Walk.Fwd.X")]
-		public static Single Velocity_Walk_Fwd_X(Object state, ref Boolean error)
+		public static float Velocity_Walk_Fwd_X(object state, ref bool error)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
@@ -383,9 +381,9 @@ namespace xnaMugen.Evaluation.Triggers
 		}
 
 		[Tag("Velocity.Walk.Back.X")]
-		public static Single Velocity_Walk_Back_X(Object state, ref Boolean error)
+		public static float Velocity_Walk_Back_X(object state, ref bool error)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
@@ -396,9 +394,9 @@ namespace xnaMugen.Evaluation.Triggers
 		}
 
 		[Tag("Velocity.Run.Fwd.X")]
-		public static Single Velocity_Run_Fwd_X(Object state, ref Boolean error)
+		public static float Velocity_Run_Fwd_X(object state, ref bool error)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
@@ -409,9 +407,9 @@ namespace xnaMugen.Evaluation.Triggers
 		}
 
 		[Tag("Velocity.Run.Fwd.Y")]
-		public static Single Velocity_Run_Fwd_Y(Object state, ref Boolean error)
+		public static float Velocity_Run_Fwd_Y(object state, ref bool error)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
@@ -422,9 +420,9 @@ namespace xnaMugen.Evaluation.Triggers
 		}
 
 		[Tag("Velocity.Run.Back.X")]
-		public static Single Velocity_Run_Back_X(Object state, ref Boolean error)
+		public static float Velocity_Run_Back_X(object state, ref bool error)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
@@ -435,9 +433,9 @@ namespace xnaMugen.Evaluation.Triggers
 		}
 
 		[Tag("Velocity.Run.Back.Y")]
-		public static Single Velocity_Run_Back_Y(Object state, ref Boolean error)
+		public static float Velocity_Run_Back_Y(object state, ref bool error)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
@@ -448,9 +446,9 @@ namespace xnaMugen.Evaluation.Triggers
 		}
 
 		[Tag("Velocity.Jump.Y")]
-		public static Single Velocity_Jump_Y(Object state, ref Boolean error)
+		public static float Velocity_Jump_Y(object state, ref bool error)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
@@ -461,9 +459,9 @@ namespace xnaMugen.Evaluation.Triggers
 		}
 
 		[Tag("Velocity.Jump.Neu.X")]
-		public static Single Velocity_Jump_Neu_X(Object state, ref Boolean error)
+		public static float Velocity_Jump_Neu_X(object state, ref bool error)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
@@ -474,9 +472,9 @@ namespace xnaMugen.Evaluation.Triggers
 		}
 
 		[Tag("Velocity.Jump.Back.X")]
-		public static Single Velocity_Jump_Back_X(Object state, ref Boolean error)
+		public static float Velocity_Jump_Back_X(object state, ref bool error)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
@@ -487,9 +485,9 @@ namespace xnaMugen.Evaluation.Triggers
 		}
 
 		[Tag("Velocity.Jump.Fwd.X")]
-		public static Single Velocity_Jump_Fwd_X(Object state, ref Boolean error)
+		public static float Velocity_Jump_Fwd_X(object state, ref bool error)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
@@ -500,9 +498,9 @@ namespace xnaMugen.Evaluation.Triggers
 		}
 
 		[Tag("Velocity.Runjump.Back.X")]
-		public static Single Velocity_Runjump_Back_X(Object state, ref Boolean error)
+		public static float Velocity_Runjump_Back_X(object state, ref bool error)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
@@ -513,9 +511,9 @@ namespace xnaMugen.Evaluation.Triggers
 		}
 
 		[Tag("Velocity.Runjump.Fwd.X")]
-		public static Single Velocity_Runjump_Fwd_X(Object state, ref Boolean error)
+		public static float Velocity_Runjump_Fwd_X(object state, ref bool error)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
@@ -526,9 +524,9 @@ namespace xnaMugen.Evaluation.Triggers
 		}
 
 		[Tag("Velocity.Airjump.Y")]
-		public static Single Velocity_Airjump_Y(Object state, ref Boolean error)
+		public static float Velocity_Airjump_Y(object state, ref bool error)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
@@ -539,9 +537,9 @@ namespace xnaMugen.Evaluation.Triggers
 		}
 
 		[Tag("Velocity.Airjump.Neu.X")]
-		public static Single Velocity_Airjump_Neu_X(Object state, ref Boolean error)
+		public static float Velocity_Airjump_Neu_X(object state, ref bool error)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
@@ -552,9 +550,9 @@ namespace xnaMugen.Evaluation.Triggers
 		}
 
 		[Tag("Velocity.Airjump.Back.X")]
-		public static Single Velocity_Airjump_Back_X(Object state, ref Boolean error)
+		public static float Velocity_Airjump_Back_X(object state, ref bool error)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
@@ -565,9 +563,9 @@ namespace xnaMugen.Evaluation.Triggers
 		}
 
 		[Tag("Velocity.Airjump.Fwd.X")]
-		public static Single Velocity_Airjump_Fwd_X(Object state, ref Boolean error)
+		public static float Velocity_Airjump_Fwd_X(object state, ref bool error)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
@@ -578,9 +576,9 @@ namespace xnaMugen.Evaluation.Triggers
 		}
 
 		[Tag("Movement.Airjump.Num")]
-		public static Int32 Movement_Airjump_Num(Object state, ref Boolean error)
+		public static int Movement_Airjump_Num(object state, ref bool error)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
@@ -591,9 +589,9 @@ namespace xnaMugen.Evaluation.Triggers
 		}
 
 		[Tag("Movement.Airjump.Height")]
-		public static Int32 Movement_Airjump_Height(Object state, ref Boolean error)
+		public static int Movement_Airjump_Height(object state, ref bool error)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
@@ -604,9 +602,9 @@ namespace xnaMugen.Evaluation.Triggers
 		}
 
 		[Tag("Movement.Yaccel")]
-		public static Single Movement_Yaccel(Object state, ref Boolean error)
+		public static float Movement_Yaccel(object state, ref bool error)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
@@ -617,9 +615,9 @@ namespace xnaMugen.Evaluation.Triggers
 		}
 
 		[Tag("Movement.Stand.Friction")]
-		public static Single Movement_Stand_Friction(Object state, ref Boolean error)
+		public static float Movement_Stand_Friction(object state, ref bool error)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
@@ -630,9 +628,9 @@ namespace xnaMugen.Evaluation.Triggers
 		}
 
 		[Tag("Movement.Crouch.Friction")]
-		public static Single Movement_Crouch_Friction(Object state, ref Boolean error)
+		public static float Movement_Crouch_Friction(object state, ref bool error)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
@@ -647,7 +645,7 @@ namespace xnaMugen.Evaluation.Triggers
 			if (state.CurrentSymbol != Symbol.LeftParen) return null;
 			++state.TokenIndex;
 
-			String constant = state.CurrentUnknown;
+			var constant = state.CurrentUnknown;
 			if (constant == null) return null;
 
 			state.BaseNode.Arguments.Add(constant);

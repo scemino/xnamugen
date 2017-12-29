@@ -1,10 +1,9 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using Microsoft.Xna.Framework;
 
 namespace xnaMugen.Menus
 {
-	class CombatScreen : Screen
+	internal class CombatScreen : Screen
 	{
 		public CombatScreen(MenuSystem menusystem)
 			: base(menusystem)
@@ -13,9 +12,9 @@ namespace xnaMugen.Menus
 			m_recorder = new Replay.Recorder(this);
 		}
 
-		void CancelCombat(Boolean pressed)
+		private void CancelCombat(bool pressed)
 		{
-			if (pressed == true)
+			if (pressed)
 			{
 				Pause = PauseState.Unpaused;
 
@@ -25,7 +24,7 @@ namespace xnaMugen.Menus
 
 		public override void FadingIn()
 		{
-			if (MenuSystem.GetSubSystem<InitializationSettings>().RecordReplay == true)
+			if (MenuSystem.GetSubSystem<InitializationSettings>().RecordReplay)
 			{
 				Recorder.StartRecording();
 			}
@@ -54,7 +53,7 @@ namespace xnaMugen.Menus
 		{
 			base.SetInput(inputstate);
 
-			if (Recorder.IsRecording == true) Recorder.SetInput(inputstate);
+			if (Recorder.IsRecording) Recorder.SetInput(inputstate);
 
 			inputstate[0].Add(SystemButton.Quit, CancelCombat);
 			inputstate[0].Add(SystemButton.Pause, TogglePause);
@@ -77,7 +76,7 @@ namespace xnaMugen.Menus
 			if (Pause == PauseState.PauseStep) m_pause = PauseState.Paused;
 		}
 
-		public override void Draw(Boolean debugdraw)
+		public override void Draw(bool debugdraw)
 		{
 			base.Draw(debugdraw);
 
@@ -88,9 +87,9 @@ namespace xnaMugen.Menus
 		/// Input handler for toggling pause state.
 		/// </summary>
 		/// <param name="pressed">Whether the button is pressed or released.</param>
-		void TogglePause(Boolean pressed)
+		private void TogglePause(bool pressed)
 		{
-			if (pressed == true)
+			if (pressed)
 			{
 				if (Pause == PauseState.Paused || Pause == PauseState.PauseStep)
 				{
@@ -109,33 +108,21 @@ namespace xnaMugen.Menus
 		/// Input handler for toggling pause step state.
 		/// </summary>
 		/// <param name="pressed">Whether the button is pressed or released.</param>
-		void TogglePauseStep(Boolean pressed)
+		private void TogglePauseStep(bool pressed)
 		{
-			if (pressed == true)
+			if (pressed)
 			{
 				if (Pause == PauseState.Paused) m_pause = PauseState.PauseStep;
 			}
 		}
 
-		public Combat.FightEngine FightEngine
-		{
-			get { return MenuSystem.GetMainSystem<Combat.FightEngine>(); }
-		}
+		public Combat.FightEngine FightEngine => MenuSystem.GetMainSystem<Combat.FightEngine>();
 
-		public override Int32 FadeInTime
-		{
-			get { return FightEngine.RoundInformation.IntroDelay; }
-		}
+		public override int FadeInTime => FightEngine.RoundInformation.IntroDelay;
 
-		public override Int32 FadeOutTime
-		{
-			get { return 20; }
-		}
+		public override int FadeOutTime => 20;
 
-		public Replay.Recorder Recorder
-		{
-			get { return m_recorder; }
-		}
+		public Replay.Recorder Recorder => m_recorder;
 
 		/// <summary>
 		/// Gets or set whether and how the game is paused.
@@ -143,7 +130,7 @@ namespace xnaMugen.Menus
 		/// <returns>Unpaused if the game is not paused; Paused if the game is paused; PauseStep if the game is paused but will still run for one tick.</returns>
 		public PauseState Pause
 		{
-			get { return m_pause; }
+			get => m_pause;
 
 			set { m_pause = value; }
 		}
@@ -151,10 +138,10 @@ namespace xnaMugen.Menus
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Replay.Recorder m_recorder;
+		private readonly Replay.Recorder m_recorder;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		PauseState m_pause;
+		private PauseState m_pause;
 
 		#endregion;
 	}

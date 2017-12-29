@@ -1,24 +1,23 @@
-using System;
 using System.Diagnostics;
 using xnaMugen.IO;
 
 namespace xnaMugen.StateMachine.Controllers
 {
 	[StateControllerName("AfterImageTime")]
-	class AfterImageTime : StateController
+	internal class AfterImageTime : StateController
 	{
-		public AfterImageTime(StateSystem statesystem, String label, TextSection textsection)
+		public AfterImageTime(StateSystem statesystem, string label, TextSection textsection)
 			: base(statesystem, label, textsection)
 		{
-			Evaluation.Expression exp_time = textsection.GetAttribute<Evaluation.Expression>("time", null);
-			Evaluation.Expression exp_value = textsection.GetAttribute<Evaluation.Expression>("value", null);
+			var expTime = textsection.GetAttribute<Evaluation.Expression>("time", null);
+			var expValue = textsection.GetAttribute<Evaluation.Expression>("value", null);
 
-			m_time = exp_time ?? exp_value;
+			m_time = expTime ?? expValue;
 		}
 
 		public override void Run(Combat.Character character)
 		{
-			Int32? time = EvaluationHelper.AsInt32(character, DisplayTime, null);
+			var time = EvaluationHelper.AsInt32(character, DisplayTime, null);
 
 			if (time != null)
 			{
@@ -30,15 +29,12 @@ namespace xnaMugen.StateMachine.Controllers
 			}
 		}
 
-		public Evaluation.Expression DisplayTime
-		{
-			get { return m_time; }
-		}
+		public Evaluation.Expression DisplayTime => m_time;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_time;
+		private readonly Evaluation.Expression m_time;
 
 		#endregion
 	}

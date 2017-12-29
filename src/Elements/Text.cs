@@ -1,15 +1,10 @@
-﻿using System;
-using System.Diagnostics;
-using System.Collections.Generic;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework;
-using xnaMugen.Collections;
+﻿using Microsoft.Xna.Framework;
 
 namespace xnaMugen.Elements
 {
-	class Text : Base
+	internal class Text : Base
 	{
-		public Text(Collection collection, String name, DataMap datamap, Drawing.SpriteManager sprites, Animations.AnimationManager animations/*, Audio.SoundManager sounds*/)
+		public Text(Collection collection, string name, DataMap datamap, Drawing.SpriteManager sprites, Animations.AnimationManager animations/*, Audio.SoundManager sounds*/)
 			: base(collection, name, datamap, sprites, animations/*, sounds*/)
 		{
 		}
@@ -19,7 +14,7 @@ namespace xnaMugen.Elements
 			Collection.Fonts.Print(DataMap.FontData, DataMap.Offset + location, DataMap.Text, null);
 		}
 
-		public override Boolean FinishedDrawing(Int32 tickcount)
+		public override bool FinishedDrawing(int tickcount)
 		{
 			return DataMap.DisplayTime == tickcount;
 		}

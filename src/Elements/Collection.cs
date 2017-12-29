@@ -1,45 +1,42 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Collections.Generic;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework;
 using xnaMugen.Collections;
 
 namespace xnaMugen.Elements
 {
-	class Collection
+	internal class Collection
 	{
 		public Collection(Drawing.SpriteManager sprites, Animations.AnimationManager animations/*, Audio.SoundManager sounds*/, Drawing.FontMap fontmap)
 		{
-			if (sprites == null) throw new ArgumentNullException("sprites");
-			if (animations == null) throw new ArgumentNullException("animations");
+			if (sprites == null) throw new ArgumentNullException(nameof(sprites));
+			if (animations == null) throw new ArgumentNullException(nameof(animations));
 			//if (sounds == null) throw new ArgumentNullException("sounds");
-			if (fontmap == null) throw new ArgumentNullException("fontmap");
+			if (fontmap == null) throw new ArgumentNullException(nameof(fontmap));
 
-			m_elements = new KeyedCollection<String, Elements.Base>(x => x.Name, StringComparer.OrdinalIgnoreCase);
+			m_elements = new KeyedCollection<string, Base>(x => x.Name, StringComparer.OrdinalIgnoreCase);
 			m_spritemanager = sprites;
 			m_animationmanager = animations;
 			//m_soundmanager = sounds;
 			m_fontmap = fontmap;
 		}
 
-		public Base Build(IO.TextSection section, String prefix)
+		public Base Build(IO.TextSection section, string prefix)
 		{
-			if (section == null) throw new ArgumentNullException("section");
-			if (prefix == null) throw new ArgumentNullException("prefix");
+			if (section == null) throw new ArgumentNullException(nameof(section));
+			if (prefix == null) throw new ArgumentNullException(nameof(prefix));
 
 			return Build(prefix, section, prefix);
 		}
 
-		public Base Build(String name, IO.TextSection section, String prefix)
+		public Base Build(string name, IO.TextSection section, string prefix)
 		{
-			if (name == null) throw new ArgumentNullException("name");
-			if (section == null) throw new ArgumentNullException("section");
-			if (prefix == null) throw new ArgumentNullException("prefix");
+			if (name == null) throw new ArgumentNullException(nameof(name));
+			if (section == null) throw new ArgumentNullException(nameof(section));
+			if (prefix == null) throw new ArgumentNullException(nameof(prefix));
 
-			DataMap datamap = new DataMap(section, prefix);
+			var datamap = new DataMap(section, prefix);
 
-			Base element = null;
+			Base element;
 
 			switch (datamap.Type)
 			{
@@ -55,7 +52,6 @@ namespace xnaMugen.Elements
 					element = new Text(this, name, datamap, SpriteManager, AnimationManager /*, SoundManager*/);
 					break;
 
-				case ElementType.None:
 				default:
 					element = new Base(this, name, datamap, SpriteManager, AnimationManager /*, SoundManager*/);
 					break;
@@ -66,9 +62,9 @@ namespace xnaMugen.Elements
 			return element;
 		}
 
-		public Base GetElement(String name)
+		public Base GetElement(string name)
 		{
-			if (name == null) throw new ArgumentNullException("name");
+			if (name == null) throw new ArgumentNullException(nameof(name));
 
 			if (m_elements.Contains(name) == false) return null;
 
@@ -87,7 +83,7 @@ namespace xnaMugen.Elements
 
 		public void Update()
 		{
-			foreach (Base element in m_elements)
+			foreach (var element in m_elements)
 			{
 				element.Update();
 			}
@@ -95,7 +91,7 @@ namespace xnaMugen.Elements
 
 		public void Reset()
 		{
-			foreach (Elements.Base element in m_elements) element.Reset();
+			foreach (var element in m_elements) element.Reset();
 		}
 
 		//public Audio.SoundManager SoundManager
@@ -103,38 +99,29 @@ namespace xnaMugen.Elements
 		//	get { return m_soundmanager; }
 		//}
 
-		public Drawing.SpriteManager SpriteManager
-		{
-			get { return m_spritemanager; }
-		}
+		public Drawing.SpriteManager SpriteManager => m_spritemanager;
 
-		public Animations.AnimationManager AnimationManager
-		{
-			get { return m_animationmanager; }
-		}
+		public Animations.AnimationManager AnimationManager => m_animationmanager;
 
-		public Drawing.FontMap Fonts
-		{
-			get { return m_fontmap; }
-		}
+		public Drawing.FontMap Fonts => m_fontmap;
 
 		#region Fields
 
 		//[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		[DebuggerDisplay(null, Name = "Elements")]
-		readonly KeyedCollection<String, Base> m_elements;
+		private readonly KeyedCollection<string, Base> m_elements;
 
 		//[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		//readonly Audio.SoundManager m_soundmanager;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Drawing.SpriteManager m_spritemanager;
+		private readonly Drawing.SpriteManager m_spritemanager;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Animations.AnimationManager m_animationmanager;
+		private readonly Animations.AnimationManager m_animationmanager;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Drawing.FontMap m_fontmap;
+		private readonly Drawing.FontMap m_fontmap;
 
 		#endregion
 	}

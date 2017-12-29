@@ -3,7 +3,7 @@ using System.Diagnostics;
 
 namespace xnaMugen.Commands
 {
-	class BufferCount
+	internal class BufferCount
 	{
 		public BufferCount()
 		{
@@ -17,7 +17,7 @@ namespace xnaMugen.Commands
 			m_isactive = false;
 		}
 
-		public void Set(Int32 time)
+		public void Set(int time)
 		{
 			m_value = Math.Max(m_value, time);
 			m_isactive = m_value > 0;
@@ -29,23 +29,20 @@ namespace xnaMugen.Commands
 			m_isactive = m_value > 0;
 		}
 
-		public override String ToString()
+		public override string ToString()
 		{
 			return m_value.ToString();
 		}
 
-		public Boolean IsActive
-		{
-			get { return m_isactive; }
-		}
+		public bool IsActive => m_isactive;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Int32 m_value;
+		private int m_value;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Boolean m_isactive;
+		private bool m_isactive;
 
 		#endregion
 	}

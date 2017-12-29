@@ -1,12 +1,11 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 
 namespace xnaMugen.Drawing
 {
-	[DebuggerDisplay("{Id}")]
-	class SpriteFileData
+	[DebuggerDisplay("{" + nameof(Id) + "}")]
+	internal class SpriteFileData
 	{
-		public SpriteFileData(Int32 fileoffset, Int32 pcxsize, Point axis, SpriteId id, Int32 sharedindex, Boolean copylastpalette)
+		public SpriteFileData(int fileoffset, int pcxsize, Point axis, SpriteId id, int sharedindex, bool copylastpalette)
 		{
 			m_fileoffset = fileoffset;
 			m_pcxsize = pcxsize;
@@ -17,39 +16,21 @@ namespace xnaMugen.Drawing
 			m_isvalid = null;
 		}
 
-		public Int32 FileOffset
-		{
-			get { return m_fileoffset; }
-		}
+		public int FileOffset => m_fileoffset;
 
-		public Int32 PcxSize
-		{
-			get { return m_pcxsize; }
-		}
+		public int PcxSize => m_pcxsize;
 
-		public Point Axis
-		{
-			get { return m_axis; }
-		}
+		public Point Axis => m_axis;
 
-		public SpriteId Id
-		{
-			get { return m_id; }
-		}
+		public SpriteId Id => m_id;
 
-		public Int32 SharedIndex
-		{
-			get { return m_sharedindex; }
-		}
+		public int SharedIndex => m_sharedindex;
 
-		public Boolean CopyLastPalette
-		{
-			get { return m_copylastpalette; }
-		}
+		public bool CopyLastPalette => m_copylastpalette;
 
-		public Boolean? IsValid
+		public bool? IsValid
 		{
-			get { return m_isvalid; }
+			get => m_isvalid;
 
 			set { m_isvalid = value; }
 		}
@@ -57,25 +38,25 @@ namespace xnaMugen.Drawing
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Int32 m_fileoffset;
+		private readonly int m_fileoffset;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Int32 m_pcxsize;
+		private readonly int m_pcxsize;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Point m_axis;
+		private readonly Point m_axis;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly SpriteId m_id;
+		private readonly SpriteId m_id;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Int32 m_sharedindex;
+		private readonly int m_sharedindex;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Boolean m_copylastpalette;
+		private readonly bool m_copylastpalette;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Boolean? m_isvalid;
+		private bool? m_isvalid;
 
 		#endregion
 	}

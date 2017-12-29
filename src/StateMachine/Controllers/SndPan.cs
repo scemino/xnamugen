@@ -1,13 +1,12 @@
-using System;
 using System.Diagnostics;
 using xnaMugen.IO;
 
 namespace xnaMugen.StateMachine.Controllers
 {
 	[StateControllerName("SndPan")]
-	class SndPan : StateController
+	internal class SndPan : StateController
 	{
-		public SndPan(StateSystem statesystem, String label, TextSection textsection)
+		public SndPan(StateSystem statesystem, string label, TextSection textsection)
 			: base(statesystem, label, textsection)
 		{
 			m_channel = textsection.GetAttribute<Evaluation.Expression>("channel", null);
@@ -17,9 +16,9 @@ namespace xnaMugen.StateMachine.Controllers
 
 		public override void Run(Combat.Character character)
 		{
-			Int32? channel = EvaluationHelper.AsInt32(character, Channel, null);
-			Int32? pan = EvaluationHelper.AsInt32(character, Pan, null);
-			Int32? abspan = EvaluationHelper.AsInt32(character, AbsolutePan, null);
+			var channel = EvaluationHelper.AsInt32(character, Channel, null);
+			var pan = EvaluationHelper.AsInt32(character, Pan, null);
+			var abspan = EvaluationHelper.AsInt32(character, AbsolutePan, null);
 
 			if (channel == null) return;
 
@@ -27,7 +26,7 @@ namespace xnaMugen.StateMachine.Controllers
 			//if (abspan != null) character.SoundManager.AbsolutePan(channel.Value, abspan.Value);
 		}
 
-		public override Boolean IsValid()
+		public override bool IsValid()
 		{
 			if (base.IsValid() == false) return false;
 
@@ -37,31 +36,22 @@ namespace xnaMugen.StateMachine.Controllers
 			return true;
 		}
 
-		public Evaluation.Expression Channel
-		{
-			get { return m_channel; }
-		}
+		public Evaluation.Expression Channel => m_channel;
 
-		public Evaluation.Expression Pan
-		{
-			get { return m_pan; }
-		}
+		public Evaluation.Expression Pan => m_pan;
 
-		public Evaluation.Expression AbsolutePan
-		{
-			get { return m_abspan; }
-		}
+		public Evaluation.Expression AbsolutePan => m_abspan;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_channel;
+		private readonly Evaluation.Expression m_channel;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_pan;
+		private readonly Evaluation.Expression m_pan;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_abspan;
+		private readonly Evaluation.Expression m_abspan;
 
 		#endregion
 	}

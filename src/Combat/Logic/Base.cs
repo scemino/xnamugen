@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Diagnostics;
-using Microsoft.Xna.Framework;
 
 namespace xnaMugen.Combat.Logic
 {
-	abstract class Base : EngineObject
+	internal abstract class Base : EngineObject
 	{
 		protected Base(FightEngine engine, RoundState state)
 			: base(engine)
 		{
-			if (state == RoundState.None) throw new ArgumentOutOfRangeException("state");
+			if (state == RoundState.None) throw new ArgumentOutOfRangeException(nameof(state));
 
 			m_tickcount = -1;
 			m_state = state;
@@ -43,9 +42,9 @@ namespace xnaMugen.Combat.Logic
 
 		protected abstract Elements.Base GetElement();
 
-		public abstract Boolean IsFinished();
+		public abstract bool IsFinished();
 
-		void UpdateElement()
+		private void UpdateElement()
 		{
 			if (m_element == null) return;
 
@@ -63,7 +62,7 @@ namespace xnaMugen.Combat.Logic
 				//}
 			}
 
-			if (m_element.FinishedDrawing(m_tickcount) == true)
+			if (m_element.FinishedDrawing(m_tickcount))
 			{
 				m_element = null;
 			}
@@ -71,7 +70,7 @@ namespace xnaMugen.Combat.Logic
 
 		public void Draw()
 		{
-			Vector2 location = Engine.RoundInformation.DefaultElementLocation;
+			var location = Engine.RoundInformation.DefaultElementLocation;
 
 			if (m_element != null)
 			{
@@ -86,41 +85,32 @@ namespace xnaMugen.Combat.Logic
 			}
 		}
 
-		public Int32 TickCount
-		{
-			get { return m_tickcount; }
-		}
+		public int TickCount => m_tickcount;
 
-		public RoundState State
-		{
-			get { return m_state; }
-		}
+		public RoundState State => m_state;
 
-		public String DisplayString
+		public string DisplayString
 		{
-			get { return m_text; }
+			get => m_text;
 
 			set { m_text = value; }
 		}
 
-		public Elements.Base CurrentElement
-		{
-			get { return m_element; }
-		}
+		public Elements.Base CurrentElement => m_element;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly RoundState m_state;
+		private readonly RoundState m_state;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Int32 m_tickcount;
+		private int m_tickcount;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Elements.Base m_element;
+		private Elements.Base m_element;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		String m_text;
+		private string m_text;
 
 		#endregion
 	}

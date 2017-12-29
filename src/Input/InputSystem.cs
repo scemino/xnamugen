@@ -2,14 +2,13 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using Microsoft.Xna.Framework.Input;
-using xnaMugen.Collections;
 
 namespace xnaMugen.Input
 {
 	/// <summary>
 	/// Interfaces between keyboard input and game code.
 	/// </summary>
-	class InputSystem : SubSystem
+	internal class InputSystem : SubSystem
 	{
 		/// <summary>
 		/// Initializes a new instance of this class.
@@ -22,12 +21,12 @@ namespace xnaMugen.Input
 			m_previousstate = new KeyboardState();
 			m_inputstatestack = new Stack<InputState>();
 			m_currentinput = new InputState();
-			m_callbackcache = new List<Action<Boolean>>();
+			m_callbackcache = new List<Action<bool>>();
 		}
 
 		public override void Initialize()
 		{
-			InitializationSettings settings = GetSubSystem<InitializationSettings>();
+			var settings = GetSubSystem<InitializationSettings>();
 
 			m_keymap.Clear();
 
@@ -75,18 +74,18 @@ namespace xnaMugen.Input
 		/// </summary>
 		public void Update()
 		{
-			KeyboardState ks = Keyboard.GetState();
+			var ks = Keyboard.GetState();
 			m_callbackcache.Clear();
 
-			foreach (KeyValuePair<Keys, ButtonWrapper> mapvalue in m_keymap)
+			foreach (var mapvalue in m_keymap)
 			{
 				if (ks[mapvalue.Key] == m_previousstate[mapvalue.Key]) continue;
 
-				ButtonMap buttonmap = CurrentInput[mapvalue.Value.MapIndex];
+				var buttonmap = CurrentInput[mapvalue.Value.MapIndex];
 
-				Boolean pressed = ks[mapvalue.Key] == KeyState.Down;
+				var pressed = ks[mapvalue.Key] == KeyState.Down;
 
-				Action<Boolean> callback = buttonmap.GetCallback(mapvalue.Value.ButtonIndex);
+				var callback = buttonmap.GetCallback(mapvalue.Value.ButtonIndex);
 
 				if (callback != null && m_callbackcache.Contains(callback) == false)
 				{
@@ -102,27 +101,24 @@ namespace xnaMugen.Input
 		/// Returns the current input state.
 		/// </summary>
 		/// <returns>The current input state.</returns>
-		public InputState CurrentInput
-		{
-			get { return m_currentinput; }
-		}
+		public InputState CurrentInput => m_currentinput;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Dictionary<Keys, ButtonWrapper> m_keymap;
+		private readonly Dictionary<Keys, ButtonWrapper> m_keymap;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		KeyboardState m_previousstate;
+		private KeyboardState m_previousstate;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly InputState m_currentinput;
+		private readonly InputState m_currentinput;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Stack<InputState> m_inputstatestack;
+		private readonly Stack<InputState> m_inputstatestack;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly List<Action<Boolean>> m_callbackcache;
+		private readonly List<Action<bool>> m_callbackcache;
 
 		#endregion
 	}

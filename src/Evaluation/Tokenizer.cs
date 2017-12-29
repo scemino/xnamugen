@@ -5,7 +5,7 @@ using System.Reflection;
 
 namespace xnaMugen.Evaluation
 {
-	class Tokenizer
+	internal class Tokenizer
 	{
 		public Tokenizer()
 		{
@@ -16,66 +16,66 @@ namespace xnaMugen.Evaluation
 			m_tokenmap = BuildTokenMapping();
 		}
 
-		Dictionary<String, TokenData> BuildTokenMapping()
+		private Dictionary<string, TokenData> BuildTokenMapping()
 		{
-			Dictionary<String, TokenData> mapping = new Dictionary<String, TokenData>(StringComparer.OrdinalIgnoreCase);
+			var mapping = new Dictionary<string, TokenData>(StringComparer.OrdinalIgnoreCase);
 
-			foreach (FieldInfo field in typeof(Operator).GetFields())
+			foreach (var field in typeof(Operator).GetFields())
 			{
-				BinaryOperatorMappingAttribute bom_attrib = (BinaryOperatorMappingAttribute)Attribute.GetCustomAttribute(field, typeof(BinaryOperatorMappingAttribute));
-				if (bom_attrib != null)
+				var bomAttrib = (BinaryOperatorMappingAttribute)Attribute.GetCustomAttribute(field, typeof(BinaryOperatorMappingAttribute));
+				if (bomAttrib != null)
 				{
-					Operator @operator = (Operator)field.GetValue(null);
-					mapping.Add(bom_attrib.Value, new Tokenizing.BinaryOperatorData(@operator, bom_attrib.Value, bom_attrib.Name, bom_attrib.Precedence));
+					var @operator = (Operator)field.GetValue(null);
+					mapping.Add(bomAttrib.Value, new Tokenizing.BinaryOperatorData(@operator, bomAttrib.Value, bomAttrib.Name, bomAttrib.Precedence));
 				}
 				else
 				{
-					UnaryOperatorMappingAttribute fm_attr = (UnaryOperatorMappingAttribute)Attribute.GetCustomAttribute(field, typeof(UnaryOperatorMappingAttribute));
+					var fm_attr = (UnaryOperatorMappingAttribute)Attribute.GetCustomAttribute(field, typeof(UnaryOperatorMappingAttribute));
 					if (fm_attr != null)
 					{
-						Operator @operator = (Operator)field.GetValue(null);
+						var @operator = (Operator)field.GetValue(null);
 						mapping.Add(fm_attr.Value, new Tokenizing.UnaryOperatorData(@operator, fm_attr.Value, fm_attr.Name));
 					}
 				}
 			}
 
-			foreach (FieldInfo field in typeof(Symbol).GetFields())
+			foreach (var field in typeof(Symbol).GetFields())
 			{
-				TokenMappingAttribute attr = (TokenMappingAttribute)Attribute.GetCustomAttribute(field, typeof(TokenMappingAttribute));
+				var attr = (TokenMappingAttribute)Attribute.GetCustomAttribute(field, typeof(TokenMappingAttribute));
 				if (attr != null)
 				{
-					Symbol symbol = (Symbol)field.GetValue(null);
+					var symbol = (Symbol)field.GetValue(null);
 					mapping.Add(attr.Value, new Tokenizing.SymbolData(symbol, attr.Value));
 				}
 			}
 
-			foreach (Type type in Assembly.GetExecutingAssembly().GetTypes())
+			foreach (var type in Assembly.GetExecutingAssembly().GetTypes())
 			{
 				if (type.IsAbstract == false || type.IsClass == false) continue;
 
-				CustomFunctionAttribute cf_attr = (CustomFunctionAttribute)Attribute.GetCustomAttribute(type, typeof(CustomFunctionAttribute));
+				var cf_attr = (CustomFunctionAttribute)Attribute.GetCustomAttribute(type, typeof(CustomFunctionAttribute));
 				if (cf_attr != null) mapping.Add(cf_attr.Value, new Tokenizing.CustomFunctionData(cf_attr.Value, cf_attr.Value, type));
 
-				StateRedirectionAttribute sr_attr = (StateRedirectionAttribute)Attribute.GetCustomAttribute(type, typeof(StateRedirectionAttribute));
+				var sr_attr = (StateRedirectionAttribute)Attribute.GetCustomAttribute(type, typeof(StateRedirectionAttribute));
 				if (sr_attr != null) mapping.Add(sr_attr.Value, new Tokenizing.StateRedirectionData(sr_attr.Value, sr_attr.Value, type));
 			}
 
 			return mapping;
 		}
 
-		public List<Token> Tokenize(String input)
+		public List<Token> Tokenize(string input)
 		{
-			if (input == null) throw new ArgumentNullException("input");
+			if (input == null) throw new ArgumentNullException(nameof(input));
 
-			List<Token> output = new List<Token>();
-			Int32 index = 0;
+			var output = new List<Token>();
+			var index = 0;
 
 			while (true)
 			{
-				while (index < input.Length && Char.IsWhiteSpace(input[index]) == true) ++index;
+				while (index < input.Length && char.IsWhiteSpace(input[index])) ++index;
 				if (index >= input.Length) break;
 
-				Token token = Read(input, index);
+				var token = Read(input, index);
 				if (token == null)
 				{
 					output.Clear();
@@ -98,55 +98,55 @@ namespace xnaMugen.Evaluation
 			return output;
 		}
 
-		Token Read(String input, Int32 index)
+		private Token Read(string input, int index)
 		{
-			if (input == null) throw new ArgumentNullException("input");
-			if (index < 0 || index >= input.Length) throw new ArgumentOutOfRangeException("index");
+			if (input == null) throw new ArgumentNullException(nameof(input));
+			if (index < 0 || index >= input.Length) throw new ArgumentOutOfRangeException(nameof(index));
 
 			//Read Quoted String
 			if (input[index] == '"')
 			{
-				Int32 endquoteindex = input.IndexOf('"', index + 1);
+				var endquoteindex = input.IndexOf('"', index + 1);
 				if (endquoteindex != -1)
 				{
-					String text = input.Substring(index, endquoteindex + 1 - index);
+					var text = input.Substring(index, endquoteindex + 1 - index);
 					return new Token(text, m_textdata);
 				}
 				else
 				{
-					String text = input.Substring(index, 1);
+					var text = input.Substring(index, 1);
 					return new Token(text, m_unknowndata);
 				}
 			}
 
 			//Read Identifier
-			if (Char.IsLetter(input[index]) == true)
+			if (char.IsLetter(input[index]))
 			{
-				Int32 length = 1;
-				while (index + length < input.Length && (Char.IsLetterOrDigit(input[index + length]) == true || input[index + length] == '.')) ++length;
+				var length = 1;
+				while (index + length < input.Length && (char.IsLetterOrDigit(input[index + length]) || input[index + length] == '.')) ++length;
 
 				return MakeToken(input, index, length);
 			}
 
 			//Read Number
-			if (Char.IsNumber(input[index]) == true || input[index] == '.')
+			if (char.IsNumber(input[index]) || input[index] == '.')
 			{
-				Int32 length = 1;
-				while (index + length < input.Length && (Char.IsNumber(input[index + length]) == true || input[index + length] == '.')) ++length;
+				var length = 1;
+				while (index + length < input.Length && (char.IsNumber(input[index + length]) || input[index + length] == '.')) ++length;
 
-				String text = input.Substring(index, length);
+				var text = input.Substring(index, length);
 
-				if (m_intdata.Match(text) == true) return new Token(text, m_intdata);
-				if (m_floatdata.Match(text) == true) return new Token(text, m_floatdata);
+				if (m_intdata.Match(text)) return new Token(text, m_intdata);
+				if (m_floatdata.Match(text)) return new Token(text, m_floatdata);
 				return new Token(text, m_unknowndata);
 			}
 
 			//Read Mathematical Symbol
-			if (Char.IsLetterOrDigit(input[index]) == false)
+			if (char.IsLetterOrDigit(input[index]) == false)
 			{
-				if (index + 1 < input.Length && (Char.IsWhiteSpace(input[index + 1]) == false && Char.IsLetterOrDigit(input[index + 1]) == false))
+				if (index + 1 < input.Length && char.IsWhiteSpace(input[index + 1]) == false && char.IsLetterOrDigit(input[index + 1]) == false)
 				{
-					Token token = MakeToken(input, index, 2);
+					var token = MakeToken(input, index, 2);
 					if (token != null && token.Data != m_unknowndata) return token;
 				}
 
@@ -156,14 +156,14 @@ namespace xnaMugen.Evaluation
 			return null;
 		}
 
-		Token MakeToken(String input, Int32 startindex, Int32 length)
+		private Token MakeToken(string input, int startindex, int length)
 		{
-			if (input == null) throw new ArgumentNullException("input");
+			if (input == null) throw new ArgumentNullException(nameof(input));
 
-			String text = input.Substring(startindex, length);
+			var text = input.Substring(startindex, length);
 
 			TokenData data;
-			if (m_tokenmap.TryGetValue(text, out data) == true) return new Token(text, data);
+			if (m_tokenmap.TryGetValue(text, out data)) return new Token(text, data);
 
 			return new Token(text, m_unknowndata);
 		}
@@ -171,19 +171,19 @@ namespace xnaMugen.Evaluation
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Dictionary<String, TokenData> m_tokenmap;
+		private readonly Dictionary<string, TokenData> m_tokenmap;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly TokenData m_intdata;
+		private readonly TokenData m_intdata;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly TokenData m_floatdata;
+		private readonly TokenData m_floatdata;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly TokenData m_textdata;
+		private readonly TokenData m_textdata;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly TokenData m_unknowndata;
+		private readonly TokenData m_unknowndata;
 
 		#endregion
 	}

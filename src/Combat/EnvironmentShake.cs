@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework;
 
 namespace xnaMugen.Combat
 {
-	class EnvironmentShake: EngineObject
+	internal class EnvironmentShake: EngineObject
 	{
 		public EnvironmentShake(FightEngine engine)
 			: base(engine)
@@ -20,7 +20,7 @@ namespace xnaMugen.Combat
 			m_phase = 0;
 		}
 
-		public void Set(Int32 time, Single frequency, Int32 amplitude, Single phase)
+		public void Set(int time, float frequency, int amplitude, float phase)
 		{
 			m_timeticks = 0;
 			m_time = time;
@@ -36,10 +36,7 @@ namespace xnaMugen.Combat
 			++m_timeticks;
 		}
 
-		public Boolean IsActive
-		{
-			get { return m_time > 0 && m_timeticks < m_time; }
-		}
+		public bool IsActive => m_time > 0 && m_timeticks < m_time;
 
 		public Vector2 DrawOffset
 		{
@@ -50,52 +47,37 @@ namespace xnaMugen.Combat
 
 				if (IsActive == false) return new Vector2(0, 0);
 
-				Single movement = Amplitude * (Single)Math.Sin((TimeElasped * Frequency) + Phase);
+				var movement = Amplitude * (float)Math.Sin(TimeElasped * Frequency + Phase);
 				return new Vector2(movement, movement);
 			}
 		}
 
-		public Int32 TimeElasped
-		{
-			get { return m_timeticks; }
-		}
+		public int TimeElasped => m_timeticks;
 
-		public Int32 Time
-		{
-			get { return m_time; }
-		}
+		public int Time => m_time;
 
-		public Single Frequency
-		{
-			get { return m_frequency; }
-		}
+		public float Frequency => m_frequency;
 
-		public Int32 Amplitude
-		{
-			get { return m_amplitude; }
-		}
+		public int Amplitude => m_amplitude;
 
-		public Single Phase
-		{
-			get { return m_phase; }
-		}
+		public float Phase => m_phase;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Int32 m_timeticks;
+		private int m_timeticks;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Int32 m_time;
+		private int m_time;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Single m_frequency;
+		private float m_frequency;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Int32 m_amplitude;
+		private int m_amplitude;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Single m_phase;
+		private float m_phase;
 
 		#endregion
 	}

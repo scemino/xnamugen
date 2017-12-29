@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("Assembly")]
 
@@ -8,12 +7,12 @@ namespace xnaMugen
 	/// <summary>
 	/// Class holding entry point into program.
 	/// </summary>
-	static class EntryPoint
+	internal static class EntryPoint
 	{
 		/// <summary>
 		/// Where the program starts. Starts logging if necessary and runs game loop.
 		/// </summary>
-		static void Main(String[] args)
+		private static void Main(string[] args)
 		{
 #if TEST
 			using (Game g = new MugenTest()) g.Run();

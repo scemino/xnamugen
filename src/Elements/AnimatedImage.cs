@@ -1,15 +1,10 @@
-﻿using System;
-using System.Diagnostics;
-using System.Collections.Generic;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework;
-using xnaMugen.Collections;
+﻿using Microsoft.Xna.Framework;
 
 namespace xnaMugen.Elements
 {
-	class AnimatedImage : Base
+	internal class AnimatedImage : Base
 	{
-		public AnimatedImage(Collection collection, String name, DataMap datamap, Drawing.SpriteManager sprites, Animations.AnimationManager animations/*, Audio.SoundManager sounds*/)
+		public AnimatedImage(Collection collection, string name, DataMap datamap, Drawing.SpriteManager sprites, Animations.AnimationManager animations/*, Audio.SoundManager sounds*/)
 			: base(collection, name, datamap, sprites, animations/*, sounds*/)
 		{
 			Reset();
@@ -17,15 +12,15 @@ namespace xnaMugen.Elements
 
 		public override void Draw(Vector2 location)
 		{
-			if (AnimationManager.HasAnimation(DataMap.AnimationNumber) == true)
+			if (AnimationManager.HasAnimation(DataMap.AnimationNumber))
 			{
-				Animations.AnimationElement element = AnimationManager.CurrentElement;
+				var element = AnimationManager.CurrentElement;
 				if (element == null) return;
 
-				Drawing.Sprite sprite = SpriteManager.GetSprite(element.SpriteId);
+				var sprite = SpriteManager.GetSprite(element.SpriteId);
 				if (sprite == null) return;
 
-				Video.DrawState drawstate = SpriteManager.SetupDrawing(element.SpriteId, location, DataMap.Offset + element.Offset, DataMap.Scale, DataMap.Flip);
+				var drawstate = SpriteManager.SetupDrawing(element.SpriteId, location, DataMap.Offset + element.Offset, DataMap.Scale, DataMap.Flip);
 				drawstate.Blending = element.Blending;
 				drawstate.Use();
 			}
@@ -35,17 +30,17 @@ namespace xnaMugen.Elements
 		{
 			base.Update();
 
-			if (AnimationManager.HasAnimation(DataMap.AnimationNumber) == true) AnimationManager.Update();
+			if (AnimationManager.HasAnimation(DataMap.AnimationNumber)) AnimationManager.Update();
 		}
 
 		public override void Reset()
 		{
 			base.Reset();
 
-			if (AnimationManager.HasAnimation(DataMap.AnimationNumber) == true) AnimationManager.SetLocalAnimation(DataMap.AnimationNumber, 0);
+			if (AnimationManager.HasAnimation(DataMap.AnimationNumber)) AnimationManager.SetLocalAnimation(DataMap.AnimationNumber, 0);
 		}
 
-		public override Boolean FinishedDrawing(Int32 tickcount)
+		public override bool FinishedDrawing(int tickcount)
 		{
 			if (AnimationManager.HasAnimation(DataMap.AnimationNumber) == false) return true;
 

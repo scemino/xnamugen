@@ -3,11 +3,11 @@ using System;
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("Cos")]
-	static class Cos
+	internal static class Cos
 	{
-		public static Single Evaluate(Object state, ref Boolean error, Single value)
+		public static float Evaluate(object state, ref bool error, float value)
 		{
-			return (Single)Math.Cos(value);
+			return (float)Math.Cos(value);
 		}
 
 		public static Node Parse(ParseState state)

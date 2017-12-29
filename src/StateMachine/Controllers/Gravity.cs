@@ -1,14 +1,12 @@
-using System;
-using System.Diagnostics;
 using xnaMugen.IO;
 using Microsoft.Xna.Framework;
 
 namespace xnaMugen.StateMachine.Controllers
 {
 	[StateControllerName("Gravity")]
-	class Gravity : StateController
+	internal class Gravity : StateController
 	{
-		public Gravity(StateSystem statesystem, String label, TextSection textsection)
+		public Gravity(StateSystem statesystem, string label, TextSection textsection)
 			: base(statesystem, label, textsection)
 		{
 		}

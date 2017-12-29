@@ -1,37 +1,34 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System.Collections.Generic;
-using xnaMugen.StateMachine;
 
 namespace xnaMugen.Combat
 {
 	[DebuggerDisplay("Id #{Id} - {CommonAnimation}, {AnimationNumber}")]
-	class ExplodData
+	internal class ExplodData
 	{
-        public Boolean IsHitSpark { get; set; }
+        public bool IsHitSpark { get; set; }
 
-		public Boolean CommonAnimation { get; set; }
-		public Int32 AnimationNumber { get; set; }
-		public Int32 Id { get; set; }
+		public bool CommonAnimation { get; set; }
+		public int AnimationNumber { get; set; }
+		public int Id { get; set; }
 		public PositionType PositionType { get; set; }
 		public Vector2 Location { get; set; }
 		public Vector2 Velocity { get; set; }
 		public Vector2 Acceleration { get; set; }
 		public SpriteEffects Flip { get; set; }
-		public Int32 BindTime { get; set; }
-		public Int32 RemoveTime { get; set; }
+		public int BindTime { get; set; }
+		public int RemoveTime { get; set; }
 		public Point Random { get; set; }
-		public Boolean SuperMove { get; set; }
-		public Int32 SuperMoveTime { get; set; }
-		public Int32 PauseTime { get; set; }
+		public bool SuperMove { get; set; }
+		public int SuperMoveTime { get; set; }
+		public int PauseTime { get; set; }
 		public Vector2 Scale { get; set; }
-		public Int32 SpritePriority { get; set; }
-		public Boolean DrawOnTop { get; set; }
-		public Boolean OwnPalFx { get; set; }
-		public Boolean RemoveOnGetHit { get; set; }
-		public Boolean IgnoreHitPause { get; set; }
+		public int SpritePriority { get; set; }
+		public bool DrawOnTop { get; set; }
+		public bool OwnPalFx { get; set; }
+		public bool RemoveOnGetHit { get; set; }
+		public bool IgnoreHitPause { get; set; }
 		public Blending Transparency { get; set; }
 
 		public Character Creator { get; set; }
@@ -39,28 +36,28 @@ namespace xnaMugen.Combat
 	}
 
 	[DebuggerDisplay("Id #{Id} - {CommonAnimation}, {AnimationNumber}")]
-	class ModifyExplodData
+	internal class ModifyExplodData
 	{
-		public Boolean? CommonAnimation { get; set; }
-		public Int32? AnimationNumber { get; set; }
-		public Int32 Id { get; set; }
+		public bool? CommonAnimation { get; set; }
+		public int? AnimationNumber { get; set; }
+		public int Id { get; set; }
 		public PositionType? PositionType { get; set; }
 		public Vector2? Location { get; set; }
 		public Vector2? Velocity { get; set; }
 		public Vector2? Acceleration { get; set; }
 		public SpriteEffects? Flip { get; set; }
-		public Int32? BindTime { get; set; }
-		public Int32? RemoveTime { get; set; }
+		public int? BindTime { get; set; }
+		public int? RemoveTime { get; set; }
 		public Point? Random { get; set; }
-		public Boolean? SuperMove { get; set; }
-		public Int32? SuperMoveTime { get; set; }
-		public Int32? PauseTime { get; set; }
+		public bool? SuperMove { get; set; }
+		public int? SuperMoveTime { get; set; }
+		public int? PauseTime { get; set; }
 		public Vector2? Scale { get; set; }
-		public Int32? SpritePriority { get; set; }
-		public Boolean? DrawOnTop { get; set; }
-		public Boolean? OwnPalFx { get; set; }
-		public Boolean? RemoveOnGetHit { get; set; }
-		public Boolean? IgnoreHitPause { get; set; }
+		public int? SpritePriority { get; set; }
+		public bool? DrawOnTop { get; set; }
+		public bool? OwnPalFx { get; set; }
+		public bool? RemoveOnGetHit { get; set; }
+		public bool? IgnoreHitPause { get; set; }
 		public Blending? Transparency { get; set; }
 	}
 }

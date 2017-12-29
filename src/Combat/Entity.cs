@@ -1,13 +1,11 @@
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using xnaMugen.Collections;
 
 namespace xnaMugen.Combat
 {
-	abstract class Entity : EngineObject
+	internal abstract class Entity : EngineObject
 	{
 		protected Entity(FightEngine engine)
 			: base(engine)
@@ -45,27 +43,20 @@ namespace xnaMugen.Combat
 			m_angledraw = false;
 		}
 
-		public void SetLocalAnimation(Int32 animnumber, Int32 elementnumber)
+		public void SetLocalAnimation(int animnumber, int elementnumber)
 		{
-			if (AnimationManager.SetLocalAnimation(animnumber, elementnumber) == true)
+			if (AnimationManager.SetLocalAnimation(animnumber, elementnumber))
 			{
 				SpriteManager.LoadSprites(AnimationManager.CurrentAnimation);
-			}
-			else
-			{
 			}
 		}
 
-		public void SetForeignAnimation(Animations.AnimationManager animationmanager, Int32 animationnumber, Int32 elementnumber)
+		public void SetForeignAnimation(Animations.AnimationManager animationmanager, int animationnumber, int elementnumber)
 		{
-			if (AnimationManager.SetForeignAnimation(animationmanager, animationnumber, elementnumber) == true)
+			if (AnimationManager.SetForeignAnimation(animationmanager, animationnumber, elementnumber))
 			{
 				SpriteManager.LoadSprites(AnimationManager.CurrentAnimation);
 			}
-			else
-			{
-			}
-
 		}
 
 		public virtual void UpdateAnimations()
@@ -73,11 +64,11 @@ namespace xnaMugen.Combat
 			UpdateAnimations(true);
 		}
 
-		public virtual void UpdateAnimations(Boolean updatepalfx)
+		public virtual void UpdateAnimations(bool updatepalfx)
 		{
 			AnimationManager.Update();
 
-			if (updatepalfx == true) PaletteFx.Update();
+			if (updatepalfx) PaletteFx.Update();
 		}
 
         public virtual void UpdateAfterImages()
@@ -102,7 +93,7 @@ namespace xnaMugen.Combat
 
 		public virtual Vector2 Move(Vector2 p)
 		{
-			Vector2 oldlocation = CurrentLocation;
+			var oldlocation = CurrentLocation;
 
 			if (CurrentFacing == Facing.Right) CurrentLocation += p;
 
@@ -110,7 +101,7 @@ namespace xnaMugen.Combat
 
 			Bounding();
 
-			Vector2 movement = CurrentLocation - oldlocation;
+			var movement = CurrentLocation - oldlocation;
 			return movement;
 		}
 
@@ -118,9 +109,9 @@ namespace xnaMugen.Combat
 		{
 		}
 
-		public virtual Boolean IsPaused(Pause pause)
+		public virtual bool IsPaused(Pause pause)
 		{
-			if (pause == null) throw new ArgumentNullException("pause");
+			if (pause == null) throw new ArgumentNullException(nameof(pause));
 
 			if (pause.IsActive == false) return false;
 			if (this == pause.Creator && pause.ElapsedTime <= pause.MoveTime) return false;
@@ -150,24 +141,24 @@ namespace xnaMugen.Combat
 		{
 			AfterImages.Draw();
 
-			Animations.AnimationElement currentelement = AnimationManager.CurrentElement;
+			var currentelement = AnimationManager.CurrentElement;
 			if (currentelement == null) return;
 
-			Drawing.Sprite sprite = SpriteManager.GetSprite(currentelement.SpriteId);
+			var sprite = SpriteManager.GetSprite(currentelement.SpriteId);
 			if (sprite == null) return;
 
-			Vector2 drawlocation = GetDrawLocation();
-			Vector2 drawoffset = Misc.GetOffset(Vector2.Zero, CurrentFacing, currentelement.Offset);
+			var drawlocation = GetDrawLocation();
+			var drawoffset = Misc.GetOffset(Vector2.Zero, CurrentFacing, currentelement.Offset);
 
 			SpriteManager.OverridePalette = CurrentPalette;
 
-			Vector2 drawscale = CurrentScale;
+			var drawscale = CurrentScale;
 			if (this is Character) drawscale *= (this as Character).DrawScale;
 
-			Video.DrawState drawstate = SpriteManager.SetupDrawing(currentelement.SpriteId, drawlocation, drawoffset, drawscale, GetDrawFlip());
+			var drawstate = SpriteManager.SetupDrawing(currentelement.SpriteId, drawlocation, drawoffset, drawscale, GetDrawFlip());
 
 			drawstate.Blending = Transparency == new Blending() ? currentelement.Blending : Transparency;
-			drawstate.Rotation = (AngleDraw == true) ? Misc.FaceScalar(CurrentFacing, -DrawingAngle) : 0;
+			drawstate.Rotation = AngleDraw ? Misc.FaceScalar(CurrentFacing, -DrawingAngle) : 0;
 
 			PaletteFx.SetShader(drawstate.ShaderParameters);
 
@@ -176,30 +167,30 @@ namespace xnaMugen.Combat
 
 		public virtual void DebugDraw()
 		{
-			Animations.AnimationElement currentelement = AnimationManager.CurrentElement;
+			var currentelement = AnimationManager.CurrentElement;
 			if (currentelement == null) return;
 
-			Vector2 location = GetDrawLocation();
+			var location = GetDrawLocation();
 
 			//DrawSpriteBox(location, currentelement);
 			DrawClsnBoxes(location, currentelement);
 			DrawOriginCross(location, 3);
 		}
 
-		void DrawSpriteBox(Vector2 location, Animations.AnimationElement element)
+		private void DrawSpriteBox(Vector2 location, Animations.AnimationElement element)
 		{
-			if (element == null) throw new ArgumentNullException("element");
+			if (element == null) throw new ArgumentNullException(nameof(element));
 
-			Drawing.Sprite sprite = SpriteManager.GetSprite(element.SpriteId);
+			var sprite = SpriteManager.GetSprite(element.SpriteId);
 			if (sprite == null) return;
 
-			Vector2 drawoffset = Vector2.Zero;
-			SpriteEffects flip = GetDrawFlip();
+			var drawoffset = Vector2.Zero;
+			var flip = GetDrawFlip();
 
 			switch (CurrentFacing)
 			{
 				case Facing.Right:
-					drawoffset = (Vector2)element.Offset;
+					drawoffset = element.Offset;
 					break;
 
 				case Facing.Left:
@@ -210,27 +201,27 @@ namespace xnaMugen.Combat
 			if ((flip & SpriteEffects.FlipHorizontally) == SpriteEffects.FlipHorizontally) drawoffset.X = -drawoffset.X;
 			if ((flip & SpriteEffects.FlipVertically) == SpriteEffects.FlipVertically) drawoffset.Y = -drawoffset.Y;
 
-			Video.DrawState drawstate = SpriteManager.DrawState;
+			var drawstate = SpriteManager.DrawState;
 
-			Vector2 spritelocation = Video.Renderer.GetDrawLocation(sprite.Size, location, (Vector2)sprite.Axis - drawoffset, CurrentScale, flip);
+			var spritelocation = Video.Renderer.GetDrawLocation(sprite.Size, location, (Vector2)sprite.Axis - drawoffset, CurrentScale, flip);
 			drawstate.Reset();
 			drawstate.Mode = DrawMode.OutlinedRectangle;
-			drawstate.AddData(spritelocation, new Rectangle(0, 0, (Int32)(sprite.Size.X * CurrentScale.X), (Int32)(sprite.Size.Y * CurrentScale.Y)), Color.Gray);
+			drawstate.AddData(spritelocation, new Rectangle(0, 0, (int)(sprite.Size.X * CurrentScale.X), (int)(sprite.Size.Y * CurrentScale.Y)), Color.Gray);
 			drawstate.Use();
 		}
 
-		void DrawClsnBoxes(Vector2 location, Animations.AnimationElement element)
+		private void DrawClsnBoxes(Vector2 location, Animations.AnimationElement element)
 		{
-			if (element == null) throw new ArgumentNullException("element");
+			if (element == null) throw new ArgumentNullException(nameof(element));
 
-			Video.DrawState drawstate = SpriteManager.DrawState;
+			var drawstate = SpriteManager.DrawState;
 			drawstate.Reset();
 
 			drawstate.Mode = DrawMode.OutlinedRectangle;
 
-			foreach (Animations.Clsn clsn in element)
+			foreach (var clsn in element)
 			{
-				Rectangle rect = clsn.MakeRect(location, CurrentScale, CurrentFacing);
+				var rect = clsn.MakeRect(location, CurrentScale, CurrentFacing);
 
 				switch (clsn.ClsnType)
 				{
@@ -247,9 +238,9 @@ namespace xnaMugen.Combat
 			drawstate.Use();
 		}
 
-		void DrawOriginCross(Vector2 location, Int32 segmentlength)
+		private void DrawOriginCross(Vector2 location, int segmentlength)
 		{
-			Video.DrawState drawstate = SpriteManager.DrawState;
+			var drawstate = SpriteManager.DrawState;
 			drawstate.Reset();
 
 			drawstate.Mode = DrawMode.Lines;
@@ -260,15 +251,15 @@ namespace xnaMugen.Combat
 			drawstate.Use();
 		}
 
-		public abstract Boolean RemoveCheck();
+		public abstract bool RemoveCheck();
 
 		public abstract Vector2 GetDrawLocation();
 
 		public SpriteEffects GetDrawFlip()
 		{
-			Animations.AnimationElement currentelement = AnimationManager.CurrentElement;
+			var currentelement = AnimationManager.CurrentElement;
 
-			SpriteEffects flip = CurrentFlip ^ currentelement.Flip;
+			var flip = CurrentFlip ^ currentelement.Flip;
 
 			if (CurrentFacing == Facing.Left) flip ^= SpriteEffects.FlipHorizontally;
 
@@ -281,37 +272,37 @@ namespace xnaMugen.Combat
 
 		public abstract EntityUpdateOrder UpdateOrder { get; }
 
-		public Int32 DrawOrder
+		public int DrawOrder
 		{
-			get { return m_draworder; }
+			get => m_draworder;
 
 			set { m_draworder = value; }
 		}
 
 		public Vector2 CurrentLocation
 		{
-			get { return m_location; }
+			get => m_location;
 
 			set { m_location = value; }
 		}
 
 		public Vector2 CurrentVelocity
 		{
-			get { return m_velocity; }
+			get => m_velocity;
 
 			set { m_velocity = value; }
 		}
 
 		public Vector2 CurrentAcceleration
 		{
-			get { return m_acceleration; }
+			get => m_acceleration;
 
 			set { m_acceleration = value; }
 		}
 
 		public Facing CurrentFacing
 		{
-			get { return m_facing; }
+			get => m_facing;
 
 			set
 			{
@@ -327,47 +318,44 @@ namespace xnaMugen.Combat
 
 		public SpriteEffects CurrentFlip
 		{
-			get { return m_flip; }
+			get => m_flip;
 
 			set { m_flip = value; }
 		}
 
 		public Vector2 CurrentScale
 		{
-			get { return m_scale; }
+			get => m_scale;
 
 			set { m_scale = value; }
 		}
 
 		public Texture2D CurrentPalette
 		{
-			get { return m_currentpalette; }
+			get => m_currentpalette;
 
 			set { m_currentpalette = value; }
 		}
 
 		public Blending Transparency
 		{
-			get { return m_blending; }
+			get => m_blending;
 
 			set { m_blending = value; }
 		}
 
-		public AfterImage AfterImages
-		{
-			get { return m_afterimages; }
-		}
+		public AfterImage AfterImages => m_afterimages;
 
-		public Single DrawingAngle
+		public float DrawingAngle
 		{
-			get { return m_drawingangle; }
+			get => m_drawingangle;
 
 			set { m_drawingangle = value; }
 		}
 
-		public Boolean AngleDraw
+		public bool AngleDraw
 		{
-			get { return m_angledraw; }
+			get => m_angledraw;
 
 			set { m_angledraw = value; }
 		}
@@ -381,40 +369,40 @@ namespace xnaMugen.Combat
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Vector2 m_location;
+		private Vector2 m_location;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Vector2 m_velocity;
+		private Vector2 m_velocity;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Vector2 m_acceleration;
+		private Vector2 m_acceleration;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Facing m_facing;
+		private Facing m_facing;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		SpriteEffects m_flip;
+		private SpriteEffects m_flip;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Vector2 m_scale;
+		private Vector2 m_scale;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Texture2D m_currentpalette;
+		private Texture2D m_currentpalette;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Blending m_blending;
+		private Blending m_blending;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly AfterImage m_afterimages;
+		private readonly AfterImage m_afterimages;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Int32 m_draworder;
+		private int m_draworder;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Single m_drawingangle;
+		private float m_drawingangle;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Boolean m_angledraw;
+		private bool m_angledraw;
 
 		#endregion
 	}

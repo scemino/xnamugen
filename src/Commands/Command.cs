@@ -1,23 +1,19 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Collections.Generic;
 using xnaMugen.Collections;
-using xnaMugen.IO;
-using System.Text.RegularExpressions;
-using System.Text;
 
 namespace xnaMugen.Commands
 {
-	[DebuggerDisplay("{Name}")]
-	class Command
+	[DebuggerDisplay("{" + nameof(Name) + "}")]
+	internal class Command
 	{
-		public Command(String name, String commandtext, Int32 time, Int32 buffertime, ReadOnlyList<CommandElement> elements)
+		public Command(string name, string commandtext, int time, int buffertime, ReadOnlyList<CommandElement> elements)
 		{
-			if (name == null) throw new ArgumentNullException("name");
-			if (commandtext == null) throw new ArgumentNullException("commandtext");
-			if (time < 0) throw new ArgumentOutOfRangeException("Time must be greater than or equal to zero");
-			if (buffertime <= 0) throw new ArgumentOutOfRangeException("Buffertime must be greater than zero");
-			if (elements == null) throw new ArgumentNullException("elements");
+			if (name == null) throw new ArgumentNullException(nameof(name));
+			if (commandtext == null) throw new ArgumentNullException(nameof(commandtext));
+			if (time < 0) throw new ArgumentOutOfRangeException(nameof(time), "Time must be greater than or equal to zero");
+			if (buffertime <= 0) throw new ArgumentOutOfRangeException(nameof(buffertime), "Buffertime must be greater than zero");
+			if (elements == null) throw new ArgumentNullException(nameof(elements));
 
 			m_name = name;
 			m_commandtext = commandtext;
@@ -27,9 +23,9 @@ namespace xnaMugen.Commands
             m_isvalid = ValidCheck();
 		}
 
-		Boolean ValidCheck()
+		private bool ValidCheck()
 		{
-			foreach (CommandElement element in Elements)
+			foreach (var element in Elements)
 			{
 				if (element.Buttons == CommandButton.None && element.Direction == CommandDirection.None) return false;
 			}
@@ -37,55 +33,37 @@ namespace xnaMugen.Commands
 			return true;
 		}
 
-		public String Name
-		{
-			get { return m_name; }
-		}
+		public string Name => m_name;
 
-		public Int32 Time
-		{
-			get { return m_time; }
-		}
+		public int Time => m_time;
 
-		public Int32 BufferTime
-		{
-			get { return m_buffertime; }
-		}
+		public int BufferTime => m_buffertime;
 
-        public Boolean IsValid
-        {
-            get { return m_isvalid; }
-        }
+		public bool IsValid => m_isvalid;
 
-		public String Text
-		{
-			get { return m_commandtext; }
-		}
+		public string Text => m_commandtext;
 
-		public ReadOnlyList<CommandElement> Elements
-		{
-			get { return m_elements; }
-		}
+		public ReadOnlyList<CommandElement> Elements => m_elements;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly String m_name;
+		private readonly string m_name;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Int32 m_time;
+		private readonly int m_time;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Int32 m_buffertime;
+		private readonly int m_buffertime;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly String m_commandtext;
+		private readonly string m_commandtext;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly ReadOnlyList<CommandElement> m_elements;
+		private readonly ReadOnlyList<CommandElement> m_elements;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        readonly Boolean m_isvalid;
+        private readonly bool m_isvalid;
 
 		#endregion
 	}

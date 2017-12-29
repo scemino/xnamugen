@@ -1,51 +1,49 @@
-using System;
-
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("ProjHit")]
-	static class ProjHit
+	internal static class ProjHit
 	{
-		public static Boolean Evaluate(Object state, ref Boolean error, Int32 proj_id, Int32 r2, Int32 rhs, Operator compare_type)
+		public static bool Evaluate(object state, ref bool error, int projId, int r2, int rhs, Operator compareType)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
 				return false;
 			}
 
-			Boolean lookingfor = r2 > 0;
+			var lookingfor = r2 > 0;
 
-			Combat.ProjectileInfo projinfo = character.OffensiveInfo.ProjectileInfo;
+			var projinfo = character.OffensiveInfo.ProjectileInfo;
 
-			Boolean found = projinfo.Type == ProjectileDataType.Hit && (proj_id <= 0 || proj_id == projinfo.ProjectileId);
-			if (found == true) found = SpecialFunctions.LogicalOperation(compare_type, projinfo.Time, rhs);
+			var found = projinfo.Type == ProjectileDataType.Hit && (projId <= 0 || projId == projinfo.ProjectileId);
+			if (found) found = SpecialFunctions.LogicalOperation(compareType, projinfo.Time, rhs);
 
 			return lookingfor == found;
 		}
 
-		public static Boolean Evaluate(Object state, ref Boolean error, Int32 proj_id, Int32 r2, Int32 pre, Int32 post, Operator compare_type, Symbol pre_check, Symbol post_check)
+		public static bool Evaluate(object state, ref bool error, int projId, int r2, int pre, int post, Operator compareType, Symbol preCheck, Symbol postCheck)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
 				return false;
 			}
 
-			Boolean lookingfor = r2 > 0;
+			var lookingfor = r2 > 0;
 
-			Combat.ProjectileInfo projinfo = character.OffensiveInfo.ProjectileInfo;
+			var projinfo = character.OffensiveInfo.ProjectileInfo;
 
-			Boolean found = projinfo.Type == ProjectileDataType.Hit&& (proj_id <= 0 || proj_id == projinfo.ProjectileId);
-			if (found == true) found = SpecialFunctions.Range(projinfo.Time, pre, post, compare_type, pre_check, post_check);
+			var found = projinfo.Type == ProjectileDataType.Hit&& (projId <= 0 || projId == projinfo.ProjectileId);
+			if (found) found = SpecialFunctions.Range(projinfo.Time, pre, post, compareType, preCheck, postCheck);
 
 			return lookingfor == found;
 		}
 
 		public static Node Parse(ParseState parsestate)
 		{
-			Node basenode = parsestate.BuildParenNumberNode(true);
+			var basenode = parsestate.BuildParenNumberNode(true);
 			if (basenode == null)
 			{
 #warning Hack
@@ -56,7 +54,7 @@ namespace xnaMugen.Evaluation.Triggers
 			if (parsestate.CurrentOperator != Operator.Equals) return null;
 			++parsestate.TokenIndex;
 
-			Node arg1 = parsestate.BuildNode(false);
+			var arg1 = parsestate.BuildNode(false);
 			if (arg1 == null) return null;
 
 			basenode.Children.Add(arg1);
@@ -72,12 +70,12 @@ namespace xnaMugen.Evaluation.Triggers
 
 			++parsestate.TokenIndex;
 
-			Operator @operator = parsestate.CurrentOperator;
+			var @operator = parsestate.CurrentOperator;
 			if (@operator == Operator.Equals || @operator == Operator.NotEquals)
 			{
 				++parsestate.TokenIndex;
 
-				Node rangenode = parsestate.BuildRangeNode();
+				var rangenode = parsestate.BuildRangeNode();
 				if (rangenode != null)
 				{
 					basenode.Children.Add(rangenode.Children[1]);
@@ -107,7 +105,7 @@ namespace xnaMugen.Evaluation.Triggers
 					return null;
 			}
 
-			Node arg = parsestate.BuildNode(false);
+			var arg = parsestate.BuildNode(false);
 			if (arg == null) return null;
 
 			basenode.Arguments.Add(@operator);

@@ -1,4 +1,3 @@
-using System;
 using System.Diagnostics;
 using xnaMugen.IO;
 using System.Collections.Generic;
@@ -6,9 +5,9 @@ using System.Collections.Generic;
 namespace xnaMugen.StateMachine.Controllers
 {
 	[StateControllerName("TargetDrop")]
-	class TargetDrop : StateController
+	internal class TargetDrop : StateController
 	{
-		public TargetDrop(StateSystem statesystem, String label, TextSection textsection)
+		public TargetDrop(StateSystem statesystem, string label, TextSection textsection)
 			: base(statesystem, label, textsection)
 		{
 			m_id = textsection.GetAttribute<Evaluation.Expression>("excludeID", null);
@@ -17,21 +16,21 @@ namespace xnaMugen.StateMachine.Controllers
 
 		public override void Run(Combat.Character character)
 		{
-			Int32 exclude_id = EvaluationHelper.AsInt32(character, Id, -1);
-			Boolean keepone = EvaluationHelper.AsBoolean(character, KeepOne, true);
+			var excludeId = EvaluationHelper.AsInt32(character, Id, -1);
+			var keepone = EvaluationHelper.AsBoolean(character, KeepOne, true);
 
 
-			List<Combat.Character> removelist = new List<Combat.Character>();
-			foreach (Combat.Character target in character.GetTargets(Int32.MinValue))
+			var removelist = new List<Combat.Character>();
+			foreach (var target in character.GetTargets(int.MinValue))
 			{
-				if (exclude_id != -1 && target.DefensiveInfo.HitDef.TargetId == exclude_id) continue;
+				if (excludeId != -1 && target.DefensiveInfo.HitDef.TargetId == excludeId) continue;
 
 				removelist.Add(target);
 			}
 
-			if (removelist.Count > 0 && keepone == true) removelist.RemoveAt(0);
+			if (removelist.Count > 0 && keepone) removelist.RemoveAt(0);
 
-			foreach (Combat.Character target in removelist) character.OffensiveInfo.TargetList.Remove(target);
+			foreach (var target in removelist) character.OffensiveInfo.TargetList.Remove(target);
 
 			/*
 			Boolean keptone = false;
@@ -53,23 +52,17 @@ namespace xnaMugen.StateMachine.Controllers
 			*/
 		}
 
-		public Evaluation.Expression Id
-		{
-			get { return m_id; }
-		}
+		public Evaluation.Expression Id => m_id;
 
-		public Evaluation.Expression KeepOne
-		{
-			get { return m_keepone; }
-		}
+		public Evaluation.Expression KeepOne => m_keepone;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_id;
+		private readonly Evaluation.Expression m_id;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_keepone;
+		private readonly Evaluation.Expression m_keepone;
 
 		#endregion
 	}

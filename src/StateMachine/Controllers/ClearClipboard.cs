@@ -1,13 +1,11 @@
-using System;
-using System.Diagnostics;
 using xnaMugen.IO;
 
 namespace xnaMugen.StateMachine.Controllers
 {
 	[StateControllerName("ClearClipboard")]
-	class ClearClipboard: StateController
+	internal class ClearClipboard: StateController
 	{
-		public ClearClipboard(StateSystem statesystem, String label, TextSection textsection)
+		public ClearClipboard(StateSystem statesystem, string label, TextSection textsection)
 			: base(statesystem, label, textsection)
 		{
 		}

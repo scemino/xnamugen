@@ -6,11 +6,11 @@ using System.Reflection;
 
 namespace xnaMugen
 {
-	abstract class SubSystem : Resource
+	internal abstract class SubSystem : Resource
 	{
 		protected SubSystem(SubSystems subsystems)
 		{
-			if (subsystems == null) throw new ArgumentNullException("subsystems");
+			if (subsystems == null) throw new ArgumentNullException(nameof(subsystems));
 
 			m_subsystems = subsystems;
 		}
@@ -19,10 +19,7 @@ namespace xnaMugen
 		{
 		}
 
-		public SubSystems SubSystems
-		{
-			get { return m_subsystems; }
-		}
+		public SubSystems SubSystems => m_subsystems;
 
 		public T GetSubSystem<T>() where T : SubSystem
 		{
@@ -32,24 +29,21 @@ namespace xnaMugen
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly SubSystems m_subsystems;
+		private readonly SubSystems m_subsystems;
 
 		#endregion
 	}
 
-	abstract class MainSystem : Resource
+	internal abstract class MainSystem : Resource
 	{
 		protected MainSystem(SubSystems subsystems)
 		{
-			if (subsystems == null) throw new ArgumentNullException("subsystems");
+			if (subsystems == null) throw new ArgumentNullException(nameof(subsystems));
 
 			m_subsystems = subsystems;
 		}
 
-		public SubSystems SubSystems
-		{
-			get { return m_subsystems; }
-		}
+		public SubSystems SubSystems => m_subsystems;
 
 		public T GetSubSystem<T>() where T : SubSystem
 		{
@@ -64,29 +58,29 @@ namespace xnaMugen
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly SubSystems m_subsystems;
+		private readonly SubSystems m_subsystems;
 
 		#endregion
 	}
 
-	class SubSystems : Resource
+	internal class SubSystems : Resource
 	{
 		public SubSystems(Game game)
 		{
-			if (game == null) throw new ArgumentNullException("game");
+			if (game == null) throw new ArgumentNullException(nameof(game));
 
 			m_game = game;
 			m_subsystems = new Dictionary<Type, SubSystem>();
 			m_mainsystems = new Dictionary<Type, MainSystem>();
 		}
 
-		protected override void Dispose(Boolean disposing)
+		protected override void Dispose(bool disposing)
 		{
-			if (disposing == true)
+			if (disposing)
 			{
 				if (m_subsystems != null)
 				{
-					foreach (SubSystem subsystem in m_subsystems.Values) subsystem.Dispose();
+					foreach (var subsystem in m_subsystems.Values) subsystem.Dispose();
 
 					m_subsystems.Clear();
 				}
@@ -97,12 +91,12 @@ namespace xnaMugen
 
 		public void LoadAllSubSystems()
 		{
-			foreach (Type type in Assembly.GetExecutingAssembly().GetTypes())
+			foreach (var type in Assembly.GetExecutingAssembly().GetTypes())
 			{
-				if (type.IsAbstract == true || type.IsSubclassOf(typeof(SubSystem)) == false || m_subsystems.ContainsKey(type) == true) continue;
+				if (type.IsAbstract || type.IsSubclassOf(typeof(SubSystem)) == false || m_subsystems.ContainsKey(type)) continue;
 
-				Constructor constructor = ConstructorDelegate.FastConstruct(type, GetType());
-				SubSystem subsystem = (SubSystem)constructor(this);
+				var constructor = ConstructorDelegate.FastConstruct(type, GetType());
+				var subsystem = (SubSystem)constructor(this);
 
 				m_subsystems.Add(type, subsystem);
 			}
@@ -110,12 +104,12 @@ namespace xnaMugen
 
 		public void LoadAllMainSystems()
 		{
-			foreach (Type type in Assembly.GetExecutingAssembly().GetTypes())
+			foreach (var type in Assembly.GetExecutingAssembly().GetTypes())
 			{
-				if (type.IsAbstract == true || type.IsSubclassOf(typeof(MainSystem)) == false || m_mainsystems.ContainsKey(type) == true) continue;
+				if (type.IsAbstract || type.IsSubclassOf(typeof(MainSystem)) == false || m_mainsystems.ContainsKey(type)) continue;
 
-				Constructor constructor = ConstructorDelegate.FastConstruct(type, GetType());
-				MainSystem mainsystem = (MainSystem)constructor(this);
+				var constructor = ConstructorDelegate.FastConstruct(type, GetType());
+				var mainsystem = (MainSystem)constructor(this);
 
 				m_mainsystems.Add(type, mainsystem);
 			}
@@ -123,7 +117,7 @@ namespace xnaMugen
 
 		public T GetSubSystem<T>() where T : SubSystem
 		{
-			Type type = typeof(T);
+			var type = typeof(T);
 
 			if (m_subsystems.ContainsKey(type) == false) m_subsystems.Add(type, (SubSystem)Activator.CreateInstance(type, this));
 
@@ -132,28 +126,25 @@ namespace xnaMugen
 
 		public T GetMainSystem<T>() where T : MainSystem
 		{
-			Type type = typeof(T);
+			var type = typeof(T);
 
 			if (m_mainsystems.ContainsKey(type) == false) m_mainsystems.Add(type, (MainSystem)Activator.CreateInstance(type, this));
 
 			return m_mainsystems[type] as T;
 		}
 
-		public Game Game
-		{
-			get { return m_game; }
-		}
+		public Game Game => m_game;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Game m_game;
+		private readonly Game m_game;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Dictionary<Type, SubSystem> m_subsystems;
+		private readonly Dictionary<Type, SubSystem> m_subsystems;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Dictionary<Type, MainSystem> m_mainsystems;
+		private readonly Dictionary<Type, MainSystem> m_mainsystems;
 
 		#endregion
 	}

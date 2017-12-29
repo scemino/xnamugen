@@ -1,13 +1,12 @@
-using System;
 using System.Diagnostics;
 using xnaMugen.IO;
 
 namespace xnaMugen.StateMachine.Controllers
 {
 	[StateControllerName("ChangeState")]
-	class ChangeState : StateController
+	internal class ChangeState : StateController
 	{
-		public ChangeState(StateSystem statesystem, String label, TextSection textsection)
+		public ChangeState(StateSystem statesystem, string label, TextSection textsection)
 			: base(statesystem, label, textsection)
 		{
 			m_statenumber = textsection.GetAttribute<Evaluation.Expression>("value", null);
@@ -17,9 +16,9 @@ namespace xnaMugen.StateMachine.Controllers
 
 		public override void Run(Combat.Character character)
 		{
-			Int32? statenumber = EvaluationHelper.AsInt32(character, StateNumber, null);
-			Boolean? playercontrol = EvaluationHelper.AsBoolean(character, Control, null);
-			Int32? animationnumber = EvaluationHelper.AsInt32(character, AnimationNumber, null);
+			var statenumber = EvaluationHelper.AsInt32(character, StateNumber, null);
+			var playercontrol = EvaluationHelper.AsBoolean(character, Control, null);
+			var animationnumber = EvaluationHelper.AsInt32(character, AnimationNumber, null);
 
 			if (statenumber == null) return;
 			character.StateManager.ChangeState(statenumber.Value);
@@ -33,7 +32,7 @@ namespace xnaMugen.StateMachine.Controllers
 			if (animationnumber != null) character.SetLocalAnimation(animationnumber.Value, 0);
 		}
 
-		public override Boolean IsValid()
+		public override bool IsValid()
 		{
 			if (base.IsValid() == false) return false;
 
@@ -42,31 +41,22 @@ namespace xnaMugen.StateMachine.Controllers
 			return true;
 		}
 
-		public Evaluation.Expression StateNumber
-		{
-			get { return m_statenumber; }
-		}
+		public Evaluation.Expression StateNumber => m_statenumber;
 
-		public Evaluation.Expression Control
-		{
-			get { return m_control; }
-		}
+		public Evaluation.Expression Control => m_control;
 
-		public Evaluation.Expression AnimationNumber
-		{
-			get { return m_animationnumber; }
-		}
+		public Evaluation.Expression AnimationNumber => m_animationnumber;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_statenumber;
+		private readonly Evaluation.Expression m_statenumber;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_control;
+		private readonly Evaluation.Expression m_control;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_animationnumber;
+		private readonly Evaluation.Expression m_animationnumber;
 
 		#endregion
 	}

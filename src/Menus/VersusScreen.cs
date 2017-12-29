@@ -1,24 +1,19 @@
 ﻿using System;
 using System.Diagnostics;
 using xnaMugen.IO;
-using System.Collections.Generic;
-using xnaMugen.Drawing;
-using xnaMugen.Collections;
-using System.Text.RegularExpressions;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace xnaMugen.Menus
 {
-	class VersusScreen : NonCombatScreen
+	internal class VersusScreen : NonCombatScreen
 	{
-		public VersusScreen(MenuSystem screensystem, TextSection textsection, String spritepath, String animationpath, String soundpath)
+		public VersusScreen(MenuSystem screensystem, TextSection textsection, string spritepath, string animationpath, string soundpath)
 			: base(screensystem, textsection, spritepath, animationpath, soundpath)
 		{
-			m_visibletime = textsection.GetAttribute<Int32>("time");
+			m_visibletime = textsection.GetAttribute<int>("time");
 			m_p1 = new VersusData("p1.", textsection);
 			m_p2 = new VersusData("p2.", textsection);
-			m_timer = new CountdownTimer(TimeSpan.FromSeconds(m_visibletime / 60.0f), this.ShowTimeComplete);
+			m_timer = new CountdownTimer(TimeSpan.FromSeconds(m_visibletime / 60.0f), ShowTimeComplete);
 		}
 
 		public override void Reset()
@@ -34,7 +29,7 @@ namespace xnaMugen.Menus
 
 			foreach (PlayerButton button in Enum.GetValues(typeof(PlayerButton)))
 			{
-				PlayerButton b = button;
+				var b = button;
 
 				inputstate[1].Add(b, SwitchToCombat);
 				inputstate[2].Add(b, SwitchToCombat);
@@ -56,7 +51,7 @@ namespace xnaMugen.Menus
 			m_timer.Update(gametime);
 		}
 
-		public override void Draw(Boolean debugdraw)
+		public override void Draw(bool debugdraw)
 		{
 			base.Draw(debugdraw);
 
@@ -67,9 +62,9 @@ namespace xnaMugen.Menus
 			Print(P2.NameFont, (Vector2)P2.NameLocation, P2.Profile.DisplayName, null);
 		}
 
-		void SwitchToCombat(Boolean pressed)
+		private void SwitchToCombat(bool pressed)
 		{
-			if (pressed == true)
+			if (pressed)
 			{
 				m_timer.Reset();
 				m_timer.IsRunning = false;
@@ -78,38 +73,29 @@ namespace xnaMugen.Menus
 			}
 		}
 
-		void ShowTimeComplete(Object sender, EventArgs args)
+		private void ShowTimeComplete(object sender, EventArgs args)
 		{
 			MenuSystem.PostEvent(new Events.SwitchScreen(ScreenType.Combat));
 		}
 
-		public Int32 VisibleTime
-		{
-			get { return m_visibletime; }
-		}
+		public int VisibleTime => m_visibletime;
 
-		public VersusData P1
-		{
-			get { return m_p1; }
-		}
+		public VersusData P1 => m_p1;
 
-		public VersusData P2
-		{
-			get { return m_p2; }
-		}
+		public VersusData P2 => m_p2;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Int32 m_visibletime;
+		private readonly int m_visibletime;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly VersusData m_p1;
+		private readonly VersusData m_p1;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly VersusData m_p2;
+		private readonly VersusData m_p2;
 
-		CountdownTimer m_timer;
+		private CountdownTimer m_timer;
 
 		#endregion
 	}

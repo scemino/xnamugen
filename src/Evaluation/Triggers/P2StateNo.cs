@@ -1,28 +1,26 @@
-using System;
-
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("P2StateNo")]
-	static class P2StateNo
+	internal static class P2StateNo
 	{
-		public static Int32 Evaluate(Object state, ref Boolean error)
+		public static int Evaluate(object state, ref bool error)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
 				return 0;
 			}
 
-			Combat.Player opponent = character.GetOpponent();
+			var opponent = character.GetOpponent();
 			if (opponent == null)
 			{
 				error = true;
 				return 0;
 			}
 
-			StateMachine.State currentstate = opponent.StateManager.CurrentState;
-			return (currentstate != null) ? currentstate.Number : 0;
+			var currentstate = opponent.StateManager.CurrentState;
+			return currentstate != null ? currentstate.Number : 0;
 		}
 
 		public static Node Parse(ParseState parsestate)

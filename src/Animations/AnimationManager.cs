@@ -7,17 +7,17 @@ namespace xnaMugen.Animations
 	/// <summary>
 	/// Controls the playing of Animations.
 	/// </summary>
-	class AnimationManager
+	internal class AnimationManager
 	{
 		/// <summary>
 		/// Initializes a new instance of this class.
 		/// </summary>
 		/// <param name="filepath">Path to the AIR file that the Animations were parsed out of.</param>
 		/// <param name="animations">Collection of Animations that were parsed of the AIR file.</param>
-		public AnimationManager(String filepath, KeyedCollection<Int32, Animation> animations)
+		public AnimationManager(string filepath, KeyedCollection<int, Animation> animations)
 		{
-			if (filepath == null) throw new ArgumentNullException("filepath");
-			if (animations == null) throw new ArgumentNullException("animations");
+			if (filepath == null) throw new ArgumentNullException(nameof(filepath));
+			if (animations == null) throw new ArgumentNullException(nameof(animations));
 
 			m_filepath = filepath;
 			m_animations = animations;
@@ -43,7 +43,7 @@ namespace xnaMugen.Animations
 		/// </summary>
 		/// <param name="number">The Animation number that is looked for.</param>
 		/// <returns>true if the requested Animation exists; false otherwise.</returns>
-		public Boolean HasAnimation(Int32 number)
+		public bool HasAnimation(int number)
 		{
 			return m_animations.Contains(number);
 		}
@@ -54,11 +54,11 @@ namespace xnaMugen.Animations
 		/// <param name="animationnumber">The number of the new Animation.</param>
 		/// <param name="elementnumber">The index of the starting element of the new Animation.</param>
 		/// <returns>true if the requested Animation is set; false otherwise.</returns>
-		public Boolean SetLocalAnimation(Int32 animationnumber, Int32 elementnumber)
+		public bool SetLocalAnimation(int animationnumber, int elementnumber)
 		{
 			if (HasAnimation(animationnumber) == false) return false;
 
-			Animation animation = m_animations[animationnumber];
+			var animation = m_animations[animationnumber];
 			if (elementnumber < 0 || elementnumber >= animation.Elements.Count) return false;
 
 			m_foreignanimation = false;
@@ -73,13 +73,13 @@ namespace xnaMugen.Animations
 		/// <param name="animationnumber">The number of the new Animation.</param>
 		/// <param name="elementnumber">The index of the starting element of the new Animation.</param>
 		/// <returns>true if the requested Animation is set; false otherwise.</returns>
-		public Boolean SetForeignAnimation(AnimationManager animations, Int32 animationnumber, Int32 elementnumber)
+		public bool SetForeignAnimation(AnimationManager animations, int animationnumber, int elementnumber)
 		{
-			if (animations == null) throw new ArgumentNullException("animations");
+			if (animations == null) throw new ArgumentNullException(nameof(animations));
 
 			if (animations.HasAnimation(animationnumber) == false) return false;
 
-			Animation animation = animations.m_animations[animationnumber];
+			var animation = animations.m_animations[animationnumber];
 			if (elementnumber < 0 || elementnumber >= animation.Elements.Count) return false;
 
 			m_foreignanimation = true;
@@ -105,7 +105,7 @@ namespace xnaMugen.Animations
 			}
 			else
 			{
-				AnimationElement newlement = CurrentAnimation.GetNextElement(CurrentElement.Id);
+				var newlement = CurrentAnimation.GetNextElement(CurrentElement.Id);
 
 				if (newlement.Id <= CurrentElement.Id)
 				{
@@ -123,10 +123,10 @@ namespace xnaMugen.Animations
 		/// </summary>
 		/// <param name="animation">The new Animation.</param>
 		/// <param name="element">The new AnimationElement of the given Animation.</param>
-		void SetAnimation(Animation animation, AnimationElement element)
+		private void SetAnimation(Animation animation, AnimationElement element)
 		{
-			if (animation == null) throw new ArgumentNullException("animation");
-			if (element == null) throw new ArgumentNullException("element");
+			if (animation == null) throw new ArgumentNullException(nameof(animation));
+			if (element == null) throw new ArgumentNullException(nameof(element));
 
 			m_currentanimation = animation;
 			m_currentelement = element;
@@ -141,7 +141,7 @@ namespace xnaMugen.Animations
 		/// Returns the path to the text file of the managed Animations.
 		/// </summary>
 		/// <returns>The path to the text file of the managed Animations.</returns>
-		public override String ToString()
+		public override string ToString()
 		{
 			return Filepath;
 		}
@@ -150,89 +150,68 @@ namespace xnaMugen.Animations
 		/// Returns the path to the text file of the managed Animations.
 		/// </summary>
 		/// <returns>The path to the text file of the managed Animations.</returns>
-		public String Filepath
-		{
-			get { return m_filepath; }
-		}
+		public string Filepath => m_filepath;
 
 		/// <summary>
 		/// Returns whether the active Animation is from another AnimationManager.
 		/// </summary>
 		/// <returns>true if the active Animation is from another AnimationManager; false otherwise.</returns>
-		public Boolean IsForeignAnimation
-		{
-			get { return m_foreignanimation; }
-		}
+		public bool IsForeignAnimation => m_foreignanimation;
 
 		/// <summary>
 		/// Returns the currently active Animation.
 		/// </summary>
 		/// <returns>The currently active Animation.</returns>
-		public Animation CurrentAnimation
-		{
-			get { return m_currentanimation; }
-		}
+		public Animation CurrentAnimation => m_currentanimation;
 
 		/// <summary>
 		/// Returns the current element of the active Animation.
 		/// </summary>
 		/// <returns>The current element of the active Animation.</returns>
-		public AnimationElement CurrentElement
-		{
-			get { return m_currentelement; }
-		}
+		public AnimationElement CurrentElement => m_currentelement;
 
 		/// <summary>
 		/// Returns whether the last element of the current Animation has been passed.
 		/// </summary>
 		/// <returns>true if the last element of the current Animation has been passed; false otherwise.</returns>
-		public Boolean IsAnimationFinished
-		{
-			get { return m_finishedanimation; }
-		}
+		public bool IsAnimationFinished => m_finishedanimation;
 
 		/// <summary>
 		/// Returns the time, in gameticks, spent in the current Animation.
 		/// </summary>
 		/// <returns>The time, in gameticks, spent in the current Animation.</returns>
-		public Int32 TimeInAnimation
-		{
-			get { return m_animationtime; }
-		}
+		public int TimeInAnimation => m_animationtime;
 
-		KeyedCollection<Int32, Animation> Animations
-		{
-			get { return m_animations; }
-		}
+		private KeyedCollection<int, Animation> Animations => m_animations;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly String m_filepath;
+		private readonly string m_filepath;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly KeyedCollection<Int32, Animation> m_animations;
+		private readonly KeyedCollection<int, Animation> m_animations;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Boolean m_foreignanimation;
+		private bool m_foreignanimation;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Animation m_currentanimation;
+		private Animation m_currentanimation;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		AnimationElement m_currentelement;
+		private AnimationElement m_currentelement;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Boolean m_finishedanimation;
+		private bool m_finishedanimation;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Boolean m_animationinloop;
+		private bool m_animationinloop;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Int32 m_animationtime;
+		private int m_animationtime;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Int32 m_elementswitchtime;
+		private int m_elementswitchtime;
 
 		#endregion
 	}

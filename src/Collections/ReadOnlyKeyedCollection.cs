@@ -4,22 +4,22 @@ using System.Diagnostics;
 
 namespace xnaMugen.Collections
 {
-	[DebuggerDisplay("Count = {Count}")]
+	[DebuggerDisplay("Count = {" + nameof(Count) + "}")]
 	[DebuggerTypeProxy(typeof(ReadOnlyKeyedCollection<,>.DebuggerProxy))]
-	class ReadOnlyKeyedCollection<T, U> : ICollection<U>
+	internal class ReadOnlyKeyedCollection<T, U> : ICollection<U>
 	{
-		class DebuggerProxy
+		private class DebuggerProxy
 		{
 			[DebuggerStepThrough]
 			public DebuggerProxy(ReadOnlyKeyedCollection<T, U> collection)
 			{
-				if (collection == null) throw new ArgumentNullException("collection");
+				if (collection == null) throw new ArgumentNullException(nameof(collection));
 
 				m_collection = collection;
 			}
 
 			[DebuggerStepThrough]
-			public override String ToString()
+			public override string ToString()
 			{
 				return m_collection.ToString();
 			}
@@ -29,9 +29,9 @@ namespace xnaMugen.Collections
 			{
 				get
 				{
-					U[] array = new U[m_collection.Count];
+					var array = new U[m_collection.Count];
 
-					Int32 index = 0;
+					var index = 0;
 					foreach (var kvp in m_collection)
 					{
 						array[index] = kvp;
@@ -45,7 +45,7 @@ namespace xnaMugen.Collections
 			#region Fields
 
 			[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-			readonly ReadOnlyKeyedCollection<T, U> m_collection;
+			private readonly ReadOnlyKeyedCollection<T, U> m_collection;
 
 			#endregion
 		}
@@ -53,23 +53,20 @@ namespace xnaMugen.Collections
 		[DebuggerStepThrough]
 		public ReadOnlyKeyedCollection(KeyedCollection<T, U> collection)
 		{
-			if (collection == null) throw new ArgumentNullException("collection");
+			if (collection == null) throw new ArgumentNullException(nameof(collection));
 
 			m_collection = collection;
 		}
 
 		[DebuggerStepThrough]
-		public Boolean Contains(T key)
+		public bool Contains(T key)
 		{
 			return m_collection.Contains(key);
 		}
 
-		public U this[T key]
-		{
-			get { return m_collection[key]; }
-		}
+		public U this[T key] => m_collection[key];
 
-		public U GetItemByIndex(Int32 index)
+		public U GetItemByIndex(int index)
 		{
 			return m_collection[index];
 		}
@@ -86,7 +83,7 @@ namespace xnaMugen.Collections
 			throw new NotImplementedException();
 		}
 
-		public Boolean Contains(U item)
+		public bool Contains(U item)
 		{
 			return m_collection.Contains(item);
 		}
@@ -96,17 +93,11 @@ namespace xnaMugen.Collections
 			m_collection.CopyTo(array, arrayIndex);
 		}
 
-		public Int32 Count
-		{
-			get { return m_collection.Count; }
-		}
+		public int Count => m_collection.Count;
 
-		public Boolean IsReadOnly
-		{
-			get { return true; }
-		}
+		public bool IsReadOnly => true;
 
-		public Boolean Remove(U item)
+		public bool Remove(U item)
 		{
 			throw new NotImplementedException();
 		}
@@ -134,7 +125,7 @@ namespace xnaMugen.Collections
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		KeyedCollection<T, U> m_collection;
+		private KeyedCollection<T, U> m_collection;
 
 		#endregion
 	}

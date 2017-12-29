@@ -1,7 +1,4 @@
-﻿using System;
-using System.Diagnostics;
-
-namespace xnaMugen.Audio
+﻿namespace xnaMugen.Audio
 {
 	/// <summary>
 	/// Identifies which SoundManager is using a Channel to play a sound.

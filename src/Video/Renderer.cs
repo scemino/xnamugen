@@ -2,42 +2,39 @@
 using System.Diagnostics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System.Collections.Generic;
 using xnaMugen.Collections;
-using System.Reflection;
 
 namespace xnaMugen.Video
 {
-	class Renderer : Resource
+	internal class Renderer : Resource
 	{
 		public Renderer(VideoSystem	videosystem)
 		{
-			if (videosystem	== null) throw new ArgumentNullException("videosystem");
+			if (videosystem	== null) throw new ArgumentNullException(nameof(videosystem));
 
 			m_videosystem =	videosystem;
-			spriteBatch	= new SpriteBatch(Device);
 
 			m_videosystem.SubSystems.Game.Content.RootDirectory	= "data";
 			m_effect = m_videosystem.SubSystems.Game.Content.Load<Effect>("bin/shader");
 
 			m_drawbuffer = new Vertex[500];
-			m_parameters = new KeyedCollection<String, EffectParameter>(x => x.Name);
+			m_parameters = new KeyedCollection<string, EffectParameter>(x => x.Name);
 
 			m_nullpixels = m_videosystem.CreatePixelTexture(new	Point(2, 2));
 			m_nullpalette =	m_videosystem.CreatePaletteTexture();
 
-			Byte[] pixels =	new	Byte[] { 1,	2, 1, 2	};
-			m_nullpixels.SetData<Byte>(pixels);
+			var pixels =	new	byte[] { 1,	2, 1, 2	};
+			m_nullpixels.SetData(pixels);
 
-			Color[]	paldata	= new Color[256];
+			var	paldata	= new Color[256];
 			paldata[1] = Color.White;
 			paldata[2] = Color.Red;
-			m_nullpalette.SetData<Color>(paldata);
+			m_nullpalette.SetData(paldata);
 		}
 
-		public void	OnDeviceReset(Object sender, EventArgs args)
+		public void	OnDeviceReset(object sender, EventArgs args)
 		{
-			Matrix m = Matrix.Identity;
+			var m = Matrix.Identity;
 			m *= Matrix.CreateScale(1, -1, -1);
 			m *= Matrix.CreateScale(ScreenScale.X, ScreenScale.Y, 1);
 			m *= Matrix.CreateOrthographicOffCenter(0, ScreenSize.X, -ScreenSize.Y,	0, 0, 1);
@@ -52,7 +49,7 @@ namespace xnaMugen.Video
 
 		public void	Draw(DrawState drawstate)
 		{
-			if (drawstate == null) throw new ArgumentNullException("drawstate");
+			if (drawstate == null) throw new ArgumentNullException(nameof(drawstate));
 
 			if (drawstate.Mode == DrawMode.None) return;
 
@@ -86,18 +83,18 @@ namespace xnaMugen.Video
 			}
 		}
 
-		void SetBlending(Blending blending)
+		private void SetBlending(Blending blending)
 		{
 			switch (blending.BlendType)
 			{
 				case BlendType.Add:
-					GetShaderParameter("xBlendWeight").SetValue((Single)blending.SourceFactor /	255.0f);
+					GetShaderParameter("xBlendWeight").SetValue(blending.SourceFactor /	255.0f);
 					Device.BlendState =	BlendState.Additive;
 					break;
 
 				case BlendType.Subtract:
-					GetShaderParameter("xBlendWeight").SetValue((Single)blending.SourceFactor /	255.0f);
-					Device.BlendState =	new	BlendState()
+					GetShaderParameter("xBlendWeight").SetValue(blending.SourceFactor /	255.0f);
+					Device.BlendState =	new	BlendState
 					{
 						ColorSourceBlend = Blend.One,
 						ColorDestinationBlend =	Blend.One,
@@ -109,62 +106,61 @@ namespace xnaMugen.Video
 					break;
 
 				default:
-				case BlendType.None:
 					GetShaderParameter("xBlendWeight").SetValue(1.0f);
 					Device.BlendState =	BlendState.NonPremultiplied;
 					break;
 			}
 		}
 
-		void SetScissorTest(Rectangle rectangle)
+		private void SetScissorTest(Rectangle rectangle)
 		{
-			if (rectangle.IsEmpty == true)
+			if (rectangle.IsEmpty)
 			{
-				var	rs = new RasterizerState() { ScissorTestEnable = false };
+				var	rs = new RasterizerState { ScissorTestEnable = false };
 				Device.RasterizerState = rs;
 			}
 			else
 			{
-				rectangle.X	= (Int32)(rectangle.X *	ScreenScale.X);
-				rectangle.Width	= (Int32)(rectangle.Width *	ScreenScale.X);
+				rectangle.X	= (int)(rectangle.X *	ScreenScale.X);
+				rectangle.Width	= (int)(rectangle.Width *	ScreenScale.X);
 
-				rectangle.Y	= (Int32)(rectangle.Y *	ScreenScale.Y);
-				rectangle.Height = (Int32)(rectangle.Height	* ScreenScale.Y);
+				rectangle.Y	= (int)(rectangle.Y *	ScreenScale.Y);
+				rectangle.Height = (int)(rectangle.Height	* ScreenScale.Y);
 
-				var	rs = new RasterizerState() { ScissorTestEnable = true };
+				var	rs = new RasterizerState { ScissorTestEnable = true };
 				Device.RasterizerState = rs;
 				Device.ScissorRectangle	= rectangle;
 			}
 		}
 
-		Int32 DefaultDrawSetup(DrawState drawstate,	Point pixelsize)
+		private int DefaultDrawSetup(DrawState drawstate,	Point pixelsize)
 		{
-			if (drawstate == null) throw new ArgumentNullException("drawstate");
+			if (drawstate == null) throw new ArgumentNullException(nameof(drawstate));
 
-			Int32 count	= 0;
-			Vector2	camerashift	= CameraShift;
-			foreach	(DrawData data in drawstate)
+			var count	= 0;
+			var	camerashift	= CameraShift;
+			foreach	(var data in drawstate)
 			{
-				Point drawsize = new Point();
+				Point drawsize;
 
 				if (data.DrawRect != null)
 				{
 					drawsize = new Point(data.DrawRect.Value.Width,	data.DrawRect.Value.Height);
 
-					Renderer.SetTextureCoords(m_drawbuffer,	count *	6, pixelsize, data.DrawRect.Value, drawstate.Flip);
+					SetTextureCoords(m_drawbuffer,	count *	6, pixelsize, data.DrawRect.Value, drawstate.Flip);
 				}
 				else
 				{
 					drawsize = pixelsize;
 
-					Renderer.SetTextureCoords(m_drawbuffer,	count *	6, drawstate.Flip);
+					SetTextureCoords(m_drawbuffer,	count *	6, drawstate.Flip);
 				}
 
-				FRect frect	= Renderer.MakeVertRect(drawsize, data.Location, camerashift, drawstate.Scale, drawstate.Axis -	drawstate.Offset, drawstate.Flip);
-				Vector2	rotationaxis = data.Location + camerashift + drawstate.Offset;
+				var frect	= MakeVertRect(drawsize, data.Location, camerashift, drawstate.Scale, drawstate.Axis -	drawstate.Offset, drawstate.Flip);
+				var	rotationaxis = data.Location + camerashift + drawstate.Offset;
 
-				Renderer.SetPosition(m_drawbuffer, count * 6, frect, MathHelper.ToRadians(drawstate.Rotation), rotationaxis);
-				Renderer.SetColor(m_drawbuffer,	count *	6, Misc.BlendColors(Tint, data.Tint));
+				SetPosition(m_drawbuffer, count * 6, frect, MathHelper.ToRadians(drawstate.Rotation), rotationaxis);
+				SetColor(m_drawbuffer,	count *	6, Misc.BlendColors(Tint, data.Tint));
 
 				++count;
 			}
@@ -172,59 +168,59 @@ namespace xnaMugen.Video
 			return count;
 		}
 
-		void NormalDraw(DrawState drawstate)
+		private void NormalDraw(DrawState drawstate)
 		{
-			if (drawstate == null) throw new ArgumentNullException("drawstate");
+			if (drawstate == null) throw new ArgumentNullException(nameof(drawstate));
 			if (drawstate.Mode != DrawMode.Normal) throw new ArgumentException("Incorrect drawstate");
 
-			m_effect.CurrentTechnique =	(UseOldShader == true) ? m_effect.Techniques["DrawOLD"]	: m_effect.Techniques["Draw"];
+			m_effect.CurrentTechnique =	UseOldShader ? m_effect.Techniques["DrawOLD"]	: m_effect.Techniques["Draw"];
 
 			SetShaderParameters(drawstate.ShaderParameters,	drawstate.Pixels, drawstate.Palette);
 
-			Int32 count	= DefaultDrawSetup(drawstate, new Point(drawstate.Pixels.Width,	drawstate.Pixels.Height));
+			var count	= DefaultDrawSetup(drawstate, new Point(drawstate.Pixels.Width,	drawstate.Pixels.Height));
 			if (count >	0) FinishDrawing(PrimitiveType.TriangleList, count * 2);
 		}
 
-		void FontDraw(DrawState	drawstate)
+		private void FontDraw(DrawState	drawstate)
 		{
-			if (drawstate == null) throw new ArgumentNullException("drawstate");
+			if (drawstate == null) throw new ArgumentNullException(nameof(drawstate));
 			if (drawstate.Mode != DrawMode.Font) throw new ArgumentException("Incorrect	drawstate");
 
 			m_effect.CurrentTechnique =	m_effect.Techniques["FontDraw"];
 
 			SetShaderParameters(drawstate.ShaderParameters,	drawstate.Pixels, drawstate.Palette);
 
-			Int32 count	= DefaultDrawSetup(drawstate, new Point(drawstate.Pixels.Width,	drawstate.Pixels.Height));
+			var count	= DefaultDrawSetup(drawstate, new Point(drawstate.Pixels.Width,	drawstate.Pixels.Height));
 			if (count >	0) FinishDrawing(PrimitiveType.TriangleList, count * 2);
 		}
 
-		void OutlinedRectangleDraw(DrawState drawstate)
+		private void OutlinedRectangleDraw(DrawState drawstate)
 		{
-			if (drawstate == null) throw new ArgumentNullException("drawstate");
+			if (drawstate == null) throw new ArgumentNullException(nameof(drawstate));
 			if (drawstate.Mode != DrawMode.OutlinedRectangle) throw	new	ArgumentException("Incorrect drawstate");
 
-			m_effect.CurrentTechnique =	(UseOldShader == true) ? m_effect.Techniques["DrawOLD"]	: m_effect.Techniques["Draw"];
+			m_effect.CurrentTechnique =	UseOldShader ? m_effect.Techniques["DrawOLD"]	: m_effect.Techniques["Draw"];
 
 			SetShaderParameters(drawstate.ShaderParameters,	drawstate.Pixels, drawstate.Palette);
 
-			Int32 count	= 0;
-			foreach	(DrawData data in drawstate)
+			var count	= 0;
+			foreach	(var data in drawstate)
 			{
 				if (data.DrawRect != null)
 				{
-					Point drawsize = new Point(data.DrawRect.Value.Width, data.DrawRect.Value.Height);
-					FRect frect	= Renderer.MakeVertRect(drawsize, data.Location, CameraShift, drawstate.Scale, drawstate.Axis -	drawstate.Offset, drawstate.Flip);
+					var drawsize = new Point(data.DrawRect.Value.Width, data.DrawRect.Value.Height);
+					var frect	= MakeVertRect(drawsize, data.Location, CameraShift, drawstate.Scale, drawstate.Axis -	drawstate.Offset, drawstate.Flip);
 
-					m_drawbuffer[(count	* 8) + 0].Position = new Vector4(frect.Left, frect.Top,	0, 1);
-					m_drawbuffer[(count	* 8) + 1].Position = new Vector4(frect.Left, frect.Bottom, 0, 1);
-					m_drawbuffer[(count	* 8) + 2].Position = new Vector4(frect.Right, frect.Top, 0,	1);
-					m_drawbuffer[(count	* 8) + 3].Position = new Vector4(frect.Right, frect.Bottom,	0, 1);
-					m_drawbuffer[(count	* 8) + 4].Position = new Vector4(frect.Left, frect.Top,	0, 1);
-					m_drawbuffer[(count	* 8) + 5].Position = new Vector4(frect.Right, frect.Top, 0,	1);
-					m_drawbuffer[(count	* 8) + 6].Position = new Vector4(frect.Left, frect.Bottom, 0, 1);
-					m_drawbuffer[(count	* 8) + 7].Position = new Vector4(frect.Right, frect.Bottom,	0, 1);
+					m_drawbuffer[count	* 8 + 0].Position = new Vector4(frect.Left, frect.Top,	0, 1);
+					m_drawbuffer[count	* 8 + 1].Position = new Vector4(frect.Left, frect.Bottom, 0, 1);
+					m_drawbuffer[count	* 8 + 2].Position = new Vector4(frect.Right, frect.Top, 0,	1);
+					m_drawbuffer[count	* 8 + 3].Position = new Vector4(frect.Right, frect.Bottom,	0, 1);
+					m_drawbuffer[count	* 8 + 4].Position = new Vector4(frect.Left, frect.Top,	0, 1);
+					m_drawbuffer[count	* 8 + 5].Position = new Vector4(frect.Right, frect.Top, 0,	1);
+					m_drawbuffer[count	* 8 + 6].Position = new Vector4(frect.Left, frect.Bottom, 0, 1);
+					m_drawbuffer[count	* 8 + 7].Position = new Vector4(frect.Right, frect.Bottom,	0, 1);
 
-					for	(Int32 i = 0; i	!= 8; ++i) m_drawbuffer[(count * 8)	+ i].Tint =	data.Tint;
+					for	(var i = 0; i	!= 8; ++i) m_drawbuffer[count * 8	+ i].Tint =	data.Tint;
 
 					++count;
 				}
@@ -233,31 +229,31 @@ namespace xnaMugen.Video
 			if (count >	0) FinishDrawing(PrimitiveType.LineList, count * 4);
 		}
 
-		void FilledRectangleDraw(DrawState drawstate)
+		private void FilledRectangleDraw(DrawState drawstate)
 		{
-			if (drawstate == null) throw new ArgumentNullException("drawstate");
+			if (drawstate == null) throw new ArgumentNullException(nameof(drawstate));
 			if (drawstate.Mode != DrawMode.FilledRectangle)	throw new ArgumentException("Incorrect drawstate");
 
-			m_effect.CurrentTechnique =	(UseOldShader == true) ? m_effect.Techniques["DrawOLD"]	: m_effect.Techniques["Draw"];
+			m_effect.CurrentTechnique =	UseOldShader ? m_effect.Techniques["DrawOLD"]	: m_effect.Techniques["Draw"];
 
 			SetShaderParameters(drawstate.ShaderParameters,	drawstate.Pixels, drawstate.Palette);
 
-			Int32 count	= DefaultDrawSetup(drawstate, new Point(drawstate.Pixels.Width,	drawstate.Pixels.Height));
+			var count	= DefaultDrawSetup(drawstate, new Point(drawstate.Pixels.Width,	drawstate.Pixels.Height));
 			if (count >	0) FinishDrawing(PrimitiveType.TriangleList, count * 2);
 		}
 
-		void LineDraw(DrawState	drawstate)
+		private void LineDraw(DrawState	drawstate)
 		{
-			if (drawstate == null) throw new ArgumentNullException("drawstate");
+			if (drawstate == null) throw new ArgumentNullException(nameof(drawstate));
 			if (drawstate.Mode != DrawMode.Lines) throw	new	ArgumentException("Incorrect drawstate");
 
-			m_effect.CurrentTechnique =	(UseOldShader == true) ? m_effect.Techniques["DrawOLD"]	: m_effect.Techniques["Draw"];
+			m_effect.CurrentTechnique =	UseOldShader ? m_effect.Techniques["DrawOLD"]	: m_effect.Techniques["Draw"];
 
 			SetShaderParameters(drawstate.ShaderParameters,	drawstate.Pixels, drawstate.Palette);
 
-			Int32 count	= 0;
-			Boolean	point =	false;
-			foreach	(DrawData data in drawstate)
+			var count	= 0;
+			var	point =	false;
+			foreach	(var data in drawstate)
 			{
 				if (point == false)
 				{
@@ -277,7 +273,7 @@ namespace xnaMugen.Video
 			if (count >	0) FinishDrawing(PrimitiveType.LineList, count);
 		}
 
-		void FinishDrawing(PrimitiveType drawtype, Int32 count)
+		private void FinishDrawing(PrimitiveType drawtype, int count)
 		{
 			foreach	(var pass in m_effect.CurrentTechnique.Passes)
 			{
@@ -289,11 +285,11 @@ namespace xnaMugen.Video
 			m_effect.GraphicsDevice.Textures[1]	= null;
 		}
 
-		void SetShaderParameters(ShaderParameters parameters, Texture2D	pixels,	Texture2D palette)
+		private void SetShaderParameters(ShaderParameters parameters, Texture2D	pixels,	Texture2D palette)
 		{
-			if (parameters == null)	throw new ArgumentNullException("parameters");
-			if (pixels == null)	throw new ArgumentNullException("pixels");
-			if (palette	== null) throw new ArgumentNullException("palette");
+			if (parameters == null)	throw new ArgumentNullException(nameof(parameters));
+			if (pixels == null)	throw new ArgumentNullException(nameof(pixels));
+			if (palette	== null) throw new ArgumentNullException(nameof(palette));
 
 			GetShaderParameter("xPixels").SetValue(pixels);
 			GetShaderParameter("xPalette").SetValue(palette);
@@ -301,7 +297,7 @@ namespace xnaMugen.Video
 			GetShaderParameter("xFontColorIndex").SetValue(parameters.FontColorIndex);
 			GetShaderParameter("xFontTotalColors").SetValue(parameters.FontTotalColors);
 
-			if (parameters.PaletteFxEnable == true)
+			if (parameters.PaletteFxEnable)
 			{
 				GetShaderParameter("xPalFx_Use").SetValue(true);
 				GetShaderParameter("xPalFx_Add").SetValue(new Vector4(parameters.PaletteFxAdd, 0));
@@ -309,7 +305,7 @@ namespace xnaMugen.Video
 				GetShaderParameter("xPalFx_Invert").SetValue(parameters.PaletteFxInvert);
 				GetShaderParameter("xPalFx_Color").SetValue(parameters.PaletteFxColor);
 
-				Vector4	sincolor = parameters.PaletteFxSinAdd *	(Single)Math.Sin(parameters.PaletteFxTime *	MathHelper.TwoPi / parameters.PaletteFxSinAdd.W);
+				var	sincolor = parameters.PaletteFxSinAdd *	(float)Math.Sin(parameters.PaletteFxTime *	MathHelper.TwoPi / parameters.PaletteFxSinAdd.W);
 				sincolor.W = 0;
 
 				GetShaderParameter("xPalFx_SinMath").SetValue(sincolor);
@@ -319,7 +315,7 @@ namespace xnaMugen.Video
 				GetShaderParameter("xPalFx_Use").SetValue(false);
 			}
 
-			if (parameters.AfterImageEnable	== true)
+			if (parameters.AfterImageEnable)
 			{
 				GetShaderParameter("xAI_Use").SetValue(true);
 				GetShaderParameter("xAI_Invert").SetValue(parameters.AfterImageInvert);
@@ -337,21 +333,21 @@ namespace xnaMugen.Video
 			}
 		}
 
-		EffectParameter	GetShaderParameter(String name)
+		private EffectParameter	GetShaderParameter(string name)
 		{
-			if (name ==	null) throw	new	ArgumentNullException("name");
+			if (name ==	null) throw	new	ArgumentNullException(nameof(name));
 
-			if (m_parameters.Contains(name)	== true) return	m_parameters[name];
+			if (m_parameters.Contains(name)) return	m_parameters[name];
 
-			EffectParameter	parameter =	m_effect.Parameters[name];
+			var	parameter =	m_effect.Parameters[name];
 			m_parameters.Add(parameter);
 
 			return parameter;
 		}
 
-		protected override void	Dispose(Boolean	disposing)
+		protected override void	Dispose(bool	disposing)
 		{
-			if (disposing == true)
+			if (disposing)
 			{
 				if (m_nullpixels !=	null) m_nullpixels.Dispose();
 
@@ -361,131 +357,10 @@ namespace xnaMugen.Video
 			base.Dispose(disposing);
 		}
 
-		static String CreateShaderCode()
+		private static void	SetPosition(Vertex[] buffer, int offset, FRect r,	float rotation, Vector2 axis)
 		{
-			var	sb = new System.Text.StringBuilder();
-
-			sb.AppendLine(@"float PI = 3.14159f;");
-
-			sb.AppendLine(@"Texture	xPixels;");
-			sb.AppendLine(@"sampler	xPixelsSampler = sampler_state { texture = <xPixels>; AddressU = clamp;	AddressV = clamp; magfilter	= point; minfilter = point;	mipfilter =	point; };");
-
-			sb.AppendLine(@"Texture	xPalette;");
-			sb.AppendLine(@"sampler	xPaletteSampler	= sampler_state	{ texture =	<xPalette>;	AddressU = clamp; AddressV = clamp;	magfilter =	none; minfilter	= none;	mipfilter =	none; };");
-
-			sb.AppendLine(@"float4x4 xMatrix;");
-			sb.AppendLine(@"float4x4 xRotation;");
-
-			sb.AppendLine(@"int	xFontColorIndex;");
-			sb.AppendLine(@"int	xFontTotalColors;");
-
-			sb.AppendLine(@"bool xPalFx_Use;");
-			sb.AppendLine(@"int	xPalFx_Time;");
-			sb.AppendLine(@"float3 xPalFx_Add;");
-			sb.AppendLine(@"float3 xPalFx_Mul;");
-			sb.AppendLine(@"float4 xPalFx_SinAdd;");
-			sb.AppendLine(@"bool xPalFx_Invert;");
-			sb.AppendLine(@"float3 xPalFx_Color;");
-
-			sb.AppendLine(@"bool xAI_Use;");
-			sb.AppendLine(@"bool xAI_Invert;");
-			sb.AppendLine(@"float3 xAI_color;");
-			sb.AppendLine(@"float3 xAI_preadd;");
-			sb.AppendLine(@"float3 xAI_contrast;");
-			sb.AppendLine(@"float3 xAI_postadd;");
-			sb.AppendLine(@"float3 xAI_paladd;");
-			sb.AppendLine(@"float3 xAI_palmul;");
-			sb.AppendLine(@"int	xAI_number;");
-
-			sb.AppendLine(@"float4 PalFx(float4	inputcolor)");
-			sb.AppendLine(@"{");
-			sb.AppendLine(@"float4 output =	inputcolor;");
-			sb.AppendLine(@"output *= float4(xPalFx_Color, 1);");
-			sb.AppendLine(@"if(xPalFx_Invert ==	true) output = float4(1	- output.r,	1 -	output.g, 1	- output.b,	output.a);");
-			sb.AppendLine(@"float4 sincolor	= float4(xPalFx_SinAdd.rgb,	0) * sin(xPalFx_Time * 2 * PI /	xPalFx_SinAdd.a);");
-			sb.AppendLine(@"output = (output + float4(xPalFx_Add, 0) + sincolor) * float4(xPalFx_Mul, 1);");
-			sb.AppendLine(@"return output;");
-			sb.AppendLine(@"}");
-
-			sb.AppendLine(@"float4 AfterImage(float4 inputcolor)");
-			sb.AppendLine(@"{");
-			sb.AppendLine(@"float4 output =	inputcolor;");
-			sb.AppendLine(@"output *= float4(xAI_color,	1);");
-			sb.AppendLine(@"if(xAI_Invert == true) output =	float4(1, 1, 1,	1) - output;");
-			sb.AppendLine(@"output += float4(xAI_preadd, 0);");
-			sb.AppendLine(@"output *= float4(xAI_contrast, 1);");
-			sb.AppendLine(@"output += float4(xAI_postadd, 0);");
-			sb.AppendLine(@"for(int	i =	0; i < xAI_number; ++i)");
-			sb.AppendLine(@"{");
-			sb.AppendLine(@"output += float4(xAI_paladd, 0);");
-			sb.AppendLine(@"output *= float4(xAI_palmul, 1);");
-			sb.AppendLine(@"}");
-			sb.AppendLine(@"return output;");
-			sb.AppendLine(@"}");
-
-			sb.AppendLine(@"struct VS_Output");
-			sb.AppendLine(@"{");
-			sb.AppendLine(@"float4 Position	: POSITION;");
-			sb.AppendLine(@"float2 TextureCoords: TEXCOORD;");
-			sb.AppendLine(@"float4 Color: COLOR;");
-			sb.AppendLine(@"};");
-
-			sb.AppendLine(@"VS_Output VertexShader(float4 inPos	: POSITION,	float2 inTexCoords:	TEXCOORD, float4 inColor : COLOR)");
-			sb.AppendLine(@"{");
-			sb.AppendLine(@"VS_Output Output = (VS_Output)0;");
-			sb.AppendLine(@"Output.Position	= mul(inPos, xMatrix);");
-			sb.AppendLine(@"Output.Position	= mul(Output.Position, xRotation);");
-			sb.AppendLine(@"Output.TextureCoords = inTexCoords;");
-			sb.AppendLine(@"Output.Color = inColor;");
-			sb.AppendLine(@"return Output;");
-			sb.AppendLine(@"}");
-
-			sb.AppendLine(@"float4 DefaultPixelShader(float4 color : COLOR,	float2 texCoord	: TEXCOORD)	: COLOR");
-			sb.AppendLine(@"{");
-			sb.AppendLine(@"float color_index =	tex2D(xPixelsSampler, texCoord).a;");
-			sb.AppendLine(@"float4 output_color	= tex1D(xPaletteSampler, color_index);");
-			sb.AppendLine(@"if(xPalFx_Use == true) output_color	= PalFx(output_color);");
-			sb.AppendLine(@"if(xAI_Use == true)	output_color = AfterImage(output_color);");
-			sb.AppendLine(@"output_color *=	color;");
-			sb.AppendLine(@"return output_color;");
-			sb.AppendLine(@"}");
-
-			sb.AppendLine(@"float4 FontPixelShader(float4 color	: COLOR, float2	texCoord : TEXCOORD) : COLOR");
-			sb.AppendLine(@"{");
-			sb.AppendLine(@"float color_index =	tex2D(xPixelsSampler, texCoord).a;");
-			sb.AppendLine(@"float per =	1.0	- float(xFontColorIndex) / float(xFontTotalColors);");
-			sb.AppendLine(@"float4 output_color	= tex1D(xPaletteSampler, color_index * per - 1.0/255.0);");
-			sb.AppendLine(@"if(xPalFx_Use == true) output_color	= PalFx(output_color);");
-			sb.AppendLine(@"if(xAI_Use == true)	output_color = AfterImage(output_color);");
-			sb.AppendLine(@"output_color *=	color;");
-			sb.AppendLine(@"return output_color;");
-			sb.AppendLine(@"}");
-
-			sb.AppendLine(@"technique Draw");
-			sb.AppendLine(@"{");
-			sb.AppendLine(@"pass Pass0");
-			sb.AppendLine(@"{");
-			sb.AppendLine(@"VertexShader = compile vs_1_1 VertexShader();");
-			sb.AppendLine(@"PixelShader	= compile ps_3_0 DefaultPixelShader();");
-			sb.AppendLine(@"}");
-			sb.AppendLine(@"}");
-
-			sb.AppendLine(@"technique FontDraw");
-			sb.AppendLine(@"{");
-			sb.AppendLine(@"pass Pass0");
-			sb.AppendLine(@"{");
-			sb.AppendLine(@"VertexShader = compile vs_1_1 VertexShader();");
-			sb.AppendLine(@"PixelShader	= compile ps_3_0 FontPixelShader();");
-			sb.AppendLine(@"}");
-			sb.AppendLine(@"}");
-
-			return sb.ToString();
-		}
-
-		static void	SetPosition(Vertex[] buffer, Int32 offset, FRect r,	Single rotation, Vector2 axis)
-		{
-			Vector2	v1 = RotatePoint(new Vector2(r.Left, r.Top), rotation, axis);
-			Vector2	v2 = RotatePoint(new Vector2(r.Right, r.Bottom), rotation, axis);
+			var	v1 = RotatePoint(new Vector2(r.Left, r.Top), rotation, axis);
+			var	v2 = RotatePoint(new Vector2(r.Right, r.Bottom), rotation, axis);
 
 			buffer[offset +	0].Position	= new Vector4(v1.X,	v1.Y, 0, 1);
 			buffer[offset +	1].Position	= new Vector4(v2.X,	v1.Y, 0, 1);
@@ -496,31 +371,31 @@ namespace xnaMugen.Video
 			buffer[offset +	5].Position	= new Vector4(v1.X,	v2.Y, 0, 1);
 		}
 
-		static Vector2 RotatePoint(Vector2 point, Single radians, Vector2 axis)
+		private static Vector2 RotatePoint(Vector2 point, float radians, Vector2 axis)
 		{
-			Double x = Math.Cos(radians) * (point.X	- axis.X) -	Math.Sin(radians) *	(point.Y - axis.Y);
-			Double y = Math.Sin(radians) * (point.X	- axis.X) +	Math.Cos(radians) *	(point.Y - axis.Y);
+			var x = Math.Cos(radians) * (point.X	- axis.X) -	Math.Sin(radians) *	(point.Y - axis.Y);
+			var y = Math.Sin(radians) * (point.X	- axis.X) +	Math.Cos(radians) *	(point.Y - axis.Y);
 
-			return new Vector2((Single)x + axis.X, (Single)y + axis.Y);
+			return new Vector2((float)x + axis.X, (float)y + axis.Y);
 		}
 
-		static void	SetTextureCoords(Vertex[] buffer, Int32	offset,	Point textsize,	Rectangle textrect,	SpriteEffects flip)
+		private static void	SetTextureCoords(Vertex[] buffer, int	offset,	Point textsize,	Rectangle textrect,	SpriteEffects flip)
 		{
-			Single x1 =	(Single)textrect.Left /	(Single)textsize.X;
-			Single x2 =	(Single)textrect.Right / (Single)textsize.X;
-			Single y1 =	(Single)textrect.Top / (Single)textsize.Y;
-			Single y2 =	(Single)textrect.Bottom	/ (Single)textsize.Y;
+			var x1 =	textrect.Left /	(float)textsize.X;
+			var x2 =	textrect.Right / (float)textsize.X;
+			var y1 =	textrect.Top / (float)textsize.Y;
+			var y2 =	textrect.Bottom	/ (float)textsize.Y;
 
 			if ((flip &	SpriteEffects.FlipHorizontally)	== SpriteEffects.FlipHorizontally)
 			{
-				Single temp	= x1;
+				var temp	= x1;
 				x1 = x2;
 				x2 = temp;
 			}
 
 			if ((flip &	SpriteEffects.FlipVertically) == SpriteEffects.FlipVertically)
 			{
-				Single temp	= y1;
+				var temp	= y1;
 				y1 = y2;
 				y2 = temp;
 			}
@@ -534,12 +409,12 @@ namespace xnaMugen.Video
 			buffer[offset +	5].TextureCoordinate = new Vector2(x1, y2);
 		}
 
-		static void	SetTextureCoords(Vertex[] buffer, Int32	offset,	SpriteEffects flip)
+		private static void	SetTextureCoords(Vertex[] buffer, int	offset,	SpriteEffects flip)
 		{
 			SetTextureCoords(buffer, offset, new Point(1, 1), new Rectangle(0, 0, 1, 1), flip);
 		}
 
-		static void	SetColor(Vertex[] buffer, Int32	offset,	Color c)
+		private static void	SetColor(Vertex[] buffer, int	offset,	Color c)
 		{
 			buffer[offset +	0].Tint	= c;
 			buffer[offset +	1].Tint	= c;
@@ -550,11 +425,11 @@ namespace xnaMugen.Video
 			buffer[offset +	5].Tint	= c;
 		}
 
-		static FRect MakeVertRect(Point	drawsize, Vector2 location,	Vector2	offset,	Vector2	scale, Vector2 axis, SpriteEffects flip)
+		private static FRect MakeVertRect(Point	drawsize, Vector2 location,	Vector2	offset,	Vector2	scale, Vector2 axis, SpriteEffects flip)
 		{
-			FRect r	= new FRect();
+			var r	= new FRect();
 
-			Vector2	vloc = GetDrawLocation(drawsize, location, axis, scale,	flip) +	offset;
+			var	vloc = GetDrawLocation(drawsize, location, axis, scale,	flip) +	offset;
 			r.X	= vloc.X;
 			r.Y	= vloc.Y;
 			r.Width	= drawsize.X * scale.X;
@@ -565,7 +440,7 @@ namespace xnaMugen.Video
 
 		public static Vector2 GetDrawLocation(Point	drawsize, Vector2 location,	Vector2	axis, Vector2 scale, SpriteEffects flip)
 		{
-			Vector2	drawlocation = location	- new Vector2(0.5f,	0.5f);
+			var	drawlocation = location	- new Vector2(0.5f,	0.5f);
 
 			if ((flip &	SpriteEffects.FlipHorizontally)	!= 0)
 			{
@@ -588,63 +463,45 @@ namespace xnaMugen.Video
 			return drawlocation;
 		}
 
-		public Boolean UseOldShader
+		public bool UseOldShader
 		{
-			get	{ return m_useoldshader; }
+			get => m_useoldshader;
 
 			set	{ m_useoldshader = value; }
 		}
 
-		Color Tint
-		{
-			get	{ return m_videosystem.Tint; }
-		}
+		private Color Tint => m_videosystem.Tint;
 
-		Point ScreenSize
-		{
-			get	{ return m_videosystem.ScreenSize; }
-		}
+		private Point ScreenSize => m_videosystem.ScreenSize;
 
-		Vector2	ScreenScale
-		{
-			get	{ return (Vector2)ScreenSize / (Vector2)Mugen.ScreenSize; }
-		}
+		private Vector2	ScreenScale => (Vector2)ScreenSize / (Vector2)Mugen.ScreenSize;
 
-		Vector2	CameraShift
-		{
-			get	{ return (Vector2)m_videosystem.CameraShift; }
-		}
+		private Vector2	CameraShift => (Vector2)m_videosystem.CameraShift;
 
-		GraphicsDevice Device
-		{
-			get	{ return m_videosystem.Device; }
-		}
+		private GraphicsDevice Device => m_videosystem.Device;
 
 		#region	Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly VideoSystem m_videosystem;
+		private readonly VideoSystem m_videosystem;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Effect	m_effect;
+		private readonly Effect	m_effect;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Vertex[] m_drawbuffer;
+		private readonly Vertex[] m_drawbuffer;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly KeyedCollection<String, EffectParameter> m_parameters;
+		private readonly KeyedCollection<string, EffectParameter> m_parameters;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Texture2D m_nullpixels;
+		private readonly Texture2D m_nullpixels;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Texture2D m_nullpalette;
+		private readonly Texture2D m_nullpalette;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Boolean	m_useoldshader;
-
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		private	SpriteBatch	spriteBatch;
+		private bool	m_useoldshader;
 
 		#endregion
 	}

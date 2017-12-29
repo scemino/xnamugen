@@ -1,9 +1,8 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 
 namespace xnaMugen.Combat
 {
-	class EngineAssertions
+	internal class EngineAssertions
 	{
 		public EngineAssertions()
 		{
@@ -24,72 +23,72 @@ namespace xnaMugen.Combat
 			m_timerfreeze = false;
 		}
 
-		public Boolean Intro
+		public bool Intro
 		{
-			get { return m_intro; }
+			get => m_intro;
 
 			set { m_intro = value; }
 		}
 
-		public Boolean WinPose
+		public bool WinPose
 		{
-			get { return m_winpose; }
+			get => m_winpose;
 
 			set { m_winpose = value; }
 		}
 
-		public Boolean NoBarDisplay
+		public bool NoBarDisplay
 		{
-			get { return m_nobardisplay; }
+			get => m_nobardisplay;
 
 			set { m_nobardisplay = value; }
 		}
 
-		public Boolean NoBackLayer
+		public bool NoBackLayer
 		{
-			get { return m_nobacklayer; }
+			get => m_nobacklayer;
 
 			set { m_nobacklayer = value; }
 		}
 
-		public Boolean NoFrontLayer
+		public bool NoFrontLayer
 		{
-			get { return m_nofrontlayer; }
+			get => m_nofrontlayer;
 
 			set { m_nofrontlayer = value; }
 		}
 
-		public Boolean NoKOSound
+		public bool NoKOSound
 		{
-			get { return m_nokosound; }
+			get => m_nokosound;
 
 			set { m_nokosound = value; }
 		}
 
-		public Boolean NoKOSlow
+		public bool NoKOSlow
 		{
-			get { return m_nokoslow; }
+			get => m_nokoslow;
 
 			set { m_nokoslow = value; }
 		}
 
-		public Boolean NoGlobalShadow
+		public bool NoGlobalShadow
 		{
-			get { return m_noglobalshadow; }
+			get => m_noglobalshadow;
 
 			set { m_noglobalshadow = value; }
 		}
 
-		public Boolean NoMusic
+		public bool NoMusic
 		{
-			get { return m_nomusic; }
+			get => m_nomusic;
 
 			set { m_nomusic = value; }
 		}
 
-		public Boolean TimerFreeze
+		public bool TimerFreeze
 		{
-			get { return m_timerfreeze; }
+			get => m_timerfreeze;
 
 			set { m_timerfreeze = value; }
 		}
@@ -97,34 +96,34 @@ namespace xnaMugen.Combat
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Boolean m_intro;
+		private bool m_intro;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Boolean m_winpose;
+		private bool m_winpose;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Boolean m_nobardisplay;
+		private bool m_nobardisplay;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Boolean m_nobacklayer;
+		private bool m_nobacklayer;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Boolean m_nofrontlayer;
+		private bool m_nofrontlayer;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Boolean m_nokosound;
+		private bool m_nokosound;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Boolean m_nokoslow;
+		private bool m_nokoslow;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Boolean m_noglobalshadow;
+		private bool m_noglobalshadow;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Boolean m_nomusic;
+		private bool m_nomusic;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Boolean m_timerfreeze;
+		private bool m_timerfreeze;
 
 		#endregion
 	}

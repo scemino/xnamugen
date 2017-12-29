@@ -1,13 +1,11 @@
-﻿using System;
-
-namespace xnaMugen.Evaluation.Triggers
+﻿namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("Assertion")]
-	static class Assertion
+	internal static class Assertion
 	{
-		public static Boolean Evaluate(Object state, ref Boolean error, xnaMugen.Assertion assertion)
+		public static bool Evaluate(object state, ref bool error, xnaMugen.Assertion assertion)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
@@ -73,7 +71,6 @@ namespace xnaMugen.Evaluation.Triggers
 				case xnaMugen.Assertion.Unguardable:
 					return character.Assertions.UnGuardable;
 
-				case xnaMugen.Assertion.None:
 				default:
 					error = true;
 					return false;
@@ -86,7 +83,7 @@ namespace xnaMugen.Evaluation.Triggers
 			++state.TokenIndex;
 
 			if (state.CurrentUnknown == null) return null;
-			xnaMugen.Assertion assert = state.ConvertCurrentToken<xnaMugen.Assertion>();
+			var assert = state.ConvertCurrentToken<xnaMugen.Assertion>();
 
 			state.BaseNode.Arguments.Add(assert);
 			++state.TokenIndex;

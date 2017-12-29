@@ -1,33 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using xnaMugen.Collections;
 
 namespace xnaMugen.Drawing
 {
-	class SpriteFileDataCollection
+	internal class SpriteFileDataCollection
 	{
 		public SpriteFileDataCollection(List<SpriteFileData> data)
 		{
-			if (data == null) throw new ArgumentNullException("data");
+			if (data == null) throw new ArgumentNullException(nameof(data));
 
 			m_indexeddata = data;
-			m_indexcache = new Dictionary<SpriteId, Int32>();
+			m_indexcache = new Dictionary<SpriteId, int>();
 
-			for (Int32 i = 0; i != Count; ++i)
+			for (var i = 0; i != Count; ++i)
 			{
-				SpriteFileData sfd = m_indexeddata[i];
+				var sfd = m_indexeddata[i];
 
 				if (sfd == null) continue;
-				if (m_indexcache.ContainsKey(sfd.Id) == true) continue;
+				if (m_indexcache.ContainsKey(sfd.Id)) continue;
 
 				m_indexcache.Add(sfd.Id, i);
 			}
 		}
 
-		void SanityCheck(SpriteFileData data, Int32 index)
+		private void SanityCheck(SpriteFileData data, int index)
 		{
-			if (data == null) throw new ArgumentNullException("data");
+			if (data == null) throw new ArgumentNullException(nameof(data));
 
 			if (data.Id.Group < 0 || data.Id.Image < 0)
 			{
@@ -41,7 +40,7 @@ namespace xnaMugen.Drawing
 				Log.Write(LogLevel.Warning, LogSystem.SpriteSystem, "Sprite data #{0}, id #{1} has invalid image size - {2}", index, data.Id, data.PcxSize);
 			}
 
-			if (index == 0 && data.CopyLastPalette == true)
+			if (index == 0 && data.CopyLastPalette)
 			{
 				Log.Write(LogLevel.Warning, LogSystem.SpriteSystem, "First sprite data it set to copy previous, non-existant palette");
 			}
@@ -53,11 +52,11 @@ namespace xnaMugen.Drawing
 			}
 		}
 
-		public SpriteFileData GetData(Int32 index)
+		public SpriteFileData GetData(int index)
 		{
-			if (index < 0 || index >= Count) throw new ArgumentOutOfRangeException("index");
+			if (index < 0 || index >= Count) throw new ArgumentOutOfRangeException(nameof(index));
 
-			SpriteFileData data = m_indexeddata[index];
+			var data = m_indexeddata[index];
 
 			if (data.IsValid == null)
 			{
@@ -65,29 +64,26 @@ namespace xnaMugen.Drawing
 				SanityCheck(data, index);
 			}
 
-			return (data.IsValid == true) ? data : null;
+			return data.IsValid == true ? data : null;
 		}
 
-		public Int32 GetIndex(SpriteId id)
+		public int GetIndex(SpriteId id)
 		{
-			Int32 index;
-			if (m_indexcache.TryGetValue(id, out index) == false) return Int32.MinValue;
+			int index;
+			if (m_indexcache.TryGetValue(id, out index) == false) return int.MinValue;
 
 			return index;
 		}
 
-		public Int32 Count
-		{
-			get { return m_indexeddata.Count; }
-		}
+		public int Count => m_indexeddata.Count;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly List<SpriteFileData> m_indexeddata;
+		private readonly List<SpriteFileData> m_indexeddata;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Dictionary<SpriteId, Int32> m_indexcache;
+		private readonly Dictionary<SpriteId, int> m_indexcache;
 
 		#endregion
 	}

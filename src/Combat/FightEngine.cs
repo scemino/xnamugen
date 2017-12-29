@@ -2,19 +2,17 @@ using System;
 using System.Diagnostics;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
-using xnaMugen.Collections;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace xnaMugen.Combat
 {
-    class FightEngine : MainSystem
+    internal class FightEngine : MainSystem
     {
         public FightEngine(SubSystems subsystems)
             : base(subsystems)
         {
-            IO.TextFile textfile = GetSubSystem<IO.FileSystem>().OpenTextFile(@"data/fight.def");
-            IO.TextSection filesection = textfile.GetSection("Files");
-            String basepath = GetSubSystem<IO.FileSystem>().GetDirectory(textfile.Filepath);
+            var textfile = GetSubSystem<IO.FileSystem>().OpenTextFile(@"data/fight.def");
+            var filesection = textfile.GetSection("Files");
+            var basepath = GetSubSystem<IO.FileSystem>().GetDirectory(textfile.Filepath);
 
 			m_init = null;
             m_entities = new EntityCollection(this);
@@ -33,10 +31,10 @@ namespace xnaMugen.Combat
             m_fontmap = BuildFontMap(filesection);
             //m_fightsounds = GetSubSystem<Audio.SoundSystem>().CreateManager(BuildPath(basepath, filesection.GetAttribute<String>("snd")));
             //m_commonsounds = GetSubSystem<Audio.SoundSystem>().CreateManager(BuildPath(basepath, filesection.GetAttribute<String>("common.snd")));
-            m_fightsprites = GetSubSystem<Drawing.SpriteSystem>().CreateManager(BuildPath(basepath, filesection.GetAttribute<String>("sff")));
-            m_fxsprites = GetSubSystem<Drawing.SpriteSystem>().CreateManager(BuildPath(basepath, filesection.GetAttribute<String>("fightfx.sff")));
+            m_fightsprites = GetSubSystem<Drawing.SpriteSystem>().CreateManager(BuildPath(basepath, filesection.GetAttribute<string>("sff")));
+            m_fxsprites = GetSubSystem<Drawing.SpriteSystem>().CreateManager(BuildPath(basepath, filesection.GetAttribute<string>("fightfx.sff")));
             m_fightanimations = GetSubSystem<Animations.AnimationSystem>().CreateManager(textfile.Filepath);
-            m_fxanimations = GetSubSystem<Animations.AnimationSystem>().CreateManager(BuildPath(basepath, filesection.GetAttribute<String>("fightfx.air")));
+            m_fxanimations = GetSubSystem<Animations.AnimationSystem>().CreateManager(BuildPath(basepath, filesection.GetAttribute<string>("fightfx.air")));
             m_elements = new Elements.Collection(FightSprites, FightAnimations/*, FightSounds*/, Fonts);
             m_roundinfo = new RoundInformation(this, textfile);
             m_team1 = new Team(this, TeamSide.Left);
@@ -46,37 +44,37 @@ namespace xnaMugen.Combat
 			m_clock = new Clock(this);
         }
 
-        Drawing.FontMap BuildFontMap(IO.TextSection filesection)
+        private Drawing.FontMap BuildFontMap(IO.TextSection filesection)
         {
-            if (filesection == null) throw new ArgumentNullException("filesection");
+            if (filesection == null) throw new ArgumentNullException(nameof(filesection));
 
-            Dictionary<Int32, Drawing.Font> fonts = new Dictionary<Int32, Drawing.Font>();
+            var fonts = new Dictionary<int, Drawing.Font>();
 
-            String fontpath1 = filesection.GetAttribute<String>("font1", null);
+            var fontpath1 = filesection.GetAttribute<string>("font1", null);
             if (fontpath1 != null) fonts[1] = GetSubSystem<Drawing.SpriteSystem>().LoadFont(fontpath1);
 
-            String fontpath2 = filesection.GetAttribute<String>("font2", null);
+            var fontpath2 = filesection.GetAttribute<string>("font2", null);
             if (fontpath2 != null) fonts[2] = GetSubSystem<Drawing.SpriteSystem>().LoadFont(fontpath2);
 
-            String fontpath3 = filesection.GetAttribute<String>("font3", null);
+            var fontpath3 = filesection.GetAttribute<string>("font3", null);
             if (fontpath3 != null) fonts[3] = GetSubSystem<Drawing.SpriteSystem>().LoadFont(fontpath3);
 
-            Drawing.FontMap fontmap = new Drawing.FontMap(fonts);
+            var fontmap = new Drawing.FontMap(fonts);
             return fontmap;
         }
 
-        String BuildPath(String basepath, String filepath)
+        private string BuildPath(string basepath, string filepath)
         {
-            IO.FileSystem filesystem = GetSubSystem<IO.FileSystem>();
+            var filesystem = GetSubSystem<IO.FileSystem>();
 
-            String path1 = filesystem.CombinePaths(basepath, filepath);
-            if (filesystem.DoesFileExist(path1) == true) return path1;
+            var path1 = filesystem.CombinePaths(basepath, filepath);
+            if (filesystem.DoesFileExist(path1)) return path1;
 
-            String path2 = filesystem.CombinePaths("data", filepath);
-            if (filesystem.DoesFileExist(path1) == true) return path2;
+            var path2 = filesystem.CombinePaths("data", filepath);
+            if (filesystem.DoesFileExist(path1)) return path2;
 
-            String path3 = filesystem.CombinePaths("", filepath);
-            if (filesystem.DoesFileExist(path1) == true) return path3;
+            var path3 = filesystem.CombinePaths("", filepath);
+            if (filesystem.DoesFileExist(path1)) return path3;
 
             return null;
         }
@@ -105,9 +103,9 @@ namespace xnaMugen.Combat
             Elements.Reset();
         }
 
-        protected override void Dispose(Boolean disposing)
+        protected override void Dispose(bool disposing)
         {
-            if (disposing == true)
+            if (disposing)
             {
             }
 
@@ -116,14 +114,14 @@ namespace xnaMugen.Combat
 
         public Team GetWinningTeam()
         {
-            if (Team1.VictoryStatus.Win == true) return Team1;
-            else if (Team2.VictoryStatus.Win == true) return Team2;
-            else return null;
+            if (Team1.VictoryStatus.Win) return Team1;
+            if (Team2.VictoryStatus.Win) return Team2;
+            return null;
         }
 
         public void Set(EngineInitialization init)
         {
-			if (init == null) throw new ArgumentNullException("init");
+			if (init == null) throw new ArgumentNullException(nameof(init));
 
 			m_init = init;
 
@@ -137,7 +135,7 @@ namespace xnaMugen.Combat
             Reset();
         }
 
-        void Tester(Boolean pressed)
+        private void Tester(bool pressed)
         {
 #if DEBUG
             if (pressed)
@@ -148,17 +146,17 @@ namespace xnaMugen.Combat
 #endif
         }
 
-        void PlayerRestore(Player player)
+        private void PlayerRestore(Player player)
         {
-            if (player == null) throw new ArgumentNullException("player");
+            if (player == null) throw new ArgumentNullException(nameof(player));
 
             player.Life = player.Constants.MaximumLife;
             player.Power = player.Constants.MaximumPower;
         }
 
-        void RestoreLifeAndPower(Boolean pressed)
+        private void RestoreLifeAndPower(bool pressed)
         {
-            if (pressed == true)
+            if (pressed)
             {
                 if (RoundState == RoundState.Fight)
                 {
@@ -170,18 +168,18 @@ namespace xnaMugen.Combat
             }
         }
 
-        public Int32 GenerateCharacterId()
+        public int GenerateCharacterId()
         {
             return m_idcounter++;
         }
 
         public void SetInput(Input.InputState inputstate)
         {
-            if (inputstate == null) throw new ArgumentNullException("inputstate");
+            if (inputstate == null) throw new ArgumentNullException(nameof(inputstate));
 
             foreach (PlayerButton button in Enum.GetValues(typeof(PlayerButton)))
             {
-                PlayerButton b = button;
+                var b = button;
 
                 inputstate[1].Add(b, x => Team1.MainPlayer.RecieveInput(b, x));
                 inputstate[2].Add(b, x => Team2.MainPlayer.RecieveInput(b, x));
@@ -191,7 +189,7 @@ namespace xnaMugen.Combat
             inputstate[0].Add(SystemButton.TestCheat, Tester);
         }
 
-        Boolean SpeedSkip()
+        private bool SpeedSkip()
         {
             if (Speed == GameSpeed.Slow)
             {
@@ -204,9 +202,9 @@ namespace xnaMugen.Combat
             return true;
         }
 
-        void UpdatePauses()
+        private void UpdatePauses()
         {
-            if (SuperPause.IsActive == true)
+            if (SuperPause.IsActive)
             {
                 SuperPause.Update();
             }
@@ -216,11 +214,11 @@ namespace xnaMugen.Combat
             }
         }
 
-        void UpdateLogic()
+        private void UpdateLogic()
         {
             m_logic.Update();
 
-            if (m_logic.IsFinished() == true)
+            if (m_logic.IsFinished())
             {
                 if (m_logic is Logic.PreIntro)
                 {
@@ -293,11 +291,11 @@ namespace xnaMugen.Combat
             ++m_tickcount;
         }
 
-        public void Draw(Boolean debug)
+        public void Draw(bool debug)
         {
             if (EnvironmentColor.IsActive == false && Assertions.NoBackLayer == false) Stage.Draw(BackgroundLayer.Back);
 
-            if (EnvironmentColor.IsActive == true && EnvironmentColor.UnderFlag == true) EnvironmentColor.Draw();
+            if (EnvironmentColor.IsActive && EnvironmentColor.UnderFlag) EnvironmentColor.Draw();
 
             if (Assertions.NoBarDisplay == false)
             {
@@ -308,7 +306,7 @@ namespace xnaMugen.Combat
 
             Entities.Draw(debug);
 
-            if (EnvironmentColor.IsActive == true && EnvironmentColor.UnderFlag == false) EnvironmentColor.Draw();
+            if (EnvironmentColor.IsActive && EnvironmentColor.UnderFlag == false) EnvironmentColor.Draw();
 
             if (EnvironmentColor.IsActive == false && Assertions.NoFrontLayer == false) Stage.Draw(BackgroundLayer.Front);
 
@@ -318,14 +316,14 @@ namespace xnaMugen.Combat
             Team2.Display.ComboCounter.Draw();
         }
 
-        public void Print(Drawing.PrintData printdata, Vector2 location, String text, Rectangle? scissorrect)
+        public void Print(Drawing.PrintData printdata, Vector2 location, string text, Rectangle? scissorrect)
         {
-            if (text == null) throw new ArgumentNullException("text");
+            if (text == null) throw new ArgumentNullException(nameof(text));
 
             m_fontmap.Print(printdata, location, text, scissorrect);
         }
 
-        public Boolean IsMatchOver()
+        public bool IsMatchOver()
         {
             return m_logic is Logic.ShowWinPose && m_logic.TickCount >= 0 && (Team1.Wins.Count >= RoundInformation.NumberOfRounds || Team2.Wins.Count >= RoundInformation.NumberOfRounds);
         }
@@ -340,133 +338,66 @@ namespace xnaMugen.Combat
         //    get { return m_commonsounds; }
         //}
 
-        public Drawing.SpriteManager FightSprites
-        {
-            get { return m_fightsprites; }
-        }
+        public Drawing.SpriteManager FightSprites => m_fightsprites;
 
-        public Drawing.SpriteManager FxSprites
-        {
-            get { return m_fxsprites; }
-        }
+        public Drawing.SpriteManager FxSprites => m_fxsprites;
 
-        public Animations.AnimationManager FightAnimations
-        {
-            get { return m_fightanimations; }
-        }
+        public Animations.AnimationManager FightAnimations => m_fightanimations;
 
-        public Animations.AnimationManager FxAnimations
-        {
-            get { return m_fxanimations; }
-        }
+        public Animations.AnimationManager FxAnimations => m_fxanimations;
 
-        public Drawing.FontMap Fonts
-        {
-            get { return m_fontmap; }
-        }
+        public Drawing.FontMap Fonts => m_fontmap;
 
-        public Stage Stage
-        {
-            get { return m_stage; }
-        }
+        public Stage Stage => m_stage;
 
-        public RoundState RoundState
-        {
-            get
-            {
-                return (m_logic == null) ? RoundState.None : m_logic.State;
-                //return m_state.State;
-            }
-        }
+        public RoundState RoundState => m_logic == null ? RoundState.None : m_logic.State;
 
-        public Int32 RoundNumber
+        public int RoundNumber
         {
-            get { return m_roundnumber; }
+            get => m_roundnumber;
 
             set { m_roundnumber = value; }
         }
 
-        public EntityCollection Entities
-        {
-            get { return m_entities; }
-        }
+        public EntityCollection Entities => m_entities;
 
-        public Int32 TickCount
-        {
-            get { return m_tickcount; }
-        }
+        public int TickCount => m_tickcount;
 
-        public Pause Pause
-        {
-            get { return m_pause; }
-        }
+        public Pause Pause => m_pause;
 
-        public Pause SuperPause
-        {
-            get { return m_superpause; }
-        }
+        public Pause SuperPause => m_superpause;
 
-        public EngineAssertions Assertions
-        {
-            get { return m_asserts; }
-        }
+        public EngineAssertions Assertions => m_asserts;
 
-        public Camera Camera
-        {
-            get { return m_camera; }
-        }
+        public Camera Camera => m_camera;
 
-        public EnvironmentColor EnvironmentColor
-        {
-            get { return m_envcolor; }
-        }
+        public EnvironmentColor EnvironmentColor => m_envcolor;
 
-        public RoundInformation RoundInformation
-        {
-            get { return m_roundinfo; }
-        }
+        public RoundInformation RoundInformation => m_roundinfo;
 
-        public Team Team1
-        {
-            get { return m_team1; }
-        }
+        public Team Team1 => m_team1;
 
-        public Team Team2
-        {
-            get { return m_team2; }
-        }
+        public Team Team2 => m_team2;
 
-        public EnvironmentShake EnvironmentShake
-        {
-            get { return m_envshake; }
-        }
+        public EnvironmentShake EnvironmentShake => m_envshake;
 
         public GameSpeed Speed
         {
-            get { return m_speed; }
+            get => m_speed;
 
             set { m_speed = value; }
         }
 
-        public Elements.Collection Elements
-        {
-            get { return m_elements; }
-        }
+        public Elements.Collection Elements => m_elements;
 
-		public Clock Clock
-		{
-			get { return m_clock; }
-		}
+        public Clock Clock => m_clock;
 
-		public EngineInitialization Initialization
-		{
-			get { return m_init; }
-		}
+        public EngineInitialization Initialization => m_init;
 
         #region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		EngineInitialization m_init;
+		private EngineInitialization m_init;
 
         //[DebuggerBrowsable(DebuggerBrowsableState.Never)]
         //readonly Audio.SoundManager m_fightsounds;
@@ -475,79 +406,79 @@ namespace xnaMugen.Combat
         //readonly Audio.SoundManager m_commonsounds;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        readonly Drawing.SpriteManager m_fightsprites;
+        private readonly Drawing.SpriteManager m_fightsprites;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        readonly Drawing.SpriteManager m_fxsprites;
+        private readonly Drawing.SpriteManager m_fxsprites;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        readonly Animations.AnimationManager m_fightanimations;
+        private readonly Animations.AnimationManager m_fightanimations;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        readonly Animations.AnimationManager m_fxanimations;
+        private readonly Animations.AnimationManager m_fxanimations;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        Stage m_stage;
+        private Stage m_stage;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        readonly EntityCollection m_entities;
+        private readonly EntityCollection m_entities;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        Int32 m_roundnumber;
+        private int m_roundnumber;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        Int32 m_idcounter;
+        private int m_idcounter;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        Int32 m_tickcount;
+        private int m_tickcount;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        readonly Pause m_pause;
+        private readonly Pause m_pause;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        readonly Pause m_superpause;
+        private readonly Pause m_superpause;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        readonly EngineAssertions m_asserts;
+        private readonly EngineAssertions m_asserts;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        readonly Camera m_camera;
+        private readonly Camera m_camera;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        readonly EnvironmentColor m_envcolor;
+        private readonly EnvironmentColor m_envcolor;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        readonly Drawing.FontMap m_fontmap;
+        private readonly Drawing.FontMap m_fontmap;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        readonly RoundInformation m_roundinfo;
+        private readonly RoundInformation m_roundinfo;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        readonly Team m_team1;
+        private readonly Team m_team1;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        readonly Team m_team2;
+        private readonly Team m_team2;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        readonly EnvironmentShake m_envshake;
+        private readonly EnvironmentShake m_envshake;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        readonly CombatChecker m_combatcheck;
+        private readonly CombatChecker m_combatcheck;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        GameSpeed m_speed;
+        private GameSpeed m_speed;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        Int32 m_slowspeedbuffer;
+        private int m_slowspeedbuffer;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        Logic.Base m_logic;
+        private Logic.Base m_logic;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        readonly Elements.Collection m_elements;
+        private readonly Elements.Collection m_elements;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Clock m_clock;
+		private readonly Clock m_clock;
 
         #endregion
     }

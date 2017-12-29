@@ -1,14 +1,11 @@
-using System;
-using Microsoft.Xna.Framework;
-
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("Pos")]
-	static class Pos
+	internal static class Pos
 	{
-		public static Single Evaluate(Object state, ref Boolean error, Axis axis)
+		public static float Evaluate(object state, ref bool error, Axis axis)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
@@ -18,8 +15,8 @@ namespace xnaMugen.Evaluation.Triggers
 			switch (axis)
 			{
 				case Axis.X:
-					Rectangle screenrect = character.Engine.Camera.ScreenBounds;
-					return character.CurrentLocation.X - screenrect.Left - (Mugen.ScreenSize.X / 2);
+					var screenrect = character.Engine.Camera.ScreenBounds;
+					return character.CurrentLocation.X - screenrect.Left - Mugen.ScreenSize.X / 2;
 
 				case Axis.Y:
 					return character.CurrentLocation.Y;
@@ -32,7 +29,7 @@ namespace xnaMugen.Evaluation.Triggers
 
 		public static Node Parse(ParseState parsestate)
 		{
-			Axis axis = parsestate.ConvertCurrentToken<Axis>();
+			var axis = parsestate.ConvertCurrentToken<Axis>();
 			if (axis == Axis.None) return null;
 
 			++parsestate.TokenIndex;

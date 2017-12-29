@@ -1,20 +1,19 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Collections.Generic;
-using System.Text;
 using System.IO;
 
 namespace xnaMugen.Replay
 {
-	class Recorder
+	internal class Recorder
 	{
 		public Recorder(Menus.CombatScreen screen)
 		{
-			if (screen == null) throw new ArgumentNullException("screen");
+			if (screen == null) throw new ArgumentNullException(nameof(screen));
 
 			m_screen = screen;
 			m_data = new LinkedList<RecordingData>();
-			m_input = new Int32[5];
+			m_input = new int[5];
 			m_isrecording = false;
 		}
 
@@ -28,29 +27,29 @@ namespace xnaMugen.Replay
 
 		public void SetInput(Input.InputState inputstate)
 		{
-			if (inputstate == null) throw new ArgumentNullException("inputstate");
+			if (inputstate == null) throw new ArgumentNullException(nameof(inputstate));
 
 			foreach (PlayerButton button in Enum.GetValues(typeof(PlayerButton)))
 			{
-				PlayerButton buttonindex = button;
+				var buttonindex = button;
 
-				inputstate[1].Add(buttonindex, x => RecieveInput((Int32)buttonindex, 1, x));
-				inputstate[2].Add(buttonindex, x => RecieveInput((Int32)buttonindex, 2, x));
-				inputstate[3].Add(buttonindex, x => RecieveInput((Int32)buttonindex, 3, x));
-				inputstate[4].Add(buttonindex, x => RecieveInput((Int32)buttonindex, 4, x));
+				inputstate[1].Add(buttonindex, x => RecieveInput((int)buttonindex, 1, x));
+				inputstate[2].Add(buttonindex, x => RecieveInput((int)buttonindex, 2, x));
+				inputstate[3].Add(buttonindex, x => RecieveInput((int)buttonindex, 3, x));
+				inputstate[4].Add(buttonindex, x => RecieveInput((int)buttonindex, 4, x));
 			}
 
 			foreach (SystemButton button in Enum.GetValues(typeof(SystemButton)))
 			{
-				SystemButton buttonindex = button;
+				var buttonindex = button;
 
-				inputstate[0].Add(buttonindex, x => RecieveInput((Int32)buttonindex, 0, x));
+				inputstate[0].Add(buttonindex, x => RecieveInput((int)buttonindex, 0, x));
 			}
 		}
 
 		public void Update()
 		{
-			RecordingData data = new RecordingData(m_input[0], m_input[1], m_input[2], m_input[3], m_input[4]);
+			var data = new RecordingData(m_input[0], m_input[1], m_input[2], m_input[3], m_input[4]);
 			m_data.AddLast(data);
 		}
 
@@ -65,9 +64,9 @@ namespace xnaMugen.Replay
 
 			IsRecording = false;
 
-			String filename = String.Format("xnaMugen Replay - {0:u}.txt", DateTime.Now).Replace(':', '-');
+			var filename = string.Format("xnaMugen Replay - {0:u}.txt", DateTime.Now).Replace(':', '-');
 
-			using (StreamWriter writer = new StreamWriter(filename))
+			using (var writer = new StreamWriter(filename))
 			{
 				writer.WriteLine("[xnaMugen Replay Header]");
 				writer.WriteLine("Version = 1");
@@ -84,9 +83,9 @@ namespace xnaMugen.Replay
 				writer.WriteLine();
 				writer.WriteLine("[xnaMugen Replay Data]");
 
-				foreach (RecordingData data in m_data)
+				foreach (var data in m_data)
 				{
-					writer.WriteLine("{0}, {1}, {2}, {3}, {4}", (Int32)data.SystemInput, (Int32)data.Player1Input, (Int32)data.Player2Input, (Int32)data.Player3Input, (Int32)data.Player4Input);
+					writer.WriteLine("{0}, {1}, {2}, {3}, {4}", (int)data.SystemInput, (int)data.Player1Input, (int)data.Player2Input, (int)data.Player3Input, (int)data.Player4Input);
 				}
 			}
 
@@ -94,7 +93,7 @@ namespace xnaMugen.Replay
 			m_input.Initialize();
 		}
 
-		void RecieveInput(Int32 buttonindex, Int32 playerindex, Boolean pressed)
+		private void RecieveInput(int buttonindex, int playerindex, bool pressed)
 		{
 			if (pressed)
 			{
@@ -106,9 +105,9 @@ namespace xnaMugen.Replay
 			}
 		}
 
-		public Boolean IsRecording
+		public bool IsRecording
 		{
-			get { return m_isrecording; }
+			get => m_isrecording;
 
 			private set { m_isrecording = value; }
 		}
@@ -116,19 +115,19 @@ namespace xnaMugen.Replay
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Menus.CombatScreen m_screen;
+		private readonly Menus.CombatScreen m_screen;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly LinkedList<RecordingData> m_data;
+		private readonly LinkedList<RecordingData> m_data;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Int32[] m_input;
+		private readonly int[] m_input;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Combat.EngineInitialization m_initsettings;
+		private Combat.EngineInitialization m_initsettings;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Boolean m_isrecording;
+		private bool m_isrecording;
 
 		#endregion
 	}

@@ -1,21 +1,20 @@
 using System;
-using System.Collections.Generic;
 
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("NumEnemy")]
-	static class NumEnemy
+	internal static class NumEnemy
 	{
-		public static Int32 Evaluate(Object state, ref Boolean error)
+		public static int Evaluate(object state, ref bool error)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
 				return 0;
 			}
 
-			Int32 count = 0;
+			var count = 0;
 			Action<Combat.Player> func = player =>
 			{
 				if (player != null && character.FilterEntityAsCharacter(player, AffectTeam.Enemy) != null) ++count;

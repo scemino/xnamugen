@@ -3,16 +3,16 @@ using System;
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("Floor")]
-	static class Floor
+	internal static class Floor
 	{
-		public static Int32 Evaluate(Object state, ref Boolean error, Int32 value)
+		public static int Evaluate(object state, ref bool error, int value)
 		{
 			return value;
 		}
 
-		public static Int32 Evaluate(Object state, ref Boolean error, Single value)
+		public static int Evaluate(object state, ref bool error, float value)
 		{
-			return (Int32)Math.Floor(value);
+			return (int)Math.Floor(value);
 		}
 
 		public static Node Parse(ParseState state)

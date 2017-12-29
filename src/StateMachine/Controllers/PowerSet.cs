@@ -1,13 +1,12 @@
-using System;
 using System.Diagnostics;
 using xnaMugen.IO;
 
 namespace xnaMugen.StateMachine.Controllers
 {
 	[StateControllerName("PowerSet")]
-	class PowerSet : StateController
+	internal class PowerSet : StateController
 	{
-		public PowerSet(StateSystem statesystem, String label, TextSection textsection)
+		public PowerSet(StateSystem statesystem, string label, TextSection textsection)
 			: base(statesystem, label, textsection)
 		{
 			m_power = textsection.GetAttribute<Evaluation.Expression>("value", null);
@@ -15,12 +14,12 @@ namespace xnaMugen.StateMachine.Controllers
 
 		public override void Run(Combat.Character character)
 		{
-			Int32? power = EvaluationHelper.AsInt32(character, Power, null);
+			var power = EvaluationHelper.AsInt32(character, Power, null);
 
 			if (power != null) character.BasePlayer.Power = power.Value;
 		}
 
-		public override Boolean IsValid()
+		public override bool IsValid()
 		{
 			if (base.IsValid() == false) return false;
 
@@ -29,15 +28,12 @@ namespace xnaMugen.StateMachine.Controllers
 			return true;
 		}
 
-		public Evaluation.Expression Power
-		{
-			get { return m_power; }
-		}
+		public Evaluation.Expression Power => m_power;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_power;
+		private readonly Evaluation.Expression m_power;
 
 		#endregion
 	}

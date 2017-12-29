@@ -1,54 +1,52 @@
-﻿using System;
-
-namespace xnaMugen.Evaluation
+﻿namespace xnaMugen.Evaluation
 {
-	static class SpecialFunctions
+	internal static class SpecialFunctions
 	{
-		public static Int32 Assignment_Var(Object state, Int32 index, Int32 value)
+		public static int Assignment_Var(object state, int index, int value)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null) throw new EvaluationException();
 
-			if (character.Variables.SetInteger(index, false, value) == true) return value;
+			if (character.Variables.SetInteger(index, false, value)) return value;
 
 			throw new EvaluationException();
 		}
 
-		public static Single Assignment_FVar(Object state, Int32 index, Single value)
+		public static float Assignment_FVar(object state, int index, float value)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null) throw new EvaluationException();
 
-			if (character.Variables.SetFloat(index, false, value) == true) return value;
+			if (character.Variables.SetFloat(index, false, value)) return value;
 
 			throw new EvaluationException();
 		}
 
-		public static Int32 Assignment_SysVar(Object state, Int32 index, Int32 value)
+		public static int Assignment_SysVar(object state, int index, int value)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null) throw new EvaluationException();
 
-			if (character.Variables.SetInteger(index, true, value) == true) return value;
+			if (character.Variables.SetInteger(index, true, value)) return value;
 
 			throw new EvaluationException();
 		}
 
-		public static Single Assignment_SysFVar(Object state, Int32 index, Single value)
+		public static float Assignment_SysFVar(object state, int index, float value)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null) throw new EvaluationException();
 
-			if (character.Variables.SetFloat(index, true, value) == true) return value;
+			if (character.Variables.SetFloat(index, true, value)) return value;
 
 			throw new EvaluationException();
 		}
 
-		public static Boolean Range(Int32 lhs, Int32 rhs1, Int32 rhs2, Operator optype, Symbol pretype, Symbol posttype)
+		public static bool Range(int lhs, int rhs1, int rhs2, Operator optype, Symbol pretype, Symbol posttype)
 		{
 			if (optype != Operator.Equals && optype != Operator.NotEquals) throw new EvaluationException();
 
-			Boolean pre, post;
+			bool pre, post;
 
 			switch (pretype)
 			{
@@ -76,14 +74,14 @@ namespace xnaMugen.Evaluation
 					throw new EvaluationException();
 			}
 
-			return (optype == Operator.Equals) ? (pre && post) : !(pre && post);
+			return optype == Operator.Equals ? pre && post : !(pre && post);
 		}
 
-		public static Boolean Range(Single lhs, Single rhs1, Single rhs2, Operator optype, Symbol pretype, Symbol posttype)
+		public static bool Range(float lhs, float rhs1, float rhs2, Operator optype, Symbol pretype, Symbol posttype)
 		{
 			if (optype != Operator.Equals && optype != Operator.NotEquals) throw new EvaluationException();
 
-			Boolean pre, post;
+			bool pre, post;
 
 			switch (pretype)
 			{
@@ -111,10 +109,10 @@ namespace xnaMugen.Evaluation
 					throw new EvaluationException();
 			}
 
-			return (optype == Operator.Equals) ? (pre && post) : !(pre && post);
+			return optype == Operator.Equals ? pre && post : !(pre && post);
 		}
 
-		public static Boolean LogicalOperation(Operator @operator, Int32 lhs, Int32 rhs)
+		public static bool LogicalOperation(Operator @operator, int lhs, int rhs)
 		{
 			switch (@operator)
 			{
@@ -141,7 +139,7 @@ namespace xnaMugen.Evaluation
 			}
 		}
 
-		public static Boolean LogicalOperation(Operator @operator, Single lhs, Single rhs)
+		public static bool LogicalOperation(Operator @operator, float lhs, float rhs)
 		{
 			switch (@operator)
 			{

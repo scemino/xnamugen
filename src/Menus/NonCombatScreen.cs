@@ -6,37 +6,37 @@ using Microsoft.Xna.Framework;
 
 namespace xnaMugen.Menus
 {
-	abstract class NonCombatScreen : Screen
+	internal abstract class NonCombatScreen : Screen
 	{
-		protected NonCombatScreen(MenuSystem menusystem, TextSection textsection, String spritepath, String animationpath, String soundpath)
+		protected NonCombatScreen(MenuSystem menusystem, TextSection textsection, string spritepath, string animationpath, string soundpath)
 			: base(menusystem)
 		{
-			if (textsection == null) throw new ArgumentNullException("textsection");
-			if (spritepath == null) throw new ArgumentNullException("spritepath");
-			if (animationpath == null) throw new ArgumentNullException("animationpath");
-			if (soundpath == null) throw new ArgumentNullException("soundpath");
+			if (textsection == null) throw new ArgumentNullException(nameof(textsection));
+			if (spritepath == null) throw new ArgumentNullException(nameof(spritepath));
+			if (animationpath == null) throw new ArgumentNullException(nameof(animationpath));
+			if (soundpath == null) throw new ArgumentNullException(nameof(soundpath));
 
 			//m_soundmanager = MenuSystem.GetSubSystem<Audio.SoundSystem>().CreateManager(soundpath);
 			m_spritemanager = MenuSystem.GetSubSystem<Drawing.SpriteSystem>().CreateManager(spritepath);
 			m_animationmanager = MenuSystem.GetSubSystem<Animations.AnimationSystem>().CreateManager(animationpath);
 			m_backgrounds = new Backgrounds.Collection(m_spritemanager.Clone(), m_animationmanager.Clone());
-			m_fadeintime = textsection.GetAttribute<Int32>("fadein.time");
-			m_fadeouttime = textsection.GetAttribute<Int32>("fadeout.time");
+			m_fadeintime = textsection.GetAttribute<int>("fadein.time");
+			m_fadeouttime = textsection.GetAttribute<int>("fadeout.time");
 
 			SpriteManager.LoadAllSprites();
 		}
 
-		public void LoadBackgrounds(String prefix, TextFile textfile)
+		public void LoadBackgrounds(string prefix, TextFile textfile)
 		{
-			if (prefix == null) throw new ArgumentNullException("prefix");
-			if (textfile == null) throw new ArgumentNullException("textfile");
+			if (prefix == null) throw new ArgumentNullException(nameof(prefix));
+			if (textfile == null) throw new ArgumentNullException(nameof(textfile));
 
-			Regex regex = new Regex("^" + prefix + "BG (.*)$", RegexOptions.IgnoreCase);
+			var regex = new Regex("^" + prefix + "BG (.*)$", RegexOptions.IgnoreCase);
 
-			foreach (TextSection section in textfile)
+			foreach (var section in textfile)
 			{
-				Match match = regex.Match(section.Title);
-				if (match.Success == true)
+				var match = regex.Match(section.Title);
+				if (match.Success)
 				{
 					m_backgrounds.CreateBackground(section);
 				}
@@ -59,66 +59,51 @@ namespace xnaMugen.Menus
 			Backgrounds.Update();
 		}
 
-		public override void Draw(Boolean debugdraw)
+		public override void Draw(bool debugdraw)
 		{
 			base.Draw(debugdraw);
 
-			Point shift = new Point(Mugen.ScreenSize.X / 2, 0);
+			var shift = new Point(Mugen.ScreenSize.X / 2, 0);
 
 			MenuSystem.GetSubSystem<Video.VideoSystem>().CameraShift += shift;
 			m_backgrounds.Draw();
 			MenuSystem.GetSubSystem<Video.VideoSystem>().CameraShift -= shift;
 		}
 
-		public Backgrounds.Collection Backgrounds
-		{
-			get { return m_backgrounds; }
-		}
+		public Backgrounds.Collection Backgrounds => m_backgrounds;
 
 		//public Audio.SoundManager SoundManager
 		//{
 		//	get { return m_soundmanager; }
 		//}
 
-		public Drawing.SpriteManager SpriteManager
-		{
-			get { return m_spritemanager; }
-		}
+		public Drawing.SpriteManager SpriteManager => m_spritemanager;
 
-		public Animations.AnimationManager AnimationManager
-		{
-			get { return m_animationmanager; }
-		}
+		public Animations.AnimationManager AnimationManager => m_animationmanager;
 
-		public override Int32 FadeInTime
-		{
-			get { return m_fadeintime; }
-		}
+		public override int FadeInTime => m_fadeintime;
 
-		public override Int32 FadeOutTime
-		{
-			get { return m_fadeouttime; }
-		}
+		public override int FadeOutTime => m_fadeouttime;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Backgrounds.Collection m_backgrounds;
+		private readonly Backgrounds.Collection m_backgrounds;
 
 		//[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		//readonly Audio.SoundManager m_soundmanager;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Drawing.SpriteManager m_spritemanager;
+		private readonly Drawing.SpriteManager m_spritemanager;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Animations.AnimationManager m_animationmanager;
+		private readonly Animations.AnimationManager m_animationmanager;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Int32 m_fadeintime;
+		private readonly int m_fadeintime;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Int32 m_fadeouttime;
+		private readonly int m_fadeouttime;
 
 		#endregion
 	}

@@ -1,13 +1,11 @@
-using System;
-
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("StateType")]
-	static class StateType
+	internal static class StateType
 	{
-		public static Boolean Evaluate(Object state, ref Boolean error, Operator @operator, xnaMugen.StateType statetype)
+		public static bool Evaluate(object state, ref bool error, Operator @operator, xnaMugen.StateType statetype)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
@@ -36,12 +34,12 @@ namespace xnaMugen.Evaluation.Triggers
 
 		public static Node Parse(ParseState parsestate)
 		{
-			Operator @operator = parsestate.CurrentOperator;
+			var @operator = parsestate.CurrentOperator;
 			if (@operator != Operator.Equals && @operator != Operator.NotEquals) return null;
 
 			++parsestate.TokenIndex;
 
-			xnaMugen.StateType statetype = parsestate.ConvertCurrentToken<xnaMugen.StateType>();
+			var statetype = parsestate.ConvertCurrentToken<xnaMugen.StateType>();
 			if (statetype == xnaMugen.StateType.Unchanged || statetype == xnaMugen.StateType.None) return null;
 
 			++parsestate.TokenIndex;

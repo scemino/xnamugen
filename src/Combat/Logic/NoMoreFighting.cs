@@ -1,8 +1,6 @@
-﻿using System;
-
-namespace xnaMugen.Combat.Logic
+﻿namespace xnaMugen.Combat.Logic
 {
-	class NoMoreFighting : Base
+	internal class NoMoreFighting : Base
 	{
 		public NoMoreFighting(FightEngine engine)
 			: base(engine, RoundState.Over)
@@ -14,7 +12,7 @@ namespace xnaMugen.Combat.Logic
 			return null;
 		}
 
-		public override Boolean IsFinished()
+		public override bool IsFinished()
 		{
 			return false;
 		}

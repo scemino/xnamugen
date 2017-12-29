@@ -1,13 +1,12 @@
-using System;
 using System.Diagnostics;
 using xnaMugen.IO;
 
 namespace xnaMugen.StateMachine.Controllers
 {
 	[StateControllerName("TargetLifeAdd")]
-	class TargetLifeAdd : StateController
+	internal class TargetLifeAdd : StateController
 	{
-		public TargetLifeAdd(StateSystem statesystem, String label, TextSection textsection)
+		public TargetLifeAdd(StateSystem statesystem, string label, TextSection textsection)
 			: base(statesystem, label, textsection)
 		{
 			m_life = textsection.GetAttribute<Evaluation.Expression>("value", null);
@@ -18,21 +17,21 @@ namespace xnaMugen.StateMachine.Controllers
 
 		public override void Run(Combat.Character character)
 		{
-			Int32? amount = EvaluationHelper.AsInt32(character, Amount, null);
-			Int32 target_id = EvaluationHelper.AsInt32(character, TargetId, Int32.MinValue);
-			Boolean cankill = EvaluationHelper.AsBoolean(character, CanKill, true);
-			Boolean absolute = EvaluationHelper.AsBoolean(character, Absolute, false);
+			var amount = EvaluationHelper.AsInt32(character, Amount, null);
+			var targetId = EvaluationHelper.AsInt32(character, TargetId, int.MinValue);
+			var cankill = EvaluationHelper.AsBoolean(character, CanKill, true);
+			var absolute = EvaluationHelper.AsBoolean(character, Absolute, false);
 
 			if (amount == null) return;
 
-			foreach (Combat.Character target in character.GetTargets(target_id))
+			foreach (var target in character.GetTargets(targetId))
 			{
-				Int32 newamount = amount.Value;
+				var newamount = amount.Value;
 
 				if (absolute == false && newamount < 0)
 				{
-					newamount = (Int32)(newamount * character.OffensiveInfo.AttackMultiplier);
-					newamount = (Int32)(newamount / target.DefensiveInfo.DefenseMultiplier);
+					newamount = (int)(newamount * character.OffensiveInfo.AttackMultiplier);
+					newamount = (int)(newamount / target.DefensiveInfo.DefenseMultiplier);
 				}
 
 				target.Life += newamount;
@@ -40,7 +39,7 @@ namespace xnaMugen.StateMachine.Controllers
 			}
 		}
 
-		public override Boolean IsValid()
+		public override bool IsValid()
 		{
 			if (base.IsValid() == false) return false;
 
@@ -49,39 +48,27 @@ namespace xnaMugen.StateMachine.Controllers
 			return true;
 		}
 
-		public Evaluation.Expression Amount
-		{
-			get { return m_life; }
-		}
+		public Evaluation.Expression Amount => m_life;
 
-		public Evaluation.Expression TargetId
-		{
-			get { return m_targetid; }
-		}
+		public Evaluation.Expression TargetId => m_targetid;
 
-		public Evaluation.Expression CanKill
-		{
-			get { return m_kill; }
-		}
+		public Evaluation.Expression CanKill => m_kill;
 
-		public Evaluation.Expression Absolute
-		{
-			get { return m_abs; }
-		}
+		public Evaluation.Expression Absolute => m_abs;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_life;
+		private readonly Evaluation.Expression m_life;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_targetid;
+		private readonly Evaluation.Expression m_targetid;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_kill;
+		private readonly Evaluation.Expression m_kill;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_abs;
+		private readonly Evaluation.Expression m_abs;
 
 		#endregion
 	}

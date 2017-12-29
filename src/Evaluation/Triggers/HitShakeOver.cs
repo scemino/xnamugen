@@ -1,13 +1,11 @@
-using System;
-
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("HitShakeOver")]
-	static class HitShakeOver
+	internal static class HitShakeOver
 	{
-		public static Boolean Evaluate(Object state, ref Boolean error)
+		public static bool Evaluate(object state, ref bool error)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;

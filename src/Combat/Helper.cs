@@ -1,27 +1,22 @@
 ﻿using System;
 using System.Diagnostics;
-using xnaMugen.IO;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using xnaMugen.Collections;
-using System.Collections.Generic;
-using System.Text;
 
 namespace xnaMugen.Combat
 {
 	[DebuggerDisplay("Helper - #{Data.HelperId} - {Data.Name}")]
-	class Helper : Character
+	internal class Helper : Character
 	{
 		public Helper(FightEngine engine, Character parent, HelperData data)
 			: base(engine)
 		{
-			if (parent == null) throw new ArgumentNullException("parent");
-			if (data == null) throw new ArgumentNullException("data");
+			if (parent == null) throw new ArgumentNullException(nameof(parent));
+			if (data == null) throw new ArgumentNullException(nameof(data));
 
 			m_parent = parent;
 			m_baseplayer = m_parent.BasePlayer;
 			m_team = m_baseplayer.Team;
-			m_offsetcharacter = (data.PositionType == PositionType.P2) ? parent.GetOpponent() : parent;
+			m_offsetcharacter = data.PositionType == PositionType.P2 ? parent.GetOpponent() : parent;
 			m_remove = false;
 			m_data = data;
 			m_firsttick = true;
@@ -31,7 +26,7 @@ namespace xnaMugen.Combat
 			m_commandmanager = Parent.CommandManager.Clone();
 			//m_soundmanager = Parent.SoundManager.Clone();
 			m_dimensions = new CharacterDimensions(Data.GroundFront, Data.GroundBack, Data.AirFront, Data.AirBack, Data.Height);
-			m_palfx = (Data.OwnPaletteFx == true) ? new PaletteFx() : Parent.PaletteFx;
+			m_palfx = Data.OwnPaletteFx ? new PaletteFx() : Parent.PaletteFx;
 
 			CurrentPalette = Parent.CurrentPalette;
 			CurrentFacing = GetFacing(Data.PositionType, m_offsetcharacter.CurrentFacing, Data.FacingFlag < 0);
@@ -43,10 +38,10 @@ namespace xnaMugen.Combat
 			StateManager.ChangeState(Data.InitialStateNumber);
 		}
 
-		Vector2 GetStartLocation()
+		private Vector2 GetStartLocation()
 		{
-			Rectangle camerabounds = Engine.Camera.ScreenBounds;
-			Facing facing = m_offsetcharacter.CurrentFacing;
+			var camerabounds = Engine.Camera.ScreenBounds;
+			var facing = m_offsetcharacter.CurrentFacing;
 			Vector2 location;
 
 			switch (Data.PositionType)
@@ -63,12 +58,12 @@ namespace xnaMugen.Combat
 
 				case PositionType.Back:
 					location = Misc.GetOffset(new Vector2(0, 0), facing, Data.CreationOffset);
-					location.X += (facing == Facing.Right) ? camerabounds.Left : camerabounds.Right;
+					location.X += facing == Facing.Right ? camerabounds.Left : camerabounds.Right;
 					return location;
 
 				case PositionType.Front:
 					location = Misc.GetOffset(new Vector2(0, 0), m_offsetcharacter.CurrentFacing, Data.CreationOffset);
-					location.X += (facing == Facing.Left) ? camerabounds.Left : camerabounds.Right;
+					location.X += facing == Facing.Left ? camerabounds.Left : camerabounds.Right;
 					return location;
 
 				default:
@@ -78,7 +73,7 @@ namespace xnaMugen.Combat
 
 		public override void UpdateState()
 		{
-			if (m_firsttick == true)
+			if (m_firsttick)
 			{
 				m_firsttick = false;
 
@@ -90,25 +85,25 @@ namespace xnaMugen.Combat
 
 		public override void UpdateInput()
 		{
-			if (Data.KeyControl == true)
+			if (Data.KeyControl)
 			{
 				base.UpdateInput();
 			}
 		}
 
-		public override void RecieveInput(PlayerButton button, Boolean pressed)
+		public override void RecieveInput(PlayerButton button, bool pressed)
 		{
-			if (Data.KeyControl == true)
+			if (Data.KeyControl)
 			{
 				base.RecieveInput(button, pressed);
 			}
 		}
 
-		public override Boolean IsPaused(Pause pause)
+		public override bool IsPaused(Pause pause)
 		{
 			if (base.IsPaused(pause) == false) return false;
 
-			if (pause.IsSuperPause == true)
+			if (pause.IsSuperPause)
 			{
 				if (pause.ElapsedTime <= Data.SuperPauseTime) return false;
 			}
@@ -120,7 +115,7 @@ namespace xnaMugen.Combat
 			return true;
 		}
 
-		static Facing GetFacing(PositionType ptype, Facing characterfacing, Boolean facingflag)
+		private static Facing GetFacing(PositionType ptype, Facing characterfacing, bool facingflag)
 		{
 			switch (ptype)
 			{
@@ -128,15 +123,14 @@ namespace xnaMugen.Combat
 				case PositionType.Front:
 				case PositionType.Back:
 				case PositionType.P2:
-					return (facingflag == true) ? Misc.FlipFacing(characterfacing) : characterfacing;
+					return facingflag ? Misc.FlipFacing(characterfacing) : characterfacing;
 
 				case PositionType.Left:
 				case PositionType.Right:
-					return (facingflag == true) ? Facing.Left : Facing.Right;
+					return facingflag ? Facing.Left : Facing.Right;
 
-				case PositionType.None:
 				default:
-					throw new ArgumentNullException("ptype");
+					throw new ArgumentNullException(nameof(ptype));
 			}
 		}
 
@@ -146,7 +140,7 @@ namespace xnaMugen.Combat
 			Engine.Entities.Remove(this);
 		}
 
-		public override Boolean RemoveCheck()
+		public override bool RemoveCheck()
 		{
 			return m_remove;
 		}
@@ -159,104 +153,74 @@ namespace xnaMugen.Combat
 			}
 		}
 
-		public Character Parent
-		{
-			get { return m_parent; }
-		}
+		public Character Parent => m_parent;
 
-		public override Drawing.SpriteManager SpriteManager
-		{
-			get { return m_spritemanager; }
-		}
+		public override Drawing.SpriteManager SpriteManager => m_spritemanager;
 
-		public override Animations.AnimationManager AnimationManager
-		{
-			get { return m_animationmanager; }
-		}
+		public override Animations.AnimationManager AnimationManager => m_animationmanager;
 
 		//public override Audio.SoundManager SoundManager
 		//{
 		//	get { return m_soundmanager; }
 		//}
 
-		public override Commands.CommandManager CommandManager
-		{
-			get { return m_commandmanager; }
-		}
+		public override Commands.CommandManager CommandManager => m_commandmanager;
 
-		public override StateMachine.StateManager StateManager
-		{
-			get { return m_statemanager; }
-		}
+		public override StateMachine.StateManager StateManager => m_statemanager;
 
-		public override CharacterDimensions Dimensions
-		{
-			get { return m_dimensions; }
-		}
+		public override CharacterDimensions Dimensions => m_dimensions;
 
-		public HelperData Data
-		{
-			get { return m_data; }
-		}
+		public HelperData Data => m_data;
 
-		public override PaletteFx PaletteFx
-		{
-			get { return m_palfx; }
-		}
+		public override PaletteFx PaletteFx => m_palfx;
 
-		public override Team Team
-		{
-			get { return m_team; }
-		}
+		public override Team Team => m_team;
 
-		public override Player BasePlayer
-		{
-			get { return m_baseplayer; }
-		}
+		public override Player BasePlayer => m_baseplayer;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Character m_parent;
+		private readonly Character m_parent;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Player m_baseplayer;
+		private readonly Player m_baseplayer;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Team m_team;
+		private readonly Team m_team;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Character m_offsetcharacter;
+		private readonly Character m_offsetcharacter;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Drawing.SpriteManager m_spritemanager;
+		private readonly Drawing.SpriteManager m_spritemanager;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Animations.AnimationManager m_animationmanager;
+		private readonly Animations.AnimationManager m_animationmanager;
 
 		//[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		//readonly Audio.SoundManager m_soundmanager;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Commands.CommandManager m_commandmanager;
+		private readonly Commands.CommandManager m_commandmanager;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly CharacterDimensions m_dimensions;
+		private readonly CharacterDimensions m_dimensions;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly StateMachine.StateManager m_statemanager;
+		private readonly StateMachine.StateManager m_statemanager;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Boolean m_remove;
+		private bool m_remove;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly HelperData m_data;
+		private readonly HelperData m_data;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly PaletteFx m_palfx;
+		private readonly PaletteFx m_palfx;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Boolean m_firsttick;
+		private bool m_firsttick;
 
 		#endregion
 	}

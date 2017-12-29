@@ -4,15 +4,13 @@ using System.Collections.Generic;
 using xnaMugen.Collections;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using xnaMugen.IO;
-using System.Text.RegularExpressions;
 
 namespace xnaMugen.Animations
 {
 	/// <summary>
 	/// Defines a single element of an Animation.
 	/// </summary>
-	class AnimationElement
+	internal class AnimationElement
 	{
 		/// <summary>
 		/// Initializes a new instance of this class.
@@ -24,13 +22,13 @@ namespace xnaMugen.Animations
 		/// <param name="offset">The offset, in pixels, used to draw this element.</param>
 		/// <param name="flip">The drawing orientation of this element.</param>
 		/// <param name="blending">Alpha blending to be used while drawing this element.</param>
-		public AnimationElement(Int32 id, List<Clsn> clsns, Int32 ticks, Int32 starttick, SpriteId spriteid, Point offset, SpriteEffects flip, Blending blending)
+		public AnimationElement(int id, List<Clsn> clsns, int ticks, int starttick, SpriteId spriteid, Point offset, SpriteEffects flip, Blending blending)
 		{
-			if (id < 0) throw new ArgumentOutOfRangeException("id");
-			if (clsns == null) throw new ArgumentNullException("clsns");
-			if (ticks < -1) throw new ArgumentOutOfRangeException("ticks");
-			if (starttick < 0) throw new ArgumentOutOfRangeException("starttick");
-			if (blending == null) throw new ArgumentNullException("blending");
+			if (id < 0) throw new ArgumentOutOfRangeException(nameof(id));
+			if (clsns == null) throw new ArgumentNullException(nameof(clsns));
+			if (ticks < -1) throw new ArgumentOutOfRangeException(nameof(ticks));
+			if (starttick < 0) throw new ArgumentOutOfRangeException(nameof(starttick));
+			if (blending == null) throw new ArgumentNullException(nameof(blending));
 
 			m_id = id;
 			m_clsns = clsns;
@@ -55,7 +53,7 @@ namespace xnaMugen.Animations
 		/// Returns a string representation of this object.
 		/// </summary>
 		/// <returns>A string representation of this object.</returns>
-		public override String ToString()
+		public override string ToString()
 		{
 			return "Element #" + Id.ToString();
 		}
@@ -64,95 +62,71 @@ namespace xnaMugen.Animations
 		/// Returns an iterator for iterating through the collision boxes of this element.
 		/// </summary>
 		/// <returns>An iterator for iterating through the collision boxes of this element.</returns>
-		public ListIterator<Clsn> Clsns
-		{
-			get { return new ListIterator<Clsn>(m_clsns); }
-		}
+		public ListIterator<Clsn> Clsns => new ListIterator<Clsn>(m_clsns);
 
 		/// <summary>
 		/// Returns the index of this element in its containing Animation.
 		/// </summary>
 		/// <returns>The index of this element in its containing Animation.</returns>
-		public Int32 Id
-		{
-			get { return m_id; }
-		}
+		public int Id => m_id;
 
 		/// <summary>
 		/// Returns the time, in gameticks, that is element if drawn.
 		/// </summary>
 		/// <returns>The time, in gameticks, that is element if drawn.</returns>
-		public Int32 Gameticks
-		{
-			get { return m_gameticks; }
-		}
+		public int Gameticks => m_gameticks;
 
 		/// <summary>
 		/// Returns the SpriteId identifing the xnaMugen.Drawing.Sprite to be drawn for this element.
 		/// </summary>
 		/// <returns>The SpriteId identifing the xnaMugen.Drawing.Sprite to be drawn for this element.</returns>
-		public SpriteId SpriteId
-		{
-			get { return m_spriteid; }
-		}
+		public SpriteId SpriteId => m_spriteid;
 
 		/// <summary>
 		/// Returns the drawing offset of this element.
 		/// </summary>
 		/// <returns>The drawing offset of this element.</returns>
-		public Vector2 Offset
-		{
-			get { return m_offset; }
-		}
+		public Vector2 Offset => m_offset;
 
 		/// <summary>
 		/// Returns the drawing orientation of this element.
 		/// </summary>
 		/// <returns>The drawing orientation of this element.</returns>
-		public SpriteEffects Flip
-		{
-			get { return m_flip; }
-		}
+		public SpriteEffects Flip => m_flip;
 
 		/// <summary>
 		/// Returns the alpha blending used for drawing this element.
 		/// </summary>
 		/// <returns>The alpha blending used for drawing this element.</returns>
-		public Blending Blending
-		{
-			get { return m_blending; }
-		}
+		public Blending Blending => m_blending;
 
-		public Int32 StartTick
-		{
-			get { return m_starttick; }
-		}
+		public int StartTick => m_starttick;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Int32 m_id;
+		private readonly int m_id;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly List<Clsn> m_clsns;
+		private readonly List<Clsn> m_clsns;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Int32 m_gameticks;
+		private readonly int m_gameticks;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Vector2 m_offset;
+		private readonly Vector2 m_offset;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly SpriteId m_spriteid;
+		private readonly SpriteId m_spriteid;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly SpriteEffects m_flip;
+		private readonly SpriteEffects m_flip;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Blending m_blending;
+		private readonly Blending m_blending;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Int32 m_starttick;
+		private readonly int m_starttick;
 
 		#endregion
 	}

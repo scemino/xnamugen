@@ -1,10 +1,9 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Collections.Generic;
 
 namespace xnaMugen.Evaluation
 {
-	class Node
+	internal class Node
 	{
 		static Node()
 		{
@@ -17,68 +16,53 @@ namespace xnaMugen.Evaluation
 		{
 			m_token = token;
 			m_children = new List<Node>();
-			m_arguments = new List<Object>();
+			m_arguments = new List<object>();
 		}
 
-		public override String ToString()
+		public override string ToString()
 		{
 			return m_token.ToString();
 		}
 
-		public Token Token
-		{
-			get { return m_token; }
-		}
+		public Token Token => m_token;
 
-		public List<Node> Children
-		{
-			get { return m_children; }
-		}
+		public List<Node> Children => m_children;
 
-		public List<Object> Arguments
-		{
-			get { return m_arguments; }
-		}
+		public List<object> Arguments => m_arguments;
 
-		public Boolean PrecedenceOverride
+		public bool PrecedenceOverride
 		{
-			get { return m_precedenceoverride; }
+			get => m_precedenceoverride;
 
 			set { m_precedenceoverride = value; }
 		}
 
-		public static Node ZeroNode
-		{
-			get { return s_zeronode; }
-		}
+		public static Node ZeroNode => s_zeronode;
 
-		public static Node NegativeOneNode
-		{
-			get { return s_negativeonenode; }
-		}
+		public static Node NegativeOneNode => s_negativeonenode;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Token m_token;
+		private readonly Token m_token;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly List<Node> m_children;
+		private readonly List<Node> m_children;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly List<Object> m_arguments;
+		private readonly List<object> m_arguments;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Boolean m_precedenceoverride;
+		private bool m_precedenceoverride;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly static Node s_emptynode;
+		private static readonly Node s_emptynode;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly static Node s_zeronode;
+		private static readonly Node s_zeronode;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly static Node s_negativeonenode;
+		private static readonly Node s_negativeonenode;
 
 		#endregion
 	}

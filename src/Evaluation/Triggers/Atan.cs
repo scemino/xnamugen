@@ -3,11 +3,11 @@ using System;
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("Atan")]
-	static class Atan
+	internal static class Atan
 	{
-		public static Single Evaluate(Object state, ref Boolean error, Single value)
+		public static float Evaluate(object state, ref bool error, float value)
 		{
-			return (Single)Math.Atan(value);
+			return (float)Math.Atan(value);
 		}
 
 		public static Node Parse(ParseState state)

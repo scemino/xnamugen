@@ -4,15 +4,15 @@ using System.Diagnostics;
 
 namespace xnaMugen.Collections
 {
-	[DebuggerDisplay("Count = {Count}")]
+	[DebuggerDisplay("Count = {" + nameof(Count) + "}")]
 	[DebuggerTypeProxy(typeof(ReadOnlyDictionary<,>.DebuggerProxy))]
-	class ReadOnlyDictionary<T, U> : IDictionary<T, U>
+	internal class ReadOnlyDictionary<T, U> : IDictionary<T, U>
 	{
-		class DebuggerProxy
+		private class DebuggerProxy
 		{
 			public DebuggerProxy(ReadOnlyDictionary<T, U> dictionary)
 			{
-				if (dictionary == null) throw new ArgumentNullException("dictionary");
+				if (dictionary == null) throw new ArgumentNullException(nameof(dictionary));
 
 				m_dictionary = dictionary;
 			}
@@ -24,7 +24,7 @@ namespace xnaMugen.Collections
 				{
 					var array = new KeyValuePair<T, U>[m_dictionary.Count];
 
-					Int32 index = 0;
+					var index = 0;
 					foreach (var kvp in m_dictionary)
 					{
 						array[index] = kvp;
@@ -38,7 +38,7 @@ namespace xnaMugen.Collections
 			#region Fields
 
 			[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-			readonly ReadOnlyDictionary<T, U> m_dictionary;
+			private readonly ReadOnlyDictionary<T, U> m_dictionary;
 
 			#endregion
 		}
@@ -46,7 +46,7 @@ namespace xnaMugen.Collections
 		[DebuggerStepThrough]
 		public ReadOnlyDictionary(Dictionary<T, U> dictionary)
 		{
-			if (dictionary == null) throw new ArgumentNullException("dictionary");
+			if (dictionary == null) throw new ArgumentNullException(nameof(dictionary));
 
 			m_dictionary = dictionary;
 		}
@@ -72,36 +72,30 @@ namespace xnaMugen.Collections
 		}
 
 		[DebuggerStepThrough]
-		public Boolean ContainsKey(T key)
+		public bool ContainsKey(T key)
 		{
 			return m_dictionary.ContainsKey(key);
 		}
 
-		public ICollection<T> Keys
-		{
-			get { return m_dictionary.Keys; }
-		}
+		public ICollection<T> Keys => m_dictionary.Keys;
 
 		[DebuggerStepThrough]
-		public Boolean Remove(T key)
+		public bool Remove(T key)
 		{
 			throw new NotImplementedException();
 		}
 
 		[DebuggerStepThrough]
-		public Boolean TryGetValue(T key, out U value)
+		public bool TryGetValue(T key, out U value)
 		{
 			return m_dictionary.TryGetValue(key, out value);
 		}
 
-		public ICollection<U> Values
-		{
-			get { return m_dictionary.Values; }
-		}
+		public ICollection<U> Values => m_dictionary.Values;
 
 		public U this[T key]
 		{
-			get { return m_dictionary[key]; }
+			get => m_dictionary[key];
 
 			set { throw new NotImplementedException(); }
 		}
@@ -129,23 +123,17 @@ namespace xnaMugen.Collections
 		}
 
 		[DebuggerStepThrough]
-		public void CopyTo(KeyValuePair<T, U>[] array, Int32 arrayIndex)
+		public void CopyTo(KeyValuePair<T, U>[] array, int arrayIndex)
 		{
 			throw new NotImplementedException();
 		}
 
-		public Int32 Count
-		{
-			get { return m_dictionary.Count; }
-		}
+		public int Count => m_dictionary.Count;
 
-		public Boolean IsReadOnly
-		{
-			get { return true; }
-		}
+		public bool IsReadOnly => true;
 
 		[DebuggerStepThrough]
-		public Boolean Remove(KeyValuePair<T, U> item)
+		public bool Remove(KeyValuePair<T, U> item)
 		{
 			throw new NotImplementedException();
 		}
@@ -175,7 +163,7 @@ namespace xnaMugen.Collections
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Dictionary<T, U> m_dictionary;
+		private readonly Dictionary<T, U> m_dictionary;
 
 		#endregion
 	}

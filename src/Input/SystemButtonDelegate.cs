@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace xnaMugen.Input
+﻿namespace xnaMugen.Input
 {
-	delegate void SystemButtonDelegate(SystemButton button, Boolean pressed);
+	internal delegate void SystemButtonDelegate(SystemButton button, bool pressed);
 }

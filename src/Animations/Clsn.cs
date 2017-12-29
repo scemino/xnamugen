@@ -1,5 +1,4 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using Microsoft.Xna.Framework;
 
 namespace xnaMugen.Animations
@@ -7,7 +6,7 @@ namespace xnaMugen.Animations
 	/// <summary>
 	/// Defines a collision box for an AnimationElement.
 	/// </summary>
-	struct Clsn
+	internal struct Clsn
 	{
 		/// <summary>
 		/// Creates a new instance of this class.
@@ -29,13 +28,13 @@ namespace xnaMugen.Animations
 		/// <returns>The ingame dimension of the collision box.</returns>
 		public Rectangle MakeRect(Point location, Vector2 scale, Facing facing)
 		{
-			Int32 x1 = location.X + (Int32)(Rectangle.Left * scale.X);
-			Int32 x2 = location.X + (Int32)(Rectangle.Right * scale.X);
+			var x1 = location.X + (int)(Rectangle.Left * scale.X);
+			var x2 = location.X + (int)(Rectangle.Right * scale.X);
 
 			if (facing == Facing.Left)
 			{
-				x1 = location.X - (Int32)(Rectangle.Left * scale.X);
-				x2 = location.X - (Int32)(Rectangle.Right * scale.X);
+				x1 = location.X - (int)(Rectangle.Left * scale.X);
+				x2 = location.X - (int)(Rectangle.Right * scale.X);
 			}
 
 			if (x1 > x2)
@@ -43,10 +42,10 @@ namespace xnaMugen.Animations
 				Misc.Swap(ref x1, ref x2);
 			}
 
-			Int32 y1 = location.Y + (Int32)(Rectangle.Top * scale.Y);
-			Int32 y2 = location.Y + (Int32)(Rectangle.Bottom * scale.Y);
+			var y1 = location.Y + (int)(Rectangle.Top * scale.Y);
+			var y2 = location.Y + (int)(Rectangle.Bottom * scale.Y);
 
-			Rectangle rectangle = new Rectangle(x1, y1, x2 - x1, y2 - y1);
+			var rectangle = new Rectangle(x1, y1, x2 - x1, y2 - y1);
 			return rectangle;
 		}
 
@@ -66,7 +65,7 @@ namespace xnaMugen.Animations
 		/// Returns a string representation of this object.
 		/// </summary>
 		/// <returns>A string representation of this object.</returns>
-		public override String ToString()
+		public override string ToString()
 		{
 			return ClsnType.ToString() + " - " + Rectangle.ToString();
 		}
@@ -75,27 +74,21 @@ namespace xnaMugen.Animations
 		/// Gets the type of collision box.
 		/// </summary>
 		/// <returns>The type of collision box.</returns>
-		public ClsnType ClsnType
-		{
-			get { return m_clsntype; }
-		}
+		public ClsnType ClsnType => m_clsntype;
 
 		/// <summary>
 		/// Gets the dimensions of the collision box.
 		/// </summary>
 		/// <returns>The dimensions of the collision box.</returns>
-		public Rectangle Rectangle
-		{
-			get { return m_rect; }
-		}
+		public Rectangle Rectangle => m_rect;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly ClsnType m_clsntype;
+		private readonly ClsnType m_clsntype;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Rectangle m_rect;
+		private readonly Rectangle m_rect;
 
 		#endregion
 	}

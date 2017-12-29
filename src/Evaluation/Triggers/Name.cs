@@ -3,18 +3,18 @@ using System;
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("Name")]
-	static class Name
+	internal static class Name
 	{
-		public static Boolean Evaluate(Object state, ref Boolean error, Operator @operator, String text)
+		public static bool Evaluate(object state, ref bool error, Operator @operator, string text)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
 				return false;
 			}
 
-			String name = GetName(character);
+			var name = GetName(character);
 			if (name == null)
 			{
 				error = true;
@@ -24,10 +24,10 @@ namespace xnaMugen.Evaluation.Triggers
 			switch (@operator)
 			{
 				case Operator.Equals:
-					return String.Equals(name, text, StringComparison.OrdinalIgnoreCase);
+					return string.Equals(name, text, StringComparison.OrdinalIgnoreCase);
 
 				case Operator.NotEquals:
-					return !String.Equals(name, text, StringComparison.OrdinalIgnoreCase);
+					return !string.Equals(name, text, StringComparison.OrdinalIgnoreCase);
 
 				default:
 					error = true;
@@ -35,19 +35,19 @@ namespace xnaMugen.Evaluation.Triggers
 			}
 		}
 
-		static String GetName(Combat.Character character)
+		private static string GetName(Combat.Character character)
 		{
-			if (character == null) throw new ArgumentNullException("character");
+			if (character == null) throw new ArgumentNullException(nameof(character));
 
 			if (character is Combat.Player)
 			{
-				Combat.Player player = (Combat.Player)character;
+				var player = (Combat.Player)character;
 				return player.Profile.PlayerName;
 			}
 
 			if (character is Combat.Helper)
 			{
-				Combat.Helper helper = (Combat.Helper)character;
+				var helper = (Combat.Helper)character;
 				return helper.Data.Name;
 			}
 
@@ -56,11 +56,11 @@ namespace xnaMugen.Evaluation.Triggers
 
 		public static Node Parse(ParseState parsestate)
 		{
-			Operator @operator = parsestate.CurrentOperator;
+			var @operator = parsestate.CurrentOperator;
 			if (@operator != Operator.Equals && @operator != Operator.NotEquals) return null;
 			++parsestate.TokenIndex;
 
-			String text = parsestate.CurrentText;
+			var text = parsestate.CurrentText;
 			if (text == null) return null;
 			++parsestate.TokenIndex;
 

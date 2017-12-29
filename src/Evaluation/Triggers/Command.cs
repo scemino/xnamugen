@@ -1,19 +1,17 @@
-using System;
-
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("Command")]
-	static class Command
+	internal static class Command
 	{
-		public static Boolean Evaluate(Object state, ref Boolean error, Operator @operator, String text)
+		public static bool Evaluate(object state, ref bool error, Operator @operator, string text)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
 				return false;
 			}
-			Boolean active = character.CommandManager.IsActive(text);
+			var active = character.CommandManager.IsActive(text);
 
 			switch (@operator)
 			{
@@ -31,11 +29,11 @@ namespace xnaMugen.Evaluation.Triggers
 
 		public static Node Parse(ParseState state)
 		{
-			Operator @operator = state.CurrentOperator;
+			var @operator = state.CurrentOperator;
 			if (@operator != Operator.Equals && @operator != Operator.NotEquals) return null;
 			++state.TokenIndex;
 
-			String text = state.CurrentText;
+			var text = state.CurrentText;
 			if (text == null) return null;
 			++state.TokenIndex;
 

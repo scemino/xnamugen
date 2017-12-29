@@ -1,10 +1,8 @@
-﻿using System;
-
-namespace xnaMugen.Replay
+﻿namespace xnaMugen.Replay
 {
-	class RecordingData
+	internal class RecordingData
 	{
-		public RecordingData(Int32 system, Int32 player1, Int32 player2, Int32 player3, Int32 player4)
+		public RecordingData(int system, int player1, int player2, int player3, int player4)
 		{
 			SystemInput = (SystemButton)system;
 			Player1Input = (PlayerButton)player1;

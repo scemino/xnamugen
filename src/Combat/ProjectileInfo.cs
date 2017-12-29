@@ -1,9 +1,8 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 
 namespace xnaMugen.Combat
 {
-	class ProjectileInfo
+	internal class ProjectileInfo
 	{
 		public ProjectileInfo()
 		{
@@ -19,9 +18,9 @@ namespace xnaMugen.Combat
 			m_time = 0;
 		}
 
-		public void Set(Int32 proj_id, ProjectileDataType datatype)
+		public void Set(int projId, ProjectileDataType datatype)
 		{
-			m_projectileid = proj_id;
+			m_projectileid = projId;
 			m_datatype = datatype;
 			m_time = 0;
 		}
@@ -31,31 +30,22 @@ namespace xnaMugen.Combat
 			if (Type != ProjectileDataType.None) ++m_time;
 		}
 
-		public Int32 ProjectileId
-		{
-			get { return m_projectileid; }
-		}
+		public int ProjectileId => m_projectileid;
 
-		public ProjectileDataType Type
-		{
-			get { return m_datatype; }
-		}
+		public ProjectileDataType Type => m_datatype;
 
-		public Int32 Time
-		{
-			get { return m_time; }
-		}
+		public int Time => m_time;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Int32 m_projectileid;
+		private int m_projectileid;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		ProjectileDataType m_datatype;
+		private ProjectileDataType m_datatype;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Int32 m_time;
+		private int m_time;
 
 		#endregion
 	}

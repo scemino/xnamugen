@@ -5,151 +5,142 @@ using xnaMugen.IO;
 namespace xnaMugen.StateMachine.Controllers
 {
 	[StateControllerName("AssertSpecial")]
-	class AssertSpecial : StateController
+	internal class AssertSpecial : StateController
 	{
-		public AssertSpecial(StateSystem statesystem, String label, TextSection textsection)
+		public AssertSpecial(StateSystem statesystem, string label, TextSection textsection)
 			: base(statesystem, label, textsection)
 		{
-			m_assert1 = textsection.GetAttribute<Assertion>("flag", Assertion.None);
-			m_assert2 = textsection.GetAttribute<Assertion>("flag2", Assertion.None);
-			m_assert3 = textsection.GetAttribute<Assertion>("flag3", Assertion.None);
+			m_assert1 = textsection.GetAttribute("flag", Assertion.None);
+			m_assert2 = textsection.GetAttribute("flag2", Assertion.None);
+			m_assert3 = textsection.GetAttribute("flag3", Assertion.None);
 		}
 
 		public override void Run(Combat.Character character)
 		{
-			if (HasAssert(Assertion.NoAutoturn) == true)
+			if (HasAssert(Assertion.NoAutoturn))
 			{
 				character.Assertions.NoAutoTurn = true;
 			}
 
-			if (HasAssert(Assertion.NoJuggleCheck) == true)
+			if (HasAssert(Assertion.NoJuggleCheck))
 			{
 				character.Assertions.NoJuggleCheck = true;
 			}
 
-			if (HasAssert(Assertion.NoKOSound) == true)
+			if (HasAssert(Assertion.NoKOSound))
 			{
 				character.Engine.Assertions.NoKOSound = true;
 			}
 
-			if (HasAssert(Assertion.NoKOSlow) == true)
+			if (HasAssert(Assertion.NoKOSlow))
 			{
 				character.Engine.Assertions.NoKOSlow = true;
 			}
 
-			if (HasAssert(Assertion.NoShadow) == true)
+			if (HasAssert(Assertion.NoShadow))
 			{
 				character.Assertions.NoShadow = true;
 			}
 
-			if (HasAssert(Assertion.NoKOSlow) == true)
+			if (HasAssert(Assertion.NoKOSlow))
 			{
 				character.Engine.Assertions.NoGlobalShadow = true;
 			}
 
-			if (HasAssert(Assertion.NoMusic) == true)
+			if (HasAssert(Assertion.NoMusic))
 			{
 				character.Engine.Assertions.NoMusic = true;
 			}
 
-			if (HasAssert(Assertion.TimerFreeze) == true)
+			if (HasAssert(Assertion.TimerFreeze))
 			{
 				character.Engine.Assertions.TimerFreeze = true;
 			}
 
-			if (HasAssert(Assertion.Unguardable) == true)
+			if (HasAssert(Assertion.Unguardable))
 			{
 				character.Assertions.UnGuardable = true;
 			}
 
-			if (HasAssert(Assertion.Invisible) == true)
+			if (HasAssert(Assertion.Invisible))
 			{
 				character.Assertions.Invisible = true;
 			}
 
-			if (HasAssert(Assertion.NoWalk) == true)
+			if (HasAssert(Assertion.NoWalk))
 			{
 				character.Assertions.NoWalk = true;
 			}
 
-			if (HasAssert(Assertion.NoStandGuard) == true)
+			if (HasAssert(Assertion.NoStandGuard))
 			{
 				character.Assertions.NoStandingGuard = true;
 			}
 
-			if (HasAssert(Assertion.NoCrouchGuard) == true)
+			if (HasAssert(Assertion.NoCrouchGuard))
 			{
 				character.Assertions.NoCrouchingGuard = true;
 			}
 
-			if (HasAssert(Assertion.NoAirGuard) == true)
+			if (HasAssert(Assertion.NoAirGuard))
 			{
 				character.Assertions.NoAirGuard = true;
 			}
 
-			if (HasAssert(Assertion.Intro) == true)
+			if (HasAssert(Assertion.Intro))
 			{
 				character.Engine.Assertions.Intro = true;
 			}
 
-			if (HasAssert(Assertion.NoBarDisplay) == true)
+			if (HasAssert(Assertion.NoBarDisplay))
 			{
 				character.Engine.Assertions.NoBarDisplay = true;
 			}
 
-			if (HasAssert(Assertion.RoundNotOver) == true)
+			if (HasAssert(Assertion.RoundNotOver))
 			{
 				character.Engine.Assertions.WinPose = true;
 			}
 
-			if (HasAssert(Assertion.NoForeground) == true)
+			if (HasAssert(Assertion.NoForeground))
 			{
 				character.Engine.Assertions.NoFrontLayer = true;
 			}
 
-			if (HasAssert(Assertion.NoBackground) == true)
+			if (HasAssert(Assertion.NoBackground))
 			{
 				character.Engine.Assertions.NoBackLayer = true;
 			}
 
-			if (HasAssert(Assertion.NoKO) == true)
+			if (HasAssert(Assertion.NoKO))
 			{
 				character.Assertions.NoKO = true;
 			}
 		}
 
-		Boolean HasAssert(Assertion assert)
+		private bool HasAssert(Assertion assert)
 		{
-			if (assert == Assertion.None) throw new ArgumentOutOfRangeException("assert");
+			if (assert == Assertion.None) throw new ArgumentOutOfRangeException(nameof(assert));
 
 			return Assert1 == assert || Assert2 == assert || Assert3 == assert;
 		}
 
-		public Assertion Assert1
-		{
-			get { return m_assert1; }
-		}
+		public Assertion Assert1 => m_assert1;
 
-		public Assertion Assert2
-		{
-			get { return m_assert2; }
-		}
+		public Assertion Assert2 => m_assert2;
 
-		public Assertion Assert3
-		{
-			get { return m_assert3; }
-		}
+		public Assertion Assert3 => m_assert3;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Assertion m_assert1;
+		private readonly Assertion m_assert1;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Assertion m_assert2;
+		private readonly Assertion m_assert2;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Assertion m_assert3;
+		private readonly Assertion m_assert3;
 
 		#endregion
 	}

@@ -1,10 +1,9 @@
 using System;
-using System.Diagnostics;
 using Microsoft.Xna.Framework;
 
 namespace xnaMugen.Combat
 {
-	class HitDefinition
+	internal class HitDefinition
 	{
 		public HitDefinition()
 		{
@@ -31,7 +30,7 @@ namespace xnaMugen.Combat
 
 		public void Set(HitDefinition other)
 		{
-			if (other == null) throw new ArgumentNullException("other");
+			if (other == null) throw new ArgumentNullException(nameof(other));
 
 			HitAttribute = other.HitAttribute;
 			HitFlag = other.HitFlag;
@@ -140,106 +139,106 @@ namespace xnaMugen.Combat
 
 		public HitPriority HitPriority { get; set; }
 
-		public Int32 HitDamage { get; set; }
-		public Int32 GuardDamage { get; set; }
+		public int HitDamage { get; set; }
+		public int GuardDamage { get; set; }
 
-		public Int32 PauseTime { get; set; }
-		public Int32 ShakeTime { get; set; }
+		public int PauseTime { get; set; }
+		public int ShakeTime { get; set; }
 
-		public Int32 GuardPauseTime { get; set; }
-		public Int32 GuardShakeTime { get; set; }
+		public int GuardPauseTime { get; set; }
+		public int GuardShakeTime { get; set; }
 
-		public Boolean PlayerSpark { get; set; }
-		public Int32 SparkAnimation { get; set; }
-		public Boolean GuardPlayerSpark { get; set; }
-		public Int32 GuardSparkAnimation { get; set; }
+		public bool PlayerSpark { get; set; }
+		public int SparkAnimation { get; set; }
+		public bool GuardPlayerSpark { get; set; }
+		public int GuardSparkAnimation { get; set; }
 		public Vector2 SparkStartPosition { get; set; }
 
-		public Boolean PlayerSound { get; set; }
+		public bool PlayerSound { get; set; }
 		public SoundId HitSoundId { get; set; }
-		public Boolean GuardPlayerSound { get; set; }
+		public bool GuardPlayerSound { get; set; }
 		public SoundId GuardSoundId { get; set; }
 
 		public AttackEffect GroundAttackEffect { get; set; }
 		public AttackEffect AirAttackEffect { get; set; }
-		public Int32 GroundHitTime { get; set; }
-		public Int32 DownHitTime { get; set; }
-		public Int32 AirHitTime { get; set; }
-		public Int32 GuardHitTime { get; set; }
-		public Int32 GroundSlideTime { get; set; }
-		public Int32 GuardSlideTime { get; set; }
-		public Int32 GuardControlTime { get; set; }
-		public Int32 AirGuardControlTime { get; set; }
-		public Int32 GuardDistance { get; set; }
-		public Single YAcceleration { get; set; }
+		public int GroundHitTime { get; set; }
+		public int DownHitTime { get; set; }
+		public int AirHitTime { get; set; }
+		public int GuardHitTime { get; set; }
+		public int GroundSlideTime { get; set; }
+		public int GuardSlideTime { get; set; }
+		public int GuardControlTime { get; set; }
+		public int AirGuardControlTime { get; set; }
+		public int GuardDistance { get; set; }
+		public float YAcceleration { get; set; }
 		public Vector2 GroundVelocity { get; set; }
 		public Vector2 AirVelocity { get; set; }
 		public Vector2 DownVelocity { get; set; }
 		public Vector2 GroundGuardVelocity { get; set; }
 		public Vector2 AirGuardVelocity { get; set; }
-		public Single GroundCornerPush { get; set; }
-		public Single AirCornerPush { get; set; }
-		public Single DownCornerPush { get; set; }
-		public Single GuardCornerPush { get; set; }
-		public Single AirGuardCornerPush { get; set; }
-		public Int32 JugglePointsNeeded { get; set; }
+		public float GroundCornerPush { get; set; }
+		public float AirCornerPush { get; set; }
+		public float DownCornerPush { get; set; }
+		public float GuardCornerPush { get; set; }
+		public float AirGuardCornerPush { get; set; }
+		public int JugglePointsNeeded { get; set; }
 		public Point? MininumDistance { get; set; }
 		public Point? MaximumDistance { get; set; }
 		public Point? SnapLocation { get; set; }
 
-		public Int32 P1SpritePriority { get; set; }
-		public Int32 P2SpritePriority { get; set; }
+		public int P1SpritePriority { get; set; }
+		public int P2SpritePriority { get; set; }
 
-		public Int32 P1Facing { get; set; }
-		public Int32 P1GetP2Facing { get; set; }
-		public Int32 P2Facing { get; set; }
+		public int P1Facing { get; set; }
+		public int P1GetP2Facing { get; set; }
+		public int P2Facing { get; set; }
 
-		public Int32? P1NewState { get; set; }
-		public Boolean P2UseP1State { get; set; }
-		public Int32? P2NewState { get; set; }
+		public int? P1NewState { get; set; }
+		public bool P2UseP1State { get; set; }
+		public int? P2NewState { get; set; }
 
-		public Boolean ForceStand { get; set; }
-		public Boolean Fall { get; set; }
-		public Boolean AirFall { get; set; }
-		public Single? FallVelocityX { get; set; }
-		public Single FallVelocityY { get; set; }
-		public Boolean FallCanRecover { get; set; }
-		public Int32 FallRecoverTime { get; set; }
-		public Int32 FallDamage { get; set; }
-		public Boolean DownBounce { get; set; }
+		public bool ForceStand { get; set; }
+		public bool Fall { get; set; }
+		public bool AirFall { get; set; }
+		public float? FallVelocityX { get; set; }
+		public float FallVelocityY { get; set; }
+		public bool FallCanRecover { get; set; }
+		public int FallRecoverTime { get; set; }
+		public int FallDamage { get; set; }
+		public bool DownBounce { get; set; }
 
-		public Int32 TargetId { get; set; }
-		public Int32 ChainId { get; set; }
-		public Int32 NoChainId1 { get; set; }
-		public Int32 NoChainId2 { get; set; }
+		public int TargetId { get; set; }
+		public int ChainId { get; set; }
+		public int NoChainId1 { get; set; }
+		public int NoChainId2 { get; set; }
 
-		public Boolean HitOnce { get; set; }
-		public Boolean CanKill { get; set; }
-		public Boolean CanGuardKill { get; set; }
-		public Boolean CanFallKill { get; set; }
+		public bool HitOnce { get; set; }
+		public bool CanKill { get; set; }
+		public bool CanGuardKill { get; set; }
+		public bool CanFallKill { get; set; }
 
-		public Int32 NumberOfHits { get; set; }
+		public int NumberOfHits { get; set; }
 
-		public Int32 P1HitPowerAdjustment { get; set; }
-		public Int32 P1GuardPowerAdjustment { get; set; }
-		public Int32 P2HitPowerAdjustment { get; set; }
-		public Int32 P2GuardPowerAdjustment { get; set; }
+		public int P1HitPowerAdjustment { get; set; }
+		public int P1GuardPowerAdjustment { get; set; }
+		public int P2HitPowerAdjustment { get; set; }
+		public int P2GuardPowerAdjustment { get; set; }
 
-		public Int32 PalFxTime { get; set; }
+		public int PalFxTime { get; set; }
 		public Vector3 PalFxAdd { get; set; }
 		public Vector3 PalFxMul { get; set; }
 		public Vector4 PalFxSinAdd { get; set; }
-		public Boolean PalFxInvert { get; set; }
-		public Single PalFxBaseColor { get; set; }
+		public bool PalFxInvert { get; set; }
+		public float PalFxBaseColor { get; set; }
 
-		public Int32 EnvShakeTime { get; set; }
-		public Single EnvShakeFrequency { get; set; }
-		public Int32 EnvShakeAmplitude { get; set; }
-		public Single EnvShakePhase { get; set; }
+		public int EnvShakeTime { get; set; }
+		public float EnvShakeFrequency { get; set; }
+		public int EnvShakeAmplitude { get; set; }
+		public float EnvShakePhase { get; set; }
 
-		public Int32 EnvShakeFallTime { get; set; }
-		public Single EnvShakeFallFrequency { get; set; }
-		public Int32 EnvShakeFallAmplitude { get; set; }
-		public Single EnvShakeFallPhase { get; set; }
+		public int EnvShakeFallTime { get; set; }
+		public float EnvShakeFallFrequency { get; set; }
+		public int EnvShakeFallAmplitude { get; set; }
+		public float EnvShakeFallPhase { get; set; }
 	}
 }

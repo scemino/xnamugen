@@ -4,11 +4,11 @@ using System.Collections.Generic;
 
 namespace xnaMugen.Combat
 {
-	class OffensiveInfo
+	internal class OffensiveInfo
 	{
 		public OffensiveInfo(Character character)
 		{
-			if (character == null) throw new ArgumentNullException("character");
+			if (character == null) throw new ArgumentNullException(nameof(character));
 
 			m_character = character;
 			m_hitdef = new HitDefinition();
@@ -51,16 +51,16 @@ namespace xnaMugen.Combat
 			if (MoveReversed > 0) ++MoveReversed;
 		}
 
-		public void OnHit(HitDefinition hitdef, Character target, Boolean blocked)
+		public void OnHit(HitDefinition hitdef, Character target, bool blocked)
 		{
-			if (hitdef == null) throw new ArgumentNullException("hitdef");
-			if (target == null) throw new ArgumentNullException("target");
+			if (hitdef == null) throw new ArgumentNullException(nameof(hitdef));
+			if (target == null) throw new ArgumentNullException(nameof(target));
 
 			m_character.DrawOrder = hitdef.P1SpritePriority;
 
 			AddToTargetList(target);
 
-			if (blocked == true)
+			if (blocked)
 			{
 				m_character.BasePlayer.Power += hitdef.P1GuardPowerAdjustment;
 				HitPauseTime = hitdef.GuardPauseTime;
@@ -82,130 +82,121 @@ namespace xnaMugen.Combat
 
 		public void AddToTargetList(Character target)
 		{
-			if (target == null) throw new ArgumentNullException("target");
-			if (target == m_character) throw new ArgumentOutOfRangeException("target");
+			if (target == null) throw new ArgumentNullException(nameof(target));
+			if (target == m_character) throw new ArgumentOutOfRangeException(nameof(target));
 
 			if (TargetList.Contains(target) == false) TargetList.Add(target);
 		}
 
-		public HitDefinition HitDef
-		{
-			get { return m_hitdef; }
-		}
+		public HitDefinition HitDef => m_hitdef;
 
-		public Boolean ActiveHitDef
+		public bool ActiveHitDef
 		{
-			get { return m_isactive; }
+			get => m_isactive;
 
 			set { m_isactive = value; }
 		}
 
-		public Int32 HitPauseTime
+		public int HitPauseTime
 		{
-			get { return m_hitpausetime; }
+			get => m_hitpausetime;
 
 			set { m_hitpausetime = value; }
 		}
 
-		public Int32 MoveContact
+		public int MoveContact
 		{
-			get { return m_movecontact; }
+			get => m_movecontact;
 
 			set { m_movecontact = value; }
 		}
 
-		public Int32 MoveHit
+		public int MoveHit
 		{
-			get { return m_movehit; }
+			get => m_movehit;
 
-			 set { m_movehit = value; }
+			set { m_movehit = value; }
 		}
 
-		public Int32 MoveGuarded
+		public int MoveGuarded
 		{
-			get { return m_moveguarded; }
+			get => m_moveguarded;
 
 			set { m_moveguarded = value; }
 		}
 
-		public Int32 MoveReversed
+		public int MoveReversed
 		{
-			get { return m_movereversed; }
+			get => m_movereversed;
 
 			set { m_movereversed = value; }
 		}
 
-		public Single AttackMultiplier
+		public float AttackMultiplier
 		{
-			get { return m_attackmultiplier; }
+			get => m_attackmultiplier;
 
 			set { m_attackmultiplier = value; }
 		}
 
-		public Int32 HitCount
+		public int HitCount
 		{
-			get { return m_hitcount; }
+			get => m_hitcount;
 
 			set { m_hitcount = value; }
 		}
 
-		public Int32 UniqueHitCount
+		public int UniqueHitCount
 		{
-			get { return m_uniquehitcount; }
+			get => m_uniquehitcount;
 
 			set { m_uniquehitcount = value; }
 		}
 
-		public ProjectileInfo ProjectileInfo
-		{
-			get { return m_projectileinfo; }
-		}
+		public ProjectileInfo ProjectileInfo => m_projectileinfo;
 
-		public List<Character> TargetList
-		{
-			get { return m_targetlist; }
-		}
+		public List<Character> TargetList => m_targetlist;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Character m_character;
+		private readonly Character m_character;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly HitDefinition m_hitdef;
+		private readonly HitDefinition m_hitdef;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Boolean m_isactive;
+		private bool m_isactive;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Int32 m_hitpausetime;
+		private int m_hitpausetime;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Int32 m_movehit;
+		private int m_movehit;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Int32 m_moveguarded;
+		private int m_moveguarded;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Int32 m_movecontact;
+		private int m_movecontact;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Int32 m_movereversed;
+		private int m_movereversed;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Single m_attackmultiplier;
+		private float m_attackmultiplier;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Int32 m_hitcount;
+		private int m_hitcount;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Int32 m_uniquehitcount;
+		private int m_uniquehitcount;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly ProjectileInfo m_projectileinfo;
+		private readonly ProjectileInfo m_projectileinfo;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		List<Character> m_targetlist;
+		private List<Character> m_targetlist;
 
 		#endregion
 	}

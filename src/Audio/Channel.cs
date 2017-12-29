@@ -1,7 +1,4 @@
-﻿using System;
-//using Microsoft.DirectX.DirectSound;
-using Microsoft.Xna.Framework;
-using System.Diagnostics;
+﻿//using Microsoft.DirectX.DirectSound;
 
 namespace xnaMugen.Audio
 {

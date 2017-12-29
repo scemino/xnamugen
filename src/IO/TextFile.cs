@@ -7,7 +7,7 @@ namespace xnaMugen.IO
 	/// <summary>
 	/// Represents the text data found in a file.
 	/// </summary>
-	class TextFile
+	internal class TextFile
 	{
 		/// <summary>
 		/// Initializes a new instance of this class.
@@ -15,10 +15,10 @@ namespace xnaMugen.IO
 		/// <param name="filepath">The path to the file this class represents.</param>
 		/// <param name="sections">The collection of TextSection parsed from the represented file.</param>
 		[DebuggerStepThrough]
-		public TextFile(String filepath, List<TextSection> sections)
+		public TextFile(string filepath, List<TextSection> sections)
 		{
-			if (filepath == null) throw new ArgumentNullException("filepath");
-			if (sections == null) throw new ArgumentNullException("sections");
+			if (filepath == null) throw new ArgumentNullException(nameof(filepath));
+			if (sections == null) throw new ArgumentNullException(nameof(sections));
 
 			m_filepath = filepath;
 			m_sections = sections;
@@ -29,7 +29,7 @@ namespace xnaMugen.IO
 		/// </summary>
 		/// <returns>The path of the file this object represents.</returns>
 		[DebuggerStepThrough]
-		public override String ToString()
+		public override string ToString()
 		{
 			return Filepath;
 		}
@@ -40,13 +40,13 @@ namespace xnaMugen.IO
 		/// <param name="title">The title of the requested TextSection.</param>
 		/// <returns>The TextSection with the given title if found; null otherwise.</returns>
 		[DebuggerStepThrough]
-		public TextSection GetSection(String title)
+		public TextSection GetSection(string title)
 		{
-			if (title == null) throw new ArgumentNullException("title");
+			if (title == null) throw new ArgumentNullException(nameof(title));
 
-			StringComparer sc = StringComparer.OrdinalIgnoreCase;
+			var sc = StringComparer.OrdinalIgnoreCase;
 
-			foreach (TextSection s in this) if (sc.Equals(s.Title, title) == true) return s;
+			foreach (var s in this) if (sc.Equals(s.Title, title)) return s;
 
 			return null;
 		}
@@ -66,18 +66,15 @@ namespace xnaMugen.IO
 		/// </summary>
 		/// <returns>The path of the file this object represents.</returns>
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		public String Filepath
-		{
-			get { return m_filepath; }
-		}
+		public string Filepath => m_filepath;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly String m_filepath;
+		private readonly string m_filepath;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
-		readonly List<TextSection> m_sections;
+		private readonly List<TextSection> m_sections;
 
 		#endregion
 	}

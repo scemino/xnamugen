@@ -1,20 +1,18 @@
-using System;
-
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("AnimExist")]
-	static class AnimExist
+	internal static class AnimExist
 	{
-		public static Boolean Evaluate(Object state, ref Boolean error, Int32 value)
+		public static bool Evaluate(object state, ref bool error, int value)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
 				return false;
 			}
 
-			if (character.AnimationManager.IsForeignAnimation == true)
+			if (character.AnimationManager.IsForeignAnimation)
 			{
 				error = true;
 				return false;

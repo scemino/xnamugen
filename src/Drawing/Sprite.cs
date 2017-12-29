@@ -1,20 +1,15 @@
 ﻿using System;
-using xnaMugen.IO;
 using System.Diagnostics;
-using System.Collections.Generic;
-using xnaMugen.Collections;
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System.Text.RegularExpressions;
 
 namespace xnaMugen.Drawing
 {
-	class Sprite : Resource
+	internal class Sprite : Resource
 	{
-		public Sprite(Point size, Point axis, Boolean ownpixels, Texture2D pixels, Boolean ownpalette, Texture2D palette, Boolean paletteoverride)
+		public Sprite(Point size, Point axis, bool ownpixels, Texture2D pixels, bool ownpalette, Texture2D palette, bool paletteoverride)
 		{
-			if (pixels == null) throw new ArgumentNullException("pixels");
-			if (palette == null) throw new ArgumentNullException("palette");
+			if (pixels == null) throw new ArgumentNullException(nameof(pixels));
+			if (palette == null) throw new ArgumentNullException(nameof(palette));
 
 			m_size = size;
 			m_axis = axis;
@@ -25,9 +20,9 @@ namespace xnaMugen.Drawing
 			m_ownpalette = ownpalette;
 		}
 
-		protected override void Dispose(Boolean disposing)
+		protected override void Dispose(bool disposing)
 		{
-			if (disposing == true)
+			if (disposing)
 			{
 				if (m_ownpixels && m_pixels != null) m_pixels.Dispose();
 
@@ -37,53 +32,38 @@ namespace xnaMugen.Drawing
 			base.Dispose(disposing);
 		}
 
-		public Point Size
-		{
-			get { return m_size; }
-		}
+		public Point Size => m_size;
 
-		public Point Axis
-		{
-			get { return m_axis; }
-		}
+		public Point Axis => m_axis;
 
-		public Texture2D Pixels
-		{
-			get { return m_pixels; }
-		}
+		public Texture2D Pixels => m_pixels;
 
-		public Texture2D Palette
-		{
-			get { return m_palette; }
-		}
+		public Texture2D Palette => m_palette;
 
-		public Boolean PaletteOverride
-		{
-			get { return m_paletteoverride; }
-		}
+		public bool PaletteOverride => m_paletteoverride;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Point m_size;
+		private readonly Point m_size;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Point m_axis;
+		private readonly Point m_axis;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Texture2D m_pixels;
+		private readonly Texture2D m_pixels;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Texture2D m_palette;
+		private readonly Texture2D m_palette;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Boolean m_paletteoverride;
+		private readonly bool m_paletteoverride;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Boolean m_ownpixels;
+		private readonly bool m_ownpixels;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Boolean m_ownpalette;
+		private readonly bool m_ownpalette;
 
 		#endregion
 	}

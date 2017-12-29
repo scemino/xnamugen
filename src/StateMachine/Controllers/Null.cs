@@ -1,13 +1,11 @@
-using System;
-using System.Diagnostics;
 using xnaMugen.IO;
 
 namespace xnaMugen.StateMachine.Controllers
 {
 	[StateControllerName("Null")]
-	class Null : StateController
+	internal class Null : StateController
 	{
-		public Null(StateSystem statesystem, String label, TextSection textsection)
+		public Null(StateSystem statesystem, string label, TextSection textsection)
 			: base(statesystem, label, textsection)
 		{
 		}

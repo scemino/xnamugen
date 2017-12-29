@@ -1,14 +1,13 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Collections.Generic;
 
 namespace xnaMugen.Input
 {
-	class SystemButtonMap
+	internal class SystemButtonMap
 	{
 		public SystemButtonMap()
 		{
-			m_callbackmap = new Dictionary<Int32, Action<Boolean>>();
+			m_callbackmap = new Dictionary<int, Action<bool>>();
 		}
 
 		public void Clear()
@@ -18,24 +17,24 @@ namespace xnaMugen.Input
 			m_callback = null;
 		}
 
-		public void Add(SystemButton button, Action<Boolean> callback)
+		public void Add(SystemButton button, Action<bool> callback)
 		{
-			if (button == SystemButton.None) throw new ArgumentOutOfRangeException("button");
-			if (callback == null) throw new ArgumentNullException("callback");
+			if (button == SystemButton.None) throw new ArgumentOutOfRangeException(nameof(button));
+			if (callback == null) throw new ArgumentNullException(nameof(callback));
 
-			m_callbackmap[(Int32)button] = callback;
+			m_callbackmap[(int)button] = callback;
 		}
 
 		public void Add(SystemButtonDelegate callback)
 		{
-			if (callback == null) throw new ArgumentNullException("callback");
+			if (callback == null) throw new ArgumentNullException(nameof(callback));
 
 			m_callback = callback;
 		}
 
-		public void Call(SystemButton button, Boolean pressed)
+		public void Call(SystemButton button, bool pressed)
 		{
-			if (button == SystemButton.None) throw new ArgumentOutOfRangeException("button");
+			if (button == SystemButton.None) throw new ArgumentOutOfRangeException(nameof(button));
 
 			if (m_callback != null)
 			{
@@ -43,16 +42,16 @@ namespace xnaMugen.Input
 			}
 			else
 			{
-				Action<Boolean> callback;
-				if (m_callbackmap.TryGetValue((Int32)button, out callback) == true) callback(pressed);
+				Action<bool> callback;
+				if (m_callbackmap.TryGetValue((int)button, out callback)) callback(pressed);
 			}
 		}
 
 		#region Fields
 
-		SystemButtonDelegate m_callback;
+		private SystemButtonDelegate m_callback;
 
-		readonly Dictionary<Int32, Action<Boolean>> m_callbackmap;
+		private readonly Dictionary<int, Action<bool>> m_callbackmap;
 
 		#endregion
 	}

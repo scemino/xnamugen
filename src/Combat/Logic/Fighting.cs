@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Diagnostics;
 
 namespace xnaMugen.Combat.Logic
 {
-	class Fighting : Base
+	internal class Fighting : Base
 	{
 		public Fighting(FightEngine engine)
 			: base(engine, RoundState.Fight)
@@ -17,9 +16,9 @@ namespace xnaMugen.Combat.Logic
 			if (TickCount != 0 && TickCount % 60 == 0) Engine.Clock.Tick();
 		}
 
-		void GivePlayerControl(Player player)
+		private void GivePlayerControl(Player player)
 		{
-			if (player == null) throw new ArgumentNullException("player");
+			if (player == null) throw new ArgumentNullException(nameof(player));
 
 			player.PlayerControl = PlayerControl.InControl;
 		}
@@ -37,9 +36,9 @@ namespace xnaMugen.Combat.Logic
 			return null;
 		}
 
-		public override Boolean IsFinished()
+		public override bool IsFinished()
 		{
-			return Engine.Clock.Time == 0 || Engine.Team1.VictoryStatus.Lose == true || Engine.Team2.VictoryStatus.Lose == true;
+			return Engine.Clock.Time == 0 || Engine.Team1.VictoryStatus.Lose || Engine.Team2.VictoryStatus.Lose;
 		}
 	}
 }

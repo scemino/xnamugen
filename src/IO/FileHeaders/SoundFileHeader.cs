@@ -3,14 +3,14 @@ using System.Diagnostics;
 
 namespace xnaMugen.IO.FileHeaders
 {
-	class SoundFileHeader
+	internal class SoundFileHeader
 	{
 		public SoundFileHeader(File file)
 		{
-			if (file == null) throw new ArgumentNullException("file");
+			if (file == null) throw new ArgumentNullException(nameof(file));
 
-			Byte[] data = file.ReadBytes(24);
-			if (data.Length != 24) throw new ArgumentException("File is not long enough", "file");
+			var data = file.ReadBytes(24);
+			if (data.Length != 24) throw new ArgumentException("File is not long enough", nameof(file));
 
 			m_signature = System.Text.Encoding.Default.GetString(data, 0, 11);
 			m_version = BitConverter.ToInt32(data, 12);
@@ -18,39 +18,27 @@ namespace xnaMugen.IO.FileHeaders
 			m_subheaderoffset = BitConverter.ToInt32(data, 20);
 		}
 
-		public String Signature
-		{
-			get { return m_signature; }
-		}
+		public string Signature => m_signature;
 
-		public Int32 Version
-		{
-			get { return m_version; }
-		}
+		public int Version => m_version;
 
-		public Int32 NumberOfSounds
-		{
-			get { return m_numberofsounds; }
-		}
+		public int NumberOfSounds => m_numberofsounds;
 
-		public Int32 SubheaderOffset
-		{
-			get { return m_subheaderoffset; }
-		}
+		public int SubheaderOffset => m_subheaderoffset;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly String m_signature;
+		private readonly string m_signature;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Int32 m_version;
+		private readonly int m_version;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Int32 m_numberofsounds;
+		private readonly int m_numberofsounds;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Int32 m_subheaderoffset;
+		private readonly int m_subheaderoffset;
 
 		#endregion
 	}

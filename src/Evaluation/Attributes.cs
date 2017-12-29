@@ -3,100 +3,91 @@ using System.Diagnostics;
 
 namespace xnaMugen.Evaluation
 {
-	class TagAttribute : Attribute
+	internal class TagAttribute : Attribute
 	{
-		public TagAttribute(String text)
+		public TagAttribute(string text)
 		{
 			m_text = text;
 		}
 
-		public override String ToString()
+		public override string ToString()
 		{
 			return m_text;
 		}
 
-		public String Value
-		{
-			get { return m_text; }
-		}
+		public string Value => m_text;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly String m_text;
+		private readonly string m_text;
 
 		#endregion
 	}
 
-	class TokenMappingAttribute : TagAttribute
+	internal class TokenMappingAttribute : TagAttribute
 	{
-		public TokenMappingAttribute(String text)
+		public TokenMappingAttribute(string text)
 			: base(text)
 		{
 		}
 	}
 
-	abstract class FunctionMappingAttribute : TokenMappingAttribute
+	internal abstract class FunctionMappingAttribute : TokenMappingAttribute
 	{
-		protected FunctionMappingAttribute(String text, String name)
+		protected FunctionMappingAttribute(string text, string name)
 			: base(text)
 		{
 			m_name = name;
 		}
 
-		public String Name
-		{
-			get { return m_name; }
-		}
+		public string Name => m_name;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly String m_name;
+		private readonly string m_name;
 
 		#endregion
 	}
 
-	class UnaryOperatorMappingAttribute : FunctionMappingAttribute
+	internal class UnaryOperatorMappingAttribute : FunctionMappingAttribute
 	{
-		public UnaryOperatorMappingAttribute(String text, String name)
+		public UnaryOperatorMappingAttribute(string text, string name)
 			: base(text, name)
 		{
 		}
 	}
 
-	class BinaryOperatorMappingAttribute : FunctionMappingAttribute
+	internal class BinaryOperatorMappingAttribute : FunctionMappingAttribute
 	{
-		public BinaryOperatorMappingAttribute(String text, String name, Int32 precedence)
+		public BinaryOperatorMappingAttribute(string text, string name, int precedence)
 			: base(text, name)
 		{
 			m_precedence = precedence;
 		}
 
-		public Int32 Precedence
-		{
-			get { return m_precedence; }
-		}
+		public int Precedence => m_precedence;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Int32 m_precedence;
+		private readonly int m_precedence;
 
 		#endregion
 	}
 
-	class CustomFunctionAttribute : FunctionMappingAttribute
+	internal class CustomFunctionAttribute : FunctionMappingAttribute
 	{
-		public CustomFunctionAttribute(String text)
+		public CustomFunctionAttribute(string text)
 			: base(text, text)
 		{
 		}
 	}
 
-	class StateRedirectionAttribute : FunctionMappingAttribute
+	internal class StateRedirectionAttribute : FunctionMappingAttribute
 	{
-		public StateRedirectionAttribute(String text)
+		public StateRedirectionAttribute(string text)
 			: base(text, text)
 		{
 		}

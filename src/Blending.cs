@@ -1,6 +1,4 @@
 using System;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System.Diagnostics;
 
 namespace xnaMugen
@@ -8,7 +6,7 @@ namespace xnaMugen
 	/// <summary>
 	/// Alpha blending information that is sent to the graphics shader.
 	/// </summary>
-	struct Blending : IEquatable<Blending>
+	internal struct Blending : IEquatable<Blending>
 	{
 		/// <summary>
 		/// Initializes a new instance of this class.
@@ -18,11 +16,11 @@ namespace xnaMugen
 		/// <param name="destination">The weight of the destination color used in color blending.</param>
 		[DebuggerStepThrough]
 
-		public Blending(BlendType type, Byte source, Byte destination)
+		public Blending(BlendType type, byte source, byte destination)
 		{
 			m_type = type;
-			m_sourcefactor = (type != BlendType.None) ? source : (Byte)0;
-			m_destionationfactor = (type != BlendType.None) ? destination : (Byte)0; ;
+			m_sourcefactor = type != BlendType.None ? source : (byte)0;
+			m_destionationfactor = type != BlendType.None ? destination : (byte)0;
 		}
 		/// <summary>
 		/// Initializes a new instance of this class.
@@ -31,33 +29,33 @@ namespace xnaMugen
 		/// <param name="source">The weight of the source color used in color blending.</param>
 		/// <param name="destination">The weight of the destination color used in color blending.</param>
 		[DebuggerStepThrough]
-		public Blending(BlendType type, Int32 source, Int32 destination)
+		public Blending(BlendType type, int source, int destination)
 		{
 			m_type = type;
-			m_sourcefactor = (type != BlendType.None) ? (Byte)Misc.Clamp(source, 0, 255) : (Byte)0;
-			m_destionationfactor = (type != BlendType.None) ? (Byte)Misc.Clamp(destination, 0, 255) : (Byte)0; ;
+			m_sourcefactor = type != BlendType.None ? (byte)Misc.Clamp(source, 0, 255) : (byte)0;
+			m_destionationfactor = type != BlendType.None ? (byte)Misc.Clamp(destination, 0, 255) : (byte)0;
 		}
 
 		[DebuggerStepThrough]
-		public Boolean Equals(Blending other)
+		public bool Equals(Blending other)
 		{
 			return this == other;
 		}
 
 		[DebuggerStepThrough]
-		public override Boolean Equals(Object obj)
+		public override bool Equals(object obj)
 		{
-			if (obj == null || obj.GetType() != this.GetType()) return false;
+			if (obj == null || obj.GetType() != GetType()) return false;
 
 			return this == (Blending)obj;
 		}
 
-		public static Boolean operator ==(Blending lhs, Blending rhs)
+		public static bool operator ==(Blending lhs, Blending rhs)
 		{
 			return lhs.BlendType == rhs.BlendType && lhs.SourceFactor == rhs.SourceFactor && lhs.DestinationFactor == rhs.DestinationFactor;
 		}
 
-		public static Boolean operator !=(Blending lhs, Blending rhs)
+		public static bool operator !=(Blending lhs, Blending rhs)
 		{
 			return lhs.BlendType != rhs.BlendType || lhs.SourceFactor != rhs.SourceFactor || lhs.DestinationFactor != rhs.DestinationFactor;
 		}
@@ -67,7 +65,7 @@ namespace xnaMugen
 		/// </summary>
 		/// <returns>The hash code of this instance.</returns>
 		[DebuggerStepThrough]
-		public override Int32 GetHashCode()
+		public override int GetHashCode()
 		{
 			if (BlendType == BlendType.None) return 0;
 
@@ -78,39 +76,30 @@ namespace xnaMugen
 		/// The type of color blending to be used.
 		/// </summary>
 		/// <returns></returns>
-		public BlendType BlendType
-		{
-			get { return m_type; }
-		}
+		public BlendType BlendType => m_type;
 
 		/// <summary>
 		/// The weight of the source color used in color blending.
 		/// </summary>
 		/// <returns>The weight of the source color.</returns>
-		public Byte SourceFactor
-		{
-			get { return m_sourcefactor; }
-		}
+		public byte SourceFactor => m_sourcefactor;
 
 		/// <summary>
 		/// The weight of the destination color used in color blending.
 		/// </summary>
 		/// <returns>The weight of the destination color.</returns>
-		public Byte DestinationFactor
-		{
-			get { return m_destionationfactor; }
-		}
+		public byte DestinationFactor => m_destionationfactor;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly BlendType m_type;
+		private readonly BlendType m_type;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Byte m_sourcefactor;
+		private readonly byte m_sourcefactor;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Byte m_destionationfactor;
+		private readonly byte m_destionationfactor;
 
 		#endregion
 	}

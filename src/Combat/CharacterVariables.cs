@@ -1,64 +1,46 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Collections.Generic;
 
 namespace xnaMugen.Combat
 {
-	class CharacterVariables
+	internal class CharacterVariables
 	{
 		public CharacterVariables()
 		{
-			m_int = new List<Int32>(60);
-			m_sysint = new List<Int32>(4);
-			m_float = new List<Single>(40);
-			m_sysfloat = new List<Single>(4);
+			m_int = new List<int>(60);
+			m_sysint = new List<int>(4);
+			m_float = new List<float>(40);
+			m_sysfloat = new List<float>(4);
 
-			for (Int32 i = 0; i != m_int.Capacity; ++i) m_int.Add(0);
-			for (Int32 i = 0; i != m_sysint.Capacity; ++i) m_sysint.Add(0);
-			for (Int32 i = 0; i != m_float.Capacity; ++i) m_float.Add(0);
-			for (Int32 i = 0; i != m_sysfloat.Capacity; ++i) m_sysfloat.Add(0);
+			for (var i = 0; i != m_int.Capacity; ++i) m_int.Add(0);
+			for (var i = 0; i != m_sysint.Capacity; ++i) m_sysint.Add(0);
+			for (var i = 0; i != m_float.Capacity; ++i) m_float.Add(0);
+			for (var i = 0; i != m_sysfloat.Capacity; ++i) m_sysfloat.Add(0);
 		}
 
 		public void Reset()
 		{
-			for (Int32 i = 0; i != m_int.Count; ++i) m_int[i] = 0;
-			for (Int32 i = 0; i != m_sysint.Count; ++i) m_sysint[i] = 0;
-			for (Int32 i = 0; i != m_float.Count; ++i) m_float[i] = 0;
-			for (Int32 i = 0; i != m_sysfloat.Count; ++i) m_sysfloat[i] = 0;
+			for (var i = 0; i != m_int.Count; ++i) m_int[i] = 0;
+			for (var i = 0; i != m_sysint.Count; ++i) m_sysint[i] = 0;
+			for (var i = 0; i != m_float.Count; ++i) m_float[i] = 0;
+			for (var i = 0; i != m_sysfloat.Count; ++i) m_sysfloat[i] = 0;
 		}
 
-		public Boolean GetInteger(Int32 index, Boolean system, out Int32 value)
+		public bool GetInteger(int index, bool system, out int value)
 		{
 			var variables = system ? m_sysint : m_int;
 
 			if (index < 0 || index > variables.Count)
 			{
-				value = Int32.MinValue;
+				value = int.MinValue;
 				return false;
 			}
-			else
-			{
-				value = variables[index];
-				return true;
-			}
+
+			value = variables[index];
+			return true;
 		}
 
-		public Boolean SetInteger(Int32 index, Boolean system, Int32 value)
-		{
-			var variables = system ? m_sysint : m_int;
-
-			if (index < 0 || index > variables.Count)
-			{
-				return false;
-			}
-			else
-			{
-				variables[index] = value;
-				return true;
-			}
-		}
-
-		public Boolean AddInteger(Int32 index, Boolean system, Int32 value)
+		public bool SetInteger(int index, bool system, int value)
 		{
 			var variables = system ? m_sysint : m_int;
 
@@ -66,45 +48,39 @@ namespace xnaMugen.Combat
 			{
 				return false;
 			}
-			else
-			{
-				variables[index] += value;
-				return true;
-			}
+
+			variables[index] = value;
+			return true;
 		}
 
-		public Boolean GetFloat(Int32 index, Boolean system, out Single value)
+		public bool AddInteger(int index, bool system, int value)
 		{
-			var variables = system ? m_sysfloat : m_float;
-
-			if (index < 0 || index > variables.Count)
-			{
-				value = Single.MinValue;
-				return false;
-			}
-			else
-			{
-				value = variables[index];
-				return true;
-			}
-		}
-
-		public Boolean SetFloat(Int32 index, Boolean system, Single value)
-		{
-			var variables = system ? m_sysfloat : m_float;
+			var variables = system ? m_sysint : m_int;
 
 			if (index < 0 || index > variables.Count)
 			{
 				return false;
 			}
-			else
-			{
-				variables[index] = value;
-				return true;
-			}
+
+			variables[index] += value;
+			return true;
 		}
 
-		public Boolean AddFloat(Int32 index, Boolean system, Single value)
+		public bool GetFloat(int index, bool system, out float value)
+		{
+			var variables = system ? m_sysfloat : m_float;
+
+			if (index < 0 || index > variables.Count)
+			{
+				value = float.MinValue;
+				return false;
+			}
+
+			value = variables[index];
+			return true;
+		}
+
+		public bool SetFloat(int index, bool system, float value)
 		{
 			var variables = system ? m_sysfloat : m_float;
 
@@ -112,46 +88,45 @@ namespace xnaMugen.Combat
 			{
 				return false;
 			}
-			else
+
+			variables[index] = value;
+			return true;
+		}
+
+		public bool AddFloat(int index, bool system, float value)
+		{
+			var variables = system ? m_sysfloat : m_float;
+
+			if (index < 0 || index > variables.Count)
 			{
-				variables[index] += value;
-				return true;
+				return false;
 			}
+
+			variables[index] += value;
+			return true;
 		}
 
-		public Collections.ListIterator<Int32> IntegerVariables
-		{
-			get { return new Collections.ListIterator<Int32>(m_int); }
-		}
+		public Collections.ListIterator<int> IntegerVariables => new Collections.ListIterator<int>(m_int);
 
-		public Collections.ListIterator<Int32> SystemIntegerVariables
-		{
-			get { return new Collections.ListIterator<Int32>(m_sysint); }
-		}
+		public Collections.ListIterator<int> SystemIntegerVariables => new Collections.ListIterator<int>(m_sysint);
 
-		public Collections.ListIterator<Single> FloatVariables
-		{
-			get { return new Collections.ListIterator<Single>(m_float); }
-		}
+		public Collections.ListIterator<float> FloatVariables => new Collections.ListIterator<float>(m_float);
 
-		public Collections.ListIterator<Single> SystemFloatVariables
-		{
-			get { return new Collections.ListIterator<Single>(m_sysfloat); }
-		}
+		public Collections.ListIterator<float> SystemFloatVariables => new Collections.ListIterator<float>(m_sysfloat);
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly List<Int32> m_int;
+		private readonly List<int> m_int;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly List<Int32> m_sysint;
+		private readonly List<int> m_sysint;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly List<Single> m_float;
+		private readonly List<float> m_float;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly List<Single> m_sysfloat;
+		private readonly List<float> m_sysfloat;
 
 		#endregion
 	}

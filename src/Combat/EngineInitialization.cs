@@ -3,21 +3,21 @@ using System.Diagnostics;
 
 namespace xnaMugen.Combat
 {
-	class EngineInitialization
+	internal class EngineInitialization
 	{
-		public EngineInitialization(CombatMode mode, PlayerProfile p1, Int32 p1palette, PlayerProfile p2, Int32 p2palette, StageProfile stage):
+		public EngineInitialization(CombatMode mode, PlayerProfile p1, int p1palette, PlayerProfile p2, int p2palette, StageProfile stage):
 			this(mode, p1, p1palette, p2, p2palette, stage, Environment.TickCount)
 		{
 		}
 
-		public EngineInitialization(CombatMode mode, PlayerProfile p1, Int32 p1palette, PlayerProfile p2, Int32 p2palette, StageProfile stage, Int32 seed)
+		public EngineInitialization(CombatMode mode, PlayerProfile p1, int p1palette, PlayerProfile p2, int p2palette, StageProfile stage, int seed)
 		{
-			if (mode == CombatMode.None) throw new ArgumentOutOfRangeException("mode");
-			if (p1 == null) throw new ArgumentNullException("p1");
-			if (p1palette < 0 || p1palette > 11) throw new ArgumentOutOfRangeException("p1palette");
-			if (p2 == null) throw new ArgumentNullException("p2");
-			if (p2palette < 0 || p2palette > 11) throw new ArgumentOutOfRangeException("p2palette");
-			if (stage == null) throw new ArgumentNullException("stage");
+			if (mode == CombatMode.None) throw new ArgumentOutOfRangeException(nameof(mode));
+			if (p1 == null) throw new ArgumentNullException(nameof(p1));
+			if (p1palette < 0 || p1palette > 11) throw new ArgumentOutOfRangeException(nameof(p1palette));
+			if (p2 == null) throw new ArgumentNullException(nameof(p2));
+			if (p2palette < 0 || p2palette > 11) throw new ArgumentOutOfRangeException(nameof(p2palette));
+			if (stage == null) throw new ArgumentNullException(nameof(stage));
 
 			m_mode = mode;
 			m_p1 = new PlayerCreation(p1, p1.GetValidPaletteIndex(p1palette));
@@ -26,47 +26,32 @@ namespace xnaMugen.Combat
 			m_seed = seed;
 		}
 
-		public CombatMode Mode
-		{
-			get { return m_mode; }
-		}
+		public CombatMode Mode => m_mode;
 
-		public PlayerCreation P1
-		{
-			get { return m_p1; }
-		}
+		public PlayerCreation P1 => m_p1;
 
-		public PlayerCreation P2
-		{
-			get { return m_p2; }
-		}
+		public PlayerCreation P2 => m_p2;
 
-		public StageProfile Stage
-		{
-			get { return m_stage; }
-		}
+		public StageProfile Stage => m_stage;
 
-		public Int32 Seed
-		{
-			get { return m_seed; }
-		}
+		public int Seed => m_seed;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly CombatMode m_mode;
+		private readonly CombatMode m_mode;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly PlayerCreation m_p1;
+		private readonly PlayerCreation m_p1;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly PlayerCreation m_p2;
+		private readonly PlayerCreation m_p2;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly StageProfile m_stage;
+		private readonly StageProfile m_stage;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Int32 m_seed;
+		private readonly int m_seed;
 
 		#endregion
 	}

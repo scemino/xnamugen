@@ -1,13 +1,12 @@
-using System;
 using System.Diagnostics;
 using xnaMugen.IO;
 
 namespace xnaMugen.StateMachine.Controllers
 {
 	[StateControllerName("SprPriority")]
-	class SprPriority : StateController
+	internal class SprPriority : StateController
 	{
-		public SprPriority(StateSystem statesystem, String label, TextSection textsection)
+		public SprPriority(StateSystem statesystem, string label, TextSection textsection)
 			: base(statesystem, label, textsection)
 		{
 			m_priority = textsection.GetAttribute<Evaluation.Expression>("value", null);
@@ -15,13 +14,13 @@ namespace xnaMugen.StateMachine.Controllers
 
 		public override void Run(Combat.Character character)
 		{
-			Int32 spritepriority = EvaluationHelper.AsInt32(character, Priority, 0);
+			var spritepriority = EvaluationHelper.AsInt32(character, Priority, 0);
 			spritepriority = Misc.Clamp(spritepriority, -5, 5);
 
 			character.DrawOrder = spritepriority;
 		}
 
-		public override Boolean IsValid()
+		public override bool IsValid()
 		{
 			if (base.IsValid() == false) return false;
 
@@ -30,15 +29,12 @@ namespace xnaMugen.StateMachine.Controllers
 			return true;
 		}
 
-		public Evaluation.Expression Priority
-		{
-			get { return m_priority; }
-		}
+		public Evaluation.Expression Priority => m_priority;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_priority;
+		private readonly Evaluation.Expression m_priority;
 
 		#endregion
 	}

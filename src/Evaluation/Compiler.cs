@@ -6,9 +6,9 @@ using System.Collections.Generic;
 
 namespace xnaMugen.Evaluation
 {
-	class Compiler
+	internal class Compiler
 	{
-		class CompilerState
+		private class CompilerState
 		{
 			public ILGenerator Generator { get; set; }
 			public LocalVariableInfo FunctionState { get; set; }
@@ -18,31 +18,31 @@ namespace xnaMugen.Evaluation
 
 		public Compiler()
 		{
-			AssemblyBuilder newAssembly = Thread.GetDomain().DefineDynamicAssembly(new AssemblyName("Assembly"), AssemblyBuilderAccess.Run);
+			var newAssembly = Thread.GetDomain().DefineDynamicAssembly(new AssemblyName("Assembly"), AssemblyBuilderAccess.Run);
 			m_module = newAssembly.DefineDynamicModule("Module");
 
-			m_constfunctionmethods = new Dictionary<String, MethodInfo>(StringComparer.InvariantCultureIgnoreCase);
-			m_gethitvarmethods = new Dictionary<String, MethodInfo>(StringComparer.InvariantCultureIgnoreCase);
+			m_constfunctionmethods = new Dictionary<string, MethodInfo>(StringComparer.InvariantCultureIgnoreCase);
+			m_gethitvarmethods = new Dictionary<string, MethodInfo>(StringComparer.InvariantCultureIgnoreCase);
 
 			BuildFunctionMap();
 		}
 
-		void BuildFunctionMap()
+		private void BuildFunctionMap()
 		{
 			m_constfunctionmethods.Clear();
 			m_gethitvarmethods.Clear();
 
-			foreach (MethodInfo method in typeof(Triggers.Const).GetMethods())
+			foreach (var method in typeof(Triggers.Const).GetMethods())
 			{
-				TagAttribute tag = (TagAttribute)Attribute.GetCustomAttribute(method, typeof(TagAttribute));
+				var tag = (TagAttribute)Attribute.GetCustomAttribute(method, typeof(TagAttribute));
 				if (tag == null) continue;
 
 				m_constfunctionmethods.Add(tag.Value, method);
 			}
 
-			foreach (MethodInfo method in typeof(Triggers.GetHitVar).GetMethods())
+			foreach (var method in typeof(Triggers.GetHitVar).GetMethods())
 			{
-				TagAttribute tag = (TagAttribute)Attribute.GetCustomAttribute(method, typeof(TagAttribute));
+				var tag = (TagAttribute)Attribute.GetCustomAttribute(method, typeof(TagAttribute));
 				if (tag == null) continue;
 
 				m_gethitvarmethods.Add(tag.Value, method);
@@ -51,28 +51,27 @@ namespace xnaMugen.Evaluation
 
 		public EvaluationCallback Create(Node node)
 		{
-			DynamicMethod method = new DynamicMethod(String.Empty, typeof(Number), new Type[] { typeof(Object) }, typeof(Compiler), true);
+			var method = new DynamicMethod(string.Empty, typeof(Number), new[] { typeof(object) }, typeof(Compiler), true);
 
-			CompilerState compilerstate = new CompilerState();
-			compilerstate.Generator = method.GetILGenerator();
-			compilerstate.FunctionState = compilerstate.Generator.DeclareLocal(typeof(Object));
+			var compilerstate = new CompilerState {Generator = method.GetILGenerator()};
+			compilerstate.FunctionState = compilerstate.Generator.DeclareLocal(typeof(object));
 			compilerstate.ErrorLabel = compilerstate.Generator.DefineLabel();
-			compilerstate.ErrorVariable = compilerstate.Generator.DeclareLocal(typeof(Boolean));
+			compilerstate.ErrorVariable = compilerstate.Generator.DeclareLocal(typeof(bool));
 
 			compilerstate.Generator.Emit(OpCodes.Ldarg, 0);
 			StoreLocalVariable(compilerstate, compilerstate.FunctionState);
 
-			LocalVariableInfo result = Emit(compilerstate, node);
+			var result = Emit(compilerstate, node);
 
-			if (result.LocalType == typeof(Int32))
+			if (result.LocalType == typeof(int))
 			{
 				LoadLocalVariable(compilerstate, result);
-				compilerstate.Generator.Emit(OpCodes.Newobj, typeof(Number).GetConstructor(new Type[] { typeof(Int32) }));
+				compilerstate.Generator.Emit(OpCodes.Newobj, typeof(Number).GetConstructor(new[] { typeof(int) }));
 			}
-			else if (result.LocalType == typeof(Single))
+			else if (result.LocalType == typeof(float))
 			{
 				LoadLocalVariable(compilerstate, result);
-				compilerstate.Generator.Emit(OpCodes.Newobj, typeof(Number).GetConstructor(new Type[] { typeof(Single) }));
+				compilerstate.Generator.Emit(OpCodes.Newobj, typeof(Number).GetConstructor(new[] { typeof(float) }));
 			}
 			else
 			{
@@ -85,36 +84,36 @@ namespace xnaMugen.Evaluation
 			LoadLocalVariable(compilerstate, compilerstate.Generator.DeclareLocal(typeof(Number)));
 			compilerstate.Generator.Emit(OpCodes.Ret);
 
-			EvaluationCallback callback = (EvaluationCallback)method.CreateDelegate(typeof(EvaluationCallback));
+			var callback = (EvaluationCallback)method.CreateDelegate(typeof(EvaluationCallback));
 			return callback;
 		}
 
-		LocalVariableInfo Emit(CompilerState state, Node node)
+		private LocalVariableInfo Emit(CompilerState state, Node node)
 		{
 			if (state == null) throw new Exception();
 			if (node == null) throw new Exception();
 
-			if (node.Token.Data is Evaluation.Tokenizing.NumberData)
+			if (node.Token.Data is Tokenizing.NumberData)
 			{
 				return EmitNumber(state, node);
 			}
 
-			if (node.Token.Data is Evaluation.Tokenizing.OperatorData)
+			if (node.Token.Data is Tokenizing.OperatorData)
 			{
 				return EmitOperator(state, node);
 			}
 
-			if (node.Token.Data is Evaluation.Tokenizing.StateRedirectionData)
+			if (node.Token.Data is Tokenizing.StateRedirectionData)
 			{
 				return EmitStateRedirection(state, node);
 			}
 
-			if (node.Token.Data is Evaluation.Tokenizing.CustomFunctionData)
+			if (node.Token.Data is Tokenizing.CustomFunctionData)
 			{
 				return EmitFunction(state, node);
 			}
 
-			if (node.Token.Data is Evaluation.Tokenizing.RangeData)
+			if (node.Token.Data is Tokenizing.RangeData)
 			{
 				return EmitRange(state, node);
 			}
@@ -122,24 +121,24 @@ namespace xnaMugen.Evaluation
 			throw new Exception();
 		}
 
-		LocalVariableInfo EmitMethod(CompilerState state, MethodInfo method, List<LocalVariableInfo> args)
+		private LocalVariableInfo EmitMethod(CompilerState state, MethodInfo method, List<LocalVariableInfo> args)
 		{
 			if (state == null) throw new Exception();
 			if (method == null) throw new Exception();
 			if (args == null) throw new Exception();
 
-			ParameterInfo[] parameters = method.GetParameters();
+			var parameters = method.GetParameters();
 
-			for (Int32 i = 0; i != args.Count; ++i)
+			for (var i = 0; i != args.Count; ++i)
 			{
 				LoadLocalVariable(state, args[i]);
 
-				if (parameters[i].ParameterType == typeof(Single) && args[i].LocalType != typeof(Single))
+				if (parameters[i].ParameterType == typeof(float) && args[i].LocalType != typeof(float))
 				{
 					state.Generator.Emit(OpCodes.Conv_R4);
 				}
 
-				if (parameters[i].ParameterType == typeof(Double) && args[i].LocalType != typeof(Double))
+				if (parameters[i].ParameterType == typeof(double) && args[i].LocalType != typeof(double))
 				{
 					state.Generator.Emit(OpCodes.Conv_R8);
 				}
@@ -147,15 +146,15 @@ namespace xnaMugen.Evaluation
 
 			state.Generator.Emit(OpCodes.Call, method);
 
-			Type returntype = method.ReturnType;
-			if (returntype == typeof(Boolean))
+			var returntype = method.ReturnType;
+			if (returntype == typeof(bool))
 			{
-				returntype = typeof(Int32);
+				returntype = typeof(int);
 			}
-			else if (returntype == typeof(Double))
+			else if (returntype == typeof(double))
 			{
 				state.Generator.Emit(OpCodes.Conv_R4);
-				returntype = typeof(Single);
+				returntype = typeof(float);
 			}
 
 			LocalVariableInfo result = state.Generator.DeclareLocal(returntype);
@@ -167,48 +166,48 @@ namespace xnaMugen.Evaluation
 			return result;
 		}
 
-		LocalVariableInfo EmitRange(CompilerState state, Node node)
+		private LocalVariableInfo EmitRange(CompilerState state, Node node)
 		{
 			if (state == null) throw new Exception();
 			if (node == null) throw new Exception();
 
-			Evaluation.Tokenizing.RangeData data = node.Token.Data as Evaluation.Tokenizing.RangeData;
+			var data = node.Token.Data as Tokenizing.RangeData;
 			if (data == null) throw new Exception();
 
 			if (node.Children.Count != 3) throw new Exception();
 			if (node.Arguments.Count != 3) throw new Exception();
 
-			List<LocalVariableInfo> args = EmitDescendants(state, node);
+			var args = EmitDescendants(state, node);
 
-			Type[] argtypes = new Type[args.Count];
-			for (Int32 i = 0; i != args.Count; ++i) argtypes[i] = args[i].LocalType;
+			var argtypes = new Type[args.Count];
+			for (var i = 0; i != args.Count; ++i) argtypes[i] = args[i].LocalType;
 
-			MethodInfo method = typeof(SpecialFunctions).GetMethod("Range", argtypes);
+			var method = typeof(SpecialFunctions).GetMethod("Range", argtypes);
 
 			return EmitMethod(state, method, args);
 		}
 
-		LocalVariableInfo EmitStateRedirection(CompilerState state, Node node)
+		private LocalVariableInfo EmitStateRedirection(CompilerState state, Node node)
 		{
 			if (state == null) throw new Exception();
 			if (node == null) throw new Exception();
 
-			Evaluation.Tokenizing.StateRedirectionData data = node.Token.Data as Evaluation.Tokenizing.StateRedirectionData;
+			var data = node.Token.Data as Tokenizing.StateRedirectionData;
 			if (data == null) throw new Exception();
 
 			if (node.Children.Count < 1) throw new Exception();
 
-			List<LocalVariableInfo> functionargs = EmitRedirectionDescendants(state, node);
-			MethodInfo method = FindCorrectRedirectionMethod(data.Type, functionargs);
-			ParameterInfo[] parameters = method.GetParameters();
+			var functionargs = EmitRedirectionDescendants(state, node);
+			var method = FindCorrectRedirectionMethod(data.Type, functionargs);
+			var parameters = method.GetParameters();
 
 			LoadLocalVariable(state, state.FunctionState);
 			state.Generator.Emit(OpCodes.Ldloca, state.ErrorVariable.LocalIndex);
 
-			for (Int32 i = 0; i != functionargs.Count; ++i)
+			for (var i = 0; i != functionargs.Count; ++i)
 			{
-				LocalVariableInfo arg = functionargs[i];
-				ParameterInfo parameter = parameters[i + 2];
+				var arg = functionargs[i];
+				var parameter = parameters[i + 2];
 
 				LoadLocalVariable(state, arg);
 
@@ -218,44 +217,44 @@ namespace xnaMugen.Evaluation
 
 			state.Generator.Emit(OpCodes.Call, method);
 
-			LocalVariableInfo oldstate = state.FunctionState;
+			var oldstate = state.FunctionState;
 
-			state.FunctionState = state.Generator.DeclareLocal(typeof(Object));
+			state.FunctionState = state.Generator.DeclareLocal(typeof(object));
 			StoreLocalVariable(state, state.FunctionState);
 
 			LoadLocalVariable(state, state.ErrorVariable);
 			state.Generator.Emit(OpCodes.Brtrue, state.ErrorLabel);
 
-			LocalVariableInfo returnvalue = Emit(state, node.Children[node.Children.Count - 1]);
+			var returnvalue = Emit(state, node.Children[node.Children.Count - 1]);
 
 			state.FunctionState = oldstate;
 			return returnvalue;
 		}
 
-		LocalVariableInfo EmitFunction(CompilerState state, Node node)
+		private LocalVariableInfo EmitFunction(CompilerState state, Node node)
 		{
 			if (state == null) throw new Exception();
 			if (node == null) throw new Exception();
 
-			Evaluation.Tokenizing.CustomFunctionData data = node.Token.Data as Evaluation.Tokenizing.CustomFunctionData;
+			var data = node.Token.Data as Tokenizing.CustomFunctionData;
 			if (data == null) throw new Exception();
 
 			if (data.Type == typeof(Triggers.Const) || data.Type == typeof(Triggers.GetHitVar))
 			{
-				return EmitSpecialFunction(state, data.Type, (String)node.Arguments[0]);
+				return EmitSpecialFunction(state, data.Type, (string)node.Arguments[0]);
 			}
 
-			List<LocalVariableInfo> functionargs = EmitDescendants(state, node);
-			MethodInfo method = FindCorrectMethod(data.Type, functionargs);
-			ParameterInfo[] parameters = method.GetParameters();
+			var functionargs = EmitDescendants(state, node);
+			var method = FindCorrectMethod(data.Type, functionargs);
+			var parameters = method.GetParameters();
 
 			LoadLocalVariable(state, state.FunctionState);
 			state.Generator.Emit(OpCodes.Ldloca, state.ErrorVariable.LocalIndex);
 
-			for (Int32 i = 0; i != functionargs.Count; ++i)
+			for (var i = 0; i != functionargs.Count; ++i)
 			{
-				LocalVariableInfo arg = functionargs[i];
-				ParameterInfo parameter = parameters[i + 2];
+				var arg = functionargs[i];
+				var parameter = parameters[i + 2];
 
 				LoadLocalVariable(state, arg);
 
@@ -265,8 +264,8 @@ namespace xnaMugen.Evaluation
 
 			state.Generator.Emit(OpCodes.Call, method);
 
-			Type returntype = method.ReturnType;
-			if (returntype == typeof(Boolean)) returntype = typeof(Int32);
+			var returntype = method.ReturnType;
+			if (returntype == typeof(bool)) returntype = typeof(int);
 
 			LocalVariableInfo result = state.Generator.DeclareLocal(returntype);
 			StoreLocalVariable(state, result);
@@ -277,13 +276,13 @@ namespace xnaMugen.Evaluation
 			return result;
 		}
 
-		LocalVariableInfo EmitSpecialFunction(CompilerState state, Type type, String constant)
+		private LocalVariableInfo EmitSpecialFunction(CompilerState state, Type type, string constant)
 		{
 			if (state == null) throw new Exception();
 			if (type == null) throw new Exception();
 			if (constant == null) throw new Exception();
 
-			Dictionary<String, MethodInfo> methodmap;
+			Dictionary<string, MethodInfo> methodmap;
 			if (type == typeof(Triggers.Const)) methodmap = m_constfunctionmethods;
 			else if (type == typeof(Triggers.GetHitVar)) methodmap = m_gethitvarmethods;
 			else throw new Exception();
@@ -296,8 +295,8 @@ namespace xnaMugen.Evaluation
 
 			state.Generator.Emit(OpCodes.Call, method);
 
-			Type returntype = method.ReturnType;
-			if (returntype == typeof(Boolean)) returntype = typeof(Int32);
+			var returntype = method.ReturnType;
+			if (returntype == typeof(bool)) returntype = typeof(int);
 
 			LocalVariableInfo result = state.Generator.DeclareLocal(returntype);
 			StoreLocalVariable(state, result);
@@ -308,12 +307,12 @@ namespace xnaMugen.Evaluation
 			return result;
 		}
 
-		LocalVariableInfo EmitOperator(CompilerState state, Node node)
+		private LocalVariableInfo EmitOperator(CompilerState state, Node node)
 		{
 			if (state == null) throw new Exception();
 			if (node == null) throw new Exception();
 
-			Evaluation.Tokenizing.OperatorData data = node.Token.Data as Evaluation.Tokenizing.OperatorData;
+			var data = node.Token.Data as Tokenizing.OperatorData;
 			if (data == null) throw new Exception();
 
 			if (node.Children.Count == 1) return EmitUnaryOperator(state, node);
@@ -322,8 +321,8 @@ namespace xnaMugen.Evaluation
 
 			if (data.Operator == Operator.Assignment) return EmitAssignmentOperator(state, node);
 
-			LocalVariableInfo lhs = Emit(state, node.Children[0]);
-			LocalVariableInfo rhs = Emit(state, node.Children[1]);
+			var lhs = Emit(state, node.Children[0]);
+			var rhs = Emit(state, node.Children[1]);
 
 			switch (data.Operator)
 			{
@@ -356,32 +355,32 @@ namespace xnaMugen.Evaluation
 					return EmitLogicalOperator(state, data.Operator, lhs, rhs);
 
 				case Operator.Exponent:
-					return EmitMethod(state, typeof(Math).GetMethod("Pow"), new List<LocalVariableInfo>() { lhs, rhs });
+					return EmitMethod(state, typeof(Math).GetMethod("Pow"), new List<LocalVariableInfo> { lhs, rhs });
 
 				default:
 					throw new Exception();
 			}
 		}
 
-		LocalVariableInfo EmitAssignmentOperator(CompilerState state, Node node)
+		private LocalVariableInfo EmitAssignmentOperator(CompilerState state, Node node)
 		{
 			if (state == null) throw new Exception();
 			if (node == null) throw new Exception();
 
-			Evaluation.Tokenizing.OperatorData data = node.Token.Data as Evaluation.Tokenizing.OperatorData;
+			var data = node.Token.Data as Tokenizing.OperatorData;
 			if (data == null || data.Operator != Operator.Assignment) throw new Exception();
 
 			if (node.Children.Count != 2) throw new Exception();
 
-			Evaluation.Tokenizing.CustomFunctionData vardata = node.Children[0].Token.Data as Evaluation.Tokenizing.CustomFunctionData;
+			var vardata = node.Children[0].Token.Data as Tokenizing.CustomFunctionData;
 			if (vardata == null) throw new Exception();
 
 			if (node.Children[0].Children.Count != 1) throw new Exception();
 
-			LocalVariableInfo index = Emit(state, node.Children[0].Children[0]);
-			LocalVariableInfo value = Emit(state, node.Children[1]);
+			var index = Emit(state, node.Children[0].Children[0]);
+			var value = Emit(state, node.Children[1]);
 
-			List<LocalVariableInfo> args = new List<LocalVariableInfo>() { state.FunctionState, index, value };
+			var args = new List<LocalVariableInfo> { state.FunctionState, index, value };
 
 			if (vardata.Type == typeof(Triggers.Var))
 			{
@@ -406,13 +405,13 @@ namespace xnaMugen.Evaluation
 			throw new Exception();
 		}
 
-		LocalVariableInfo EmitLogicalOperator(CompilerState state, Operator @operator, LocalVariableInfo lhs, LocalVariableInfo rhs)
+		private LocalVariableInfo EmitLogicalOperator(CompilerState state, Operator @operator, LocalVariableInfo lhs, LocalVariableInfo rhs)
 		{
 			if (state == null) throw new Exception();
 			if (lhs == null) throw new Exception();
 			if (rhs == null) throw new Exception();
 
-			LocalVariableInfo result = state.Generator.DeclareLocal(typeof(Int32));
+			LocalVariableInfo result = state.Generator.DeclareLocal(typeof(int));
 
 			PushAsBoolean(state, lhs);
 			PushAsBoolean(state, rhs);
@@ -442,15 +441,15 @@ namespace xnaMugen.Evaluation
 			return result;
 		}
 
-		LocalVariableInfo EmitComparsionOperator(CompilerState state, Operator @operator, LocalVariableInfo lhs, LocalVariableInfo rhs)
+		private LocalVariableInfo EmitComparsionOperator(CompilerState state, Operator @operator, LocalVariableInfo lhs, LocalVariableInfo rhs)
 		{
 			if (state == null) throw new Exception();
 			if (lhs == null) throw new Exception();
 			if (rhs == null) throw new Exception();
 
-			LocalVariableInfo result = state.Generator.DeclareLocal(typeof(Int32));
+			LocalVariableInfo result = state.Generator.DeclareLocal(typeof(int));
 
-			if (lhs.LocalType == typeof(Int32) && rhs.LocalType == typeof(Int32))
+			if (lhs.LocalType == typeof(int) && rhs.LocalType == typeof(int))
 			{
 				LoadLocalVariable(state, lhs);
 				LoadLocalVariable(state, rhs);
@@ -509,7 +508,7 @@ namespace xnaMugen.Evaluation
 			return result;
 		}
 
-		LocalVariableInfo EmitArithmeticOperator(CompilerState state, OpCode msilcode, LocalVariableInfo lhs, LocalVariableInfo rhs)
+		private LocalVariableInfo EmitArithmeticOperator(CompilerState state, OpCode msilcode, LocalVariableInfo lhs, LocalVariableInfo rhs)
 		{
 			if (state == null) throw new Exception();
 			if (lhs == null) throw new Exception();
@@ -518,16 +517,16 @@ namespace xnaMugen.Evaluation
 			if (msilcode == OpCodes.Div) CheckIfZero(state, rhs);
 
 			LocalVariableInfo result;
-			if (lhs.LocalType == typeof(Int32) && rhs.LocalType == typeof(Int32))
+			if (lhs.LocalType == typeof(int) && rhs.LocalType == typeof(int))
 			{
-				result = state.Generator.DeclareLocal(typeof(Int32));
+				result = state.Generator.DeclareLocal(typeof(int));
 
 				LoadLocalVariable(state, lhs);
 				LoadLocalVariable(state, rhs);
 			}
 			else
 			{
-				result = state.Generator.DeclareLocal(typeof(Single));
+				result = state.Generator.DeclareLocal(typeof(float));
 
 				LoadLocalVariable(state, lhs);
 				state.Generator.Emit(OpCodes.Conv_R4);
@@ -542,19 +541,19 @@ namespace xnaMugen.Evaluation
 			return result;
 		}
 
-		LocalVariableInfo EmitUnaryOperator(CompilerState state, Node node)
+		private LocalVariableInfo EmitUnaryOperator(CompilerState state, Node node)
 		{
 			if (state == null) throw new Exception();
 			if (node == null) throw new Exception();
 
-			Evaluation.Tokenizing.OperatorData data = node.Token.Data as Evaluation.Tokenizing.OperatorData;
+			var data = node.Token.Data as Tokenizing.OperatorData;
 			if (data == null) throw new Exception();
 
 			if (node.Children.Count != 1) throw new Exception();
 
 			if (data.Operator == Operator.Minus)
 			{
-				LocalVariableInfo value = Emit(state, node.Children[0]);
+				var value = Emit(state, node.Children[0]);
 				LocalVariableInfo result = state.Generator.DeclareLocal(value.LocalType);
 
 				LoadLocalVariable(state, value);
@@ -566,12 +565,12 @@ namespace xnaMugen.Evaluation
 
 			if (data.Operator == Operator.LogicalNot)
 			{
-				LocalVariableInfo value = Emit(state, node.Children[0]);
+				var value = Emit(state, node.Children[0]);
 				LoadLocalVariable(state, value);
 
-				LocalVariableInfo result = state.Generator.DeclareLocal(typeof(Int32));
-				Label l1 = state.Generator.DefineLabel();
-				Label l2 = state.Generator.DefineLabel();
+				LocalVariableInfo result = state.Generator.DeclareLocal(typeof(int));
+				var l1 = state.Generator.DefineLabel();
+				var l2 = state.Generator.DefineLabel();
 
 				state.Generator.Emit(OpCodes.Brtrue, l1);
 				state.Generator.Emit(OpCodes.Ldc_I4_1);
@@ -589,19 +588,19 @@ namespace xnaMugen.Evaluation
 			throw new Exception();
 		}
 
-		LocalVariableInfo EmitNumber(CompilerState state, Node node)
+		private LocalVariableInfo EmitNumber(CompilerState state, Node node)
 		{
 			if (state == null) throw new Exception();
 			if (node == null) throw new Exception();
 
-			Evaluation.Tokenizing.NumberData data = node.Token.Data as Evaluation.Tokenizing.NumberData;
+			var data = node.Token.Data as Tokenizing.NumberData;
 			if (data == null) throw new Exception();
 
-			Number number = data.GetNumber(node.Token.ToString());
+			var number = data.GetNumber(node.Token.ToString());
 
 			if (number.NumberType == NumberType.Int)
 			{
-				LocalVariableInfo local = state.Generator.DeclareLocal(typeof(Int32));
+				LocalVariableInfo local = state.Generator.DeclareLocal(typeof(int));
 
 				state.Generator.Emit(OpCodes.Ldc_I4, number.IntValue);
 				StoreLocalVariable(state, local);
@@ -610,7 +609,7 @@ namespace xnaMugen.Evaluation
 
 			if (number.NumberType == NumberType.Float)
 			{
-				LocalVariableInfo local = state.Generator.DeclareLocal(typeof(Single));
+				LocalVariableInfo local = state.Generator.DeclareLocal(typeof(float));
 
 				state.Generator.Emit(OpCodes.Ldc_R4, number.FloatValue);
 				StoreLocalVariable(state, local);
@@ -620,63 +619,63 @@ namespace xnaMugen.Evaluation
 			throw new Exception();
 		}
 
-		MethodInfo FindCorrectMethod(Type functiontype, List<LocalVariableInfo> args)
+		private MethodInfo FindCorrectMethod(Type functiontype, List<LocalVariableInfo> args)
 		{
 			if (functiontype == null) throw new Exception();
 			if (args == null) throw new Exception();
 
-			Type[] argtypes = new Type[args.Count + 2];
-			argtypes[0] = typeof(Object);
-			argtypes[1] = typeof(Boolean).MakeByRefType();
-			for (Int32 i = 0; i != args.Count; ++i) argtypes[i + 2] = args[i].LocalType;
+			var argtypes = new Type[args.Count + 2];
+			argtypes[0] = typeof(object);
+			argtypes[1] = typeof(bool).MakeByRefType();
+			for (var i = 0; i != args.Count; ++i) argtypes[i + 2] = args[i].LocalType;
 
-			MethodInfo info = functiontype.GetMethod("Evaluate", argtypes);
+			var info = functiontype.GetMethod("Evaluate", argtypes);
 			if (info != null) return info;
 
 			throw new Exception();
 		}
 
-		MethodInfo FindCorrectRedirectionMethod(Type functiontype, List<LocalVariableInfo> args)
+		private MethodInfo FindCorrectRedirectionMethod(Type functiontype, List<LocalVariableInfo> args)
 		{
 			if (functiontype == null) throw new Exception();
 			if (args == null) throw new Exception();
 
-			Type[] argtypes = new Type[args.Count + 2];
-			argtypes[0] = typeof(Object);
-			argtypes[1] = typeof(Boolean).MakeByRefType();
-			for (Int32 i = 0; i != args.Count; ++i) argtypes[i + 2] = args[i].LocalType;
+			var argtypes = new Type[args.Count + 2];
+			argtypes[0] = typeof(object);
+			argtypes[1] = typeof(bool).MakeByRefType();
+			for (var i = 0; i != args.Count; ++i) argtypes[i + 2] = args[i].LocalType;
 
-			MethodInfo info = functiontype.GetMethod("RedirectState", argtypes);
+			var info = functiontype.GetMethod("RedirectState", argtypes);
 			if (info != null) return info;
 
 			throw new Exception();
 		}
 
-		List<LocalVariableInfo> EmitDescendants(CompilerState state, Node node)
+		private List<LocalVariableInfo> EmitDescendants(CompilerState state, Node node)
 		{
 			if (state == null) throw new Exception();
 			if (node == null) throw new Exception();
 
-			List<LocalVariableInfo> output = new List<LocalVariableInfo>();
+			var output = new List<LocalVariableInfo>();
 
-			foreach (Node child in node.Children) output.Add(Emit(state, child));
+			foreach (var child in node.Children) output.Add(Emit(state, child));
 
-			foreach (Object arg in node.Arguments)
+			foreach (var arg in node.Arguments)
 			{
-				if (arg is String)
+				if (arg is string)
 				{
-					LocalVariableInfo local = state.Generator.DeclareLocal(typeof(String));
+					LocalVariableInfo local = state.Generator.DeclareLocal(typeof(string));
 
-					state.Generator.Emit(OpCodes.Ldstr, (String)arg);
+					state.Generator.Emit(OpCodes.Ldstr, (string)arg);
 					StoreLocalVariable(state, local);
 
 					output.Add(local);
 				}
-				else if (arg.GetType().IsEnum == true)
+				else if (arg.GetType().IsEnum)
 				{
 					LocalVariableInfo local = state.Generator.DeclareLocal(arg.GetType());
 
-					state.Generator.Emit(OpCodes.Ldc_I4, (Int32)arg);
+					state.Generator.Emit(OpCodes.Ldc_I4, (int)arg);
 					StoreLocalVariable(state, local);
 
 					output.Add(local);
@@ -684,22 +683,22 @@ namespace xnaMugen.Evaluation
 				else if (arg is Combat.HitType[])
 				{
 					LocalVariableInfo local = state.Generator.DeclareLocal(arg.GetType());
-					Combat.HitType[] hitypes = (Combat.HitType[])arg;
+					var hitypes = (Combat.HitType[])arg;
 
 					state.Generator.Emit(OpCodes.Ldc_I4, hitypes.Length);
 					state.Generator.Emit(OpCodes.Newarr, typeof(Combat.HitType));
 
 					StoreLocalVariable(state, local);
 
-					for (Int32 i = 0; i != hitypes.Length; ++i)
+					for (var i = 0; i != hitypes.Length; ++i)
 					{
 						LoadLocalVariable(state, local);
 
 						state.Generator.Emit(OpCodes.Ldc_I4, i);
 
-						state.Generator.Emit(OpCodes.Ldc_I4, (Int32)hitypes[i].Class);
-						state.Generator.Emit(OpCodes.Ldc_I4, (Int32)hitypes[i].Power);
-						state.Generator.Emit(OpCodes.Newobj, typeof(Combat.HitType).GetConstructor(new Type[] { typeof(AttackClass), typeof(AttackPower) }));
+						state.Generator.Emit(OpCodes.Ldc_I4, (int)hitypes[i].Class);
+						state.Generator.Emit(OpCodes.Ldc_I4, (int)hitypes[i].Power);
+						state.Generator.Emit(OpCodes.Newobj, typeof(Combat.HitType).GetConstructor(new[] { typeof(AttackClass), typeof(AttackPower) }));
 
 						state.Generator.Emit(OpCodes.Stelem, typeof(Combat.HitType));
 					}
@@ -715,31 +714,31 @@ namespace xnaMugen.Evaluation
 			return output;
 		}
 
-		List<LocalVariableInfo> EmitRedirectionDescendants(CompilerState state, Node node)
+		private List<LocalVariableInfo> EmitRedirectionDescendants(CompilerState state, Node node)
 		{
 			if (state == null) throw new Exception();
 			if (node == null) throw new Exception();
 
-			List<LocalVariableInfo> output = new List<LocalVariableInfo>();
+			var output = new List<LocalVariableInfo>();
 
-			for (Int32 i = 0; i < node.Children.Count - 1; ++i) output.Add(Emit(state, node.Children[i]));
+			for (var i = 0; i < node.Children.Count - 1; ++i) output.Add(Emit(state, node.Children[i]));
 
-			foreach (Object arg in node.Arguments)
+			foreach (var arg in node.Arguments)
 			{
-				if (arg is String)
+				if (arg is string)
 				{
-					LocalVariableInfo local = state.Generator.DeclareLocal(typeof(String));
+					LocalVariableInfo local = state.Generator.DeclareLocal(typeof(string));
 
-					state.Generator.Emit(OpCodes.Ldstr, (String)arg);
+					state.Generator.Emit(OpCodes.Ldstr, (string)arg);
 					StoreLocalVariable(state, local);
 
 					output.Add(local);
 				}
-				else if (arg.GetType().IsEnum == true)
+				else if (arg.GetType().IsEnum)
 				{
 					LocalVariableInfo local = state.Generator.DeclareLocal(arg.GetType());
 
-					state.Generator.Emit(OpCodes.Ldc_I4, (Int32)arg);
+					state.Generator.Emit(OpCodes.Ldc_I4, (int)arg);
 					StoreLocalVariable(state, local);
 
 					output.Add(local);
@@ -753,19 +752,19 @@ namespace xnaMugen.Evaluation
 			return output;
 		}
 
-		void CheckIfZero(CompilerState state, LocalVariableInfo local)
+		private void CheckIfZero(CompilerState state, LocalVariableInfo local)
 		{
 			if (state == null) throw new Exception();
 			if (local == null) throw new Exception();
 
-			if (local.LocalType == typeof(Int32))
+			if (local.LocalType == typeof(int))
 			{
 				LoadLocalVariable(state, local);
 				state.Generator.Emit(OpCodes.Ldc_I4_0);
 				state.Generator.Emit(OpCodes.Beq, state.ErrorLabel);
 			}
 
-			if (local.LocalType == typeof(Single))
+			if (local.LocalType == typeof(float))
 			{
 				LoadLocalVariable(state, local);
 				state.Generator.Emit(OpCodes.Ldc_R4, 0.0f);
@@ -773,7 +772,7 @@ namespace xnaMugen.Evaluation
 			}
 		}
 
-		void LoadLocalVariable(CompilerState state, LocalVariableInfo local)
+		private void LoadLocalVariable(CompilerState state, LocalVariableInfo local)
 		{
 			if (state == null) throw new Exception();
 			if (local == null) throw new Exception();
@@ -802,7 +801,7 @@ namespace xnaMugen.Evaluation
 			}
 		}
 
-		void StoreLocalVariable(CompilerState state, LocalVariableInfo local)
+		private void StoreLocalVariable(CompilerState state, LocalVariableInfo local)
 		{
 			if (state == null) throw new Exception();
 			if (local == null) throw new Exception();
@@ -831,21 +830,21 @@ namespace xnaMugen.Evaluation
 			}
 		}
 
-		void PushAsBoolean(CompilerState state, LocalVariableInfo local)
+		private void PushAsBoolean(CompilerState state, LocalVariableInfo local)
 		{
 			if (state == null) throw new Exception();
 			if (local == null) throw new Exception();
 
-			Label l1 = state.Generator.DefineLabel();
-			Label l2 = state.Generator.DefineLabel();
+			var l1 = state.Generator.DefineLabel();
+			var l2 = state.Generator.DefineLabel();
 
 			LoadLocalVariable(state, local);
 
-			if (local.LocalType == typeof(Int32))
+			if (local.LocalType == typeof(int))
 			{
 				state.Generator.Emit(OpCodes.Brfalse, l1);
 			}
-			else if (local.LocalType == typeof(Single))
+			else if (local.LocalType == typeof(float))
 			{
 				state.Generator.Emit(OpCodes.Ldc_R4, 0);
 				state.Generator.Emit(OpCodes.Beq, l1);
@@ -864,10 +863,10 @@ namespace xnaMugen.Evaluation
 			state.Generator.MarkLabel(l2);
 		}
 
-		readonly ModuleBuilder m_module;
+		private readonly ModuleBuilder m_module;
 
-		readonly Dictionary<String, MethodInfo> m_constfunctionmethods;
+		private readonly Dictionary<string, MethodInfo> m_constfunctionmethods;
 
-		readonly Dictionary<String, MethodInfo> m_gethitvarmethods;
+		private readonly Dictionary<string, MethodInfo> m_gethitvarmethods;
 	}
 }

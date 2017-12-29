@@ -3,15 +3,14 @@ using System.Diagnostics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
-using xnaMugen.Collections;
 
 namespace xnaMugen.Video
 {
-	class DrawState
+	internal class DrawState
 	{
 		public DrawState(VideoSystem videosystem)
 		{
-			if (videosystem == null) throw new ArgumentNullException("videosystem");
+			if (videosystem == null) throw new ArgumentNullException(nameof(videosystem));
 
 			m_videosystem = videosystem;
 			m_mode = DrawMode.Normal;
@@ -84,84 +83,81 @@ namespace xnaMugen.Video
 			return m_drawdata.GetEnumerator();
 		}
 
-		public ShaderParameters ShaderParameters
-		{
-			get { return m_parameters; }
-		}
+		public ShaderParameters ShaderParameters => m_parameters;
 
 		public DrawMode Mode
 		{
-			get { return m_mode; }
+			get => m_mode;
 
 			set { m_mode = value; }
 		}
 
 		public Texture2D Pixels
 		{
-			get { return m_pixels; }
+			get => m_pixels;
 
 			set { m_pixels = value; }
 		}
 
 		public Texture2D Palette
 		{
-			get { return m_palette; }
+			get => m_palette;
 
 			set { m_palette = value; }
 		}
 
 		public Rectangle ScissorRectangle
 		{
-			get { return m_scissorrect; }
+			get => m_scissorrect;
 
 			set { m_scissorrect = value; }
 		}
 
 		public Blending Blending
 		{
-			get { return m_blending; }
+			get => m_blending;
 
 			set { m_blending = value; }
 		}
 
 		public Vector2 Scale
 		{
-			get { return m_scale; }
+			get => m_scale;
 
 			set { m_scale = value; }
 		}
 
 		public Vector2 Axis
 		{
-			get { return m_axis; }
+			get => m_axis;
 
 			set { m_axis = value; }
 		}
 
 		public Vector2 Offset
 		{
-			get { return m_offset; }
+			get => m_offset;
 
 			set { m_offset = value; }
 		}
 
 		public SpriteEffects Flip
 		{
-			get { return m_flip; }
+			get => m_flip;
 
 			set { m_flip = value; }
 		}
 
-		public Single Rotation
+		public float Rotation
 		{
-			get { return m_rotation; }
+			get => m_rotation;
 
 			set { m_rotation = value; }
 		}
 
 		public Vector2 Stretch
 		{
-			get { return m_stretch; }
+			get => m_stretch;
 
 			set { m_stretch = value; }
 		}
@@ -169,46 +165,46 @@ namespace xnaMugen.Video
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly VideoSystem m_videosystem;
+		private readonly VideoSystem m_videosystem;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly ShaderParameters m_parameters;
+		private readonly ShaderParameters m_parameters;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		DrawMode m_mode;
+		private DrawMode m_mode;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Texture2D m_pixels;
+		private Texture2D m_pixels;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Texture2D m_palette;
+		private Texture2D m_palette;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Rectangle m_scissorrect;
+		private Rectangle m_scissorrect;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Blending m_blending;
+		private Blending m_blending;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Vector2 m_scale;
+		private Vector2 m_scale;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Vector2 m_axis;
+		private Vector2 m_axis;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Vector2 m_offset;
+		private Vector2 m_offset;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		SpriteEffects m_flip;
+		private SpriteEffects m_flip;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		List<DrawData> m_drawdata;
+		private List<DrawData> m_drawdata;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Single m_rotation;
+		private float m_rotation;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Vector2 m_stretch;
+		private Vector2 m_stretch;
 
 		#endregion
 	}

@@ -4,20 +4,20 @@ using System.Diagnostics;
 
 namespace xnaMugen.Collections
 {
-	[DebuggerDisplay("Count = {Count}")]
+	[DebuggerDisplay("Count = {" + nameof(Count) + "}")]
 	[DebuggerTypeProxy(typeof(KeyedCollection<,>.DebuggerProxy))]
-	class KeyedCollection<TKey, TItem> : System.Collections.ObjectModel.KeyedCollection<TKey, TItem>
+	internal class KeyedCollection<TKey, TItem> : System.Collections.ObjectModel.KeyedCollection<TKey, TItem>
 	{
-		class DebuggerProxy
+		private class DebuggerProxy
 		{
 			public DebuggerProxy(KeyedCollection<TKey, TItem> collection)
 			{
-				if (collection == null) throw new ArgumentNullException("collection");
+				if (collection == null) throw new ArgumentNullException(nameof(collection));
 
 				m_collection = collection;
 			}
 
-			public override String ToString()
+			public override string ToString()
 			{
 				return m_collection.ToString();
 			}
@@ -27,9 +27,9 @@ namespace xnaMugen.Collections
 			{
 				get
 				{
-					KeyValuePair<TKey, TItem>[] items = new KeyValuePair<TKey, TItem>[m_collection.Count];
+					var items = new KeyValuePair<TKey, TItem>[m_collection.Count];
 
-					Int32 index = 0;
+					var index = 0;
 					foreach (var kvp in m_collection)
 					{
 						items[index] = new KeyValuePair<TKey, TItem>(m_collection.GetKeyForItem(kvp), kvp);
@@ -43,7 +43,7 @@ namespace xnaMugen.Collections
 			#region Fields
 
 			[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-			readonly KeyedCollection<TKey, TItem> m_collection;
+			private readonly KeyedCollection<TKey, TItem> m_collection;
 
 			#endregion
 		}
@@ -58,7 +58,7 @@ namespace xnaMugen.Collections
 		public KeyedCollection(Converter<TItem, TKey> indexer, IEqualityComparer<TKey> comparer) :
 			base(comparer)
 		{
-			if (indexer == null) throw new ArgumentNullException("indexer");
+			if (indexer == null) throw new ArgumentNullException(nameof(indexer));
 
 			m_getkey = indexer;
 		}
@@ -72,7 +72,7 @@ namespace xnaMugen.Collections
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Converter<TItem, TKey> m_getkey;
+		private readonly Converter<TItem, TKey> m_getkey;
 
 		#endregion
 	}

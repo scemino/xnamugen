@@ -1,13 +1,9 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System.Collections.Generic;
-using xnaMugen.Collections;
 
 namespace xnaMugen.Video
 {
-	class ShaderParameters
+	internal class ShaderParameters
 	{
 		public ShaderParameters()
 		{
@@ -40,135 +36,135 @@ namespace xnaMugen.Video
 			m_shadowcolor = Vector4.Zero;
 		}
 
-		public Int32 FontColorIndex
+		public int FontColorIndex
 		{
-			get { return m_fontcolorindex; }
+			get => m_fontcolorindex;
 
 			set { m_fontcolorindex = value; }
 		}
 
-		public Int32 FontTotalColors
+		public int FontTotalColors
 		{
-			get { return m_fonttotalcolors; }
+			get => m_fonttotalcolors;
 
 			set { m_fonttotalcolors = value; }
 		}
 
-		public Boolean AfterImageEnable
+		public bool AfterImageEnable
 		{
-			get { return m_afterimageuse; }
+			get => m_afterimageuse;
 
 			set { m_afterimageuse = value; }
 		}
 
-		public Boolean AfterImageInvert
+		public bool AfterImageInvert
 		{
-			get { return m_afterimageinvert; }
+			get => m_afterimageinvert;
 
 			set { m_afterimageinvert = value; }
 		}
 
-		public Single AfterImageColor
+		public float AfterImageColor
 		{
-			get { return m_afterimagecolor; }
+			get => m_afterimagecolor;
 
 			set { m_afterimagecolor = value; }
 		}
 
 		public Vector3 AfterImagePreAdd
 		{
-			get { return m_afterimagepreadd; }
+			get => m_afterimagepreadd;
 
 			set { m_afterimagepreadd = value; }
 		}
 
 		public Vector3 AfterImageConstrast
 		{
-			get { return m_afterimagecontrast; }
+			get => m_afterimagecontrast;
 
 			set { m_afterimagecontrast = value; }
 		}
 
 		public Vector3 AfterImagePostAdd
 		{
-			get { return m_afterimagepostadd; }
+			get => m_afterimagepostadd;
 
 			set { m_afterimagepostadd = value; }
 		}
 
 		public Vector3 AfterImagePaletteAdd
 		{
-			get { return m_afterimagepaladd; }
+			get => m_afterimagepaladd;
 
 			set { m_afterimagepaladd = value; }
 		}
 
 		public Vector3 AfterImagePaletteMultiply
 		{
-			get { return m_afterimagepalmul; }
+			get => m_afterimagepalmul;
 
 			set { m_afterimagepalmul = value; }
 		}
 
-		public Int32 AfterImageNumber
+		public int AfterImageNumber
 		{
-			get { return m_afterimagenumber; }
+			get => m_afterimagenumber;
 
 			set { m_afterimagenumber = value; }
 		}
 
-		public Boolean PaletteFxEnable
+		public bool PaletteFxEnable
 		{
-			get { return m_usepalfx; }
+			get => m_usepalfx;
 
 			set { m_usepalfx = value; }
 		}
 
-		public Int32 PaletteFxTime
+		public int PaletteFxTime
 		{
-			get { return m_palfxtime; }
+			get => m_palfxtime;
 
 			set { m_palfxtime = value; }
 		}
 
-		public Boolean PaletteFxInvert
+		public bool PaletteFxInvert
 		{
-			get { return m_palfxinvert; }
+			get => m_palfxinvert;
 
 			set { m_palfxinvert = value; }
 		}
 
 		public Vector3 PaletteFxAdd
 		{
-			get { return m_palfxadd; }
+			get => m_palfxadd;
 
 			set { m_palfxadd = value; }
 		}
 
 		public Vector3 PaletteFxMultiply
 		{
-			get { return m_palfxmul; }
+			get => m_palfxmul;
 
 			set { m_palfxmul = value; }
 		}
 
 		public Vector4 PaletteFxSinAdd
 		{
-			get { return m_palfxsinadd; }
+			get => m_palfxsinadd;
 
 			set { m_palfxsinadd = value; }
 		}
 
-		public Single PaletteFxColor
+		public float PaletteFxColor
 		{
-			get { return m_palfxcolor; }
+			get => m_palfxcolor;
 
 			set { m_palfxcolor = value; }
 		}
 
 		public Vector4 ShadowColor
 		{
-			get { return m_shadowcolor; }
+			get => m_shadowcolor;
 
 			set { m_shadowcolor = value; }
 		}
@@ -176,61 +172,61 @@ namespace xnaMugen.Video
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Int32 m_fontcolorindex;
+		private int m_fontcolorindex;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Int32 m_fonttotalcolors;
+		private int m_fonttotalcolors;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Boolean m_afterimageuse;
+		private bool m_afterimageuse;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Boolean m_afterimageinvert;
+		private bool m_afterimageinvert;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Single m_afterimagecolor;
+		private float m_afterimagecolor;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Vector3 m_afterimagepreadd;
+		private Vector3 m_afterimagepreadd;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Vector3 m_afterimagecontrast;
+		private Vector3 m_afterimagecontrast;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Vector3 m_afterimagepostadd;
+		private Vector3 m_afterimagepostadd;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Vector3 m_afterimagepaladd;
+		private Vector3 m_afterimagepaladd;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Vector3 m_afterimagepalmul;
+		private Vector3 m_afterimagepalmul;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Int32 m_afterimagenumber;
+		private int m_afterimagenumber;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Boolean m_usepalfx;
+		private bool m_usepalfx;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Int32 m_palfxtime;
+		private int m_palfxtime;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Vector3 m_palfxadd;
+		private Vector3 m_palfxadd;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Vector3 m_palfxmul;
+		private Vector3 m_palfxmul;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Vector4 m_palfxsinadd;
+		private Vector4 m_palfxsinadd;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Boolean m_palfxinvert;
+		private bool m_palfxinvert;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Single m_palfxcolor;
+		private float m_palfxcolor;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Vector4 m_shadowcolor;
+		private Vector4 m_shadowcolor;
 
 		#endregion
 	}

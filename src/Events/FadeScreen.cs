@@ -3,24 +3,21 @@ using System.Diagnostics;
 
 namespace xnaMugen.Events
 {
-	class FadeScreen : Base
+	internal class FadeScreen : Base
 	{
 		public FadeScreen(FadeDirection direction)
 		{
-			if (direction == FadeDirection.None) throw new ArgumentNullException("direction");
+			if (direction == FadeDirection.None) throw new ArgumentNullException(nameof(direction));
 
 			m_direction = direction;
 		}
 
-		public FadeDirection Direction
-		{
-			get { return m_direction; }
-		}
+		public FadeDirection Direction => m_direction;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly FadeDirection m_direction;
+		private readonly FadeDirection m_direction;
 
 		#endregion
 	}

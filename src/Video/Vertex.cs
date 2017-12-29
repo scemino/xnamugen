@@ -1,4 +1,3 @@
-using System;
 using System.Diagnostics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -6,7 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 namespace xnaMugen.Video
 {
 	[DebuggerDisplay("{Position} {TextureCoordinate} {Tint}")]
-	struct Vertex
+	internal struct Vertex
 	{
 		public Vector4 Position;
 

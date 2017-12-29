@@ -9,7 +9,7 @@ namespace xnaMugen.Animations
 	/// <summary>
 	/// Controls the creation of Animations and AnimationManagers. 
 	/// </summary>
-	class AnimationSystem : SubSystem
+	internal class AnimationSystem : SubSystem
 	{
 		/// <summary>
 		/// Initializes a new instance of this class.
@@ -18,7 +18,7 @@ namespace xnaMugen.Animations
 		public AnimationSystem(SubSystems subsystems)
 			: base(subsystems)
 		{
-			m_animationcache = new Dictionary<String, KeyedCollection<Int32, Animation>>(StringComparer.OrdinalIgnoreCase);
+			m_animationcache = new Dictionary<string, KeyedCollection<int, Animation>>(StringComparer.OrdinalIgnoreCase);
 			m_loader = new AnimationLoader(this);
 		}
 
@@ -27,9 +27,9 @@ namespace xnaMugen.Animations
 		/// </summary>
 		/// <param name="filepath">Path to a text file containing animations in the AIR format.</param>
 		/// <returns>A new AnimationManager for the animations found in the given file.</returns>
-		public AnimationManager CreateManager(String filepath)
+		public AnimationManager CreateManager(string filepath)
 		{
-			if (filepath == null) throw new ArgumentNullException("filepath");
+			if (filepath == null) throw new ArgumentNullException(nameof(filepath));
 
 			return new AnimationManager(filepath, GetAnimations(filepath));
 		}
@@ -39,9 +39,9 @@ namespace xnaMugen.Animations
 		/// </summary>
 		/// <param name="line">A line of text.</param>
 		/// <returns>true is the supplied line represents a Clsn; false otherwise.</returns>
-		public Boolean IsClsnLine(String line)
+		public bool IsClsnLine(string line)
 		{
-			if (line == null) throw new ArgumentNullException("line");
+			if (line == null) throw new ArgumentNullException(nameof(line));
 
 			return m_loader.IsClsnLine(line);
 		}
@@ -51,14 +51,14 @@ namespace xnaMugen.Animations
 		/// </summary>
 		/// <param name="filepath">The file to parsed Animations out of.</param>
 		/// <returns>A collection containing all the Animations found in the given file.</returns>
-		KeyedCollection<Int32, Animation> GetAnimations(String filepath)
+		private KeyedCollection<int, Animation> GetAnimations(string filepath)
 		{
-			if (filepath == null) throw new ArgumentNullException("filepath");
+			if (filepath == null) throw new ArgumentNullException(nameof(filepath));
 
-			KeyedCollection<Int32, Animation> animations = null;
-			if (m_animationcache.TryGetValue(filepath, out animations) == true) return animations;
+			KeyedCollection<int, Animation> animations = null;
+			if (m_animationcache.TryGetValue(filepath, out animations)) return animations;
 
-			TextFile textfile = GetSubSystem<IO.FileSystem>().OpenTextFile(filepath);
+			var textfile = GetSubSystem<FileSystem>().OpenTextFile(filepath);
 
 			animations = m_loader.LoadAnimations(textfile);
 			m_animationcache.Add(filepath, animations);
@@ -69,10 +69,10 @@ namespace xnaMugen.Animations
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Dictionary<String, KeyedCollection<Int32, Animation>> m_animationcache;
+		private Dictionary<string, KeyedCollection<int, Animation>> m_animationcache;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly AnimationLoader m_loader;
+		private readonly AnimationLoader m_loader;
 
 		#endregion
 	}

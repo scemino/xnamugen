@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
 using System.Diagnostics;
-using xnaMugen.Collections;
 
 namespace xnaMugen.Combat
 {
-	class HitBy
+	internal class HitBy
 	{
 		public HitBy()
 		{
@@ -26,7 +23,7 @@ namespace xnaMugen.Combat
 
 		public void Update()
 		{
-			if (IsActive == true && Time > 0)
+			if (IsActive && Time > 0)
 			{
 				--m_time;
 			}
@@ -36,9 +33,9 @@ namespace xnaMugen.Combat
 			}
 		}
 
-		public void Set(HitAttribute attribute, Int32 time, Boolean negation)
+		public void Set(HitAttribute attribute, int time, bool negation)
 		{
-			if (attribute == null) throw new ArgumentNullException("attribute");
+			if (attribute == null) throw new ArgumentNullException(nameof(attribute));
 
 			m_attribute = attribute;
 			m_time = time;
@@ -46,61 +43,47 @@ namespace xnaMugen.Combat
 			m_isactive = true;
 		}
 
-		public Boolean CanHit(HitAttribute attr)
+		public bool CanHit(HitAttribute attr)
 		{
-			if (attr == null) throw new ArgumentNullException("attr");
+			if (attr == null) throw new ArgumentNullException(nameof(attr));
 
 			if (IsActive == false) return true;
 
 			if (m_negation == false)
 			{
 				if (m_attribute.HasHeight(attr.AttackHeight) == false) return false;
-				foreach (HitType hittype in attr.AttackData) if (m_attribute.HasData(hittype) == false) return false;
+				foreach (var hittype in attr.AttackData) if (m_attribute.HasData(hittype) == false) return false;
 
 				return true;
 			}
-			else
-			{
-				if (m_attribute.HasHeight(attr.AttackHeight) == true) return false;
-				foreach (HitType hittype in attr.AttackData) if (m_attribute.HasData(hittype) == true) return false;
 
-				return true;
-			}
+			if (m_attribute.HasHeight(attr.AttackHeight)) return false;
+			foreach (var hittype in attr.AttackData) if (m_attribute.HasData(hittype)) return false;
+
+			return true;
 		}
 
-		public Boolean IsActive
-		{
-			get { return m_isactive; }
-		}
+		public bool IsActive => m_isactive;
 
-		public HitAttribute Attribute
-		{
-			get { return m_attribute; }
-		}
+		public HitAttribute Attribute => m_attribute;
 
-		public Int32 Time
-		{
-			get { return m_time; }
-		}
+		public int Time => m_time;
 
-		public Boolean IsNegation
-		{
-			get { return m_negation; }
-		}
+		public bool IsNegation => m_negation;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Boolean m_isactive;
+		private bool m_isactive;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		HitAttribute m_attribute;
+		private HitAttribute m_attribute;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Int32 m_time;
+		private int m_time;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Boolean m_negation;
+		private bool m_negation;
 
 		#endregion
 	}

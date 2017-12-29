@@ -1,9 +1,8 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 
 namespace xnaMugen.Combat
 {
-	class CharacterAssertions
+	internal class CharacterAssertions
 	{
 		public CharacterAssertions()
 		{
@@ -24,72 +23,72 @@ namespace xnaMugen.Combat
 			m_noko = false;
 		}
 
-		public Boolean Invisible
+		public bool Invisible
 		{
-			get { return m_invisible; }
+			get => m_invisible;
 
 			set { m_invisible = value; }
 		}
 
-		public Boolean NoStandingGuard
+		public bool NoStandingGuard
 		{
-			get { return m_nostandingguard; }
+			get => m_nostandingguard;
 
 			set { m_nostandingguard = value; }
 		}
 
-		public Boolean NoCrouchingGuard
+		public bool NoCrouchingGuard
 		{
-			get { return m_nocrouchingguard; }
+			get => m_nocrouchingguard;
 
 			set { m_nocrouchingguard = value; }
 		}
 
-		public Boolean NoAirGuard
+		public bool NoAirGuard
 		{
-			get { return m_noairguard; }
+			get => m_noairguard;
 
 			set { m_noairguard = value; }
 		}
 
-		public Boolean NoWalk
+		public bool NoWalk
 		{
-			get { return m_nowalk; }
+			get => m_nowalk;
 
 			set { m_nowalk = value; }
 		}
 
-		public Boolean NoAutoTurn
+		public bool NoAutoTurn
 		{
-			get { return m_noautoturn; }
+			get => m_noautoturn;
 
 			set { m_noautoturn = value; }
 		}
 
-		public Boolean NoJuggleCheck
+		public bool NoJuggleCheck
 		{
-			get { return m_nojugglecheck; }
+			get => m_nojugglecheck;
 
 			set { m_nojugglecheck = value; }
 		}
 
-		public Boolean NoShadow
+		public bool NoShadow
 		{
-			get { return m_noshadow; }
+			get => m_noshadow;
 
 			set { m_noshadow = value; }
 		}
 
-		public Boolean UnGuardable
+		public bool UnGuardable
 		{
-			get { return m_unguardable; }
+			get => m_unguardable;
 
 			set { m_unguardable = value; }
 		}
 
-		public Boolean NoKO
+		public bool NoKO
 		{
-			get { return m_noko; }
+			get => m_noko;
 
 			set { m_noko = value; }
 		}
@@ -97,34 +96,34 @@ namespace xnaMugen.Combat
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Boolean m_invisible;
+		private bool m_invisible;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Boolean m_nostandingguard;
+		private bool m_nostandingguard;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Boolean m_nocrouchingguard;
+		private bool m_nocrouchingguard;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Boolean m_noairguard;
+		private bool m_noairguard;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Boolean m_nowalk;
+		private bool m_nowalk;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Boolean m_noautoturn;
+		private bool m_noautoturn;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Boolean m_nojugglecheck;
+		private bool m_nojugglecheck;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Boolean m_noshadow;
+		private bool m_noshadow;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Boolean m_unguardable;
+		private bool m_unguardable;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Boolean m_noko;
+		private bool m_noko;
 
 		#endregion
 	}

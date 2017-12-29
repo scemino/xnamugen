@@ -1,15 +1,14 @@
 using System;
 using System.Diagnostics;
-using Microsoft.Xna.Framework.Graphics;
 using xnaMugen.IO;
 using Microsoft.Xna.Framework;
 using System.Text.RegularExpressions;
 
 namespace xnaMugen.Combat
 {
-	class BoundsRect
+	internal class BoundsRect
 	{
-		public BoundsRect(Int32 left, Int32 right, Int32 top, Int32 bottom)
+		public BoundsRect(int left, int right, int top, int bottom)
 		{
 			m_left = left;
 			m_right = right;
@@ -19,7 +18,7 @@ namespace xnaMugen.Combat
 
 		public Point Bound(Point input)
 		{
-			Point output = input;
+			var output = input;
 
 			if (output.X < Left) output.X = Left;
 			if (output.X > Right) output.X = Right;
@@ -30,50 +29,38 @@ namespace xnaMugen.Combat
 			return output;
 		}
 
-		public override String ToString()
+		public override string ToString()
 		{
-			return String.Format("Left: {0} Right: {1} Top: {2} Bottom {3}", Left, Right, Top, Bottom);
+			return string.Format("Left: {0} Right: {1} Top: {2} Bottom {3}", Left, Right, Top, Bottom);
 		}
 
-		public Int32 Left
-		{
-			get { return m_left; }
-		}
+		public int Left => m_left;
 
-		public Int32 Right
-		{
-			get { return m_right; }
-		}
+		public int Right => m_right;
 
-		public Int32 Top
-		{
-			get { return m_top; }
-		}
+		public int Top => m_top;
 
-		public Int32 Bottom
-		{
-			get { return m_bottom; }
-		}
+		public int Bottom => m_bottom;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Int32 m_left;
+		private readonly int m_left;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Int32 m_right;
+		private readonly int m_right;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Int32 m_top;
+		private readonly int m_top;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Int32 m_bottom;
+		private readonly int m_bottom;
 
 		#endregion
 	}
 
-	[DebuggerDisplay("{Name}")]
-	class Stage : EngineObject
+	[DebuggerDisplay("{" + nameof(Name) + "}")]
+	internal class Stage : EngineObject
 	{
 		static Stage()
 		{
@@ -83,7 +70,7 @@ namespace xnaMugen.Combat
 		public Stage(FightEngine engine, StageProfile profile)
 			: base(engine)
 		{
-			if (profile == null) throw new ArgumentNullException("profile");
+			if (profile == null) throw new ArgumentNullException(nameof(profile));
 
 			m_profile = profile;
 			m_camerastartlocation = new Point(0, 0);
@@ -91,16 +78,16 @@ namespace xnaMugen.Combat
 			m_p2start = new Vector2(0, 0);
 			m_palettefx = new PaletteFx();
 
-			TextFile textfile = Engine.GetSubSystem<IO.FileSystem>().OpenTextFile(Profile.Filepath);
-			TextSection infosection = textfile.GetSection("Info");
-			TextSection camerasection = textfile.GetSection("Camera");
-			TextSection playerinfosection = textfile.GetSection("PlayerInfo");
-			TextSection boundsection = textfile.GetSection("Bound");
-			TextSection stageinfosection = textfile.GetSection("StageInfo");
-			TextSection shadowsection = textfile.GetSection("Shadow");
-			TextSection reflectionsection = textfile.GetSection("Reflection");
-			TextSection musicsection = textfile.GetSection("Music");
-			TextSection bgdefsection = textfile.GetSection("BGDef");
+			var textfile = Engine.GetSubSystem<FileSystem>().OpenTextFile(Profile.Filepath);
+			var infosection = textfile.GetSection("Info");
+			var camerasection = textfile.GetSection("Camera");
+			var playerinfosection = textfile.GetSection("PlayerInfo");
+			var boundsection = textfile.GetSection("Bound");
+			var stageinfosection = textfile.GetSection("StageInfo");
+			var shadowsection = textfile.GetSection("Shadow");
+			var reflectionsection = textfile.GetSection("Reflection");
+			var musicsection = textfile.GetSection("Music");
+			var bgdefsection = textfile.GetSection("BGDef");
 
 			if (infosection == null) throw new InvalidOperationException("Stage textfile '" + Profile.Filepath + "' is missing 'Info' section");
 			if (camerasection == null) throw new InvalidOperationException("Stage textfile '" + Profile.Filepath + "' is missing 'Camera' section");
@@ -112,63 +99,63 @@ namespace xnaMugen.Combat
 			if (musicsection == null) throw new InvalidOperationException("Stage textfile '" + Profile.Filepath + "' is missing 'Music' section");
 			if (bgdefsection == null) throw new InvalidOperationException("Stage textfile '" + Profile.Filepath + "' is missing 'BGDef' section");
 
-			m_name = infosection.GetAttribute<String>("name");
+			m_name = infosection.GetAttribute<string>("name");
 
-			m_camerastartlocation.X = camerasection.GetAttribute<Int32>("startx");
-			m_camerastartlocation.Y = camerasection.GetAttribute<Int32>("starty");
+			m_camerastartlocation.X = camerasection.GetAttribute<int>("startx");
+			m_camerastartlocation.Y = camerasection.GetAttribute<int>("starty");
 			m_camerabounds = BuildBoundsRect(camerasection, "boundleft", "boundright", "boundhigh", "boundlow");
-			m_floortension = camerasection.GetAttribute<Int32>("floortension", 0);
-			m_tension = camerasection.GetAttribute<Int32>("tension");
-			m_verticalfollow = camerasection.GetAttribute<Single>("verticalfollow");
+			m_floortension = camerasection.GetAttribute("floortension", 0);
+			m_tension = camerasection.GetAttribute<int>("tension");
+			m_verticalfollow = camerasection.GetAttribute<float>("verticalfollow");
 
-			m_p1start.X = playerinfosection.GetAttribute<Single>("p1startx");
-			m_p1start.Y = playerinfosection.GetAttribute<Single>("p1starty");
+			m_p1start.X = playerinfosection.GetAttribute<float>("p1startx");
+			m_p1start.Y = playerinfosection.GetAttribute<float>("p1starty");
 			m_p1facing = playerinfosection.GetAttribute<Facing>("p1facing");
-			m_p2start.X = playerinfosection.GetAttribute<Single>("p2startx");
-			m_p2start.Y = playerinfosection.GetAttribute<Single>("p2starty");
+			m_p2start.X = playerinfosection.GetAttribute<float>("p2startx");
+			m_p2start.Y = playerinfosection.GetAttribute<float>("p2starty");
 			m_p2facing = playerinfosection.GetAttribute<Facing>("p2facing");
 			m_playerbounds = BuildBoundsRect(playerinfosection, "leftbound", "rightbound", "topbound", "botbound");
 
-			m_screenleft = boundsection.GetAttribute<Int32>("screenleft");
-			m_screenright = boundsection.GetAttribute<Int32>("screenright");
+			m_screenleft = boundsection.GetAttribute<int>("screenleft");
+			m_screenright = boundsection.GetAttribute<int>("screenright");
 
-			m_zoffset = stageinfosection.GetAttribute<Int32>("zoffset");
-			m_zoffsetlink = stageinfosection.GetAttribute<Int32?>("zoffsetlink", null);
-			m_autoturn = stageinfosection.GetAttribute<Boolean>("autoturn");
-			m_resetbg = stageinfosection.GetAttribute<Boolean>("resetBG");
+			m_zoffset = stageinfosection.GetAttribute<int>("zoffset");
+			m_zoffsetlink = stageinfosection.GetAttribute<int?>("zoffsetlink", null);
+			m_autoturn = stageinfosection.GetAttribute<bool>("autoturn");
+			m_resetbg = stageinfosection.GetAttribute<bool>("resetBG");
 
-			m_shadowintensity = stageinfosection.GetAttribute<Byte>("intensity", 128);
-			m_shadowcolor = stageinfosection.GetAttribute<Color>("color", Color.TransparentBlack);
-			m_shadowscale = stageinfosection.GetAttribute<Single>("yscale", 0.4f);
+			m_shadowintensity = stageinfosection.GetAttribute<byte>("intensity", 128);
+			m_shadowcolor = stageinfosection.GetAttribute("color", Color.TransparentBlack);
+			m_shadowscale = stageinfosection.GetAttribute("yscale", 0.4f);
 			m_shadowfade = stageinfosection.GetAttribute<Point?>("fade.range", null);
 
 			if (reflectionsection != null)
 			{
-				m_shadowreflection = reflectionsection.GetAttribute<Boolean>("reflect", false);
+				m_shadowreflection = reflectionsection.GetAttribute("reflect", false);
 			}
 			else
 			{
 				m_shadowreflection = false;
 			}
 
-			m_musicfile = musicsection.GetAttribute<String>("bgmusic", String.Empty);
-			m_volumeoffset = musicsection.GetAttribute<Int32>("bgvolume", 0);
+			m_musicfile = musicsection.GetAttribute("bgmusic", string.Empty);
+			m_volumeoffset = musicsection.GetAttribute("bgvolume", 0);
 
-			m_spritefile = bgdefsection.GetAttribute<String>("spr");
-			m_debug = bgdefsection.GetAttribute<Boolean>("debugbg", false);
+			m_spritefile = bgdefsection.GetAttribute<string>("spr");
+			m_debug = bgdefsection.GetAttribute("debugbg", false);
 
-			if (Engine.GetSubSystem<IO.FileSystem>().DoesFileExist(m_spritefile) == false)
+			if (Engine.GetSubSystem<FileSystem>().DoesFileExist(m_spritefile) == false)
 			{
-				m_spritefile = Engine.GetSubSystem<IO.FileSystem>().CombinePaths("stages", m_spritefile);
+				m_spritefile = Engine.GetSubSystem<FileSystem>().CombinePaths("stages", m_spritefile);
 			}
 
-			Drawing.SpriteManager spritemanager = Engine.GetSubSystem<Drawing.SpriteSystem>().CreateManager(SpritePath);
-			Animations.AnimationManager animationmanager = Engine.GetSubSystem<Animations.AnimationSystem>().CreateManager(Profile.Filepath);
+			var spritemanager = Engine.GetSubSystem<Drawing.SpriteSystem>().CreateManager(SpritePath);
+			var animationmanager = Engine.GetSubSystem<Animations.AnimationSystem>().CreateManager(Profile.Filepath);
 			m_backgrounds = new Backgrounds.Collection(spritemanager, animationmanager);
 
-			foreach (TextSection textsection in textfile)
+			foreach (var textsection in textfile)
 			{
-				if (s_bgtitleregex.Match(textsection.Title).Success == true)
+				if (s_bgtitleregex.Match(textsection.Title).Success)
 				{
 					m_backgrounds.CreateBackground(textsection);
 				}
@@ -177,12 +164,12 @@ namespace xnaMugen.Combat
 			Reset();
 		}
 
-		static BoundsRect BuildBoundsRect(TextSection textsection, String left, String right, String top, String bottom)
+		private static BoundsRect BuildBoundsRect(TextSection textsection, string left, string right, string top, string bottom)
 		{
-			Int32 leftval = textsection.GetAttribute<Int32>(left);
-			Int32 rightval = textsection.GetAttribute<Int32>(right);
-			Int32 topval = textsection.GetAttribute<Int32>(top);
-			Int32 downval = textsection.GetAttribute<Int32>(bottom);
+			var leftval = textsection.GetAttribute<int>(left);
+			var rightval = textsection.GetAttribute<int>(right);
+			var topval = textsection.GetAttribute<int>(top);
+			var downval = textsection.GetAttribute<int>(bottom);
 
 			return new BoundsRect(leftval, rightval, topval, downval);
 		}
@@ -200,7 +187,7 @@ namespace xnaMugen.Combat
 
 		public void Draw(BackgroundLayer layer)
 		{
-			Point shift = new Point(Mugen.ScreenSize.X / 2 - Engine.Camera.Location.X, 0 - Engine.Camera.Location.Y);
+			var shift = new Point(Mugen.ScreenSize.X / 2 - Engine.Camera.Location.X, 0 - Engine.Camera.Location.Y);
 
 			Engine.GetSubSystem<Video.VideoSystem>().CameraShift += shift;
 
@@ -209,242 +196,155 @@ namespace xnaMugen.Combat
 			Engine.GetSubSystem<Video.VideoSystem>().CameraShift -= shift;
 		}
 
-		public StageProfile Profile
-		{
-			get { return m_profile; }
-		}
+		public StageProfile Profile => m_profile;
 
-		public String Name
-		{
-			get { return m_name; }
-		}
+		public string Name => m_name;
 
-		public BoundsRect CameraBounds
-		{
-			get { return m_camerabounds; }
-		}
+		public BoundsRect CameraBounds => m_camerabounds;
 
-		public Boolean DebugBackgrounds
-		{
-			get { return m_debug; }
-		}
+		public bool DebugBackgrounds => m_debug;
 
-		public String SpritePath
-		{
-			get { return m_spritefile; }
-		}
+		public string SpritePath => m_spritefile;
 
-		public String MusicFile
-		{
-			get { return m_musicfile; }
-		}
+		public string MusicFile => m_musicfile;
 
-		public Int32 MusicVolume
-		{
-			get { return m_volumeoffset; }
-		}
+		public int MusicVolume => m_volumeoffset;
 
-		public Byte ShadowIntensity
-		{
-			get { return m_shadowintensity; }
-		}
+		public byte ShadowIntensity => m_shadowintensity;
 
-		public Color ShadowColor
-		{
-			get { return m_shadowcolor; }
-		}
+		public Color ShadowColor => m_shadowcolor;
 
-		public Single ShadowScale
-		{
-			get { return m_shadowscale; }
-		}
+		public float ShadowScale => m_shadowscale;
 
-		public Point? ShadowFade
-		{
-			get { return m_shadowfade; }
-		}
+		public Point? ShadowFade => m_shadowfade;
 
-		public Boolean ShadowReflection
-		{
-			get { return m_shadowreflection; }
-		}
+		public bool ShadowReflection => m_shadowreflection;
 
-		public Int32 ZOffset
-		{
-			get { return m_zoffset; }
-		}
+		public int ZOffset => m_zoffset;
 
-		public Int32? ZOffsetLink
-		{
-			get { return m_zoffsetlink; }
-		}
+		public int? ZOffsetLink => m_zoffsetlink;
 
-		public Boolean AutoTurn
-		{
-			get { return m_autoturn; }
-		}
+		public bool AutoTurn => m_autoturn;
 
-		public Boolean ResetBackgrounds
-		{
-			get { return m_resetbg; }
-		}
+		public bool ResetBackgrounds => m_resetbg;
 
-		public Int32 LeftEdgeDistance
-		{
-			get { return m_screenleft; }
-		}
+		public int LeftEdgeDistance => m_screenleft;
 
-		public Int32 RightEdgeDistance
-		{
-			get { return m_screenright; }
-		}
+		public int RightEdgeDistance => m_screenright;
 
-		public Vector2 P1Start
-		{
-			get { return m_p1start; }
-		}
+		public Vector2 P1Start => m_p1start;
 
-		public Facing P1Facing
-		{
-			get { return m_p1facing; }
-		}
+		public Facing P1Facing => m_p1facing;
 
-		public Vector2 P2Start
-		{
-			get { return m_p2start; }
-		}
+		public Vector2 P2Start => m_p2start;
 
-		public Facing P2Facing
-		{
-			get { return m_p2facing; }
-		}
+		public Facing P2Facing => m_p2facing;
 
-		public Point CameraStartLocation
-		{
-			get { return m_camerastartlocation; }
-		}
+		public Point CameraStartLocation => m_camerastartlocation;
 
-		public BoundsRect PlayerBounds
-		{
-			get { return m_playerbounds; }
-		}
+		public BoundsRect PlayerBounds => m_playerbounds;
 
-		public Single VerticalFollow
-		{
-			get { return m_verticalfollow; }
-		}
+		public float VerticalFollow => m_verticalfollow;
 
-		public Int32 Tension
-		{
-			get { return m_tension; }
-		}
+		public int Tension => m_tension;
 
-		public Int32 FloorTension
-		{
-			get { return m_floortension; }
-		}
+		public int FloorTension => m_floortension;
 
-		public Backgrounds.Collection Backgrounds
-		{
-			get { return m_backgrounds; }
-		}
+		public Backgrounds.Collection Backgrounds => m_backgrounds;
 
-		public PaletteFx PaletteFx
-		{
-			get { return m_palettefx; }
-		}
+		public PaletteFx PaletteFx => m_palettefx;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		static readonly Regex s_bgtitleregex;
+		private static readonly Regex s_bgtitleregex;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Backgrounds.Collection m_backgrounds;
+		private readonly Backgrounds.Collection m_backgrounds;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly String m_name;
+		private readonly string m_name;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly BoundsRect m_camerabounds;
+		private readonly BoundsRect m_camerabounds;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly String m_spritefile;
+		private readonly string m_spritefile;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Boolean m_debug;
+		private readonly bool m_debug;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly String m_musicfile;
+		private readonly string m_musicfile;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Int32 m_volumeoffset;
+		private readonly int m_volumeoffset;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Byte m_shadowintensity;
+		private readonly byte m_shadowintensity;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Color m_shadowcolor;
+		private readonly Color m_shadowcolor;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Single m_shadowscale;
+		private readonly float m_shadowscale;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Point? m_shadowfade;
+		private readonly Point? m_shadowfade;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Boolean m_shadowreflection;
+		private readonly bool m_shadowreflection;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Int32 m_zoffset;
+		private readonly int m_zoffset;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Int32? m_zoffsetlink;
+		private readonly int? m_zoffsetlink;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Boolean m_autoturn;
+		private readonly bool m_autoturn;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Boolean m_resetbg;
+		private readonly bool m_resetbg;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Int32 m_screenleft;
+		private readonly int m_screenleft;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Int32 m_screenright;
+		private readonly int m_screenright;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Vector2 m_p1start;
+		private readonly Vector2 m_p1start;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Facing m_p1facing;
+		private readonly Facing m_p1facing;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Vector2 m_p2start;
+		private readonly Vector2 m_p2start;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Facing m_p2facing;
+		private readonly Facing m_p2facing;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Point m_camerastartlocation;
+		private readonly Point m_camerastartlocation;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly BoundsRect m_playerbounds;
+		private readonly BoundsRect m_playerbounds;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Single m_verticalfollow;
+		private readonly float m_verticalfollow;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Int32 m_floortension;
+		private readonly int m_floortension;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Int32 m_tension;
+		private readonly int m_tension;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly StageProfile m_profile;
+		private readonly StageProfile m_profile;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly PaletteFx m_palettefx;
+		private readonly PaletteFx m_palettefx;
 
 		#endregion
 	}

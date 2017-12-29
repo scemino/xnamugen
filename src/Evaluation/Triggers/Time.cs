@@ -1,20 +1,18 @@
-using System;
-
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("Time")]
-	static class Time
+	internal static class Time
 	{
-		public static Int32 Evaluate(Object state, ref Boolean error)
+		public static int Evaluate(object state, ref bool error)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
 				return 0;
 			}
 
-			Int32 time = character.StateManager.StateTime;
+			var time = character.StateManager.StateTime;
 			if (time < 0) time = 0;
 
 			return time;
@@ -27,18 +25,18 @@ namespace xnaMugen.Evaluation.Triggers
 	}
 
 	[CustomFunction("StateTime")]
-	static class StateTime
+	internal static class StateTime
 	{
-		public static Int32 Evaluate(Object state, ref Boolean error)
+		public static int Evaluate(object state, ref bool error)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
 				return 0;
 			}
 
-			Int32 time = character.StateManager.StateTime;
+			var time = character.StateManager.StateTime;
 			if (time < 0) time = 0;
 
 			return time;

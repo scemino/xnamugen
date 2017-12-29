@@ -12,7 +12,7 @@ namespace xnaMugen.Animations
 	/// <summary>
 	/// Used to create Animations, AnimationElements, and Clsns from AIR files.
 	/// </summary>
-	class AnimationLoader
+	internal class AnimationLoader
 	{
 		/// <summary>
 		/// Creates a new instance of this class.
@@ -20,7 +20,7 @@ namespace xnaMugen.Animations
 		/// <param name="animationsystem">The animation system.</param>
 		public AnimationLoader(AnimationSystem animationsystem)
 		{
-			if (animationsystem == null) throw new ArgumentNullException("animationsystem");
+			if (animationsystem == null) throw new ArgumentNullException(nameof(animationsystem));
 
 			m_animationsystem = animationsystem;
 			m_animationtitleregex = new Regex(@"^\s*Begin action\s+(-?\d+)(,.+)?\s*$", RegexOptions.IgnoreCase);
@@ -34,15 +34,15 @@ namespace xnaMugen.Animations
 		/// </summary>
 		/// <param name="textfile">A textfile whose xnaMugen.IO.TextSection can be used to create Animations.</param>
 		/// <returns>A collection of Animations created from the supplied textfile.</returns>
-		public KeyedCollection<Int32, Animation> LoadAnimations(TextFile textfile)
+		public KeyedCollection<int, Animation> LoadAnimations(TextFile textfile)
 		{
-			if (textfile == null) throw new ArgumentNullException("textfile");
+			if (textfile == null) throw new ArgumentNullException(nameof(textfile));
 
-			KeyedCollection<Int32, Animation> animations = new KeyedCollection<Int32, Animation>(x => x.Number);
+			var animations = new KeyedCollection<int, Animation>(x => x.Number);
 
-			foreach (TextSection section in textfile)
+			foreach (var section in textfile)
 			{
-				Animation animation = CreateAnimation(section);
+				var animation = CreateAnimation(section);
 				if (animation != null)
 				{
 					if (animations.Contains(animation.Number) == false)
@@ -64,9 +64,9 @@ namespace xnaMugen.Animations
 		/// </summary>
 		/// <param name="line">A line of text.</param>
 		/// <returns>true is the supplied line represents a Clsn; false otherwise.</returns>
-		public Boolean IsClsnLine(String line)
+		public bool IsClsnLine(string line)
 		{
-			if (line == null) throw new ArgumentNullException("line");
+			if (line == null) throw new ArgumentNullException(nameof(line));
 
 			return m_clsnlineregex.IsMatch(line);
 		}
@@ -76,37 +76,37 @@ namespace xnaMugen.Animations
 		/// </summary>
 		/// <param name="section">The information used to intialize the Animation.</param>
 		/// <returns>A new instance of the Animation class if it could be created; null otherwise.</returns>
-		Animation CreateAnimation(TextSection section)
+		private Animation CreateAnimation(TextSection section)
 		{
-			if (section == null) throw new ArgumentNullException("section");
+			if (section == null) throw new ArgumentNullException(nameof(section));
 
-			Match titlematch = m_animationtitleregex.Match(section.Title);
+			var titlematch = m_animationtitleregex.Match(section.Title);
 			if (titlematch.Success == false) return null;
 
-			StringComparer sc = StringComparer.OrdinalIgnoreCase;
+			var sc = StringComparer.OrdinalIgnoreCase;
 
-			Int32 animationnumber = Int32.Parse(titlematch.Groups[1].Value);
-			Int32 loopstart = 0;
-			Int32 starttick = 0;
-			List<AnimationElement> elements = new List<AnimationElement>();
+			var animationnumber = int.Parse(titlematch.Groups[1].Value);
+			var loopstart = 0;
+			var starttick = 0;
+			var elements = new List<AnimationElement>();
 
-			List<Clsn> loading_type1 = new List<Clsn>();
-			List<Clsn> loading_type2 = new List<Clsn>();
-			List<Clsn> default_type1 = new List<Clsn>();
-			List<Clsn> default_type2 = new List<Clsn>();
+			var loading_type1 = new List<Clsn>();
+			var loading_type2 = new List<Clsn>();
+			var default_type1 = new List<Clsn>();
+			var default_type2 = new List<Clsn>();
 
-			Boolean loaddefault = false;
-			ClsnType loadtype = ClsnType.None;
-			Int32 loadcount = 0;
+			var loaddefault = false;
+			var loadtype = ClsnType.None;
+			var loadcount = 0;
 
-			foreach (String line in section.Lines)
+			foreach (var line in section.Lines)
 			{
 				if (loadcount > 0)
 				{
-					Clsn? clsn = CreateClsn(line, loadtype);
+					var clsn = CreateClsn(line, loadtype);
 					if (clsn != null)
 					{
-						if (loaddefault == true)
+						if (loaddefault)
 						{
 							if (loadtype == ClsnType.Type1Attack) default_type1.Add(clsn.Value);
 							if (loadtype == ClsnType.Type2Normal) default_type2.Add(clsn.Value);
@@ -126,33 +126,33 @@ namespace xnaMugen.Animations
 					continue;
 				}
 
-				Match clsnmatch = m_clsnregex.Match(line);
-				if (clsnmatch.Success == true)
+				var clsnmatch = m_clsnregex.Match(line);
+				if (clsnmatch.Success)
 				{
-					ClsnType clsntype = ClsnType.None;
-					if (sc.Equals(clsnmatch.Groups[1].Value, "1") == true) clsntype = ClsnType.Type1Attack;
-					if (sc.Equals(clsnmatch.Groups[1].Value, "2") == true) clsntype = ClsnType.Type2Normal;
+					var clsntype = ClsnType.None;
+					if (sc.Equals(clsnmatch.Groups[1].Value, "1")) clsntype = ClsnType.Type1Attack;
+					if (sc.Equals(clsnmatch.Groups[1].Value, "2")) clsntype = ClsnType.Type2Normal;
 
-					Boolean isdefault = sc.Equals(clsnmatch.Groups[2].Value, "default");
-					if (isdefault == true)
+					var isdefault = sc.Equals(clsnmatch.Groups[2].Value, "default");
+					if (isdefault)
 					{
 						if (clsntype == ClsnType.Type1Attack) default_type1.Clear();
 						if (clsntype == ClsnType.Type2Normal) default_type2.Clear();
 					}
 
-					loadcount = Int32.Parse(clsnmatch.Groups[3].Value);
+					loadcount = int.Parse(clsnmatch.Groups[3].Value);
 					loaddefault = isdefault;
 					loadtype = clsntype;
 					continue;
 				}
 
-				if (sc.Equals(line, "Loopstart") == true)
+				if (sc.Equals(line, "Loopstart"))
 				{
 					loopstart = elements.Count;
 					continue;
 				}
 
-				AnimationElement element = CreateElement(line, elements.Count, starttick, default_type1, default_type2, loading_type1, loading_type2);
+				var element = CreateElement(line, elements.Count, starttick, default_type1, default_type2, loading_type1, loading_type2);
 				if (element != null)
 				{
 					if (element.Gameticks == -1)
@@ -180,12 +180,10 @@ namespace xnaMugen.Animations
 				Log.Write(LogLevel.Warning, LogSystem.AnimationSystem, "No elements defined for Animation #{0}", animationnumber);
 				return null;
 			}
-			else
-			{
-				if (loopstart == elements.Count) loopstart = 0;
 
-				return new Animation(animationnumber, loopstart, elements);
-			}
+			if (loopstart == elements.Count) loopstart = 0;
+
+			return new Animation(animationnumber, loopstart, elements);
 		}
 
 		/// <summary>
@@ -194,20 +192,20 @@ namespace xnaMugen.Animations
 		/// <param name="line">A line of text representing a collision box.</param>
 		/// <param name="overridetype">The type of collision box to be created.</param>
 		/// <returns>A new instance of the Clsn class if it could be created; null otherwise.</returns>
-		Clsn? CreateClsn(String line, ClsnType overridetype)
+		private Clsn? CreateClsn(string line, ClsnType overridetype)
 		{
-			if (String.Compare(line, 0, "Clsn", 0, 4, StringComparison.OrdinalIgnoreCase) != 0) return null;
+			if (string.Compare(line, 0, "Clsn", 0, 4, StringComparison.OrdinalIgnoreCase) != 0) return null;
 
-			Match match = m_clsnlineregex.Match(line);
+			var match = m_clsnlineregex.Match(line);
 			if (match.Success == false) return null;
 
 			//if (String.Equals(match.Groups[1].Value, "1") == true) clsn.Type = ClsnType.Type1Attack;
 			//if (String.Equals(match.Groups[1].Value, "2") == true) clsn.Type = ClsnType.Type2Normal;
 
-			Int32 x1 = Int32.Parse(match.Groups[3].Value);
-			Int32 y1 = Int32.Parse(match.Groups[4].Value);
-			Int32 x2 = Int32.Parse(match.Groups[5].Value);
-			Int32 y2 = Int32.Parse(match.Groups[6].Value);
+			var x1 = int.Parse(match.Groups[3].Value);
+			var y1 = int.Parse(match.Groups[4].Value);
+			var x2 = int.Parse(match.Groups[5].Value);
+			var y2 = int.Parse(match.Groups[6].Value);
 
 			if (x1 > x2) Misc.Swap(ref x1, ref x2);
 			if (y1 > y2) Misc.Swap(ref y1, ref y2);
@@ -223,71 +221,71 @@ namespace xnaMugen.Animations
 		/// <param name="default_clsn"></param>
 		/// <param name="loading_clsn"></param>
 		/// <returns></returns>
-		AnimationElement CreateElement(String line, Int32 elementid, Int32 starttick, List<Clsn> default_type1, List<Clsn> default_type2, List<Clsn> loading_type1, List<Clsn> loading_type2)
+		private AnimationElement CreateElement(string line, int elementid, int starttick, List<Clsn> default_type1, List<Clsn> default_type2, List<Clsn> loading_type1, List<Clsn> loading_type2)
 		{
-			if (line == null) throw new ArgumentNullException("line");
-			if (elementid < 0) throw new ArgumentOutOfRangeException("elementid");
-			if (starttick < 0) throw new ArgumentOutOfRangeException("starttick");
-			if (default_type1 == null) throw new ArgumentNullException("default_type1");
-			if (default_type2 == null) throw new ArgumentNullException("default_type2");
-			if (loading_type1 == null) throw new ArgumentNullException("loading_type1");
-			if (loading_type2 == null) throw new ArgumentNullException("loading_type2");
+			if (line == null) throw new ArgumentNullException(nameof(line));
+			if (elementid < 0) throw new ArgumentOutOfRangeException(nameof(elementid));
+			if (starttick < 0) throw new ArgumentOutOfRangeException(nameof(starttick));
+			if (default_type1 == null) throw new ArgumentNullException(nameof(default_type1));
+			if (default_type2 == null) throw new ArgumentNullException(nameof(default_type2));
+			if (loading_type1 == null) throw new ArgumentNullException(nameof(loading_type1));
+			if (loading_type2 == null) throw new ArgumentNullException(nameof(loading_type2));
 
-			String[] elements = m_elementregex.Split(line);
+			var elements = m_elementregex.Split(line);
 			if (elements == null) return null;
 
-			Int32 groupnumber;
-			if (Int32.TryParse(elements[0], out groupnumber) == false) return null;
+			int groupnumber;
+			if (int.TryParse(elements[0], out groupnumber) == false) return null;
 
-			Int32 imagenumber;
-			if (Int32.TryParse(elements[1], out imagenumber) == false) return null;
+			int imagenumber;
+			if (int.TryParse(elements[1], out imagenumber) == false) return null;
 
-			Int32 offset_x;
-			if (Int32.TryParse(elements[2], out offset_x) == false) return null;
+			int offset_x;
+			if (int.TryParse(elements[2], out offset_x) == false) return null;
 
-			Int32 offset_y;
-			if (Int32.TryParse(elements[3], out offset_y) == false) return null;
+			int offset_y;
+			if (int.TryParse(elements[3], out offset_y) == false) return null;
 
-			Int32 gameticks;
-			if (Int32.TryParse(elements[4], out gameticks) == false) return null;
+			int gameticks;
+			if (int.TryParse(elements[4], out gameticks) == false) return null;
 
-			SpriteEffects flip = SpriteEffects.None;
+			var flip = SpriteEffects.None;
 			if (elements.Length >= 6)
 			{
 				if (elements[5].IndexOf('H') != -1 || elements[5].IndexOf('h') != -1) flip |= SpriteEffects.FlipHorizontally;
 				if (elements[5].IndexOf('V') != -1 || elements[5].IndexOf('v') != -1) flip |= SpriteEffects.FlipVertically;
 			}
 
-			Blending blending = new Blending();
+			var blending = new Blending();
 			if (elements.Length >= 7)
 			{
 				blending = m_animationsystem.GetSubSystem<StringConverter>().Convert<Blending>(elements[6]);
 			}
 
-			List<Clsn> clsn = new List<Clsn>();
+			var clsn = new List<Clsn>();
 			clsn.AddRange(loading_type1.Count != 0 ? loading_type1 : default_type1);
 			clsn.AddRange(loading_type2.Count != 0 ? loading_type2 : default_type2);
 
-			AnimationElement element = new AnimationElement(elementid, clsn, gameticks, starttick, new SpriteId(groupnumber, imagenumber), new Point(offset_x, offset_y), flip, blending);
+			var element = new AnimationElement(elementid, clsn, gameticks, starttick, new SpriteId(groupnumber, imagenumber), new Point(offset_x, offset_y), flip, blending);
 			return element;
 		}
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly AnimationSystem m_animationsystem;
+		private readonly AnimationSystem m_animationsystem;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Regex m_animationtitleregex;
+		private readonly Regex m_animationtitleregex;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Regex m_clsnregex;
+		private readonly Regex m_clsnregex;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Regex m_clsnlineregex;
+		private readonly Regex m_clsnlineregex;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Regex m_elementregex;
+		private readonly Regex m_elementregex;
 
 		#endregion
 	}

@@ -1,54 +1,41 @@
 ﻿using System;
 using System.Diagnostics;
-using xnaMugen.Collections;
-using System.Collections.Generic;
-using xnaMugen.Evaluation.Tokenizing;
-using System.Text.RegularExpressions;
 
 namespace xnaMugen.Evaluation
 {
-	class PrefixedExpression : IExpression
+	internal class PrefixedExpression : IExpression
 	{
-		public PrefixedExpression(Expression expression, Boolean? common)
+		public PrefixedExpression(Expression expression, bool? common)
 		{
-			if (expression == null) throw new ArgumentNullException("expression");
+			if (expression == null) throw new ArgumentNullException(nameof(expression));
 
 			m_expression = expression;
 			m_common = common;
 		}
 
-		public Boolean IsCommon(Boolean failover)
+		public bool IsCommon(bool failover)
 		{
 			return Common ?? failover;
 		}
 
-		public Number[] Evaluate(Object state)
+		public Number[] Evaluate(object state)
 		{
 			return m_expression.Evaluate(state);
 		}
 
-		public Expression Expression
-		{
-			get { return m_expression; }
-		}
+		public Expression Expression => m_expression;
 
-		public Boolean? Common
-		{
-			get { return m_common; }
-		}
+		public bool? Common => m_common;
 
-		public Boolean IsValid
-		{
-			get { return Expression.IsValid; }
-		}
+		public bool IsValid => Expression.IsValid;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Expression m_expression;
+		private readonly Expression m_expression;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Boolean? m_common;
+		private readonly bool? m_common;
 
 		#endregion
 	}

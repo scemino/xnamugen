@@ -1,9 +1,7 @@
-﻿using System;
-
-namespace xnaMugen.Evaluation
+﻿namespace xnaMugen.Evaluation
 {
-	interface IFunction
+	internal interface IFunction
 	{
-		Number Evaluate(Object state);
+		Number Evaluate(object state);
 	}
 }

@@ -3,9 +3,9 @@ using System;
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("Asin")]
-	static class Asin
+	internal static class Asin
 	{
-		public static Single Evaluate(Object state, ref Boolean error, Single value)
+		public static float Evaluate(object state, ref bool error, float value)
 		{
 			if (value < -1 || value > 1)
 			{
@@ -13,7 +13,7 @@ namespace xnaMugen.Evaluation.Triggers
 				return 0;
 			}
 
-			return (Single)Math.Asin(value);
+			return (float)Math.Asin(value);
 		}
 
 		public static Node Parse(ParseState state)

@@ -8,14 +8,14 @@ namespace xnaMugen.Input
 	/// Encapsulates a collection of input callbacks.
 	/// </summary>
 	[DebuggerDisplay("Count = {m_buttonmap.Count}")]
-	class ButtonMap
+	internal class ButtonMap
 	{
 		/// <summary>
 		/// Initializes a new instance of this class.
 		/// </summary>
 		public ButtonMap()
 		{
-			m_buttonmap = new Dictionary<Int32, Action<Boolean>>();
+			m_buttonmap = new Dictionary<int, Action<bool>>();
 		}
 
 		/// <summary>
@@ -24,7 +24,7 @@ namespace xnaMugen.Input
 		/// <param name="map">The ButtonMap to copy from.</param>
 		public void Set(ButtonMap map)
 		{
-			if (map == null) throw new ArgumentNullException("map");
+			if (map == null) throw new ArgumentNullException(nameof(map));
 
 			Clear();
 			foreach (var iter in map.m_buttonmap) m_buttonmap.Add(iter.Key, iter.Value);
@@ -43,11 +43,11 @@ namespace xnaMugen.Input
 		/// </summary>
 		/// <param name="button">The button associated with the callback.</param>
 		/// <param name="callback">The callback to be fired.</param>
-		public void Add(SystemButton button, Action<Boolean> callback)
+		public void Add(SystemButton button, Action<bool> callback)
 		{
-			if (callback == null) throw new ArgumentNullException("callback");
+			if (callback == null) throw new ArgumentNullException(nameof(callback));
 
-			Add((Int32)button, callback);
+			Add((int)button, callback);
 		}
 
 		/// <summary>
@@ -55,18 +55,18 @@ namespace xnaMugen.Input
 		/// </summary>
 		/// <param name="button">The button associated with the callback.</param>
 		/// <param name="callback">The callback to be fired.</param>
-		public void Add(PlayerButton button, Action<Boolean> callback)
+		public void Add(PlayerButton button, Action<bool> callback)
 		{
-			if (callback == null) throw new ArgumentNullException("callback");
+			if (callback == null) throw new ArgumentNullException(nameof(callback));
 
-			Add((Int32)button, callback);
+			Add((int)button, callback);
 		}
 
-		void Add(Int32 index, Action<Boolean> callback)
+		private void Add(int index, Action<bool> callback)
 		{
-			if (callback == null) throw new ArgumentNullException("callback");
+			if (callback == null) throw new ArgumentNullException(nameof(callback));
 
-			if (m_buttonmap.ContainsKey(index) == true)
+			if (m_buttonmap.ContainsKey(index))
 			{
 				m_buttonmap[index] += callback;
 			}
@@ -81,16 +81,16 @@ namespace xnaMugen.Input
 		/// </summary>
 		/// <param name="button">The button index associates with the callback.</param>
 		/// <param name="pressed">Whether the key has pressed or released.</param>
-		public void Call(Int32 button, Boolean pressed)
+		public void Call(int button, bool pressed)
 		{
-			Action<Boolean> callback;
-			if (m_buttonmap.TryGetValue(button, out callback) == true) callback(pressed);
+			Action<bool> callback;
+			if (m_buttonmap.TryGetValue(button, out callback)) callback(pressed);
 		}
 
-		public Action<Boolean> GetCallback(Int32 button)
+		public Action<bool> GetCallback(int button)
 		{
-			Action<Boolean> callback;
-			if (m_buttonmap.TryGetValue(button, out callback) == true) return callback;
+			Action<bool> callback;
+			if (m_buttonmap.TryGetValue(button, out callback)) return callback;
 
 			return null;
 		}
@@ -98,7 +98,7 @@ namespace xnaMugen.Input
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
-		readonly Dictionary<Int32, Action<Boolean>> m_buttonmap;
+		private readonly Dictionary<int, Action<bool>> m_buttonmap;
 
 		#endregion
 	}

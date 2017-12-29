@@ -7,9 +7,9 @@ using Microsoft.Xna.Framework.Graphics;
 namespace xnaMugen.StateMachine.Controllers
 {
 	[StateControllerName("ModifyExplod")]
-	class ModifyExplod : StateController
+	internal class ModifyExplod : StateController
 	{
-		public ModifyExplod(StateSystem statesystem, String label, TextSection textsection)
+		public ModifyExplod(StateSystem statesystem, string label, TextSection textsection)
 			: base(statesystem, label, textsection)
 		{
 			m_animationnumber = textsection.GetAttribute<Evaluation.PrefixedExpression>("anim", null);
@@ -20,9 +20,9 @@ namespace xnaMugen.StateMachine.Controllers
 			m_verticalfacing = textsection.GetAttribute<Evaluation.Expression>("vfacing", null);
 			m_bindtime = textsection.GetAttribute<Evaluation.Expression>("BindTime", null);
 
-			Evaluation.Expression exp_vel = textsection.GetAttribute<Evaluation.Expression>("vel", null);
-			Evaluation.Expression exp_velocity = textsection.GetAttribute<Evaluation.Expression>("velocity", null);
-			m_velocity = exp_vel ?? exp_velocity;
+			var expVel = textsection.GetAttribute<Evaluation.Expression>("vel", null);
+			var expVelocity = textsection.GetAttribute<Evaluation.Expression>("velocity", null);
+			m_velocity = expVel ?? expVelocity;
 
 			m_acceleration = textsection.GetAttribute<Evaluation.Expression>("accel", null);
 			m_randomdisplacement = textsection.GetAttribute<Evaluation.Expression>("random", null);
@@ -43,13 +43,13 @@ namespace xnaMugen.StateMachine.Controllers
 
 		public override void Run(Combat.Character character)
 		{
-			Combat.ModifyExplodData data = CreateModifyExplodData(character);
+			var data = CreateModifyExplodData(character);
 			if (data == null) return;
 
-			foreach (Combat.Explod explod in character.GetExplods(data.Id)) explod.Modify(data);
+			foreach (var explod in character.GetExplods(data.Id)) explod.Modify(data);
 		}
 
-		public override Boolean IsValid()
+		public override bool IsValid()
 		{
 			if (base.IsValid() == false) return false;
 
@@ -58,30 +58,30 @@ namespace xnaMugen.StateMachine.Controllers
 			return true;
 		}
 
-		Combat.ModifyExplodData CreateModifyExplodData(Combat.Character character)
+		private Combat.ModifyExplodData CreateModifyExplodData(Combat.Character character)
 		{
-			if (character == null) throw new ArgumentNullException("character");
+			if (character == null) throw new ArgumentNullException(nameof(character));
 
-			Int32? animationnumber = EvaluationHelper.AsInt32(character, AnimationNumber, null);
-			Int32? id = EvaluationHelper.AsInt32(character, Id, null);
-			Point? location = EvaluationHelper.AsPoint(character, Position, null);
-			Int32? horizfacing = EvaluationHelper.AsInt32(character, Facing, null);
-			Int32? vertfacing = EvaluationHelper.AsInt32(character, VerticalFacing, null);
-			Int32? bindtime = EvaluationHelper.AsInt32(character, BindTime, null);
-			Vector2? velocity = EvaluationHelper.AsVector2(character, Velocity, null);
-			Vector2? acceleration = EvaluationHelper.AsVector2(character, Acceleration, null);
-			Point? randomdisplacement = EvaluationHelper.AsPoint(character, RandomDisplacement, null);
-			Int32? removetime = EvaluationHelper.AsInt32(character, RemoveTime, null);
-			Boolean? supermove = EvaluationHelper.AsBoolean(character, Supermove, null);
-			Int32? supermovetime = EvaluationHelper.AsInt32(character, SupermoveTime, null);
-			Int32? pausetime = EvaluationHelper.AsInt32(character, PauseMoveTime, null);
-			Vector2? scale = EvaluationHelper.AsVector2(character, Scale, null);
-			Int32? spritepriority = EvaluationHelper.AsInt32(character, SpritePriority, null);
-			Boolean? ontop = EvaluationHelper.AsBoolean(character, DrawOnTop, null);
-			Boolean? ownpalette = EvaluationHelper.AsBoolean(character, OwnPalette, null);
-			Boolean? removeongethit = EvaluationHelper.AsBoolean(character, RemoveOnGetHit, null);
-			Boolean? ignorehitpause = EvaluationHelper.AsBoolean(character, ExplodIgnoreHitPause, null);
-			Point? alpha = EvaluationHelper.AsPoint(character, Alpha, null);
+			var animationnumber = EvaluationHelper.AsInt32(character, AnimationNumber, null);
+			var id = EvaluationHelper.AsInt32(character, Id, null);
+			var location = EvaluationHelper.AsPoint(character, Position, null);
+			var horizfacing = EvaluationHelper.AsInt32(character, Facing, null);
+			var vertfacing = EvaluationHelper.AsInt32(character, VerticalFacing, null);
+			var bindtime = EvaluationHelper.AsInt32(character, BindTime, null);
+			var velocity = EvaluationHelper.AsVector2(character, Velocity, null);
+			var acceleration = EvaluationHelper.AsVector2(character, Acceleration, null);
+			var randomdisplacement = EvaluationHelper.AsPoint(character, RandomDisplacement, null);
+			var removetime = EvaluationHelper.AsInt32(character, RemoveTime, null);
+			var supermove = EvaluationHelper.AsBoolean(character, Supermove, null);
+			var supermovetime = EvaluationHelper.AsInt32(character, SupermoveTime, null);
+			var pausetime = EvaluationHelper.AsInt32(character, PauseMoveTime, null);
+			var scale = EvaluationHelper.AsVector2(character, Scale, null);
+			var spritepriority = EvaluationHelper.AsInt32(character, SpritePriority, null);
+			var ontop = EvaluationHelper.AsBoolean(character, DrawOnTop, null);
+			var ownpalette = EvaluationHelper.AsBoolean(character, OwnPalette, null);
+			var removeongethit = EvaluationHelper.AsBoolean(character, RemoveOnGetHit, null);
+			var ignorehitpause = EvaluationHelper.AsBoolean(character, ExplodIgnoreHitPause, null);
+			var alpha = EvaluationHelper.AsPoint(character, Alpha, null);
 
 			if (id == null) return null;
 
@@ -91,7 +91,7 @@ namespace xnaMugen.StateMachine.Controllers
 			if (horizfacing == -1) flip ^= SpriteEffects.FlipHorizontally;
 			if (vertfacing == -1) flip ^= SpriteEffects.FlipVertically;
 
-			Blending? transparency = Transparency;
+			var transparency = Transparency;
 			if (transparency != null && transparency.Value.BlendType == BlendType.Add && transparency.Value.SourceFactor == 0 && transparency.Value.DestinationFactor == 0)
 			{
 				if (alpha != null)
@@ -104,7 +104,7 @@ namespace xnaMugen.StateMachine.Controllers
 				}
 			}
 
-			Combat.ModifyExplodData data = new Combat.ModifyExplodData();
+			var data = new Combat.ModifyExplodData();
 			data.CommonAnimation = EvaluationHelper.IsCommon(AnimationNumber, false);
 			data.AnimationNumber = animationnumber;
 			data.Id = id.Value;
@@ -130,191 +130,122 @@ namespace xnaMugen.StateMachine.Controllers
 			return data;
 		}
 
-		public Evaluation.PrefixedExpression AnimationNumber
-		{
-			get { return m_animationnumber; }
-		}
+		public Evaluation.PrefixedExpression AnimationNumber => m_animationnumber;
 
-		public Evaluation.Expression Id
-		{
-			get { return m_id; }
-		}
+		public Evaluation.Expression Id => m_id;
 
-		public Evaluation.Expression Position
-		{
-			get { return m_position; }
-		}
+		public Evaluation.Expression Position => m_position;
 
-		public PositionType? PositionType
-		{
-			get { return m_postype; }
-		}
+		public PositionType? PositionType => m_postype;
 
-		public Evaluation.Expression Facing
-		{
-			get { return m_facing; }
-		}
+		public Evaluation.Expression Facing => m_facing;
 
-		public Evaluation.Expression VerticalFacing
-		{
-			get { return m_verticalfacing; }
-		}
+		public Evaluation.Expression VerticalFacing => m_verticalfacing;
 
-		public Evaluation.Expression BindTime
-		{
-			get { return m_bindtime; }
-		}
+		public Evaluation.Expression BindTime => m_bindtime;
 
-		public Evaluation.Expression Velocity
-		{
-			get { return m_velocity; }
-		}
+		public Evaluation.Expression Velocity => m_velocity;
 
-		public Evaluation.Expression Acceleration
-		{
-			get { return m_acceleration; }
-		}
+		public Evaluation.Expression Acceleration => m_acceleration;
 
-		public Evaluation.Expression RandomDisplacement
-		{
-			get { return m_randomdisplacement; }
-		}
+		public Evaluation.Expression RandomDisplacement => m_randomdisplacement;
 
-		public Evaluation.Expression RemoveTime
-		{
-			get { return m_removetime; }
-		}
+		public Evaluation.Expression RemoveTime => m_removetime;
 
-		public Evaluation.Expression Supermove
-		{
-			get { return m_supermove; }
-		}
+		public Evaluation.Expression Supermove => m_supermove;
 
-		public Evaluation.Expression SupermoveTime
-		{
-			get { return m_supermovetime; }
-		}
+		public Evaluation.Expression SupermoveTime => m_supermovetime;
 
-		public Evaluation.Expression PauseMoveTime
-		{
-			get { return m_pausemovetime; }
-		}
+		public Evaluation.Expression PauseMoveTime => m_pausemovetime;
 
-		public Evaluation.Expression Scale
-		{
-			get { return m_scale; }
-		}
+		public Evaluation.Expression Scale => m_scale;
 
-		public Evaluation.Expression SpritePriority
-		{
-			get { return m_spritepriority; }
-		}
+		public Evaluation.Expression SpritePriority => m_spritepriority;
 
-		public Evaluation.Expression DrawOnTop
-		{
-			get { return m_drawontop; }
-		}
+		public Evaluation.Expression DrawOnTop => m_drawontop;
 
-		public Evaluation.Expression Shadow
-		{
-			get { return m_shadow; }
-		}
+		public Evaluation.Expression Shadow => m_shadow;
 
-		public Evaluation.Expression OwnPalette
-		{
-			get { return m_ownpalette; }
-		}
+		public Evaluation.Expression OwnPalette => m_ownpalette;
 
-		public Evaluation.Expression RemoveOnGetHit
-		{
-			get { return m_removeongethit; }
-		}
+		public Evaluation.Expression RemoveOnGetHit => m_removeongethit;
 
-		public Evaluation.Expression ExplodIgnoreHitPause
-		{
-			get { return m_explodignorehitpause; }
-		}
+		public Evaluation.Expression ExplodIgnoreHitPause => m_explodignorehitpause;
 
-		public Blending? Transparency
-		{
-			get { return m_blending; }
-		}
+		public Blending? Transparency => m_blending;
 
-		public Evaluation.Expression Alpha
-		{
-			get { return m_alpha; }
-		}
+		public Evaluation.Expression Alpha => m_alpha;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.PrefixedExpression m_animationnumber;
+		private readonly Evaluation.PrefixedExpression m_animationnumber;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_id;
+		private readonly Evaluation.Expression m_id;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_position;
+		private readonly Evaluation.Expression m_position;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly PositionType? m_postype;
+		private readonly PositionType? m_postype;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_facing;
+		private readonly Evaluation.Expression m_facing;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_verticalfacing;
+		private readonly Evaluation.Expression m_verticalfacing;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_bindtime;
+		private readonly Evaluation.Expression m_bindtime;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_velocity;
+		private readonly Evaluation.Expression m_velocity;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_acceleration;
+		private readonly Evaluation.Expression m_acceleration;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_randomdisplacement;
+		private readonly Evaluation.Expression m_randomdisplacement;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_removetime;
+		private readonly Evaluation.Expression m_removetime;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_supermove;
+		private readonly Evaluation.Expression m_supermove;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_supermovetime;
+		private readonly Evaluation.Expression m_supermovetime;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_pausemovetime;
+		private readonly Evaluation.Expression m_pausemovetime;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_scale;
+		private readonly Evaluation.Expression m_scale;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_spritepriority;
+		private readonly Evaluation.Expression m_spritepriority;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_drawontop;
+		private readonly Evaluation.Expression m_drawontop;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_shadow;
+		private readonly Evaluation.Expression m_shadow;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_ownpalette;
+		private readonly Evaluation.Expression m_ownpalette;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_removeongethit;
+		private readonly Evaluation.Expression m_removeongethit;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_explodignorehitpause;
+		private readonly Evaluation.Expression m_explodignorehitpause;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Blending? m_blending;
+		private readonly Blending? m_blending;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_alpha;
+		private readonly Evaluation.Expression m_alpha;
 
 		#endregion
 	}

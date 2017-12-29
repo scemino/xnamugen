@@ -8,7 +8,7 @@ namespace xnaMugen.Animations
 	/// <summary>
 	/// Represents a sequence of sprites to draw.
 	/// </summary>
-	class Animation
+	internal class Animation
 	{
 		/// <summary>
 		/// Creates a new instance of this class.
@@ -16,13 +16,13 @@ namespace xnaMugen.Animations
 		/// <param name="number">The identifing number of this Animation.</param>
 		/// <param name="loopstart">The element index where the sequence of this Animation starts on when looping.</param>
 		/// <param name="elements">The collection of elements making up this Animation.</param>
-		public Animation(Int32 number, Int32 loopstart, List<AnimationElement> elements)
+		public Animation(int number, int loopstart, List<AnimationElement> elements)
 		{
-			if (number < 0) throw new ArgumentOutOfRangeException("number");
-			if (loopstart < 0) throw new ArgumentOutOfRangeException("loopstart");
-			if (elements == null) throw new ArgumentNullException("elements");
+			if (number < 0) throw new ArgumentOutOfRangeException(nameof(number));
+			if (loopstart < 0) throw new ArgumentOutOfRangeException(nameof(loopstart));
+			if (elements == null) throw new ArgumentNullException(nameof(elements));
 			if (elements.Count == 0) throw new ArgumentException("elements");
-			if (loopstart >= elements.Count) throw new ArgumentOutOfRangeException("loopstart");
+			if (loopstart >= elements.Count) throw new ArgumentOutOfRangeException(nameof(loopstart));
 
 			m_number = number;
 			m_loopstart = loopstart;
@@ -34,11 +34,11 @@ namespace xnaMugen.Animations
 		/// Calculates the total amount of time, in gameticks, it takes for this animation to start looping.
 		/// </summary>
 		/// <returns>The sum of the time of all the elements of this Animation. If the last element has a length of -1, this returns -1.</returns>
-		Int32 CalculateTotalTime()
+		private int CalculateTotalTime()
 		{
-			Int32 time = 0;
+			var time = 0;
 
-			foreach (AnimationElement element in this)
+			foreach (var element in this)
 			{
 				if (element.Gameticks == -1) return -1;
 				time += element.Gameticks;
@@ -47,9 +47,9 @@ namespace xnaMugen.Animations
 			return time;
 		}
 
-		public Int32 GetElementStartTime(Int32 elementnumber)
+		public int GetElementStartTime(int elementnumber)
 		{
-			if (elementnumber < 0 || elementnumber >= Elements.Count) throw new ArgumentOutOfRangeException("elementnumber");
+			if (elementnumber < 0 || elementnumber >= Elements.Count) throw new ArgumentOutOfRangeException(nameof(elementnumber));
 
 			return Elements[elementnumber].StartTick;
 		}
@@ -59,12 +59,12 @@ namespace xnaMugen.Animations
 		/// </summary>
 		/// <param name="elementnumber">The element index that precedes the returned element.</param>
 		/// <returns>The next element in the animation sequence.</returns>
-		public AnimationElement GetNextElement(Int32 elementnumber)
+		public AnimationElement GetNextElement(int elementnumber)
 		{
-			if (elementnumber < 0 || elementnumber >= Elements.Count) throw new ArgumentOutOfRangeException("elementnumber");
+			if (elementnumber < 0 || elementnumber >= Elements.Count) throw new ArgumentOutOfRangeException(nameof(elementnumber));
 
 			++elementnumber;
-			return (elementnumber < Elements.Count) ? Elements[elementnumber] : Elements[Loopstart];
+			return elementnumber < Elements.Count ? Elements[elementnumber] : Elements[Loopstart];
 		}
 
 		/// <summary>
@@ -72,11 +72,11 @@ namespace xnaMugen.Animations
 		/// </summary>
 		/// <param name="time">The time, in gameticks.</param>
 		/// <returns>The element that would be drawn at the given time.</returns>
-		public AnimationElement GetElementFromTime(Int32 time)
+		public AnimationElement GetElementFromTime(int time)
 		{
-			if (time < 0) throw new ArgumentOutOfRangeException("time");
+			if (time < 0) throw new ArgumentOutOfRangeException(nameof(time));
 
-			for (AnimationElement element = Elements[0]; element != null; element = GetNextElement(element.Id))
+			for (var element = Elements[0]; element != null; element = GetNextElement(element.Id))
 			{
 				if (element.Gameticks == -1) return element;
 
@@ -100,7 +100,7 @@ namespace xnaMugen.Animations
 		/// Returns a string representation of this object.
 		/// </summary>
 		/// <returns>A string representation of this object.</returns>
-		public override String ToString()
+		public override string ToString()
 		{
 			return "Animation #" + Number.ToString();
 		}
@@ -109,51 +109,39 @@ namespace xnaMugen.Animations
 		/// Retusn the identifing number of this Animation.
 		/// </summary>
 		/// <returns>The identifing number of this Animation.</returns>
-		public Int32 Number
-		{
-			get { return m_number; }
-		}
+		public int Number => m_number;
 
 		/// <summary>
 		/// Returns the index of the element where the sequence of this Animation starts on when looping.
 		/// </summary>
 		/// <returns>The index of the element where the sequence of this Animation starts on when looping.</returns>
-		public Int32 Loopstart
-		{
-			get { return m_loopstart; }
-		}
+		public int Loopstart => m_loopstart;
 
 		/// <summary>
 		/// Returns an iterator for iterating through the elements of this Animation.
 		/// </summary>
 		/// <returns>An iterator for iterating through the elements of this Animation.</returns>
-		public ListIterator<AnimationElement> Elements
-		{
-			get { return new ListIterator<AnimationElement>(m_elements); }
-		}
+		public ListIterator<AnimationElement> Elements => new ListIterator<AnimationElement>(m_elements);
 
 		/// <summary>
 		/// Returns the total amount of time, in gameticks, required for this Animation to start looping.
 		/// </summary>
 		/// <returns>The total amount of time, in gameticks, required for this Animation to start looping.</returns>
-		public Int32 TotalTime
-		{
-			get { return m_totaltime; }
-		}
+		public int TotalTime => m_totaltime;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Int32 m_number;
+		private readonly int m_number;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Int32 m_loopstart;
+		private readonly int m_loopstart;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Int32 m_totaltime;
+		private readonly int m_totaltime;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly List<AnimationElement> m_elements;
+		private readonly List<AnimationElement> m_elements;
 
 		#endregion
 	}

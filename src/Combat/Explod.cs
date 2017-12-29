@@ -2,18 +2,16 @@
 using System.Diagnostics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System.Collections.Generic;
-using xnaMugen.StateMachine;
 
 namespace xnaMugen.Combat
 {
 	[DebuggerDisplay("Explod Id #{Data.Id} - {Data.CommonAnimation}, {Data.AnimationNumber}")]
-	class Explod : Entity
+	internal class Explod : Entity
 	{
 		public Explod(FightEngine fightengine, ExplodData data)
 			: base(fightengine)
 		{
-			if (data == null) throw new ArgumentNullException("data");
+			if (data == null) throw new ArgumentNullException(nameof(data));
 
 			m_data = data;
 			m_tickcount = 0;
@@ -40,17 +38,17 @@ namespace xnaMugen.Combat
 			CurrentAcceleration = m_data.Acceleration;
 			CurrentFlip = SpriteEffects.None;
 			CurrentScale = m_data.Scale;
-			DrawOrder = (m_data.DrawOnTop == true) ? 11 : m_data.SpritePriority;
+			DrawOrder = m_data.DrawOnTop ? 11 : m_data.SpritePriority;
 			Transparency = Data.Transparency;
 
-			Random rng = Engine.GetSubSystem<Random>();
+			var rng = Engine.GetSubSystem<Random>();
 			m_random = new Vector2();
 			m_random.X += rng.NewInt(-m_data.Random.X, m_data.Random.X);
 			m_random.Y += rng.NewInt(-m_data.Random.Y, m_data.Random.Y);
 
-			m_palfx = (m_data.OwnPalFx == true) ? new PaletteFx() : Creator.PaletteFx;
+			m_palfx = m_data.OwnPalFx ? new PaletteFx() : Creator.PaletteFx;
 
-			if (AnimationManager.HasAnimation(Data.AnimationNumber) == true)
+			if (AnimationManager.HasAnimation(Data.AnimationNumber))
 			{
 				SetLocalAnimation(Data.AnimationNumber, 0);
 				m_valid = true;
@@ -61,11 +59,11 @@ namespace xnaMugen.Combat
 			}
 		}
 
-		Vector2 GetStartLocation()
+		private Vector2 GetStartLocation()
 		{
-			Vector2 offset = Data.Location + m_random;
+			var offset = Data.Location + m_random;
 			Vector2 location;
-			Rectangle camerabounds = Engine.Camera.ScreenBounds;
+			var camerabounds = Engine.Camera.ScreenBounds;
 
 			switch (Data.PositionType)
 			{
@@ -81,12 +79,12 @@ namespace xnaMugen.Combat
 
 				case PositionType.Back:
 					location = Misc.GetOffset(Vector2.Zero, m_creationfacing, offset);
-					location.X += (m_creationfacing == Facing.Right) ? camerabounds.Left : camerabounds.Right;
+					location.X += m_creationfacing == Facing.Right ? camerabounds.Left : camerabounds.Right;
 					return location;
 
 				case PositionType.Front:
 					location = Misc.GetOffset(Vector2.Zero, m_creationfacing, offset);
-					location.X += (m_creationfacing == Facing.Left) ? camerabounds.Left : camerabounds.Right;
+					location.X += m_creationfacing == Facing.Left ? camerabounds.Left : camerabounds.Right;
 					return location;
 
 				default:
@@ -94,9 +92,9 @@ namespace xnaMugen.Combat
 			}
 		}
 
-		Facing GetStartFacing()
+		private Facing GetStartFacing()
 		{
-			Facing facing = Facing.Left;
+			var facing = Facing.Left;
 
 			switch (Data.PositionType)
 			{
@@ -112,7 +110,6 @@ namespace xnaMugen.Combat
 					facing = Facing.Right;
 					break;
 
-				case PositionType.None:
 				default:
 					throw new ArgumentOutOfRangeException("Data.PositionType");
 			}
@@ -122,17 +119,17 @@ namespace xnaMugen.Combat
 			return facing;
 		}
 
-		public override Boolean IsPaused(Pause pause)
+		public override bool IsPaused(Pause pause)
 		{
-			if (pause == null) throw new ArgumentNullException("pause");
+			if (pause == null) throw new ArgumentNullException(nameof(pause));
 
 			if (pause.IsActive == false) return false;
 
-            if (Data.IsHitSpark == true) return false;
+            if (Data.IsHitSpark) return false;
 
-			if (pause.IsSuperPause == true)
+			if (pause.IsSuperPause)
 			{
-				if (Data.SuperMove == true || pause.ElapsedTime <= Data.SuperMoveTime) return false;
+				if (Data.SuperMove || pause.ElapsedTime <= Data.SuperMoveTime) return false;
 			}
 			else
 			{
@@ -144,7 +141,7 @@ namespace xnaMugen.Combat
 
 		public override Vector2 Move(Vector2 p)
 		{
-			if (IsBound == true) return new Vector2();
+			if (IsBound) return new Vector2();
 
 			switch (m_data.PositionType)
 			{
@@ -193,38 +190,40 @@ namespace xnaMugen.Combat
 			++m_tickcount;
 		}
 
-		public override Boolean RemoveCheck()
+		public override bool RemoveCheck()
 		{
-			if (m_forceremove == true)
+			if (m_forceremove)
 			{
 				return true;
 			}
-			else if (m_valid == false)
+
+			if (m_valid == false)
 			{
 				return true;
 			}
-			else if (m_data.RemoveTime == -1)
+
+			if (m_data.RemoveTime == -1)
 			{
 				return false;
 			}
-			else if (m_data.RemoveTime == -2)
+
+			if (m_data.RemoveTime == -2)
 			{
 				return AnimationManager.IsAnimationFinished;
 			}
-			else if (m_data.RemoveTime >= 0)
+
+			if (m_data.RemoveTime >= 0)
 			{
 				return Ticks > m_data.RemoveTime;
 			}
-			else
-			{
-				return true;
-			}
+
+			return true;
 		}
 
 		public override Vector2 GetDrawLocation()
 		{
-			Vector2 drawlocation = (IsBound == true) ? GetStartLocation() : CurrentLocation;
-			Rectangle screenrect = Engine.Camera.ScreenBounds;
+			var drawlocation = IsBound ? GetStartLocation() : CurrentLocation;
+			var screenrect = Engine.Camera.ScreenBounds;
 
 			switch (Data.PositionType)
 			{
@@ -273,7 +272,7 @@ namespace xnaMugen.Combat
 			if (modifydata.DrawOnTop != null)
 			{
 				Data.DrawOnTop = modifydata.DrawOnTop.Value;
-				if (Data.DrawOnTop == true) DrawOrder = 11;
+				if (Data.DrawOnTop) DrawOrder = 11;
 			}
 
 			if (modifydata.RemoveOnGetHit != null)
@@ -365,92 +364,59 @@ namespace xnaMugen.Combat
 			*/
 		}
 
-		public override EntityUpdateOrder UpdateOrder
-		{
-			get { return EntityUpdateOrder.Explod; }
-		}
+		public override EntityUpdateOrder UpdateOrder => EntityUpdateOrder.Explod;
 
-		public Character Creator
-		{
-			get { return m_creator; }
-		}
+		public Character Creator => m_creator;
 
-		public ExplodData Data
-		{
-			get { return m_data; }
-		}
+		public ExplodData Data => m_data;
 
-		public override Drawing.SpriteManager SpriteManager
-		{
-			get { return m_spritemanager; }
-		}
+		public override Drawing.SpriteManager SpriteManager => m_spritemanager;
 
-		public override Animations.AnimationManager AnimationManager
-		{
-			get { return m_animationmanager; }
-		}
+		public override Animations.AnimationManager AnimationManager => m_animationmanager;
 
-		public override Team Team
-		{
-			get { return BasePlayer.Team; }
-		}
+		public override Team Team => BasePlayer.Team;
 
-		public override Player BasePlayer
-		{
-			get { return Creator.BasePlayer; }
-		}
+		public override Player BasePlayer => Creator.BasePlayer;
 
-		Int32 Ticks
-		{
-			get { return m_tickcount; }
-		}
+		private int Ticks => m_tickcount;
 
-		Boolean IsBound
-		{
-			get { return Data.BindTime == -1 || m_tickcount <= Data.BindTime; }
-		}
+		private bool IsBound => Data.BindTime == -1 || m_tickcount <= Data.BindTime;
 
-		public Boolean IsValid
-		{
-			get { return m_valid; }
-		}
+		public bool IsValid => m_valid;
 
-		public override PaletteFx PaletteFx
-		{
-			get { return m_palfx; }
-		}
+		public override PaletteFx PaletteFx => m_palfx;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Drawing.SpriteManager m_spritemanager;
+		private readonly Drawing.SpriteManager m_spritemanager;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Animations.AnimationManager m_animationmanager;
+		private readonly Animations.AnimationManager m_animationmanager;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly ExplodData m_data;
+		private readonly ExplodData m_data;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Int32 m_tickcount;
+		private int m_tickcount;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Boolean m_valid;
+		private readonly bool m_valid;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly PaletteFx m_palfx;
+		private readonly PaletteFx m_palfx;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Vector2 m_random;
+		private readonly Vector2 m_random;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Boolean m_forceremove;
+		private bool m_forceremove;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Facing m_creationfacing;
+		private readonly Facing m_creationfacing;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Character m_creator;
+		private readonly Character m_creator;
 
 		#endregion
 	}

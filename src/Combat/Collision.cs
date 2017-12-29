@@ -1,18 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using xnaMugen.Collections;
 
 namespace xnaMugen.Combat
 {
-	struct Collision
+	internal struct Collision
 	{
 		public Collision(Entity lhs, ClsnType lhstype, Entity rhs, ClsnType rhstype)
 		{
-			if (lhs == null) throw new ArgumentNullException("lhs");
-			if (rhs == null) throw new ArgumentNullException("rhs");
+			if (lhs == null) throw new ArgumentNullException(nameof(lhs));
+			if (rhs == null) throw new ArgumentNullException(nameof(rhs));
 
 			m_lhs = lhs;
 			m_lhsclsntype = lhstype;
@@ -40,49 +36,49 @@ namespace xnaMugen.Combat
 
 		public static Collision Build(Entity lhs, Entity rhs)
 		{
-			if (lhs == null) throw new ArgumentNullException("lhs");
-			if (rhs == null) throw new ArgumentNullException("rhs");
+			if (lhs == null) throw new ArgumentNullException(nameof(lhs));
+			if (rhs == null) throw new ArgumentNullException(nameof(rhs));
 
-			foreach (Animations.Clsn lhs_clsn in lhs.AnimationManager.CurrentElement)
+			foreach (var lhs_clsn in lhs.AnimationManager.CurrentElement)
 			{
-				Rectangle lhs_rect = lhs_clsn.MakeRect(lhs.CurrentLocation, lhs.CurrentScale, lhs.CurrentFacing);
+				var lhs_rect = lhs_clsn.MakeRect(lhs.CurrentLocation, lhs.CurrentScale, lhs.CurrentFacing);
 
-				foreach (Animations.Clsn rhs_clsn in rhs.AnimationManager.CurrentElement)
+				foreach (var rhs_clsn in rhs.AnimationManager.CurrentElement)
 				{
-					Rectangle rhs_rect = rhs_clsn.MakeRect(rhs.CurrentLocation, rhs.CurrentScale, rhs.CurrentFacing);
+					var rhs_rect = rhs_clsn.MakeRect(rhs.CurrentLocation, rhs.CurrentScale, rhs.CurrentFacing);
 
-					if (lhs_rect.Intersects(rhs_rect) == true) return new Collision(lhs, lhs_clsn.ClsnType, rhs, rhs_clsn.ClsnType);
+					if (lhs_rect.Intersects(rhs_rect)) return new Collision(lhs, lhs_clsn.ClsnType, rhs, rhs_clsn.ClsnType);
 				}
 			}
 
 			return new Collision();
 		}
 
-		public static Boolean HasCollision(Entity lhs, ClsnType lhstype, Entity rhs, ClsnType rhstype)
+		public static bool HasCollision(Entity lhs, ClsnType lhstype, Entity rhs, ClsnType rhstype)
 		{
-			if (lhs == null) throw new ArgumentNullException("lhs");
-			if (rhs == null) throw new ArgumentNullException("rhs");
+			if (lhs == null) throw new ArgumentNullException(nameof(lhs));
+			if (rhs == null) throw new ArgumentNullException(nameof(rhs));
 
-			foreach (Animations.Clsn lhs_clsn in lhs.AnimationManager.CurrentElement)
+			foreach (var lhs_clsn in lhs.AnimationManager.CurrentElement)
 			{
 				if (lhs_clsn.ClsnType != lhstype) continue;
 
-				Rectangle lhs_rect = lhs_clsn.MakeRect(lhs.CurrentLocation, lhs.CurrentScale, lhs.CurrentFacing);
+				var lhs_rect = lhs_clsn.MakeRect(lhs.CurrentLocation, lhs.CurrentScale, lhs.CurrentFacing);
 
-				foreach (Animations.Clsn rhs_clsn in rhs.AnimationManager.CurrentElement)
+				foreach (var rhs_clsn in rhs.AnimationManager.CurrentElement)
 				{
 					if (rhs_clsn.ClsnType != rhstype) continue;
 
-					Rectangle rhs_rect = rhs_clsn.MakeRect(rhs.CurrentLocation, rhs.CurrentScale, rhs.CurrentFacing);
+					var rhs_rect = rhs_clsn.MakeRect(rhs.CurrentLocation, rhs.CurrentScale, rhs.CurrentFacing);
 
-					if (lhs_rect.Intersects(rhs_rect) == true) return true;
+					if (lhs_rect.Intersects(rhs_rect)) return true;
 				}
 			}
 
 			return false;
 		}
 
-		public static Boolean Equals(Collision lhs, Collision rhs)
+		public static bool Equals(Collision lhs, Collision rhs)
 		{
 			if (lhs.Left != rhs.Left) return false;
 			if (lhs.LeftClsnType != rhs.LeftClsnType) return false;
@@ -92,47 +88,32 @@ namespace xnaMugen.Combat
 			return true;
 		}
 
-		public Entity Left
-		{
-			get { return m_lhs; }
-		}
+		public Entity Left => m_lhs;
 
-		public ClsnType LeftClsnType
-		{
-			get { return m_lhsclsntype; }
-		}
+		public ClsnType LeftClsnType => m_lhsclsntype;
 
-		public Entity Right
-		{
-			get { return m_rhs; }
-		}
+		public Entity Right => m_rhs;
 
-		public ClsnType RightClsnType
-		{
-			get { return m_rhsclsntype; }
-		}
+		public ClsnType RightClsnType => m_rhsclsntype;
 
-		public CollisionType Type
-		{
-			get { return m_type; }
-		}
+		public CollisionType Type => m_type;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Entity m_lhs;
+		private readonly Entity m_lhs;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly ClsnType m_lhsclsntype;
+		private readonly ClsnType m_lhsclsntype;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Entity m_rhs;
+		private readonly Entity m_rhs;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly ClsnType m_rhsclsntype;
+		private readonly ClsnType m_rhsclsntype;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly CollisionType m_type;
+		private readonly CollisionType m_type;
 
 		#endregion
 	}

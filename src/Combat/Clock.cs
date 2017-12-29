@@ -1,27 +1,26 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using Microsoft.Xna.Framework;
 
 namespace xnaMugen.Combat
 {
-    class Clock : EngineObject
+	internal class Clock : EngineObject
     {
         public Clock(FightEngine engine)
             : base(engine)
         {
-			IO.TextFile textfile = Engine.GetSubSystem<IO.FileSystem>().OpenTextFile(@"data/fight.def");
-            IO.TextSection timesection = textfile.GetSection("Time");
+			var textfile = Engine.GetSubSystem<IO.FileSystem>().OpenTextFile(@"data/fight.def");
+            var timesection = textfile.GetSection("Time");
 
-            m_position = (Vector2)timesection.GetAttribute<Point>("pos", new Point(0, 0));
+            m_position = (Vector2)timesection.GetAttribute("pos", new Point(0, 0));
             m_bgelement = Engine.Elements.Build("time bg", timesection, "bg");
             m_counterelement = Engine.Elements.Build("time counter", timesection, "counter");
 
 			m_time = -1;
         }
 
-		String BuildTimeString()
+	    private string BuildTimeString()
 		{
-			return (m_time >= 0) ? m_time.ToString() : "o";
+			return m_time >= 0 ? m_time.ToString() : "o";
 		}
 
 		public void Tick()
@@ -39,9 +38,9 @@ namespace xnaMugen.Combat
 			}
         }
 
-		public Int32 Time
+		public int Time
 		{
-			get { return m_time; }
+			get => m_time;
 
 			set { m_time = value; }
 		}
@@ -49,16 +48,16 @@ namespace xnaMugen.Combat
         #region Fields
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        readonly Vector2 m_position;
+        private readonly Vector2 m_position;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        readonly Elements.Base m_bgelement;
+        private readonly Elements.Base m_bgelement;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        readonly Elements.Base m_counterelement;
+        private readonly Elements.Base m_counterelement;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Int32 m_time;
+		private int m_time;
 
         #endregion
     }

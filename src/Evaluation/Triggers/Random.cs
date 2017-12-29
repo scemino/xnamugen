@@ -1,20 +1,18 @@
-using System;
-
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("Random")]
-	static class Random
+	internal static class Random
 	{
-		public static Int32 Evaluate(Object state, ref Boolean error)
+		public static int Evaluate(object state, ref bool error)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
 				return 0;
 			}
 
-			xnaMugen.Random rng = character.Engine.GetSubSystem<xnaMugen.Random>();
+			var rng = character.Engine.GetSubSystem<xnaMugen.Random>();
 			return rng.NewInt(0, 999);
 		}
 

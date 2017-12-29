@@ -3,32 +3,29 @@ using System.Diagnostics;
 
 namespace xnaMugen.Evaluation
 {
-	class Token
+	internal class Token
 	{
-		public Token(String text, TokenData data)
+		public Token(string text, TokenData data)
 		{
-			if (text == null) throw new ArgumentNullException("text");
-			if (data == null) throw new ArgumentNullException("data");
+			if (text == null) throw new ArgumentNullException(nameof(text));
+			if (data == null) throw new ArgumentNullException(nameof(data));
 
 			m_text = text;
 			m_data = data;
 		}
 
-		public override String ToString()
+		public override string ToString()
 		{
 			return m_text;
 		}
 
-		public TokenData Data
-		{
-			get { return m_data; }
-		}
+		public TokenData Data => m_data;
 
 		public Symbol AsSymbol
 		{
 			get
 			{
-				Tokenizing.SymbolData data = Data as Tokenizing.SymbolData;
+				var data = Data as Tokenizing.SymbolData;
 				if (data == null) return Symbol.None;
 
 				return data.Symbol;
@@ -39,29 +36,29 @@ namespace xnaMugen.Evaluation
 		{
 			get
 			{
-				Tokenizing.OperatorData data = Data as Tokenizing.OperatorData;
+				var data = Data as Tokenizing.OperatorData;
 				if (data == null) return Operator.None;
 
 				return data.Operator;
 			}
 		}
 
-		public String AsText
+		public string AsText
 		{
 			get
 			{
-				Tokenizing.TextData data = Data as Tokenizing.TextData;
+				var data = Data as Tokenizing.TextData;
 				if (data == null) return null;
 
 				return m_text.Substring(1, m_text.Length - 2);
 			}
 		}
 
-		public String AsUnknown
+		public string AsUnknown
 		{
 			get
 			{
-				Tokenizing.UnknownData data = Data as Tokenizing.UnknownData;
+				var data = Data as Tokenizing.UnknownData;
 				if (data == null) return null;
 
 				return m_text;
@@ -71,10 +68,10 @@ namespace xnaMugen.Evaluation
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly String m_text;
+		private readonly string m_text;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly TokenData m_data;
+		private readonly TokenData m_data;
 
 		#endregion
 	}

@@ -4,16 +4,16 @@ using System.Collections.Generic;
 
 namespace xnaMugen.Evaluation
 {
-	class ParseState
+	internal class ParseState
 	{
-		public ParseState(EvaluationSystem system, NodeBuild fullbuild, NodeBuild endbuild, NodeBuild rangebuild, Node node, List<Token> tokens, Int32 index)
+		public ParseState(EvaluationSystem system, NodeBuild fullbuild, NodeBuild endbuild, NodeBuild rangebuild, Node node, List<Token> tokens, int index)
 		{
-			if (system == null) throw new ArgumentNullException("system");
-			if (fullbuild == null) throw new ArgumentNullException("fullbuild");
-			if (endbuild == null) throw new ArgumentNullException("endbuild");
-			if (rangebuild == null) throw new ArgumentNullException("rangebuild");
-			if (node == null) throw new ArgumentNullException("node");
-			if (tokens == null) throw new ArgumentNullException("tokens");
+			if (system == null) throw new ArgumentNullException(nameof(system));
+			if (fullbuild == null) throw new ArgumentNullException(nameof(fullbuild));
+			if (endbuild == null) throw new ArgumentNullException(nameof(endbuild));
+			if (rangebuild == null) throw new ArgumentNullException(nameof(rangebuild));
+			if (node == null) throw new ArgumentNullException(nameof(node));
+			if (tokens == null) throw new ArgumentNullException(nameof(tokens));
 
 			m_system = system;
 			m_fullnodebuild = fullbuild;
@@ -25,12 +25,12 @@ namespace xnaMugen.Evaluation
 			m_currentindex = index;
 		}
 
-		public Node BuildNode(Boolean full)
+		public Node BuildNode(bool full)
 		{
-			Int32 index = TokenIndex;
-			Node node = null;
+			var index = TokenIndex;
+			Node node;
 
-			if (full == true)
+			if (full)
 			{
 				node = m_fullnodebuild(m_tokens, ref index);
 			}
@@ -43,34 +43,32 @@ namespace xnaMugen.Evaluation
 			return node;
 		}
 
-		public Node BuildParenNumberNode(Boolean frombase)
+		public Node BuildParenNumberNode(bool frombase)
 		{
-			Int32 savedindex = TokenIndex;
+			var savedindex = TokenIndex;
 
 			if (CurrentSymbol != Symbol.LeftParen) { TokenIndex = savedindex; return null; }
 			++TokenIndex;
 
-			Node node = BuildNode(true);
+			var node = BuildNode(true);
 			if (node == null) { TokenIndex = savedindex; return null; }
 
 			if (CurrentSymbol != Symbol.RightParen) { TokenIndex = savedindex; return null; }
 			++TokenIndex;
 
-			if (frombase == true)
+			if (frombase)
 			{
 				BaseNode.Children.Add(node);
 				return BaseNode;
 			}
-			else
-			{
-				return node;
-			}
+
+			return node;
 		}
 
 		public Node BuildRangeNode()
 		{
-			Int32 index = TokenIndex;
-			Node node = m_rangenodebuild(m_tokens, ref index);
+			var index = TokenIndex;
+			var node = m_rangenodebuild(m_tokens, ref index);
 
 			TokenIndex = index;
 			return node;
@@ -81,73 +79,52 @@ namespace xnaMugen.Evaluation
 			return m_system.GetSubSystem<StringConverter>().Convert<T>(CurrentUnknown);
 		}
 
-		public Node BaseNode
-		{
-			get { return m_node; }
-		}
+		public Node BaseNode => m_node;
 
-		public Token CurrentToken
-		{
-			get { return (m_currentindex >= 0 && m_currentindex < m_tokens.Count) ? m_tokens[m_currentindex] : null; }
-		}
+		public Token CurrentToken => m_currentindex >= 0 && m_currentindex < m_tokens.Count ? m_tokens[m_currentindex] : null;
 
-		public Symbol CurrentSymbol
-		{
-			get { return CurrentToken != null ? CurrentToken.AsSymbol : Symbol.None; }
-		}
+		public Symbol CurrentSymbol => CurrentToken != null ? CurrentToken.AsSymbol : Symbol.None;
 
-		public Operator CurrentOperator
-		{
-			get { return CurrentToken != null ? CurrentToken.AsOperator : Operator.None; }
-		}
+		public Operator CurrentOperator => CurrentToken != null ? CurrentToken.AsOperator : Operator.None;
 
-		public String CurrentText
-		{
-			get { return CurrentToken != null ? CurrentToken.AsText : null; }
-		}
+		public string CurrentText => CurrentToken != null ? CurrentToken.AsText : null;
 
-		public String CurrentUnknown
-		{
-			get { return CurrentToken != null ? CurrentToken.AsUnknown : null; }
-		}
+		public string CurrentUnknown => CurrentToken != null ? CurrentToken.AsUnknown : null;
 
-		public Int32 TokenIndex
+		public int TokenIndex
 		{
-			get { return m_currentindex; }
+			get => m_currentindex;
 
 			set { m_currentindex = value; }
 		}
 
-		public Int32 InitialTokenIndex
-		{
-			get { return m_initindex; }
-		}
+		public int InitialTokenIndex => m_initindex;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly EvaluationSystem m_system;
+		private readonly EvaluationSystem m_system;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly NodeBuild m_fullnodebuild;
+		private readonly NodeBuild m_fullnodebuild;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly NodeBuild m_endnodebuild;
+		private readonly NodeBuild m_endnodebuild;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly NodeBuild m_rangenodebuild;
+		private readonly NodeBuild m_rangenodebuild;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Node m_node;
+		private readonly Node m_node;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly List<Token> m_tokens;
+		private readonly List<Token> m_tokens;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Int32 m_initindex;
+		private readonly int m_initindex;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Int32 m_currentindex;
+		private int m_currentindex;
 
 		#endregion
 	}

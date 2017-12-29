@@ -1,13 +1,11 @@
-using System;
-
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("Vel")]
-	static class Vel
+	internal static class Vel
 	{
-		public static Single Evaluate(Object state, ref Boolean error, Axis axis)
+		public static float Evaluate(object state, ref bool error, Axis axis)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
@@ -30,7 +28,7 @@ namespace xnaMugen.Evaluation.Triggers
 
 		public static Node Parse(ParseState parsestate)
 		{
-			Axis axis = parsestate.ConvertCurrentToken<Axis>();
+			var axis = parsestate.ConvertCurrentToken<Axis>();
 			if (axis == Axis.None) return null;
 
 			++parsestate.TokenIndex;

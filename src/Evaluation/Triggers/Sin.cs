@@ -3,11 +3,11 @@ using System;
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("Sin")]
-	static class Sin
+	internal static class Sin
 	{
-		public static Single Evaluate(Object state, ref Boolean error, Single value)
+		public static float Evaluate(object state, ref bool error, float value)
 		{
-			return (Single)Math.Sin(value);
+			return (float)Math.Sin(value);
 		}
 
 		public static Node Parse(ParseState state)

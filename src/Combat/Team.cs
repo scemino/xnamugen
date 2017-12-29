@@ -1,17 +1,16 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Collections.Generic;
-using Microsoft.Xna.Framework;
 using xnaMugen.Collections;
 
 namespace xnaMugen.Combat
 {
-	class Team : EngineObject
+	internal class Team : EngineObject
 	{
 		public Team(FightEngine engine, TeamSide side)
 			: base(engine)
 		{
-			if (side != TeamSide.Left && side != TeamSide.Right) throw new ArgumentException("Side must be either Left or Right", "side");
+			if (side != TeamSide.Left && side != TeamSide.Right) throw new ArgumentException("Side must be either Left or Right", nameof(side));
 
 			m_side = side;
 			m_victorystatus = new VictoryStatus(this);
@@ -30,7 +29,7 @@ namespace xnaMugen.Combat
 
 		public void DoAction(Action<Player> action)
 		{
-			if (action == null) throw new ArgumentNullException("action");
+			if (action == null) throw new ArgumentNullException(nameof(action));
 
 			action(MainPlayer);
 			if (TeamMate != null) action(TeamMate);
@@ -87,7 +86,7 @@ namespace xnaMugen.Combat
 
 		public void CreatePlayers(PlayerCreation p1, PlayerCreation p2)
 		{
-			if (p1 == null) throw new ArgumentNullException("p1");
+			if (p1 == null) throw new ArgumentNullException(nameof(p1));
 
 			Clear();
 
@@ -103,60 +102,39 @@ namespace xnaMugen.Combat
 			ResetPlayers();
 		}
 
-		public TeamSide Side
-		{
-			get { return m_side; }
-		}
+		public TeamSide Side => m_side;
 
-		public Player MainPlayer
-		{
-			get { return m_p1; }
-		}
+		public Player MainPlayer => m_p1;
 
-		public Player TeamMate
-		{
-			get { return m_p2; }
-		}
+		public Player TeamMate => m_p2;
 
-		public Team OtherTeam
-		{
-			get { return (Side == TeamSide.Left) ? Engine.Team2 : Engine.Team1; }
-		}
+		public Team OtherTeam => Side == TeamSide.Left ? Engine.Team2 : Engine.Team1;
 
-		public VictoryStatus VictoryStatus
-		{
-			get { return m_victorystatus; }
-		}
+		public VictoryStatus VictoryStatus => m_victorystatus;
 
-		public TeamDisplay Display
-		{
-			get { return m_display; }
-		}
+		public TeamDisplay Display => m_display;
 
-		public ListIterator<Win> Wins
-		{
-			get { return new ListIterator<Win>(m_winhistory); }
-		}
+		public ListIterator<Win> Wins => new ListIterator<Win>(m_winhistory);
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly TeamSide m_side;
+		private readonly TeamSide m_side;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly VictoryStatus m_victorystatus;
+		private readonly VictoryStatus m_victorystatus;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly TeamDisplay m_display;
+		private readonly TeamDisplay m_display;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly List<Win> m_winhistory;
+		private readonly List<Win> m_winhistory;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Player m_p1;
+		private Player m_p1;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Player m_p2;
+		private Player m_p2;
 
 		#endregion
 	}

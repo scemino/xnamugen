@@ -1,21 +1,19 @@
-using System;
-
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("StateNo")]
-	static class StateNo
+	internal static class StateNo
 	{
-		public static Int32 Evaluate(Object state, ref Boolean error)
+		public static int Evaluate(object state, ref bool error)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
 				return 0;
 			}
 
-			StateMachine.State currentstate = character.StateManager.CurrentState;
-			return (currentstate != null) ? currentstate.Number : 0;
+			var currentstate = character.StateManager.CurrentState;
+			return currentstate != null ? currentstate.Number : 0;
 		}
 
 		public static Node Parse(ParseState parsestate)

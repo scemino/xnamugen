@@ -1,23 +1,18 @@
 ﻿using System;
 using System.Diagnostics;
 using xnaMugen.IO;
-using System.Collections.Generic;
-using xnaMugen.Drawing;
-using xnaMugen.Collections;
-using System.Text.RegularExpressions;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace xnaMugen.Menus
 {
-	class SelectData
+	internal class SelectData
 	{
-		public SelectData(SelectScreen selectscreen, Input.ButtonMap buttonmap, TextSection textsection, String prefix, Boolean moveoverempty)
+		public SelectData(SelectScreen selectscreen, Input.ButtonMap buttonmap, TextSection textsection, string prefix, bool moveoverempty)
 		{
-			if (selectscreen == null) throw new ArgumentNullException("selectscreen");
-			if (buttonmap == null) throw new ArgumentNullException("buttonmap");
-			if (textsection == null) throw new ArgumentNullException("textsection");
-			if (prefix == null) throw new ArgumentNullException("prefix");
+			if (selectscreen == null) throw new ArgumentNullException(nameof(selectscreen));
+			if (buttonmap == null) throw new ArgumentNullException(nameof(buttonmap));
+			if (textsection == null) throw new ArgumentNullException(nameof(textsection));
+			if (prefix == null) throw new ArgumentNullException(nameof(prefix));
 
 			m_selectscreen = selectscreen;
 			m_buttonmap = buttonmap;
@@ -53,11 +48,11 @@ namespace xnaMugen.Menus
 			m_elements.Update();
 		}
 
-		public Boolean MoveCharacterCursor(CursorDirection direction, Point gridsize, Boolean wrapping)
+		public bool MoveCharacterCursor(CursorDirection direction, Point gridsize, bool wrapping)
 		{
-			Point newlocation = GetNewLocation(CurrentCell, direction, gridsize, wrapping);
+			var newlocation = GetNewLocation(CurrentCell, direction, gridsize, wrapping);
 
-			Boolean hasmoved = CurrentCell != newlocation;
+			var hasmoved = CurrentCell != newlocation;
 
 			CurrentCell = newlocation;
 
@@ -78,167 +73,158 @@ namespace xnaMugen.Menus
 
 		public void DrawCursorActive(Vector2 location)
 		{
-			Elements.Base element = m_elements.GetElement("cursor.active");
+			var element = m_elements.GetElement("cursor.active");
 			if (element != null) element.Draw(location);
 		}
 
 		public void DrawCursorDone(Vector2 location)
 		{
-			Elements.Base element = m_elements.GetElement("cursor.done");
+			var element = m_elements.GetElement("cursor.done");
 			if (element != null) element.Draw(location);
 		}
 
 		public void DrawProfile(PlayerProfile profile)
 		{
-			if (profile == null) throw new ArgumentNullException("profile");
+			if (profile == null) throw new ArgumentNullException(nameof(profile));
 
-			Elements.Base face = m_elements.GetElement("player.face");
+			var face = m_elements.GetElement("player.face");
 			if (face != null)
 			{
 				profile.SpriteManager.Draw(SpriteId.LargePortrait, face.DataMap.Offset, Vector2.Zero, face.DataMap.Scale, face.DataMap.Flip);
 			}
 
-			Elements.Text name = m_elements.GetElement("player.name") as Elements.Text;
+			var name = m_elements.GetElement("player.name") as Elements.Text;
 			if (name != null)
 			{
 				SelectScreen.Print(name.DataMap.FontData, name.DataMap.Offset, profile.DisplayName, null);
 			}
 		}
 
-		Point GetNewLocation(Point location, CursorDirection direction, Point gridsize, Boolean wrapping)
+		private Point GetNewLocation(Point location, CursorDirection direction, Point gridsize, bool wrapping)
 		{
 			if (direction == CursorDirection.Down)
 			{
-				Point newlocation = location + new Point(0, 1);
+				var newlocation = location + new Point(0, 1);
 				if (newlocation.Y > gridsize.Y - 1)
 				{
 					if (wrapping == false) return location;
 					newlocation.Y = 0;
 				}
 
-				for (Int32 i = newlocation.Y; i < gridsize.Y; ++i)
+				for (var i = newlocation.Y; i < gridsize.Y; ++i)
 				{
 					newlocation.Y = i;
-					PlayerSelect selection = SelectScreen.GetSelection(newlocation, true);
-					if (selection != null || m_moveoverempty == true) return newlocation;
+					var selection = SelectScreen.GetSelection(newlocation, true);
+					if (selection != null || m_moveoverempty) return newlocation;
 				}
 			}
 
 			if (direction == CursorDirection.Up)
 			{
-				Point newlocation = location + new Point(0, -1);
+				var newlocation = location + new Point(0, -1);
 				if (newlocation.Y < 0)
 				{
 					if (wrapping == false) return location;
 					newlocation.Y = gridsize.Y - 1;
 				}
 
-				for (Int32 i = newlocation.Y; i >= 0; --i)
+				for (var i = newlocation.Y; i >= 0; --i)
 				{
 					newlocation.Y = i;
-					PlayerSelect selection = SelectScreen.GetSelection(newlocation, true);
-					if (selection != null || m_moveoverempty == true) return newlocation;
+					var selection = SelectScreen.GetSelection(newlocation, true);
+					if (selection != null || m_moveoverempty) return newlocation;
 				}
 			}
 
 			if (direction == CursorDirection.Left)
 			{
-				Point newlocation = location + new Point(-1, 0);
+				var newlocation = location + new Point(-1, 0);
 				if (newlocation.X < 0)
 				{
 					if (wrapping == false) return location;
 					newlocation.X = gridsize.X - 1;
 				}
 
-				for (Int32 i = newlocation.X; i >= 0; --i)
+				for (var i = newlocation.X; i >= 0; --i)
 				{
 					newlocation.X = i;
-					PlayerSelect selection = SelectScreen.GetSelection(newlocation, true);
-					if (selection != null || m_moveoverempty == true) return newlocation;
+					var selection = SelectScreen.GetSelection(newlocation, true);
+					if (selection != null || m_moveoverempty) return newlocation;
 				}
 			}
 
 			if (direction == CursorDirection.Right)
 			{
-				Point newlocation = location + new Point(1, 0);
+				var newlocation = location + new Point(1, 0);
 				if (newlocation.X > gridsize.X - 1)
 				{
 					if (wrapping == false) return location;
 					newlocation.X = 0;
 				}
 
-				for (Int32 i = newlocation.X; i < gridsize.X; ++i)
+				for (var i = newlocation.X; i < gridsize.X; ++i)
 				{
 					newlocation.X = i;
-					PlayerSelect selection = SelectScreen.GetSelection(newlocation, true);
-					if (selection != null || m_moveoverempty == true) return newlocation;
+					var selection = SelectScreen.GetSelection(newlocation, true);
+					if (selection != null || m_moveoverempty) return newlocation;
 				}
 			}
 
 			return location;
 		}
 
-		public SelectScreen SelectScreen
-		{
-			get { return m_selectscreen; }
-		}
+		public SelectScreen SelectScreen => m_selectscreen;
 
-		public Point StartCell
-		{
-			get { return m_startcell; }
-		}
+		public Point StartCell => m_startcell;
 
 		public Point CurrentCell
 		{
-			get { return m_currentcell; }
+			get => m_currentcell;
 
 			set { m_currentcell = value; }
 		}
 
-		public Boolean IsSelected
+		public bool IsSelected
 		{
-			get { return m_selected; }
+			get => m_selected;
 
 			set { m_selected = value; }
 		}
 
-		public Int32 PaletteIndex
+		public int PaletteIndex
 		{
-			get { return m_paletteindex; }
+			get => m_paletteindex;
 
 			set { m_paletteindex = value; }
 		}
 
-		public Input.ButtonMap ButtonMap
-		{
-			get { return m_buttonmap; }
-		}
+		public Input.ButtonMap ButtonMap => m_buttonmap;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly SelectScreen m_selectscreen;
+		private readonly SelectScreen m_selectscreen;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Elements.Collection m_elements;
+		private readonly Elements.Collection m_elements;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Point m_startcell;
+		private readonly Point m_startcell;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Boolean m_moveoverempty;
+		private readonly bool m_moveoverempty;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Point m_currentcell;
+		private Point m_currentcell;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Boolean m_selected;
+		private bool m_selected;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Int32 m_paletteindex;
+		private int m_paletteindex;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Input.ButtonMap m_buttonmap;
+		private readonly Input.ButtonMap m_buttonmap;
 
 		#endregion
 	}

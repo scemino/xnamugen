@@ -1,15 +1,13 @@
 ﻿using System;
-using System.Diagnostics;
-using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 
 namespace xnaMugen
 {
-	static class Misc
+	internal static class Misc
 	{
 		public static void Swap<T>(ref T lhs, ref T rhs)
 		{
-			T temp = lhs;
+			var temp = lhs;
 			lhs = rhs;
 			rhs = temp;
 		}
@@ -20,7 +18,7 @@ namespace xnaMugen
 
 			if (input == Facing.Right) return Facing.Left;
 
-			throw new ArgumentException("Not valid Facing", "input");
+			throw new ArgumentException("Not valid Facing", nameof(input));
 		}
 
 		public static Color BlendColors(Color a, Color b)
@@ -28,33 +26,33 @@ namespace xnaMugen
 			return new Color(a.ToVector4() * b.ToVector4());
 		}
 
-		public static Int32 NextPowerOfTwo(Int32 input)
+		public static int NextPowerOfTwo(int input)
 		{
-			if (input < 0) throw new ArgumentOutOfRangeException("input");
+			if (input < 0) throw new ArgumentOutOfRangeException(nameof(input));
 
-			Int32 output = 1;
+			var output = 1;
 			while (output < input) output *= 2;
 
 			return output;
 		}
 
-		public static Int32 Clamp(Int32 value, Int32 min, Int32 max)
+		public static int Clamp(int value, int min, int max)
 		{
-			value = (value > max) ? max : value;
-			value = (value < min) ? min : value;
+			value = value > max ? max : value;
+			value = value < min ? min : value;
 			return value;
 		}
 
-		public static Single Clamp(Single value, Single min, Single max)
+		public static float Clamp(float value, float min, float max)
 		{
-			value = (value > max) ? max : value;
-			value = (value < min) ? min : value;
+			value = value > max ? max : value;
+			value = value < min ? min : value;
 			return value;
 		}
 
 		public static Vector2 GetOffset(Vector2 location, Facing facing, Vector2 offset)
 		{
-			Vector2 output = location + new Vector2(0, offset.Y);
+			var output = location + new Vector2(0, offset.Y);
 
 			if (facing == Facing.Right)
 			{
@@ -68,10 +66,10 @@ namespace xnaMugen
 				return output;
 			}
 
-			throw new ArgumentOutOfRangeException("facing");
+			throw new ArgumentOutOfRangeException(nameof(facing));
 		}
 
-		public static Int32 FaceScalar(Facing facing, Int32 value)
+		public static int FaceScalar(Facing facing, int value)
 		{
 			switch(facing)
 			{
@@ -82,11 +80,11 @@ namespace xnaMugen
 					return value;
 
 				default:
-					throw new ArgumentOutOfRangeException("facing");
+					throw new ArgumentOutOfRangeException(nameof(facing));
 			}
 		}
 
-		public static Single FaceScalar(Facing facing, Single value)
+		public static float FaceScalar(Facing facing, float value)
 		{
 			switch (facing)
 			{
@@ -97,11 +95,11 @@ namespace xnaMugen
 					return value;
 
 				default:
-					throw new ArgumentOutOfRangeException("facing");
+					throw new ArgumentOutOfRangeException(nameof(facing));
 			}
 		}
 
-        public static String GetPrefix(TeamSide side)
+        public static string GetPrefix(TeamSide side)
         {
             switch (side)
             {
@@ -112,7 +110,7 @@ namespace xnaMugen
                     return "p2";
 
                 default:
-                    throw new ArgumentOutOfRangeException("side");
+                    throw new ArgumentOutOfRangeException(nameof(side));
             }
         }
 	}

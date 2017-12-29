@@ -6,7 +6,7 @@ namespace xnaMugen
 	/// <summary>
 	/// Base class to ease proper resource disposal.
 	/// </summary>
-	abstract class Resource: IDisposable
+	internal abstract class Resource: IDisposable
 	{
 		/// <summary>
 		/// Initializes a new instance of this class.
@@ -37,9 +37,9 @@ namespace xnaMugen
 		/// Disposes of resources managed by this class instance.
 		/// </summary>
 		/// <param name="disposing">Determined whether to dispose of managed resources.</param>
-		protected virtual void Dispose(Boolean disposing)
+		protected virtual void Dispose(bool disposing)
 		{
-			if (disposing == true)
+			if (disposing)
 			{
 			}
 
@@ -50,15 +50,12 @@ namespace xnaMugen
 		/// Get whether this object has disposed its resources.
 		/// </summary>
 		/// <returns>true if Dispose() has been called on this object; false otherwise.</returns>
-		public Boolean IsDisposed
-		{
-			get { return m_disposed; }
-		}
+		public bool IsDisposed => m_disposed;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Boolean m_disposed;
+		private bool m_disposed;
 
 		#endregion
 	}

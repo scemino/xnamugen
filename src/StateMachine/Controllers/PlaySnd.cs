@@ -1,13 +1,12 @@
-using System;
 using System.Diagnostics;
 using xnaMugen.IO;
 
 namespace xnaMugen.StateMachine.Controllers
 {
 	[StateControllerName("PlaySnd")]
-	class PlaySnd : StateController
+	internal class PlaySnd : StateController
 	{
-		public PlaySnd(StateSystem statesystem, String label, TextSection textsection)
+		public PlaySnd(StateSystem statesystem, string label, TextSection textsection)
 			: base(statesystem, label, textsection)
 		{
 			m_soundid = textsection.GetAttribute<Evaluation.PrefixedExpression>("value", null);
@@ -22,14 +21,14 @@ namespace xnaMugen.StateMachine.Controllers
 
 		public override void Run(Combat.Character character)
 		{
-			SoundId? soundid = EvaluationHelper.AsSoundId(character, SoundId, null);
-			Int32 volume = EvaluationHelper.AsInt32(character, Volume, 0);
-			Int32 channelindex = EvaluationHelper.AsInt32(character, ChannelNumber, -1);
-			Boolean priority = EvaluationHelper.AsBoolean(character, ChannelPriority, false);
-			Single frequencymultiplier = EvaluationHelper.AsSingle(character, FrequencyMultiplier, 1.0f);
-			Boolean loop = EvaluationHelper.AsBoolean(character, LoopSound, false);
-			Int32? pan = EvaluationHelper.AsInt32(character, PanSound, null);
-			Int32? abspan = EvaluationHelper.AsInt32(character, PanSoundAbsolute, null);
+			var soundid = EvaluationHelper.AsSoundId(character, SoundId, null);
+			var volume = EvaluationHelper.AsInt32(character, Volume, 0);
+			var channelindex = EvaluationHelper.AsInt32(character, ChannelNumber, -1);
+			var priority = EvaluationHelper.AsBoolean(character, ChannelPriority, false);
+			var frequencymultiplier = EvaluationHelper.AsSingle(character, FrequencyMultiplier, 1.0f);
+			var loop = EvaluationHelper.AsBoolean(character, LoopSound, false);
+			var pan = EvaluationHelper.AsInt32(character, PanSound, null);
+			var abspan = EvaluationHelper.AsInt32(character, PanSoundAbsolute, null);
 
 			if (soundid == null) return;
 
@@ -40,7 +39,7 @@ namespace xnaMugen.StateMachine.Controllers
 			//if (channel != null && abspan != null) channel.AbsolutePan(abspan.Value);
 		}
 
-		public override Boolean IsValid()
+		public override bool IsValid()
 		{
 			if (base.IsValid() == false) return false;
 
@@ -50,71 +49,47 @@ namespace xnaMugen.StateMachine.Controllers
 			return true;
 		}
 
-		public Evaluation.PrefixedExpression SoundId
-		{
-			get { return m_soundid; }
-		}
+		public Evaluation.PrefixedExpression SoundId => m_soundid;
 
-		public Evaluation.Expression Volume
-		{
-			get { return m_volume; }
-		}
+		public Evaluation.Expression Volume => m_volume;
 
-		public Evaluation.Expression ChannelNumber
-		{
-			get { return m_channel; }
-		}
+		public Evaluation.Expression ChannelNumber => m_channel;
 
-		public Evaluation.Expression ChannelPriority
-		{
-			get { return m_channelpriority; }
-		}
+		public Evaluation.Expression ChannelPriority => m_channelpriority;
 
-		public Evaluation.Expression FrequencyMultiplier
-		{
-			get { return m_freqmul; }
-		}
+		public Evaluation.Expression FrequencyMultiplier => m_freqmul;
 
-		public Evaluation.Expression LoopSound
-		{
-			get { return m_loop; }
-		}
+		public Evaluation.Expression LoopSound => m_loop;
 
-		public Evaluation.Expression PanSound
-		{
-			get { return m_pan; }
-		}
+		public Evaluation.Expression PanSound => m_pan;
 
-		public Evaluation.Expression PanSoundAbsolute
-		{
-			get { return m_abspan; }
-		}
+		public Evaluation.Expression PanSoundAbsolute => m_abspan;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.PrefixedExpression m_soundid;
+		private readonly Evaluation.PrefixedExpression m_soundid;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_volume;
+		private readonly Evaluation.Expression m_volume;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_channel;
+		private readonly Evaluation.Expression m_channel;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_channelpriority;
+		private readonly Evaluation.Expression m_channelpriority;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_freqmul;
+		private readonly Evaluation.Expression m_freqmul;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_loop;
+		private readonly Evaluation.Expression m_loop;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_pan;
+		private readonly Evaluation.Expression m_pan;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_abspan;
+		private readonly Evaluation.Expression m_abspan;
 
 		#endregion
 	}

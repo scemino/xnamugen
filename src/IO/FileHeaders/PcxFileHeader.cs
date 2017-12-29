@@ -3,14 +3,14 @@ using System.Diagnostics;
 
 namespace xnaMugen.IO.FileHeaders
 {
-	struct PcxFileHeader
+	internal struct PcxFileHeader
 	{
 		public PcxFileHeader(File file)
 		{
-			if(file == null) throw new ArgumentNullException("file");
+			if(file == null) throw new ArgumentNullException(nameof(file));
 
-			Byte[] data = file.ReadBytes(HeaderSize);
-			if (data.Length != HeaderSize) throw new ArgumentException("File is not long enough", "file");
+			var data = file.ReadBytes(HeaderSize);
+			if (data.Length != HeaderSize) throw new ArgumentException("File is not long enough", nameof(file));
 
 			m_manufacturer = data[0];
 			m_version = data[1];
@@ -27,9 +27,9 @@ namespace xnaMugen.IO.FileHeaders
 			m_palettetype = BitConverter.ToInt16(data, 68);
 		}
 
-		public PcxFileHeader(Byte[] filebuffer)
+		public PcxFileHeader(byte[] filebuffer)
 		{
-			if (filebuffer == null) throw new ArgumentNullException("filebuffer");
+			if (filebuffer == null) throw new ArgumentNullException(nameof(filebuffer));
 
 			m_manufacturer = filebuffer[0];
 			m_version = filebuffer[1];
@@ -46,116 +46,74 @@ namespace xnaMugen.IO.FileHeaders
 			m_palettetype = BitConverter.ToInt16(filebuffer, 68);
 		}
 
-		static public Int32 HeaderSize
-		{
-			get { return 128; }
-		}
+		public static int HeaderSize => 128;
 
-		public Byte Manufacturer
-		{
-			get { return m_manufacturer; }
-		}
+		public byte Manufacturer => m_manufacturer;
 
-		public Byte Version
-		{
-			get { return m_version; }
-		}
+		public byte Version => m_version;
 
-		public Byte Encoding
-		{
-			get { return m_encoding; }
-		}
+		public byte Encoding => m_encoding;
 
-		public Byte BitsPerPixel
-		{
-			get { return m_bitsperpixel; }
-		}
+		public byte BitsPerPixel => m_bitsperpixel;
 
-		public Int16 XMin
-		{
-			get { return m_xmin; }
-		}
+		public short XMin => m_xmin;
 
-		public Int16 YMin
-		{
-			get { return m_ymin; }
-		}
+		public short YMin => m_ymin;
 
-		public Int16 XMax
-		{
-			get { return m_xmax; }
-		}
+		public short XMax => m_xmax;
 
-		public Int16 YMax
-		{
-			get { return m_ymax; }
-		}
+		public short YMax => m_ymax;
 
-		public Int16 HorizontalDPI
-		{
-			get { return m_horizontalDPI; }
-		}
+		public short HorizontalDPI => m_horizontalDPI;
 
-		public Int16 VerticalDPI
-		{
-			get { return m_verticalDPI; }
-		}
+		public short VerticalDPI => m_verticalDPI;
 
-		public Byte ColorPlanes
-		{
-			get { return m_colorplanes; }
-		}
+		public byte ColorPlanes => m_colorplanes;
 
-		public Int16 BytesPerLine
-		{
-			get { return m_bytesperline; }
-		}
+		public short BytesPerLine => m_bytesperline;
 
-		public Int16 PaletteType
-		{
-			get { return m_palettetype; }
-		}
+		public short PaletteType => m_palettetype;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Byte m_manufacturer;
+		private readonly byte m_manufacturer;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Byte m_version;
+		private readonly byte m_version;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Byte m_encoding;
+		private readonly byte m_encoding;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Byte m_bitsperpixel;
+		private readonly byte m_bitsperpixel;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Int16 m_xmin;
+		private readonly short m_xmin;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Int16 m_ymin;
+		private readonly short m_ymin;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Int16 m_xmax;
+		private readonly short m_xmax;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Int16 m_ymax;
+		private readonly short m_ymax;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Int16 m_horizontalDPI;
+		private readonly short m_horizontalDPI;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Int16 m_verticalDPI;
+		private readonly short m_verticalDPI;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Byte m_colorplanes;
+		private readonly byte m_colorplanes;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Int16 m_bytesperline;
+		private readonly short m_bytesperline;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Int16 m_palettetype;
+		private readonly short m_palettetype;
 
 		#endregion
 	}

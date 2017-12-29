@@ -1,8 +1,6 @@
-﻿using System;
-
-namespace xnaMugen.Events
+﻿namespace xnaMugen.Events
 {
-	abstract class Base
+	internal abstract class Base
 	{
 	}
 }

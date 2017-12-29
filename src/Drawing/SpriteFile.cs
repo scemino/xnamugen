@@ -2,20 +2,17 @@
 using xnaMugen.IO;
 using System.Diagnostics;
 using System.Collections.Generic;
-using xnaMugen.Collections;
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System.Text.RegularExpressions;
 
 namespace xnaMugen.Drawing
 {
-	class SpriteFile : Resource
+	internal class SpriteFile : Resource
 	{
-		public SpriteFile(SpriteSystem spritesystem, File file, SpriteFileVersion version, List<SpriteFileData> data, Boolean sharedpalette)
+		public SpriteFile(SpriteSystem spritesystem, File file, SpriteFileVersion version, List<SpriteFileData> data, bool sharedpalette)
 		{
-			if (spritesystem == null) throw new ArgumentNullException("spritesystem");
-			if (file == null) throw new ArgumentNullException("file");
-			if (data == null) throw new ArgumentNullException("data");
+			if (spritesystem == null) throw new ArgumentNullException(nameof(spritesystem));
+			if (file == null) throw new ArgumentNullException(nameof(file));
+			if (data == null) throw new ArgumentNullException(nameof(data));
 
 			m_spritesystem = spritesystem;
 			m_file = file;
@@ -25,22 +22,22 @@ namespace xnaMugen.Drawing
 			m_sharedpalette = sharedpalette;
 		}
 
-		public override String ToString()
+		public override string ToString()
 		{
 			return Filepath;
 		}
 
-		Boolean TryGetSpriteData(SpriteId id, out SpriteFileData data, out Int32 dataindex)
+		private bool TryGetSpriteData(SpriteId id, out SpriteFileData data, out int dataindex)
 		{
 			data = null;
-			dataindex = Int32.MinValue;
+			dataindex = int.MinValue;
 
 			if (id == SpriteId.Invalid) return false;
 
-			Int32 index = m_collection.GetIndex(id);
-			if (index == Int32.MinValue) return false;
+			var index = m_collection.GetIndex(id);
+			if (index == int.MinValue) return false;
 
-			SpriteFileData sfd = m_collection.GetData(index);
+			var sfd = m_collection.GetData(index);
 			if (sfd == null) return false;
 
 			data = sfd;
@@ -52,18 +49,18 @@ namespace xnaMugen.Drawing
 		{
 			if (id == SpriteId.Invalid) return null;
 
-			if (m_cachedsprites.ContainsKey(id) == true) return m_cachedsprites[id];
+			if (m_cachedsprites.ContainsKey(id)) return m_cachedsprites[id];
 
 			SpriteFileData data;
-			Int32 dataindex;
+			int dataindex;
 			if (TryGetSpriteData(id, out data, out dataindex) == false) return null;
 
 			Point size;
 			Texture2D pixels;
 			Texture2D palette;
-			Boolean paletteoverride = false;
-			Boolean ownpixels = true;
-			Boolean ownpalette = true;
+			var paletteoverride = false;
+			var ownpixels = true;
+			var ownpalette = true;
 
 			if (data.PcxSize > 0)
 			{
@@ -78,26 +75,26 @@ namespace xnaMugen.Drawing
 			}
 			else
 			{
-				SpriteFileData shareddata = m_collection.GetData(data.SharedIndex);
+				var shareddata = m_collection.GetData(data.SharedIndex);
 				if (shareddata == null || shareddata.Id == id) return null;
 
-				Sprite shared_sprite = GetSprite(shareddata.Id);
-				if (shared_sprite == null) return null;
+				var sharedSprite = GetSprite(shareddata.Id);
+				if (sharedSprite == null) return null;
 
-				size = shared_sprite.Size;
-				paletteoverride = shared_sprite.PaletteOverride;
-				pixels = shared_sprite.Pixels;
-				palette = shared_sprite.Palette;
+				size = sharedSprite.Size;
+				paletteoverride = sharedSprite.PaletteOverride;
+				pixels = sharedSprite.Pixels;
+				palette = sharedSprite.Palette;
 				ownpixels = false;
 				ownpalette = false;
 			}
 
-			if (data.CopyLastPalette == true && dataindex != 0)
+			if (data.CopyLastPalette && dataindex != 0)
 			{
-				SpriteFileData previousdata = m_collection.GetData(dataindex - 1);
+				var previousdata = m_collection.GetData(dataindex - 1);
 				if (previousdata != null && previousdata.Id != id)
 				{
-					Sprite previoussprite = GetSprite(previousdata.Id);
+					var previoussprite = GetSprite(previousdata.Id);
 					if (previoussprite != null)
 					{
 						paletteoverride = previoussprite.PaletteOverride;
@@ -110,7 +107,7 @@ namespace xnaMugen.Drawing
 
 			if (id == new SpriteId(0, 0) || id == SpriteId.SmallPortrait) paletteoverride = true;
 
-			Sprite sprite = new Sprite(size, data.Axis, ownpixels, pixels, ownpalette, palette, paletteoverride);
+			var sprite = new Sprite(size, data.Axis, ownpixels, pixels, ownpalette, palette, paletteoverride);
 			m_cachedsprites.Add(id, sprite);
 
 			return sprite;
@@ -118,9 +115,9 @@ namespace xnaMugen.Drawing
 
 		public void LoadAllSprites()
 		{
-			for (Int32 i = 0; i != m_collection.Count; ++i)
+			for (var i = 0; i != m_collection.Count; ++i)
 			{
-				SpriteFileData data = m_collection.GetData(i);
+				var data = m_collection.GetData(i);
 				if (data == null) continue;
 
 				GetSprite(data.Id);
@@ -131,22 +128,22 @@ namespace xnaMugen.Drawing
 		{
 			if (m_collection.Count == 0) return null;
 
-			SpriteFileData data = m_collection.GetData(0);
+			var data = m_collection.GetData(0);
 			if (data == null) return null;
 
-			Sprite sprite = GetSprite(data.Id);
+			var sprite = GetSprite(data.Id);
 			if (sprite == null) return null;
 
 			return sprite.Palette;
 		}
 
-		protected override void Dispose(Boolean disposing)
+		protected override void Dispose(bool disposing)
 		{
-			if (disposing == true)
+			if (disposing)
 			{
 				if (m_cachedsprites != null)
 				{
-					foreach (Sprite sprite in m_cachedsprites.Values)
+					foreach (var sprite in m_cachedsprites.Values)
 					{
 						if (sprite != null) sprite.Dispose();
 					}
@@ -158,45 +155,33 @@ namespace xnaMugen.Drawing
 			base.Dispose(disposing);
 		}
 
-		public SpriteSystem SpriteSystem
-		{
-			get { return m_spritesystem; }
-		}
+		public SpriteSystem SpriteSystem => m_spritesystem;
 
-		public String Filepath
-		{
-			get { return m_file.Filepath; }
-		}
+		public string Filepath => m_file.Filepath;
 
-		public SpriteFileVersion Version
-		{
-			get { return m_version; }
-		}
+		public SpriteFileVersion Version => m_version;
 
-		public Boolean SharedPalette
-		{
-			get { return m_sharedpalette; }
-		}
+		public bool SharedPalette => m_sharedpalette;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly SpriteSystem m_spritesystem;
+		private readonly SpriteSystem m_spritesystem;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly File m_file;
+		private readonly File m_file;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Boolean m_sharedpalette;
+		private readonly bool m_sharedpalette;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly SpriteFileVersion m_version;
+		private readonly SpriteFileVersion m_version;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly SpriteFileDataCollection m_collection;
+		private readonly SpriteFileDataCollection m_collection;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Dictionary<SpriteId, Sprite> m_cachedsprites;
+		private readonly Dictionary<SpriteId, Sprite> m_cachedsprites;
 
 		#endregion
 	}

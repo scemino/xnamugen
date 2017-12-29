@@ -1,13 +1,12 @@
-using System;
 using System.Diagnostics;
 using xnaMugen.IO;
 
 namespace xnaMugen.StateMachine.Controllers
 {
 	[StateControllerName("AttackDist")]
-	class AttackDist: StateController
+	internal class AttackDist: StateController
 	{
-		public AttackDist(StateSystem statesystem, String label, TextSection textsection)
+		public AttackDist(StateSystem statesystem, string label, TextSection textsection)
 			: base(statesystem, label, textsection)
 		{
 			m_distance = textsection.GetAttribute<Evaluation.Expression>("value", null);
@@ -15,15 +14,15 @@ namespace xnaMugen.StateMachine.Controllers
 
 		public override void Run(Combat.Character character)
 		{
-			Int32? distance = EvaluationHelper.AsInt32(character, GuardDistance, null);
+			var distance = EvaluationHelper.AsInt32(character, GuardDistance, null);
 
-			if (distance != null && character.OffensiveInfo.ActiveHitDef == true)
+			if (distance != null && character.OffensiveInfo.ActiveHitDef)
 			{
 				character.OffensiveInfo.HitDef.GuardDistance = distance.Value;
 			}
 		}
 
-		public override Boolean IsValid()
+		public override bool IsValid()
 		{
 			if (base.IsValid() == false) return false;
 
@@ -32,15 +31,12 @@ namespace xnaMugen.StateMachine.Controllers
 			return true;
 		}
 
-		public Evaluation.Expression GuardDistance
-		{
-			get { return m_distance; }
-		}
+		public Evaluation.Expression GuardDistance => m_distance;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_distance;
+		private readonly Evaluation.Expression m_distance;
 
 		#endregion
 	}

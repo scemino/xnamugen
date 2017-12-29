@@ -1,33 +1,31 @@
 ﻿using System;
-using System.Diagnostics;
-using Microsoft.Xna.Framework;
 
 namespace xnaMugen.Combat.Logic
 {
-	class ShowWinPose : Base
+	internal class ShowWinPose : Base
 	{
 		public ShowWinPose(FightEngine engine)
 			: base(engine, RoundState.Over)
 		{
 		}
 
-		Team GetWinningTeam()
+		private Team GetWinningTeam()
 		{
-			if (Engine.Team1.VictoryStatus.Win == true) return Engine.Team1;
-			else if (Engine.Team2.VictoryStatus.Win == true) return Engine.Team2;
-			else return null;
+			if (Engine.Team1.VictoryStatus.Win) return Engine.Team1;
+			if (Engine.Team2.VictoryStatus.Win) return Engine.Team2;
+			return null;
 		}
 
-		void EnterWinPose(Player player)
+		private void EnterWinPose(Player player)
 		{
-			if (player == null) throw new ArgumentNullException("player");
+			if (player == null) throw new ArgumentNullException(nameof(player));
 
 			player.StateManager.ChangeState(StateMachine.StateNumber.WinPose);
 		}
 
-		void EnterTimeLosePose(Player player)
+		private void EnterTimeLosePose(Player player)
 		{
-			if (player == null) throw new ArgumentNullException("player");
+			if (player == null) throw new ArgumentNullException(nameof(player));
 
 			player.StateManager.ChangeState(StateMachine.StateNumber.LoseTimeOverPose);
 		}
@@ -36,15 +34,15 @@ namespace xnaMugen.Combat.Logic
 		{
 			base.OnFirstTick();
 
-			Team winningteam = GetWinningTeam();
+			var winningteam = GetWinningTeam();
 			if (winningteam != null)
 			{
 				winningteam.DoAction(EnterWinPose);
 
-				Win win = new Win(Victory.Normal, winningteam.VictoryStatus.WinPerfect == true);
+				var win = new Win(Victory.Normal, winningteam.VictoryStatus.WinPerfect);
 				winningteam.AddWin(win);
 
-				if (winningteam.OtherTeam.VictoryStatus.LoseTime == true)
+				if (winningteam.OtherTeam.VictoryStatus.LoseTime)
 				{
 					winningteam.OtherTeam.DoAction(EnterTimeLosePose);
 				}
@@ -67,7 +65,7 @@ namespace xnaMugen.Combat.Logic
 
 		protected override Elements.Base GetElement()
 		{
-			Team winningteam = GetWinningTeam();
+			var winningteam = GetWinningTeam();
 
 			if (winningteam == null)
 			{
@@ -82,30 +80,30 @@ namespace xnaMugen.Combat.Logic
             return Engine.Elements.GetElement("win");
 		}
 
-		public override Boolean IsFinished()
+		public override bool IsFinished()
 		{
-			if (Engine.Team1.MainPlayer != null && PlayeInputSkip(Engine.Team1.MainPlayer) == true) return true;
-			if (Engine.Team1.TeamMate != null && PlayeInputSkip(Engine.Team1.TeamMate) == true) return true;
+			if (Engine.Team1.MainPlayer != null && PlayeInputSkip(Engine.Team1.MainPlayer)) return true;
+			if (Engine.Team1.TeamMate != null && PlayeInputSkip(Engine.Team1.TeamMate)) return true;
 
-			if (Engine.Team2.MainPlayer != null && PlayeInputSkip(Engine.Team2.MainPlayer) == true) return true;
-			if (Engine.Team2.TeamMate != null && PlayeInputSkip(Engine.Team2.TeamMate) == true) return true;
+			if (Engine.Team2.MainPlayer != null && PlayeInputSkip(Engine.Team2.MainPlayer)) return true;
+			if (Engine.Team2.TeamMate != null && PlayeInputSkip(Engine.Team2.TeamMate)) return true;
 
 			return Engine.Assertions.WinPose == false && (TickCount > Engine.RoundInformation.OverTime || CurrentElement == null);
 		}
 
-		Boolean PlayeInputSkip(Player player)
+		private bool PlayeInputSkip(Player player)
 		{
-			if (player == null) throw new ArgumentNullException("player");
+			if (player == null) throw new ArgumentNullException(nameof(player));
 
-			if (player.CommandManager.IsActive("x") == true) return true;
-			if (player.CommandManager.IsActive("y") == true) return true;
-			if (player.CommandManager.IsActive("z") == true) return true;
+			if (player.CommandManager.IsActive("x")) return true;
+			if (player.CommandManager.IsActive("y")) return true;
+			if (player.CommandManager.IsActive("z")) return true;
 
-			if (player.CommandManager.IsActive("a") == true) return true;
-			if (player.CommandManager.IsActive("b") == true) return true;
-			if (player.CommandManager.IsActive("c") == true) return true;
+			if (player.CommandManager.IsActive("a")) return true;
+			if (player.CommandManager.IsActive("b")) return true;
+			if (player.CommandManager.IsActive("c")) return true;
 
-			if (player.CommandManager.IsActive("taunt") == true) return true;
+			if (player.CommandManager.IsActive("taunt")) return true;
 
 			return false;
 		}

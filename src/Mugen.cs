@@ -1,7 +1,6 @@
 using System;
 using Microsoft.Xna.Framework;
 using System.Diagnostics;
-using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
@@ -10,14 +9,14 @@ namespace xnaMugen
 	/// <summary>
 	/// Main class of MUGEN engine.
 	/// </summary>
-	class Mugen : Game
+	internal class Mugen : Game
 	{
 		/// <summary>
 		/// Initializes a new instance of this class. Sets game timing and default screen size.
 		/// </summary>
 		public Mugen(string[] args)
 		{
-			if (args == null) throw new ArgumentNullException("args");
+			if (args == null) throw new ArgumentNullException(nameof(args));
 
 			m_args = new List<string>(args);
 
@@ -25,9 +24,9 @@ namespace xnaMugen
 			TargetElapsedTime = TimeSpan.FromTicks(TimeSpan.TicksPerSecond / 60);
 			IsMouseVisible = true;
 
-			GraphicsDeviceManager graphics = new GraphicsDeviceManager(this);
-			graphics.PreferredBackBufferWidth = Mugen.ScreenSize.X;
-			graphics.PreferredBackBufferHeight = Mugen.ScreenSize.Y;
+			var graphics = new GraphicsDeviceManager(this);
+			graphics.PreferredBackBufferWidth = ScreenSize.X;
+			graphics.PreferredBackBufferHeight = ScreenSize.Y;
             graphics.ApplyChanges();
 
 			m_debugdraw = false;
@@ -52,63 +51,63 @@ namespace xnaMugen
 
 			m_subsystems.LoadAllMainSystems();
 
-			m_subsystems.GetSubSystem<Input.InputSystem>().CurrentInput[0].Add(SystemButton.DebugDraw, this.ToggleDebugDraw);
-			m_subsystems.GetSubSystem<Input.InputSystem>().CurrentInput[0].Add(SystemButton.TakeScreenshot, this.TakeScreenshot);
+			m_subsystems.GetSubSystem<Input.InputSystem>().CurrentInput[0].Add(SystemButton.DebugDraw, ToggleDebugDraw);
+			m_subsystems.GetSubSystem<Input.InputSystem>().CurrentInput[0].Add(SystemButton.TakeScreenshot, TakeScreenshot);
 
 			base.Initialize();
 		}
 
-		Replay.Recording BuildRecording(string filepath)
+		private Replay.Recording BuildRecording(string filepath)
 		{
-			if (filepath == null) throw new ArgumentNullException("filepath");
+			if (filepath == null) throw new ArgumentNullException(nameof(filepath));
 
-			ProfileLoader profiles = m_subsystems.GetSubSystem<ProfileLoader>();
+			var profiles = m_subsystems.GetSubSystem<ProfileLoader>();
 
 			if (m_subsystems.GetSubSystem<IO.FileSystem>().DoesFileExist(filepath) == false) return null;
 
-			IO.TextFile text = m_subsystems.GetSubSystem<IO.FileSystem>().OpenTextFile(filepath);
-			IO.TextSection header = text.GetSection("xnaMugen Replay Header");
-			IO.TextSection data = text.GetSection("xnaMugen Replay Data");
+			var text = m_subsystems.GetSubSystem<IO.FileSystem>().OpenTextFile(filepath);
+			var header = text.GetSection("xnaMugen Replay Header");
+			var data = text.GetSection("xnaMugen Replay Data");
 
 			if (header == null || data == null) return null;
 
-			Int32 version = header.GetAttribute("Version", 0);
-			CombatMode mode = header.GetAttribute("Combat Mode", CombatMode.None);
-            string p1name = header.GetAttribute<string>("Player 1 Name", null);
-            string p1version = header.GetAttribute<string>("Player 1 Version", null);
-			Int32 p1palette = header.GetAttribute("Player 1 Palette", Int32.MinValue);
-            string p2name = header.GetAttribute<string>("Player 2 Name", null);
-            string p2version = header.GetAttribute<string>("Player 2 Version", null);
-			Int32 p2palette = header.GetAttribute("Player 2 Palette", Int32.MinValue);
-            string stagepath = header.GetAttribute<string>("Stage Path", null);
-			Int32 seed = header.GetAttribute("Seed", Int32.MinValue);
+			var version = header.GetAttribute("Version", 0);
+			var mode = header.GetAttribute("Combat Mode", CombatMode.None);
+            var p1name = header.GetAttribute<string>("Player 1 Name", null);
+            var p1version = header.GetAttribute<string>("Player 1 Version", null);
+			var p1palette = header.GetAttribute("Player 1 Palette", int.MinValue);
+            var p2name = header.GetAttribute<string>("Player 2 Name", null);
+            var p2version = header.GetAttribute<string>("Player 2 Version", null);
+			var p2palette = header.GetAttribute("Player 2 Palette", int.MinValue);
+            var stagepath = header.GetAttribute<string>("Stage Path", null);
+			var seed = header.GetAttribute("Seed", int.MinValue);
 
-			if (version != 1 || mode == CombatMode.None || stagepath == null || seed == Int32.MinValue) return null;
-			if (p1name == null || p1version == null || p1palette == Int32.MinValue) return null;
+			if (version != 1 || mode == CombatMode.None || stagepath == null || seed == int.MinValue) return null;
+			if (p1name == null || p1version == null || p1palette == int.MinValue) return null;
 
-			PlayerProfile p1profile = profiles.FindPlayerProfile(p1name, p1version);
-			PlayerProfile p2profile = profiles.FindPlayerProfile(p2name, p2version);
-			StageProfile stageprofile = profiles.FindStageProfile(stagepath);
+			var p1profile = profiles.FindPlayerProfile(p1name, p1version);
+			var p2profile = profiles.FindPlayerProfile(p2name, p2version);
+			var stageprofile = profiles.FindStageProfile(stagepath);
 
 			if (p1profile == null || p2profile == null || stageprofile == null) return null;
 
-			Combat.EngineInitialization initsettings = new Combat.EngineInitialization(mode, p1profile, p1palette, p2profile, p2palette, stageprofile, seed);
+			var initsettings = new Combat.EngineInitialization(mode, p1profile, p1palette, p2profile, p2palette, stageprofile, seed);
 
-			List<Replay.RecordingData> replaydata = new List<Replay.RecordingData>();
+			var replaydata = new List<Replay.RecordingData>();
 
-			Regex line_regex = new Regex(@"^(\d+),\s*(\d+),\s*(\d+),\s*(\d+),\s*(\d+)$", RegexOptions.IgnoreCase);
-			StringConverter converter = profiles.GetSubSystem<StringConverter>();
-			foreach (string dataline in data.Lines)
+			var line_regex = new Regex(@"^(\d+),\s*(\d+),\s*(\d+),\s*(\d+),\s*(\d+)$", RegexOptions.IgnoreCase);
+			var converter = profiles.GetSubSystem<StringConverter>();
+			foreach (var dataline in data.Lines)
 			{
-				Match match = line_regex.Match(dataline);
+				var match = line_regex.Match(dataline);
 				if (match.Success == false) continue;
 
-				Replay.RecordingData inputdata = new Replay.RecordingData(
-					converter.Convert<Int32>(match.Groups[1].Value),
-					converter.Convert<Int32>(match.Groups[2].Value),
-					converter.Convert<Int32>(match.Groups[3].Value),
-					converter.Convert<Int32>(match.Groups[4].Value),
-					converter.Convert<Int32>(match.Groups[5].Value)
+				var inputdata = new Replay.RecordingData(
+					converter.Convert<int>(match.Groups[1].Value),
+					converter.Convert<int>(match.Groups[2].Value),
+					converter.Convert<int>(match.Groups[3].Value),
+					converter.Convert<int>(match.Groups[4].Value),
+					converter.Convert<int>(match.Groups[5].Value)
 					);
 
 				replaydata.Add(inputdata);
@@ -124,9 +123,9 @@ namespace xnaMugen
 		{
 			base.BeginRun();
 
-            string recordingpath = (m_args.Count > 0) ? m_args[0] : string.Empty;
+            var recordingpath = m_args.Count > 0 ? m_args[0] : string.Empty;
 
-			Replay.Recording recording = BuildRecording(recordingpath);
+			var recording = BuildRecording(recordingpath);
 			if (recording != null)
 			{
 				m_subsystems.GetMainSystem<Menus.MenuSystem>().PostEvent(new Events.LoadReplay(recording));
@@ -168,7 +167,7 @@ namespace xnaMugen
 
 			m_subsystems.GetMainSystem<Menus.MenuSystem>().Draw(DebugDraw);
 
-            if (m_takescreeshot == true)
+            if (m_takescreeshot)
             {
                 m_takescreeshot = false;
                 m_subsystems.GetSubSystem<Video.VideoSystem>().TakeScreenshot();
@@ -181,11 +180,11 @@ namespace xnaMugen
 		/// Releases resources used by this object.
 		/// </summary>
 		/// <param name="disposing">Determines if managed resources are to be released.</param>
-		protected override void Dispose(Boolean disposing)
+		protected override void Dispose(bool disposing)
 		{
-			if (disposing == true)
+			if (disposing)
 			{
-				if(m_subsystems != null) m_subsystems.Dispose();
+				m_subsystems?.Dispose();
 			}
 
 			base.Dispose(disposing);
@@ -195,9 +194,9 @@ namespace xnaMugen
 		/// Input handler for toggling the drawing of debug information.
 		/// </summary>
 		/// <param name="pressed">Whether the button is pressed or released.</param>
-		void ToggleDebugDraw(Boolean pressed)
+		private void ToggleDebugDraw(bool pressed)
 		{
-			if (pressed == true)
+			if (pressed)
 			{
 				DebugDraw = !DebugDraw;
 			}
@@ -207,9 +206,9 @@ namespace xnaMugen
 		/// Input handler for taking a screenshot.
 		/// </summary>
 		/// <param name="pressed">Whether the button is pressed or released.</param>
-		void TakeScreenshot(Boolean pressed)
+		private void TakeScreenshot(bool pressed)
 		{
-			if (pressed == true)
+			if (pressed)
 			{
 				m_takescreeshot = true;
 			}
@@ -219,35 +218,32 @@ namespace xnaMugen
 		/// Logical screen size of game.
 		/// </summary>
 		/// <returns>The screen size used by game logic.</returns>
-		public static Point ScreenSize
-		{
-			get { return new Point(320, 240); }
-		}
+		public static Point ScreenSize => new Point(320, 240);
 
 		/// <summary>
 		/// Gets or sets whether debug information is drawn to screen.
 		/// </summary>
 		/// <returns>true if debug information is drawn; false otherwise.</returns>
-		public Boolean DebugDraw
+		public bool DebugDraw
 		{
-			get { return m_debugdraw; }
+			get => m_debugdraw;
 
-			set { m_debugdraw = value; }
+			set => m_debugdraw = value;
 		}
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly List<string> m_args;
+		private readonly List<string> m_args;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		SubSystems m_subsystems;
+		private SubSystems m_subsystems;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Boolean m_debugdraw;
+		private bool m_debugdraw;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Boolean m_takescreeshot;
+		private bool m_takescreeshot;
 
 		#endregion
 	}

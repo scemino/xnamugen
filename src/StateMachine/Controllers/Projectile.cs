@@ -1,15 +1,13 @@
-using System;
 using System.Diagnostics;
 using xnaMugen.IO;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace xnaMugen.StateMachine.Controllers
 {
 	[StateControllerName("Projectile")]
-	class Projectile : HitDef
+	internal class Projectile : HitDef
 	{
-		public Projectile(StateSystem statesystem, String label, TextSection textsection)
+		public Projectile(StateSystem statesystem, string label, TextSection textsection)
 			: base(statesystem, label, textsection)
 		{
 			m_priority = textsection.GetAttribute<Evaluation.Expression>("value", null);
@@ -34,7 +32,7 @@ namespace xnaMugen.StateMachine.Controllers
 			m_stagebound = textsection.GetAttribute<Evaluation.Expression>("projstagebound", null);
 			m_heightbound = textsection.GetAttribute<Evaluation.Expression>("projheightbound", null);
 			m_offset = textsection.GetAttribute<Evaluation.Expression>("offset", null);
-			m_postype = textsection.GetAttribute<PositionType>("postype", PositionType.P1);
+			m_postype = textsection.GetAttribute("postype", PositionType.P1);
 			m_shadow = textsection.GetAttribute<Evaluation.Expression>("projshadow", null);
 			m_supermovetime = textsection.GetAttribute<Evaluation.Expression>("supermovetime", null);
 			m_pausetime = textsection.GetAttribute<Evaluation.Expression>("pausemovetime", null);
@@ -49,12 +47,12 @@ namespace xnaMugen.StateMachine.Controllers
 			m_afterimagecolormul = textsection.GetAttribute<Evaluation.Expression>("afterimage.palmul", null);
 			m_afterimagetimegap = textsection.GetAttribute<Evaluation.Expression>("afterimage.TimeGap", null);
 			m_afterimageframegap = textsection.GetAttribute<Evaluation.Expression>("afterimage.FrameGap", null);
-			m_afterimageblending = textsection.GetAttribute<Blending>("afterimage.trans", new Blending());
+			m_afterimageblending = textsection.GetAttribute("afterimage.trans", new Blending());
 		}
 
 		public override void Run(Combat.Character character)
 		{
-			Combat.ProjectileData data = new Combat.ProjectileData();
+			var data = new Combat.ProjectileData();
 
 			if (HitAttribute != null)
 			{
@@ -81,7 +79,7 @@ namespace xnaMugen.StateMachine.Controllers
 			data.ScreenEdgeBound = EvaluationHelper.AsInt32(character, ProjectileScreenBound, 40);
 			data.StageEdgeBound = EvaluationHelper.AsInt32(character, ProjectileStageBound, 40);
 
-			Point heightbounds = EvaluationHelper.AsPoint(character, ProjectileHeightBound, new Point(-240, 1));
+			var heightbounds = EvaluationHelper.AsPoint(character, ProjectileHeightBound, new Point(-240, 1));
 			data.HeightLowerBound = heightbounds.X;
 			data.HeightUpperBound = heightbounds.Y;
 
@@ -93,328 +91,220 @@ namespace xnaMugen.StateMachine.Controllers
 			data.AfterImageTime = EvaluationHelper.AsInt32(character, ProjectileAfterImageTime, 1);
 			data.AfterImageNumberOfFrames = EvaluationHelper.AsInt32(character, ProjectileAfterImageNumberOfFrames, 20);
 
-			Int32 basecolor = EvaluationHelper.AsInt32(character, ProjectileAfterImagePaletteColor, 255);
+			var basecolor = EvaluationHelper.AsInt32(character, ProjectileAfterImagePaletteColor, 255);
 			data.AfterImageBaseColor = Vector3.Clamp(new Vector3(basecolor) / 255.0f, Vector3.Zero, Vector3.One);
 
 			data.AfterImageInvertColor = EvaluationHelper.AsBoolean(character, ProjectileAfterImagePaletteColorInversion, false);
 
-			Vector3 brightness = EvaluationHelper.AsVector3(character, ProjectileAfterImagePaletteColorBrightness, new Vector3(30, 30, 30));
+			var brightness = EvaluationHelper.AsVector3(character, ProjectileAfterImagePaletteColorBrightness, new Vector3(30, 30, 30));
 			data.AfterImagePreAddColor = Vector3.Clamp(brightness / 255.0f, Vector3.Zero, Vector3.One);
 
-			Vector3 contrast = EvaluationHelper.AsVector3(character, ProjectileAfterImagePaletteColorContrast, new Vector3(255, 255, 255));
-			data.AfterImageConstrast = Vector3.Clamp(contrast / 255.0f, Vector3.Zero, new Vector3(Single.MaxValue));
+			var contrast = EvaluationHelper.AsVector3(character, ProjectileAfterImagePaletteColorContrast, new Vector3(255, 255, 255));
+			data.AfterImageConstrast = Vector3.Clamp(contrast / 255.0f, Vector3.Zero, new Vector3(float.MaxValue));
 
-			Vector3 postcolor = EvaluationHelper.AsVector3(character, ProjectileAfterImagePalettePostBrightness, new Vector3(0, 0, 0));
+			var postcolor = EvaluationHelper.AsVector3(character, ProjectileAfterImagePalettePostBrightness, new Vector3(0, 0, 0));
 			data.AfterImagePostAddColor = Vector3.Clamp(postcolor / 255.0f, Vector3.Zero, Vector3.One);
 
-			Vector3 coloradd = EvaluationHelper.AsVector3(character, ProjectileAfterImagePaletteColorAdd, new Vector3(10, 10, 25));
+			var coloradd = EvaluationHelper.AsVector3(character, ProjectileAfterImagePaletteColorAdd, new Vector3(10, 10, 25));
 			data.AfterImagePaletteColorAdd = Vector3.Clamp(coloradd / 255.0f, Vector3.Zero, Vector3.One);
 
-			Vector3 colormul = EvaluationHelper.AsVector3(character, ProjectileAfterImagePaletteColorMultiply, new Vector3(.65f, .65f, .75f));
-			data.AfterImagePaletteColorMul = Vector3.Clamp(colormul, Vector3.Zero, new Vector3(Single.MaxValue));
+			var colormul = EvaluationHelper.AsVector3(character, ProjectileAfterImagePaletteColorMultiply, new Vector3(.65f, .65f, .75f));
+			data.AfterImagePaletteColorMul = Vector3.Clamp(colormul, Vector3.Zero, new Vector3(float.MaxValue));
 
 			data.AfterImageTimeGap = EvaluationHelper.AsInt32(character, ProjectileAfterImageTimeGap, 1);
 			data.AfterImageFrameGap = EvaluationHelper.AsInt32(character, ProjectileAfterImageFrameGap, 4);
 			data.AfterImageTransparency = ProjectileAfterImageTransparency;
 
-			Combat.Projectile projectile = new Combat.Projectile(character.Engine, character, data);
+			var projectile = new Combat.Projectile(character.Engine, character, data);
 			projectile.Engine.Entities.Add(projectile);
 		}
 
-		public override Boolean IsValid()
+		public override bool IsValid()
 		{
 			return Triggers.IsValid;
 		}
 
-		public Evaluation.Expression ProjectileId
-		{
-			get { return m_projectileid; }
-		}
+		public Evaluation.Expression ProjectileId => m_projectileid;
 
-		public Evaluation.Expression ProjectileAnimationNumber
-		{
-			get { return m_animation; }
-		}
+		public Evaluation.Expression ProjectileAnimationNumber => m_animation;
 
-		public Evaluation.Expression ProjectileHitAnimationNumber
-		{
-			get { return m_hitanimation; }
-		}
+		public Evaluation.Expression ProjectileHitAnimationNumber => m_hitanimation;
 
-		public Evaluation.Expression ProjectileRemoveAnimationNumber
-		{
-			get { return m_removeanimation; }
-		}
+		public Evaluation.Expression ProjectileRemoveAnimationNumber => m_removeanimation;
 
-		public Evaluation.Expression ProjectileCancelAnimationNumber
-		{
-			get { return m_cancelanimation; }
-		}
+		public Evaluation.Expression ProjectileCancelAnimationNumber => m_cancelanimation;
 
-		public Evaluation.Expression ProjectileScale
-		{
-			get { return m_scale; }
-		}
+		public Evaluation.Expression ProjectileScale => m_scale;
 
-		public Evaluation.Expression ProjectileRemoveOnHit
-		{
-			get { return m_removeonhit; }
-		}
+		public Evaluation.Expression ProjectileRemoveOnHit => m_removeonhit;
 
-		public Evaluation.Expression ProjectileRemoveTime
-		{
-			get { return m_removetime; }
-		}
+		public Evaluation.Expression ProjectileRemoveTime => m_removetime;
 
-		public Evaluation.Expression ProjectileVelocity
-		{
-			get { return m_velocity; }
-		}
+		public Evaluation.Expression ProjectileVelocity => m_velocity;
 
-		public Evaluation.Expression ProjectileRemoveVelocity
-		{
-			get { return m_removevelocity; }
-		}
+		public Evaluation.Expression ProjectileRemoveVelocity => m_removevelocity;
 
-		public Evaluation.Expression ProjectileAcceleration
-		{
-			get { return m_acceleration; }
-		}
+		public Evaluation.Expression ProjectileAcceleration => m_acceleration;
 
-		public Evaluation.Expression ProjectileVelocityMultiplier
-		{
-			get { return m_velocitymultiplier; }
-		}
+		public Evaluation.Expression ProjectileVelocityMultiplier => m_velocitymultiplier;
 
-		public Evaluation.Expression ProjectileHits
-		{
-			get { return m_hits; }
-		}
+		public Evaluation.Expression ProjectileHits => m_hits;
 
-		public Evaluation.Expression ProjectileMissTime
-		{
-			get { return m_misstime; }
-		}
+		public Evaluation.Expression ProjectileMissTime => m_misstime;
 
-		public Evaluation.Expression ProjectilePriority
-		{
-			get { return m_priority; }
-		}
+		public Evaluation.Expression ProjectilePriority => m_priority;
 
-		public Evaluation.Expression ProjectileSpritePriority
-		{
-			get { return m_spritepriority; }
-		}
+		public Evaluation.Expression ProjectileSpritePriority => m_spritepriority;
 
-		public Evaluation.Expression ProjectileScreenBound
-		{
-			get { return m_edgebound; }
-		}
+		public Evaluation.Expression ProjectileScreenBound => m_edgebound;
 
-		public Evaluation.Expression ProjectileStageBound
-		{
-			get { return m_stagebound; }
-		}
+		public Evaluation.Expression ProjectileStageBound => m_stagebound;
 
-		public Evaluation.Expression ProjectileHeightBound
-		{
-			get { return m_heightbound; }
-		}
+		public Evaluation.Expression ProjectileHeightBound => m_heightbound;
 
-		public Evaluation.Expression ProjectileCreationOffset
-		{
-			get { return m_offset; }
-		}
+		public Evaluation.Expression ProjectileCreationOffset => m_offset;
 
-		public PositionType ProjectileCreationPositionType
-		{
-			get { return m_postype; }
-		}
+		public PositionType ProjectileCreationPositionType => m_postype;
 
-		public Evaluation.Expression ProjectileShadow
-		{
-			get { return m_shadow; }
-		}
+		public Evaluation.Expression ProjectileShadow => m_shadow;
 
-		public Evaluation.Expression ProjectileSuperPauseTime
-		{
-			get { return m_supermovetime; }
-		}
+		public Evaluation.Expression ProjectileSuperPauseTime => m_supermovetime;
 
-		public Evaluation.Expression ProjectilePauseTime
-		{
-			get { return m_pausetime; }
-		}
+		public Evaluation.Expression ProjectilePauseTime => m_pausetime;
 
-		public Evaluation.Expression ProjectileAfterImageTime
-		{
-			get { return m_afterimagetime; }
-		}
+		public Evaluation.Expression ProjectileAfterImageTime => m_afterimagetime;
 
-		public Evaluation.Expression ProjectileAfterImageNumberOfFrames
-		{
-			get { return m_afterimageframes; }
-		}
+		public Evaluation.Expression ProjectileAfterImageNumberOfFrames => m_afterimageframes;
 
-		public Evaluation.Expression ProjectileAfterImagePaletteColor
-		{
-			get { return m_afterimagecolor; }
-		}
+		public Evaluation.Expression ProjectileAfterImagePaletteColor => m_afterimagecolor;
 
-		public Evaluation.Expression ProjectileAfterImagePaletteColorInversion
-		{
-			get { return m_afterimageinversion; }
-		}
+		public Evaluation.Expression ProjectileAfterImagePaletteColorInversion => m_afterimageinversion;
 
-		public Evaluation.Expression ProjectileAfterImagePaletteColorBrightness
-		{
-			get { return m_afterimageprebrightness; }
-		}
+		public Evaluation.Expression ProjectileAfterImagePaletteColorBrightness => m_afterimageprebrightness;
 
-		public Evaluation.Expression ProjectileAfterImagePaletteColorContrast
-		{
-			get { return m_afterimagecontrast; }
-		}
+		public Evaluation.Expression ProjectileAfterImagePaletteColorContrast => m_afterimagecontrast;
 
-		public Evaluation.Expression ProjectileAfterImagePalettePostBrightness
-		{
-			get { return m_afterimagepostbrightness; }
-		}
+		public Evaluation.Expression ProjectileAfterImagePalettePostBrightness => m_afterimagepostbrightness;
 
-		public Evaluation.Expression ProjectileAfterImagePaletteColorAdd
-		{
-			get { return m_afterimagecoloradd; }
-		}
+		public Evaluation.Expression ProjectileAfterImagePaletteColorAdd => m_afterimagecoloradd;
 
-		public Evaluation.Expression ProjectileAfterImagePaletteColorMultiply
-		{
-			get { return m_afterimagecolormul; }
-		}
+		public Evaluation.Expression ProjectileAfterImagePaletteColorMultiply => m_afterimagecolormul;
 
-		public Evaluation.Expression ProjectileAfterImageTimeGap
-		{
-			get { return m_afterimagetimegap; }
-		}
+		public Evaluation.Expression ProjectileAfterImageTimeGap => m_afterimagetimegap;
 
-		public Evaluation.Expression ProjectileAfterImageFrameGap
-		{
-			get { return m_afterimageframegap; }
-		}
+		public Evaluation.Expression ProjectileAfterImageFrameGap => m_afterimageframegap;
 
-		public Blending ProjectileAfterImageTransparency
-		{
-			get { return m_afterimageblending; }
-		}
+		public Blending ProjectileAfterImageTransparency => m_afterimageblending;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_projectileid;
+		private readonly Evaluation.Expression m_projectileid;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_animation;
+		private readonly Evaluation.Expression m_animation;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_hitanimation;
+		private readonly Evaluation.Expression m_hitanimation;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_removeanimation;
+		private readonly Evaluation.Expression m_removeanimation;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_cancelanimation;
+		private readonly Evaluation.Expression m_cancelanimation;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_scale;
+		private readonly Evaluation.Expression m_scale;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_removeonhit;
+		private readonly Evaluation.Expression m_removeonhit;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_removetime;
+		private readonly Evaluation.Expression m_removetime;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_velocity;
+		private readonly Evaluation.Expression m_velocity;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_removevelocity;
+		private readonly Evaluation.Expression m_removevelocity;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_acceleration;
+		private readonly Evaluation.Expression m_acceleration;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_velocitymultiplier;
+		private readonly Evaluation.Expression m_velocitymultiplier;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_hits;
+		private readonly Evaluation.Expression m_hits;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_misstime;
+		private readonly Evaluation.Expression m_misstime;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_priority;
+		private readonly Evaluation.Expression m_priority;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_spritepriority;
+		private readonly Evaluation.Expression m_spritepriority;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_edgebound;
+		private readonly Evaluation.Expression m_edgebound;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_stagebound;
+		private readonly Evaluation.Expression m_stagebound;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_heightbound;
+		private readonly Evaluation.Expression m_heightbound;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_offset;
+		private readonly Evaluation.Expression m_offset;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly PositionType m_postype;
+		private readonly PositionType m_postype;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_shadow;
+		private readonly Evaluation.Expression m_shadow;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_supermovetime;
+		private readonly Evaluation.Expression m_supermovetime;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_pausetime;
+		private readonly Evaluation.Expression m_pausetime;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_afterimagetime;
+		private readonly Evaluation.Expression m_afterimagetime;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_afterimageframes;
+		private readonly Evaluation.Expression m_afterimageframes;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_afterimagecolor;
+		private readonly Evaluation.Expression m_afterimagecolor;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_afterimageinversion;
+		private readonly Evaluation.Expression m_afterimageinversion;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_afterimageprebrightness;
+		private readonly Evaluation.Expression m_afterimageprebrightness;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_afterimagecontrast;
+		private readonly Evaluation.Expression m_afterimagecontrast;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_afterimagepostbrightness;
+		private readonly Evaluation.Expression m_afterimagepostbrightness;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_afterimagecoloradd;
+		private readonly Evaluation.Expression m_afterimagecoloradd;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_afterimagecolormul;
+		private readonly Evaluation.Expression m_afterimagecolormul;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_afterimagetimegap;
+		private readonly Evaluation.Expression m_afterimagetimegap;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_afterimageframegap;
+		private readonly Evaluation.Expression m_afterimageframegap;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Blending m_afterimageblending;
+		private readonly Blending m_afterimageblending;
 
 		#endregion
 	}

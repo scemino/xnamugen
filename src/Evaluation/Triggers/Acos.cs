@@ -3,9 +3,9 @@ using System;
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("Acos")]
-	static class Acos
+	internal static class Acos
 	{
-		public static Single Evaluate(Object state, ref Boolean error, Single value)
+		public static float Evaluate(object state, ref bool error, float value)
 		{
 			if (value < -1 || value > 1)
 			{
@@ -13,7 +13,7 @@ namespace xnaMugen.Evaluation.Triggers
 				return 0;
 			}
 
-			return (Single)Math.Acos(value);
+			return (float)Math.Acos(value);
 		}
 
 		public static Node Parse(ParseState state)

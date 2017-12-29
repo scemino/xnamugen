@@ -7,7 +7,7 @@ using System.IO;
 
 namespace xnaMugen
 {
-	class ProfileLoader : SubSystem
+	internal class ProfileLoader : SubSystem
 	{
 		public ProfileLoader(SubSystems subsystems)
 			: base(subsystems)
@@ -22,27 +22,27 @@ namespace xnaMugen
 			BuildPlayerProfiles();
 		}
 
-		public PlayerProfile FindPlayerProfile(String name, String version)
+		public PlayerProfile FindPlayerProfile(string name, string version)
 		{
-			if (name == null) throw new ArgumentNullException("name");
-			if (version == null) throw new ArgumentNullException("version");
+			if (name == null) throw new ArgumentNullException(nameof(name));
+			if (version == null) throw new ArgumentNullException(nameof(version));
 
-			foreach (PlayerSelect select in PlayerProfiles)
+			foreach (var select in PlayerProfiles)
 			{
 				if (select.SelectionType != PlayerSelectType.Profile) continue;
 
-				PlayerProfile profile = select.Profile;
+				var profile = select.Profile;
 				if (profile.PlayerName == name && profile.Version == version) return profile;
 			}
 
 			return null;
 		}
 
-		public StageProfile FindStageProfile(String filepath)
+		public StageProfile FindStageProfile(string filepath)
 		{
-			if (filepath == null) throw new ArgumentNullException("filepath");
+			if (filepath == null) throw new ArgumentNullException(nameof(filepath));
 
-			foreach (StageProfile profile in StageProfiles)
+			foreach (var profile in StageProfiles)
 			{
 				if (profile.Filepath == filepath) return profile;
 			}
@@ -50,40 +50,40 @@ namespace xnaMugen
 			return null;
 		}
 
-		void BuildStageProfiles()
+		private void BuildStageProfiles()
 		{
 			m_stages.Clear();
 
-			TextFile textfile = GetSubSystem<IO.FileSystem>().OpenTextFile("data/select.def");
-			TextSection textsection = textfile.GetSection("ExtraStages");
+			var textfile = GetSubSystem<FileSystem>().OpenTextFile("data/select.def");
+			var textsection = textfile.GetSection("ExtraStages");
 
-			foreach (String line in textsection.Lines)
+			foreach (var line in textsection.Lines)
 			{
-				TextFile stagetextfile = GetSubSystem<IO.FileSystem>().OpenTextFile(line);
-				String stagename = stagetextfile.GetSection("Info").GetAttribute<String>("name");
+				var stagetextfile = GetSubSystem<FileSystem>().OpenTextFile(line);
+				var stagename = stagetextfile.GetSection("Info").GetAttribute<string>("name");
 
 				m_stages.Add(new StageProfile(line, stagename));
 			}
 		}
 
-		void BuildPlayerProfiles()
+		private void BuildPlayerProfiles()
 		{
 			m_players.Clear();
 
-			TextFile textfile = GetSubSystem<IO.FileSystem>().OpenTextFile("data/select.def");
-			TextSection textsection = textfile.GetSection("Characters");
+			var textfile = GetSubSystem<FileSystem>().OpenTextFile("data/select.def");
+			var textsection = textfile.GetSection("Characters");
 
-			foreach (String line in textsection.Lines)
+			foreach (var line in textsection.Lines)
 			{
-				if (String.Equals(line, "random", StringComparison.OrdinalIgnoreCase) == true)
+				if (string.Equals(line, "random", StringComparison.OrdinalIgnoreCase))
 				{
 					m_players.Add(new PlayerSelect(PlayerSelectType.Random, null));
 				}
 				else
 				{
-					String playerpath;
-					String stagepath;
-					if (ParseProfileLine(line, out playerpath, out stagepath) == true)
+					string playerpath;
+					string stagepath;
+					if (ParseProfileLine(line, out playerpath, out stagepath))
 					{
 						m_players.Add(new PlayerSelect(PlayerSelectType.Profile, new PlayerProfile(this, playerpath, stagepath)));
 					}
@@ -95,24 +95,24 @@ namespace xnaMugen
 			}
 		}
 
-		Boolean ParseProfileLine(String line, out String playerpath, out String stagepath)
+		private bool ParseProfileLine(string line, out string playerpath, out string stagepath)
 		{
-			if (line == null) throw new ArgumentNullException("line");
+			if (line == null) throw new ArgumentNullException(nameof(line));
 
-			if (line == String.Empty)
+			if (line == string.Empty)
 			{
 				playerpath = null;
 				stagepath = null;
 				return false;
 			}
 
-			Int32 comma_index = line.IndexOf(',');
-			if (comma_index != -1)
+			var commaIndex = line.IndexOf(',');
+			if (commaIndex != -1)
 			{
-				String playername = line.Substring(0, comma_index).Trim();
+				var playername = line.Substring(0, commaIndex).Trim();
 				playerpath = @"chars/" + playername + @"/" + playername + @".def";
 
-				stagepath = line.Substring(comma_index + 1).Trim();
+				stagepath = line.Substring(commaIndex + 1).Trim();
 			}
 			else
 			{
@@ -120,14 +120,14 @@ namespace xnaMugen
 				stagepath = null;
 			}
 
-			if (GetSubSystem<IO.FileSystem>().DoesFileExist(playerpath) == false)
+			if (GetSubSystem<FileSystem>().DoesFileExist(playerpath) == false)
 			{
 				playerpath = null;
 				stagepath = null;
 				return false;
 			}
 
-			if (stagepath != null && GetSubSystem<IO.FileSystem>().DoesFileExist(stagepath) == false)
+			if (stagepath != null && GetSubSystem<FileSystem>().DoesFileExist(stagepath) == false)
 			{
 				stagepath = null;
 			}
@@ -135,104 +135,92 @@ namespace xnaMugen
 			return true;
 		}
 
-		public ListIterator<StageProfile> StageProfiles
-		{
-			get { return new ListIterator<StageProfile>(m_stages); }
-		}
+		public ListIterator<StageProfile> StageProfiles => new ListIterator<StageProfile>(m_stages);
 
-		public ListIterator<PlayerSelect> PlayerProfiles
-		{
-			get { return new ListIterator<PlayerSelect>(m_players); }
-		}
+		public ListIterator<PlayerSelect> PlayerProfiles => new ListIterator<PlayerSelect>(m_players);
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly List<StageProfile> m_stages;
+		private readonly List<StageProfile> m_stages;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly List<PlayerSelect> m_players;
+		private readonly List<PlayerSelect> m_players;
 
 		#endregion
 	}
 
-	class PlayerSelect
+	internal class PlayerSelect
 	{
 		public PlayerSelect(PlayerSelectType type, PlayerProfile profile)
 		{
 			if (type == PlayerSelectType.Profile)
 			{
-				if (profile == null) throw new ArgumentNullException("profile", "profile cannot be null when type = Profile");
+				if (profile == null) throw new ArgumentNullException(nameof(profile), "profile cannot be null when type = Profile");
 
 				m_type = PlayerSelectType.Profile;
 				m_profile = profile;
 			}
 			else if (type == PlayerSelectType.Random)
 			{
-				if (profile != null) throw new ArgumentException("profile must be null when type = Random", "profile");
+				if (profile != null) throw new ArgumentException("profile must be null when type = Random", nameof(profile));
 
 				m_type = PlayerSelectType.Random;
 				m_profile = null;
 			}
 		}
 
-		public PlayerSelectType SelectionType
-		{
-			get { return m_type; }
-		}
+		public PlayerSelectType SelectionType => m_type;
 
-		public PlayerProfile Profile
-		{
-			get { return m_profile; }
-		}
+		public PlayerProfile Profile => m_profile;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly PlayerSelectType m_type;
+		private readonly PlayerSelectType m_type;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly PlayerProfile m_profile;
+		private readonly PlayerProfile m_profile;
 
 		#endregion
 	}
 
-	[DebuggerDisplay("{PlayerName}")]
-	class PlayerProfile
+	[DebuggerDisplay("{" + nameof(PlayerName) + "}")]
+	internal class PlayerProfile
 	{
-		public PlayerProfile(ProfileLoader loader, String playerpath, String stagepath)
+		public PlayerProfile(ProfileLoader loader, string playerpath, string stagepath)
 		{
-			if (playerpath == null) throw new ArgumentNullException("playerpath");
-			if (loader == null) throw new ArgumentNullException("loader");
+			if (playerpath == null) throw new ArgumentNullException(nameof(playerpath));
+			if (loader == null) throw new ArgumentNullException(nameof(loader));
 
 			m_loader = loader;
 
 			//May be null
 			m_playerstagepath = stagepath;
 
-			IO.TextFile textfile = m_loader.SubSystems.GetSubSystem<IO.FileSystem>().OpenTextFile(playerpath);
+			var textfile = m_loader.SubSystems.GetSubSystem<FileSystem>().OpenTextFile(playerpath);
 
-			TextSection infosection = textfile.GetSection("info");
+			var infosection = textfile.GetSection("info");
 			if (infosection == null) throw new InvalidOperationException("No 'info' section in .def file");
 
-			TextSection filesection = textfile.GetSection("files");
+			var filesection = textfile.GetSection("files");
 			if (filesection == null) throw new InvalidOperationException("No 'files' section in .def file");
 
 			m_defpath = playerpath;
 			m_basepath = Path.GetDirectoryName(textfile.Filepath);
-			m_playername = infosection.GetAttribute<String>("name", String.Empty);
-			m_displayname = infosection.GetAttribute<String>("displayname", m_playername);
-			m_author = infosection.GetAttribute<String>("author", String.Empty);
-			m_version = infosection.GetAttribute<String>("versiondate", String.Empty);
-			m_mugenversion = infosection.GetAttribute<String>("mugenversion", String.Empty);
-			m_paletteorder = BuildPaletteOrder(infosection.GetAttribute<String>("pal.defaults", null));
-			m_commandfile = FilterPath(filesection.GetAttribute<String>("cmd", String.Empty));
-			m_constantsfile = FilterPath(filesection.GetAttribute<String>("cns", String.Empty));
-			m_commonstatefile = GetCommonStateFile(filesection.GetAttribute<String>("stcommon"));
+			m_playername = infosection.GetAttribute("name", string.Empty);
+			m_displayname = infosection.GetAttribute("displayname", m_playername);
+			m_author = infosection.GetAttribute("author", string.Empty);
+			m_version = infosection.GetAttribute("versiondate", string.Empty);
+			m_mugenversion = infosection.GetAttribute("mugenversion", string.Empty);
+			m_paletteorder = BuildPaletteOrder(infosection.GetAttribute<string>("pal.defaults", null));
+			m_commandfile = FilterPath(filesection.GetAttribute("cmd", string.Empty));
+			m_constantsfile = FilterPath(filesection.GetAttribute("cns", string.Empty));
+			m_commonstatefile = GetCommonStateFile(filesection.GetAttribute<string>("stcommon"));
 			m_statesfiles = BuildStateFiles(filesection);
-			m_spritesfile = FilterPath(filesection.GetAttribute<String>("sprite", String.Empty));
-			m_animationfile = FilterPath(filesection.GetAttribute<String>("anim", String.Empty));
-			m_soundfile = FilterPath(filesection.GetAttribute<String>("sound", String.Empty));
+			m_spritesfile = FilterPath(filesection.GetAttribute("sprite", string.Empty));
+			m_animationfile = FilterPath(filesection.GetAttribute("anim", string.Empty));
+			m_soundfile = FilterPath(filesection.GetAttribute("sound", string.Empty));
 			m_palettefiles = BuildPaletteFiles(filesection);
 
 			m_spritemanager = m_loader.SubSystems.GetSubSystem<Drawing.SpriteSystem>().CreateManager(SpritePath);
@@ -241,255 +229,195 @@ namespace xnaMugen
 			SpriteManager.GetSprite(SpriteId.SmallPortrait);
 		}
 
-		ReadOnlyList<Int32> BuildPaletteOrder(String input)
+		private ReadOnlyList<int> BuildPaletteOrder(string input)
 		{
-			if (input == null) return new ReadOnlyList<Int32>();
+			if (input == null) return new ReadOnlyList<int>();
 
-			List<Int32> order = new List<Int32>();
+			var order = new List<int>();
 
-			String[] palinfo = input.Split(new Char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-			foreach (String palnumber in palinfo)
+			var palinfo = input.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+			foreach (var palnumber in palinfo)
 			{
-				Int32 palvalue = 0;
-				if (Int32.TryParse(palnumber, out palvalue) == true) order.Add(palvalue);
+				if (int.TryParse(palnumber, out var palvalue)) order.Add(palvalue);
 			}
 
-			return new ReadOnlyList<Int32>(order);
+			return new ReadOnlyList<int>(order);
 		}
 
-		String GetCommonStateFile(String input)
+		private string GetCommonStateFile(string input)
 		{
-			if (input == null) throw new ArgumentNullException("input");
+			if (input == null) throw new ArgumentNullException(nameof(input));
 
-			if (String.Equals(input, "common1.cns", StringComparison.OrdinalIgnoreCase) == true)
+			if (string.Equals(input, "common1.cns", StringComparison.OrdinalIgnoreCase))
 			{
-				String trypath = FilterPath(input);
+				var trypath = FilterPath(input);
 
-				if (m_loader.SubSystems.GetSubSystem<IO.FileSystem>().DoesFileExist(trypath) == true)
+				if (m_loader.SubSystems.GetSubSystem<FileSystem>().DoesFileExist(trypath))
 				{
 					return trypath;
 				}
-				else
-				{
-					return "data/common1.cns";
-				}
+
+				return "data/common1.cns";
 			}
-			else
-			{
-				return FilterPath(input);
-			}
+
+			return FilterPath(input);
 		}
 
-		ReadOnlyList<String> BuildStateFiles(TextSection filesection)
+		private ReadOnlyList<string> BuildStateFiles(TextSection filesection)
 		{
-			if (filesection == null) throw new ArgumentNullException("filesection");
+			if (filesection == null) throw new ArgumentNullException(nameof(filesection));
 
-			SortedList<Int32, String> files = new SortedList<Int32, String>();
+			var files = new SortedList<int, string>();
 			files.Add(-2, CommonStateFile);
 			files.Add(-1, CommandPath);
 
 			foreach (var kvp in filesection.ParsedLines)
 			{
-				if (String.Compare(kvp.Key, 0, "st", 0, 2, StringComparison.OrdinalIgnoreCase) != 0) continue;
+				if (string.Compare(kvp.Key, 0, "st", 0, 2, StringComparison.OrdinalIgnoreCase) != 0) continue;
 
-				if (String.Equals(kvp.Key, "st", StringComparison.OrdinalIgnoreCase) == true)
+				if (string.Equals(kvp.Key, "st", StringComparison.OrdinalIgnoreCase))
 				{
-					String path = FilterPath(kvp.Value);
-					if (path != String.Empty) files[0] = path;
+					var path = FilterPath(kvp.Value);
+					if (path != string.Empty) files[0] = path;
 				}
 				else
 				{
-					Int32 index = 0;
-					if (Int32.TryParse(kvp.Key.Substring(2), out index) == true)
+					if (int.TryParse(kvp.Key.Substring(2), out var index))
 					{
-						String path = FilterPath(kvp.Value);
-						if (path != String.Empty) files[index + 1] = path;
+						var path = FilterPath(kvp.Value);
+						if (path != string.Empty) files[index + 1] = path;
 					}
 				}
 			}
 
-			return new ReadOnlyList<String>(files.Values);
+			return new ReadOnlyList<string>(files.Values);
 		}
 
-		ReadOnlyList<String> BuildPaletteFiles(TextSection filesection)
+		private ReadOnlyList<string> BuildPaletteFiles(TextSection filesection)
 		{
-			if (filesection == null) throw new ArgumentNullException("filesection");
+			if (filesection == null) throw new ArgumentNullException(nameof(filesection));
 
-			List<String> pals = new List<String>(12);
-			for (Int32 i = 0; i != 12; ++i) pals.Add(FilterPath(filesection.GetAttribute<String>("pal" + (i + 1), String.Empty)));
+			var pals = new List<string>(12);
+			for (var i = 0; i != 12; ++i) pals.Add(FilterPath(filesection.GetAttribute("pal" + (i + 1), string.Empty)));
 
-			return new ReadOnlyList<String>(pals);
+			return new ReadOnlyList<string>(pals);
 		}
 
-		String FilterPath(String filepath)
+		private string FilterPath(string filepath)
 		{
-			if (String.IsNullOrEmpty(filepath) == true) return String.Empty;
+			if (string.IsNullOrEmpty(filepath)) return string.Empty;
 
 			return Path.Combine(BasePath, filepath);
 		}
 
-		public Int32 GetValidPaletteIndex(Int32 index)
+		public int GetValidPaletteIndex(int index)
 		{
-			if (index < 0 || index > 11) throw new ArgumentOutOfRangeException("index");
+			if (index < 0 || index > 11) throw new ArgumentOutOfRangeException(nameof(index));
 
-			if (PaletteFiles[index] != String.Empty) return index;
+			if (PaletteFiles[index] != string.Empty) return index;
 
 			if (index >= 6)
 			{
-				if (PaletteFiles[index - 6] != String.Empty) return index - 6;
+				if (PaletteFiles[index - 6] != string.Empty) return index - 6;
 			}
 
 			return 0;
 		}
 
-		public String DefinitionPath
-		{
-			get { return m_defpath; }
-		}
+		public string DefinitionPath => m_defpath;
 
-		public String PlayerName
-		{
-			get { return m_playername; }
-		}
+		public string PlayerName => m_playername;
 
-		public String DisplayName
-		{
-			get { return m_displayname; }
-		}
+		public string DisplayName => m_displayname;
 
-		public String Author
-		{
-			get { return m_author; }
-		}
+		public string Author => m_author;
 
-		public String Version
-		{
-			get { return m_version; }
-		}
+		public string Version => m_version;
 
-		public String MugenVersion
-		{
-			get { return m_mugenversion; }
-		}
+		public string MugenVersion => m_mugenversion;
 
-		public ReadOnlyList<Int32> PaletteOrder
-		{
-			get { return m_paletteorder; }
-		}
+		public ReadOnlyList<int> PaletteOrder => m_paletteorder;
 
-		public String CommandPath
-		{
-			get { return m_commandfile; }
-		}
+		public string CommandPath => m_commandfile;
 
-		public String ConstantsPath
-		{
-			get { return m_constantsfile; }
-		}
+		public string ConstantsPath => m_constantsfile;
 
-		public ReadOnlyList<String> StateFiles
-		{
-			get { return m_statesfiles; }
-		}
+		public ReadOnlyList<string> StateFiles => m_statesfiles;
 
-		public String CommonStateFile
-		{
-			get { return m_commonstatefile; }
-		}
+		public string CommonStateFile => m_commonstatefile;
 
-		public String SpritePath
-		{
-			get { return m_spritesfile; }
-		}
+		public string SpritePath => m_spritesfile;
 
-		public String AnimationPath
-		{
-			get { return m_animationfile; }
-		}
+		public string AnimationPath => m_animationfile;
 
-		public String SoundPath
-		{
-			get { return m_soundfile; }
-		}
+		public string SoundPath => m_soundfile;
 
-		public String StagePath
-		{
-			get { return m_playerstagepath; }
-		}
+		public string StagePath => m_playerstagepath;
 
-		public ReadOnlyList<String> PaletteFiles
-		{
-			get { return m_palettefiles; }
-		}
+		public ReadOnlyList<string> PaletteFiles => m_palettefiles;
 
-		public Drawing.SpriteManager SpriteManager
-		{
-			get { return m_spritemanager; }
-		}
+		public Drawing.SpriteManager SpriteManager => m_spritemanager;
 
-		public String BasePath
-		{
-			get { return m_basepath; }
-		}
+		public string BasePath => m_basepath;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly ProfileLoader m_loader;
+		private readonly ProfileLoader m_loader;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly String m_defpath;
+		private readonly string m_defpath;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly String m_playername;
+		private readonly string m_playername;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly String m_displayname;
+		private readonly string m_displayname;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly String m_author;
+		private readonly string m_author;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly String m_version;
+		private readonly string m_version;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly String m_mugenversion;
+		private readonly string m_mugenversion;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly ReadOnlyList<Int32> m_paletteorder;
+		private readonly ReadOnlyList<int> m_paletteorder;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly String m_commandfile;
+		private readonly string m_commandfile;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly String m_constantsfile;
+		private readonly string m_constantsfile;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly ReadOnlyList<String> m_statesfiles;
+		private readonly ReadOnlyList<string> m_statesfiles;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly String m_commonstatefile;
+		private readonly string m_commonstatefile;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly String m_spritesfile;
+		private readonly string m_spritesfile;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly String m_animationfile;
+		private readonly string m_animationfile;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly String m_soundfile;
+		private readonly string m_soundfile;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly ReadOnlyList<String> m_palettefiles;
+		private readonly ReadOnlyList<string> m_palettefiles;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Drawing.SpriteManager m_spritemanager;
+		private readonly Drawing.SpriteManager m_spritemanager;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly String m_basepath;
+		private readonly string m_basepath;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly String m_playerstagepath;
+		private readonly string m_playerstagepath;
 
 		#endregion
 	}

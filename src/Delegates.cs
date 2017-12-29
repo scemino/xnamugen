@@ -1,16 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace xnaMugen
 {
-	delegate Object Constructor(params Object[] args);
+	internal delegate object Constructor(params object[] args);
 }
 
 namespace xnaMugen.Evaluation
 {
-	delegate Node NodeParse(ParseState state);
+	internal delegate Node NodeParse(ParseState state);
 
-	delegate Node NodeBuild(List<Token> tokens, ref Int32 tokenindex);
+	internal delegate Node NodeBuild(List<Token> tokens, ref int tokenindex);
 
-	delegate Number EvaluationCallback(Object state);
+	internal delegate Number EvaluationCallback(object state);
 }

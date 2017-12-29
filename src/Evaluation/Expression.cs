@@ -1,25 +1,22 @@
 ﻿using System;
 using System.Diagnostics;
-using xnaMugen.Collections;
 using System.Collections.Generic;
-using xnaMugen.Evaluation.Tokenizing;
-using System.Text.RegularExpressions;
 
 namespace xnaMugen.Evaluation
 {
-	class Expression : IExpression
+	internal class Expression : IExpression
 	{
-		public Expression(String expression, List<EvaluationCallback> functions)
+		public Expression(string expression, List<EvaluationCallback> functions)
 		{
-			if (expression == null) throw new ArgumentNullException("expression");
-			if (functions == null) throw new ArgumentNullException("functions");
+			if (expression == null) throw new ArgumentNullException(nameof(expression));
+			if (functions == null) throw new ArgumentNullException(nameof(functions));
 
 			m_expression = expression;
 			m_functions = functions;
 			m_isvalid = ValidCheck();
 		}
 
-		Boolean ValidCheck()
+		private bool ValidCheck()
 		{
 			if (m_functions.Count == 0) return false;
 
@@ -33,11 +30,11 @@ namespace xnaMugen.Evaluation
 			return true;
 		}
 
-		public Number[] Evaluate(Object state)
+		public Number[] Evaluate(object state)
 		{
-			Number[] result = new Number[m_functions.Count];
+			var result = new Number[m_functions.Count];
 
-			for (Int32 i = 0; i != result.Length; ++i)
+			for (var i = 0; i != result.Length; ++i)
 			{
 				try
 				{
@@ -52,7 +49,7 @@ namespace xnaMugen.Evaluation
 			return result;
 		}
 
-		public Number EvaluateFirst(Object state)
+		public Number EvaluateFirst(object state)
 		{
 			if (IsValid == false) return new Number();
 
@@ -66,26 +63,23 @@ namespace xnaMugen.Evaluation
 			}
 		}
 
-		public override String ToString()
+		public override string ToString()
 		{
 			return m_expression;
 		}
 
-		public Boolean IsValid
-		{
-			get { return m_isvalid; }
-		}
+		public bool IsValid => m_isvalid;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly String m_expression;
+		private readonly string m_expression;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly List<EvaluationCallback> m_functions;
+		private readonly List<EvaluationCallback> m_functions;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Boolean m_isvalid;
+		private readonly bool m_isvalid;
 
 		#endregion
 	}

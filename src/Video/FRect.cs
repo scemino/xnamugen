@@ -1,22 +1,15 @@
-﻿using System;
-using System.Diagnostics;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System.Collections.Generic;
-using xnaMugen.Collections;
-
-namespace xnaMugen.Video
+﻿namespace xnaMugen.Video
 {
-	struct FRect
+	internal struct FRect
 	{
-		public Single X;
-		public Single Y;
-		public Single Width;
-		public Single Height;
+		public float X;
+		public float Y;
+		public float Width;
+		public float Height;
 
-		public Single Left { get { return X; } }
-		public Single Right { get { return X + Width; } }
-		public Single Top { get { return Y; } }
-		public Single Bottom { get { return Y + Height; } }
+		public float Left => X;
+		public float Right => X + Width;
+		public float Top => Y;
+		public float Bottom => Y + Height;
 	}
 }

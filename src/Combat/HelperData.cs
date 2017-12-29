@@ -1,36 +1,29 @@
-﻿using System;
-using System.Diagnostics;
-using xnaMugen.IO;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using xnaMugen.Collections;
-using System.Collections.Generic;
-using System.Text;
+﻿using Microsoft.Xna.Framework;
 
 namespace xnaMugen.Combat
 {
-	class HelperData
+	internal class HelperData
 	{
-		public String Name { get; set; }
-		public Int32 HelperId { get; set; }
+		public string Name { get; set; }
+		public int HelperId { get; set; }
 		public HelperType Type { get; set; }
-		public Boolean KeyControl { get; set; }
-		public Int32 FacingFlag { get; set; }
+		public bool KeyControl { get; set; }
+		public int FacingFlag { get; set; }
 		public PositionType PositionType { get; set; }
 		public Vector2 CreationOffset { get; set; }
-		public Int32 InitialStateNumber { get; set; }
+		public int InitialStateNumber { get; set; }
 		public Vector2 Scale { get; set; }
-		public Int32 GroundFront { get; set; }
-		public Int32 GroundBack { get; set; }
-		public Int32 AirFront { get; set; }
-		public Int32 AirBack { get; set; }
-		public Int32 Height { get; set; }
-		public Boolean OwnPaletteFx { get; set; }
-		public Int32 SuperPauseTime { get; set; }
-		public Int32 PauseTime { get; set; }
-		public Boolean ProjectileScaling { get; set; }
+		public int GroundFront { get; set; }
+		public int GroundBack { get; set; }
+		public int AirFront { get; set; }
+		public int AirBack { get; set; }
+		public int Height { get; set; }
+		public bool OwnPaletteFx { get; set; }
+		public int SuperPauseTime { get; set; }
+		public int PauseTime { get; set; }
+		public bool ProjectileScaling { get; set; }
 		public Vector2 HeadPosition { get; set; }
 		public Vector2 MidPosition { get; set; }
-		public Int32 ShadowOffset { get; set; }
+		public int ShadowOffset { get; set; }
 	}
 }

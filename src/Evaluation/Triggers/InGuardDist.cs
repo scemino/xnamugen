@@ -3,27 +3,27 @@ using System;
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("InGuardDist")]
-	static class InGuardDist
+	internal static class InGuardDist
 	{
-		public static Boolean Evaluate(Object state, ref Boolean error)
+		public static bool Evaluate(object state, ref bool error)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
 				return false;
 			}
 
-			foreach (Combat.Entity entity in character.Engine.Entities)
+			foreach (var entity in character.Engine.Entities)
 			{
-				Combat.Character opp = character.FilterEntityAsCharacter(entity, AffectTeam.Enemy);
-				if (opp != null && opp.OffensiveInfo.ActiveHitDef == true && InGuardDistance(opp.OffensiveInfo.HitDef, opp, character) == true)
+				var opp = character.FilterEntityAsCharacter(entity, AffectTeam.Enemy);
+				if (opp != null && opp.OffensiveInfo.ActiveHitDef && InGuardDistance(opp.OffensiveInfo.HitDef, opp, character))
 				{
 					return true;
 				}
 
-				Combat.Projectile projectile = entity as Combat.Projectile;
-				if (projectile != null && projectile.Team != character.Team && InGuardDistance(projectile.Data.HitDef, projectile, character) == true)
+				var projectile = entity as Combat.Projectile;
+				if (projectile != null && projectile.Team != character.Team && InGuardDistance(projectile.Data.HitDef, projectile, character))
 				{
 					return true;
 				}
@@ -32,13 +32,13 @@ namespace xnaMugen.Evaluation.Triggers
 			return false;
 		}
 
-		static Boolean InGuardDistance(Combat.HitDefinition hitdef, Combat.Entity attacker, Combat.Character target)
+		private static bool InGuardDistance(Combat.HitDefinition hitdef, Combat.Entity attacker, Combat.Character target)
 		{
-			if (attacker == null) throw new ArgumentNullException("attacker");
-			if (target == null) throw new ArgumentNullException("target");
-			if (hitdef == null) throw new ArgumentNullException("hitdef");
+			if (attacker == null) throw new ArgumentNullException(nameof(attacker));
+			if (target == null) throw new ArgumentNullException(nameof(target));
+			if (hitdef == null) throw new ArgumentNullException(nameof(hitdef));
 
-			Single distance = Math.Abs(attacker.CurrentLocation.X - target.CurrentLocation.X);
+			var distance = Math.Abs(attacker.CurrentLocation.X - target.CurrentLocation.X);
 
 			return distance <= hitdef.GuardDistance;
 		}

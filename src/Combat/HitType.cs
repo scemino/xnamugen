@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
-using System.Diagnostics;
-using xnaMugen.Collections;
+﻿using System.Diagnostics;
 
 namespace xnaMugen.Combat
 {
 	[DebuggerDisplay("{Class} {Power}")]
-	struct HitType
+	internal struct HitType
 	{
 		public HitType(AttackClass aclass, AttackPower apower)
 		{
@@ -15,7 +11,7 @@ namespace xnaMugen.Combat
 			m_power = apower;
 		}
 
-		public static Boolean Match(HitType lhs, HitType rhs)
+		public static bool Match(HitType lhs, HitType rhs)
 		{
 			if (lhs.Class == AttackClass.None || lhs.Power == AttackPower.None) return false;
 			if (rhs.Class == AttackClass.None || rhs.Power == AttackPower.None) return false;
@@ -27,23 +23,17 @@ namespace xnaMugen.Combat
 			return false;
 		}
 
-		public AttackClass Class
-		{
-			get { return m_class; }
-		}
+		public AttackClass Class => m_class;
 
-		public AttackPower Power
-		{
-			get { return m_power; }
-		}
+		public AttackPower Power => m_power;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly AttackClass m_class;
+		private readonly AttackClass m_class;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly AttackPower m_power;
+		private readonly AttackPower m_power;
 
 		#endregion
 	}

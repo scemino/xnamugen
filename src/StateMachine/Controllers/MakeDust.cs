@@ -1,13 +1,12 @@
-using System;
 using System.Diagnostics;
 using xnaMugen.IO;
 
 namespace xnaMugen.StateMachine.Controllers
 {
 	[StateControllerName("MakeDust")]
-	class MakeDust : StateController
+	internal class MakeDust : StateController
 	{
-		public MakeDust(StateSystem statesystem, String label, TextSection textsection)
+		public MakeDust(StateSystem statesystem, string label, TextSection textsection)
 			: base(statesystem, label, textsection)
 		{
 			m_pos = textsection.GetAttribute<Evaluation.Expression>("pos", null);
@@ -19,31 +18,22 @@ namespace xnaMugen.StateMachine.Controllers
 		{
 		}
 
-		public Evaluation.Expression Position1
-		{
-			get { return m_pos; }
-		}
+		public Evaluation.Expression Position1 => m_pos;
 
-		public Evaluation.Expression Position2
-		{
-			get { return m_pos2; }
-		}
+		public Evaluation.Expression Position2 => m_pos2;
 
-		public Evaluation.Expression Spacing
-		{
-			get { return m_spacing; }
-		}
+		public Evaluation.Expression Spacing => m_spacing;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_pos;
+		private readonly Evaluation.Expression m_pos;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_pos2;
+		private readonly Evaluation.Expression m_pos2;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Evaluation.Expression m_spacing;
+		private readonly Evaluation.Expression m_spacing;
 
 		#endregion
 	}

@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Text.RegularExpressions;
 using System.Diagnostics;
-using System.Collections.Generic;
 using xnaMugen.IO;
 using Microsoft.Xna.Framework;
-using xnaMugen.Collections;
 
 namespace xnaMugen.Backgrounds
 {
-	[DebuggerDisplay("{Name}")]
-	abstract class Base
+	[DebuggerDisplay("{" + nameof(Name) + "}")]
+	internal abstract class Base
 	{
 		static Base()
 		{
@@ -18,30 +16,30 @@ namespace xnaMugen.Backgrounds
 
 		protected Base(TextSection textsection)
 		{
-			if (textsection == null) throw new ArgumentNullException("textsection");
+			if (textsection == null) throw new ArgumentNullException(nameof(textsection));
 
 			m_name = GetBackgroundName(textsection);
-			m_id = textsection.GetAttribute<Int32>("id", 0);
-			m_startlocation = textsection.GetAttribute<Vector2>("start", Vector2.Zero);
+			m_id = textsection.GetAttribute("id", 0);
+			m_startlocation = textsection.GetAttribute("start", Vector2.Zero);
 			m_currentlocation = Vector2.Zero;
-			m_delta = textsection.GetAttribute<Vector2>("delta", Vector2.Zero);
-			m_tiling = textsection.GetAttribute<Point>("tile", new Point(0, 0));
-			m_tilingspacing = textsection.GetAttribute<Point>("tilespacing", new Point(0, 0));
-			m_velocity = textsection.GetAttribute<Vector2>("velocity", Vector2.Zero);
-			m_masking = textsection.GetAttribute<Boolean>("masking", false);
-			m_layer = textsection.GetAttribute<BackgroundLayer>("layerno", BackgroundLayer.Back);
-			m_blending = textsection.GetAttribute<Blending>("trans", new Blending());
-			m_drawrect = textsection.GetAttribute<Rectangle>("window", new Rectangle(0, 0, Mugen.ScreenSize.X, Mugen.ScreenSize.Y));
+			m_delta = textsection.GetAttribute("delta", Vector2.Zero);
+			m_tiling = textsection.GetAttribute("tile", new Point(0, 0));
+			m_tilingspacing = textsection.GetAttribute("tilespacing", new Point(0, 0));
+			m_velocity = textsection.GetAttribute("velocity", Vector2.Zero);
+			m_masking = textsection.GetAttribute("masking", false);
+			m_layer = textsection.GetAttribute("layerno", BackgroundLayer.Back);
+			m_blending = textsection.GetAttribute("trans", new Blending());
+			m_drawrect = textsection.GetAttribute("window", new Rectangle(0, 0, Mugen.ScreenSize.X, Mugen.ScreenSize.Y));
 			m_paused = false;
 			m_visible = true;
 		}
 
-		static String GetBackgroundName(TextSection textsection)
+		private static string GetBackgroundName(TextSection textsection)
 		{
-			if (textsection == null) throw new ArgumentNullException("textsection");
+			if (textsection == null) throw new ArgumentNullException(nameof(textsection));
 
-			Match titlematch = s_titleregex.Match(textsection.Title);
-			return (titlematch.Success == true) ? titlematch.Groups[1].Value : String.Empty;
+			var titlematch = s_titleregex.Match(textsection.Title);
+			return titlematch.Success ? titlematch.Groups[1].Value : string.Empty;
 		}
 
 		public virtual void Reset()
@@ -63,9 +61,9 @@ namespace xnaMugen.Backgrounds
 				return;
 			}
 
-			Point t = new Point();
-			t.X = 1 + (Mugen.ScreenSize.X / size.X);
-			t.Y = 1 + (Mugen.ScreenSize.Y / size.Y);
+			var t = new Point();
+			t.X = 1 + Mugen.ScreenSize.X / size.X;
+			t.Y = 1 + Mugen.ScreenSize.Y / size.Y;
 
 			start = new Point();
 			end = new Point();
@@ -103,78 +101,45 @@ namespace xnaMugen.Backgrounds
 			}
 		}
 
-		public String Name
-		{
-			get { return m_name; }
-		}
+		public string Name => m_name;
 
-		public Int32 Id
-		{
-			get { return m_id; }
-		}
+		public int Id => m_id;
 
-		public Vector2 StartLocation
-		{
-			get { return m_startlocation; }
-		}
+		public Vector2 StartLocation => m_startlocation;
 
 		public Vector2 CurrentLocation
 		{
-			get { return m_currentlocation; }
+			get => m_currentlocation;
 
 			set { m_currentlocation = value; }
 		}
 
-		public Vector2 CameraDelta
-		{
-			get { return m_delta; }
-		}
+		public Vector2 CameraDelta => m_delta;
 
-		public Point Tiling
-		{
-			get { return m_tiling; }
-		}
+		public Point Tiling => m_tiling;
 
-		public Point TilingSpacing
-		{
-			get { return m_tilingspacing; }
-		}
+		public Point TilingSpacing => m_tilingspacing;
 
-		public Vector2 Velocity
-		{
-			get { return m_velocity; }
-		}
+		public Vector2 Velocity => m_velocity;
 
-		public Boolean Masking
-		{
-			get { return m_masking; }
-		}
+		public bool Masking => m_masking;
 
-		public BackgroundLayer Layer
-		{
-			get { return m_layer; }
-		}
+		public BackgroundLayer Layer => m_layer;
 
-		public Blending Transparency
-		{
-			get { return m_blending; }
-		}
+		public Blending Transparency => m_blending;
 
-		public Rectangle DrawRect
-		{
-			get { return m_drawrect; }
-		}
+		public Rectangle DrawRect => m_drawrect;
 
-		public Boolean IsPaused
+		public bool IsPaused
 		{
-			get { return m_paused; }
+			get => m_paused;
 
 			set { m_paused = value; }
 		}
 
-		public Boolean IsVisible
+		public bool IsVisible
 		{
-			get { return m_visible; }
+			get => m_visible;
 
 			set { m_visible = value; }
 		}
@@ -182,49 +147,49 @@ namespace xnaMugen.Backgrounds
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		static readonly Regex s_titleregex;
+		private static readonly Regex s_titleregex;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly String m_name;
+		private readonly string m_name;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Int32 m_id;
+		private readonly int m_id;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Vector2 m_startlocation;
+		private readonly Vector2 m_startlocation;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Vector2 m_currentlocation;
+		private Vector2 m_currentlocation;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Vector2 m_delta;
+		private readonly Vector2 m_delta;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Point m_tiling;
+		private readonly Point m_tiling;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Point m_tilingspacing;
+		private readonly Point m_tilingspacing;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Vector2 m_velocity;
+		private readonly Vector2 m_velocity;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Boolean m_masking;
+		private readonly bool m_masking;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly BackgroundLayer m_layer;
+		private readonly BackgroundLayer m_layer;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Blending m_blending;
+		private readonly Blending m_blending;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Rectangle m_drawrect;
+		private readonly Rectangle m_drawrect;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Boolean m_paused;
+		private bool m_paused;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Boolean m_visible;
+		private bool m_visible;
 
 		#endregion
 	}

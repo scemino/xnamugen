@@ -1,9 +1,6 @@
-﻿using System;
-using System.Diagnostics;
-
-namespace xnaMugen.Combat.Logic
+﻿namespace xnaMugen.Combat.Logic
 {
-	class DisplayRoundNumber : Base
+	internal class DisplayRoundNumber : Base
 	{
 		public DisplayRoundNumber(FightEngine engine)
 			: base(engine, RoundState.Intro)
@@ -22,7 +19,7 @@ namespace xnaMugen.Combat.Logic
 
 		protected override Elements.Base GetElement()
 		{
-			Elements.Base element = Engine.RoundInformation.GetRoundElement(Engine.RoundNumber);
+			var element = Engine.RoundInformation.GetRoundElement(Engine.RoundNumber);
 
 			if (element.DataMap.Type == ElementType.None)
 			{
@@ -32,7 +29,7 @@ namespace xnaMugen.Combat.Logic
 			return element;
 		}
 
-		public override Boolean IsFinished()
+		public override bool IsFinished()
 		{
 			return CurrentElement == null;
 		}

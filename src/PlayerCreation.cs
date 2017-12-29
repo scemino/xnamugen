@@ -3,34 +3,28 @@ using System.Diagnostics;
 
 namespace xnaMugen
 {
-	class PlayerCreation
+	internal class PlayerCreation
 	{
-		public PlayerCreation(PlayerProfile profile, Int32 paletteindex)
+		public PlayerCreation(PlayerProfile profile, int paletteindex)
 		{
-			if (profile == null) throw new ArgumentNullException("profile");
-			if (paletteindex < 0 || paletteindex > 11) throw new ArgumentOutOfRangeException("paletteindex");
+			if (profile == null) throw new ArgumentNullException(nameof(profile));
+			if (paletteindex < 0 || paletteindex > 11) throw new ArgumentOutOfRangeException(nameof(paletteindex));
 
 			m_profile = profile;
 			m_paletteindex = paletteindex;
 		}
 
-		public PlayerProfile Profile
-		{
-			get { return m_profile; }
-		}
+		public PlayerProfile Profile => m_profile;
 
-		public Int32 PaletteIndex
-		{
-			get { return m_paletteindex; }
-		}
+		public int PaletteIndex => m_paletteindex;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly PlayerProfile m_profile;
+		private readonly PlayerProfile m_profile;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Int32 m_paletteindex;
+		private readonly int m_paletteindex;
 
 		#endregion
 	}

@@ -1,13 +1,11 @@
-using System;
-using System.Diagnostics;
 using xnaMugen.IO;
 
 namespace xnaMugen.StateMachine.Controllers
 {
 	[StateControllerName("MoveHitReset")]
-	class MoveHitReset : StateController
+	internal class MoveHitReset : StateController
 	{
-		public MoveHitReset(StateSystem statesystem, String label, TextSection textsection)
+		public MoveHitReset(StateSystem statesystem, string label, TextSection textsection)
 			: base(statesystem, label, textsection)
 		{
 		}

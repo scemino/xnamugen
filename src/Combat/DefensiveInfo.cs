@@ -6,11 +6,11 @@ using Microsoft.Xna.Framework;
 
 namespace xnaMugen.Combat
 {
-	class DefensiveInfo
+	internal class DefensiveInfo
 	{
 		public DefensiveInfo(Character character)
 		{
-			if (character == null) throw new ArgumentNullException("character");
+			if (character == null) throw new ArgumentNullException(nameof(character));
 
 			m_character = character;
 			m_hitdef = new HitDefinition();
@@ -26,7 +26,7 @@ namespace xnaMugen.Combat
 			m_isfalling = false;
 
 			m_hitoverrides = new List<HitOverride>();
-			for (Int32 i = 0; i != 8; ++i) m_hitoverrides.Add(new HitOverride());
+			for (var i = 0; i != 8; ++i) m_hitoverrides.Add(new HitOverride());
 
 			m_hitcount = 0;
 
@@ -46,7 +46,7 @@ namespace xnaMugen.Combat
 			m_hitby2.Reset();
 			m_isfalling = false;
 
-			for (Int32 i = 0; i != 8; ++i) m_hitoverrides[i].Reset();
+			for (var i = 0; i != 8; ++i) m_hitoverrides[i].Reset();
 
 			m_hitcount = 0;
 		}
@@ -64,21 +64,21 @@ namespace xnaMugen.Combat
 
 			if (m_character.StateManager.CurrentState.Number == StateMachine.StateNumber.HitGetUp && m_character.StateManager.StateTime == 0) HitDef.Fall = false;
 
-			foreach (HitOverride hitoverride in m_hitoverrides) hitoverride.Update();
+			foreach (var hitoverride in m_hitoverrides) hitoverride.Update();
 		}
 
-		public void OnHit(HitDefinition hitdef, Character attacker, Boolean blocked)
+		public void OnHit(HitDefinition hitdef, Character attacker, bool blocked)
 		{
-			if (hitdef == null) throw new ArgumentNullException("hitdef");
-			if (attacker == null) throw new ArgumentNullException("attacker");
+			if (hitdef == null) throw new ArgumentNullException(nameof(hitdef));
+			if (attacker == null) throw new ArgumentNullException(nameof(attacker));
 
-			Boolean alreadyfalling = IsFalling;
+			var alreadyfalling = IsFalling;
 
 			HitDef.Set(hitdef);
 			Attacker = attacker;
 			Blocked = blocked;
 
-			if (alreadyfalling == true)
+			if (alreadyfalling)
 			{
 				HitDef.Fall = true;
 			}
@@ -87,14 +87,14 @@ namespace xnaMugen.Combat
 				m_character.JugglePoints = m_character.BasePlayer.Constants.AirJuggle;
 			}
 
-			HitCount = (m_character.MoveType == MoveType.BeingHit) ? HitCount + 1 : 1;
+			HitCount = m_character.MoveType == MoveType.BeingHit ? HitCount + 1 : 1;
 			HitStateType = m_character.StateType;
 
 			m_character.DrawOrder = HitDef.P2SpritePriority;
 			m_character.PlayerControl = PlayerControl.NoControl;
 			m_character.MoveType = MoveType.BeingHit;
 
-			if (blocked == true)
+			if (blocked)
 			{
 				HitShakeTime = HitDef.GuardShakeTime;
 				m_character.BasePlayer.Power += HitDef.P2GuardPowerAdjustment;
@@ -106,9 +106,9 @@ namespace xnaMugen.Combat
 
 				m_character.PaletteFx.Set(HitDef.PalFxTime, HitDef.PalFxAdd, HitDef.PalFxMul, HitDef.PalFxSinAdd, HitDef.PalFxInvert, HitDef.PalFxBaseColor);
 
-				if (IsFalling == true)
+				if (IsFalling)
 				{
-					Int32 neededjugglepoints = EvaluationHelper.AsInt32(Attacker, Attacker.StateManager.CurrentState.JugglePoints, 0);
+					var neededjugglepoints = EvaluationHelper.AsInt32(Attacker, Attacker.StateManager.CurrentState.JugglePoints, 0);
 					m_character.JugglePoints -= neededjugglepoints;
 				}
 			}
@@ -116,14 +116,16 @@ namespace xnaMugen.Combat
 
 		public HitOverride GetOverride(HitDefinition hitdef)
 		{
-			if (hitdef == null) throw new ArgumentNullException("hitdef");
+			if (hitdef == null) throw new ArgumentNullException(nameof(hitdef));
 
-			foreach (HitOverride hitoverride in HitOverrides)
+			foreach (var hitoverride in HitOverrides)
 			{
 				if (hitoverride.IsActive == false) continue;
 
 				if (hitoverride.Attribute.HasHeight(hitdef.HitAttribute.AttackHeight) == false) continue;
-				foreach (HitType hittype in hitdef.HitAttribute.AttackData) if (hitoverride.Attribute.HasData(hittype) == false) continue;
+				foreach (var hittype in hitdef.HitAttribute.AttackData)
+					if (hitoverride.Attribute.HasData(hittype) == false)
+						continue;
 
 				return hitoverride;
 			}
@@ -135,15 +137,15 @@ namespace xnaMugen.Combat
 		{
 			Vector2 velocity;
 
-			if (Blocked == true)
+			if (Blocked)
 			{
-				velocity = (HitStateType == xnaMugen.StateType.Airborne) ? HitDef.AirGuardVelocity : HitDef.GroundGuardVelocity;
+				velocity = HitStateType == StateType.Airborne ? HitDef.AirGuardVelocity : HitDef.GroundGuardVelocity;
 			}
 			else
 			{
-				velocity = (HitStateType == xnaMugen.StateType.Airborne) ? HitDef.AirVelocity : HitDef.GroundVelocity;
+				velocity = HitStateType == StateType.Airborne ? HitDef.AirVelocity : HitDef.GroundVelocity;
 
-				if (Killed == true)
+				if (Killed)
 				{
 					velocity.X *= .66f;
 					velocity.Y = -6;
@@ -153,83 +155,68 @@ namespace xnaMugen.Combat
 			return velocity;
 		}
 
-		public HitDefinition HitDef
-		{
-			get { return m_hitdef; }
-		}
+		public HitDefinition HitDef => m_hitdef;
 
-		public Boolean Blocked
+		public bool Blocked
 		{
-			get { return m_blocked; }
+			get => m_blocked;
 
 			set { m_blocked = value; }
 		}
 
-		public Boolean Killed
+		public bool Killed
 		{
-			get { return m_killed; }
+			get => m_killed;
 
 			set { m_killed = value; }
 		}
 
 		public StateType HitStateType
 		{
-			get { return m_hitstatetype; }
+			get => m_hitstatetype;
 
 			set { m_hitstatetype = value; }
 		}
 
-		public Int32 HitShakeTime
+		public int HitShakeTime
 		{
-			get { return m_hitshaketime; }
+			get => m_hitshaketime;
 
 			set { m_hitshaketime = value; }
 		}
 
-		public Single DefenseMultiplier
+		public float DefenseMultiplier
 		{
-			get { return m_defensemultiplier; }
+			get => m_defensemultiplier;
 
 			set { m_defensemultiplier = value; }
 		}
 
 		public Character Attacker
 		{
-			get { return m_attacker; }
+			get => m_attacker;
 
 			set { m_attacker = value; }
 		}
 
-		public Int32 HitTime
+		public int HitTime
 		{
-			get { return m_hittime; }
+			get => m_hittime;
 
 			set { m_hittime = value; }
 		}
 
-		public HitBy HitBy1
-		{
-			get { return m_hitby1; }
-		}
+		public HitBy HitBy1 => m_hitby1;
 
-		public HitBy HitBy2
-		{
-			get { return m_hitby2; }
-		}
+		public HitBy HitBy2 => m_hitby2;
 
-		public Boolean IsFalling
-		{
-			get { return (m_character.MoveType == MoveType.BeingHit) ? HitDef.Fall : false; }
-		}
+		public bool IsFalling => m_character.MoveType == MoveType.BeingHit ? HitDef.Fall : false;
 
-		public ListIterator<HitOverride> HitOverrides
-		{
-			get { return new ListIterator<HitOverride>(m_hitoverrides); }
-		}
+		public ListIterator<HitOverride> HitOverrides => new ListIterator<HitOverride>(m_hitoverrides);
 
-		public Int32 HitCount
+		public int HitCount
 		{
-			get { return m_hitcount; }
+			get => m_hitcount;
 
 			set { m_hitcount = value; }
 		}
@@ -237,46 +224,46 @@ namespace xnaMugen.Combat
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Character m_character;
+		private readonly Character m_character;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly HitDefinition m_hitdef;
+		private readonly HitDefinition m_hitdef;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Boolean m_blocked;
+		private bool m_blocked;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Boolean m_killed;
+		private bool m_killed;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		StateType m_hitstatetype;
+		private StateType m_hitstatetype;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Int32 m_hitshaketime;
+		private int m_hitshaketime;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Single m_defensemultiplier;
+		private float m_defensemultiplier;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Character m_attacker;
+		private Character m_attacker;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Int32 m_hittime;
+		private int m_hittime;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly HitBy m_hitby1;
+		private readonly HitBy m_hitby1;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly HitBy m_hitby2;
+		private readonly HitBy m_hitby2;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Boolean m_isfalling;
+		private bool m_isfalling;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly List<HitOverride> m_hitoverrides;
+		private readonly List<HitOverride> m_hitoverrides;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		Int32 m_hitcount;
+		private int m_hitcount;
 
 		#endregion
 	}

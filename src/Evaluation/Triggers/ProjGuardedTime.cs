@@ -1,21 +1,19 @@
-using System;
-
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("ProjGuardedTime")]
-	static class ProjGuardedTime
+	internal static class ProjGuardedTime
 	{
-		public static Int32 Evaluate(Object state, ref Boolean error, Int32 projectile_id)
+		public static int Evaluate(object state, ref bool error, int projectileId)
 		{
-			Combat.Character character = state as Combat.Character;
+			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
 				return 0;
 			}
 
-			Combat.ProjectileInfo projinfo = character.OffensiveInfo.ProjectileInfo;
-			if (projinfo.Type == ProjectileDataType.Guarded && (projectile_id <= 0 || projectile_id == projinfo.ProjectileId))
+			var projinfo = character.OffensiveInfo.ProjectileInfo;
+			if (projinfo.Type == ProjectileDataType.Guarded && (projectileId <= 0 || projectileId == projinfo.ProjectileId))
 			{
 				return projinfo.Time;
 			}

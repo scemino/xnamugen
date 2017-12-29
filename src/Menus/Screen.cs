@@ -1,27 +1,22 @@
 ﻿using System;
 using System.Diagnostics;
-using xnaMugen.IO;
-using System.Collections.Generic;
 using xnaMugen.Drawing;
-using xnaMugen.Collections;
-using System.Text.RegularExpressions;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace xnaMugen.Menus
 {
-	abstract class Screen : Resource
+	internal abstract class Screen : Resource
 	{
 		protected Screen(MenuSystem menusystem)
 		{
-			if (menusystem == null) throw new ArgumentNullException("menusystem");
+			if (menusystem == null) throw new ArgumentNullException(nameof(menusystem));
 
 			m_menusystem = menusystem;
 		}
 
 		public virtual void SetInput(Input.InputState inputstate)
 		{
-			if (inputstate == null) throw new ArgumentNullException("inputstate");
+			if (inputstate == null) throw new ArgumentNullException(nameof(inputstate));
 
 			MenuSystem.GetSubSystem<Input.InputSystem>().SaveInputState();
 		}
@@ -51,39 +46,36 @@ namespace xnaMugen.Menus
 		{
 		}
 
-		public virtual void Draw(Boolean debugdraw)
+		public virtual void Draw(bool debugdraw)
 		{
 		}
 
-		public void Print(PrintData printdata, Vector2 location, String text, Rectangle? scissorrect)
+		public void Print(PrintData printdata, Vector2 location, string text, Rectangle? scissorrect)
 		{
-			if (text == null) throw new ArgumentNullException("text");
+			if (text == null) throw new ArgumentNullException(nameof(text));
 
 			MenuSystem.FontMap.Print(printdata, location, text, scissorrect);
 		}
 
-		protected override void Dispose(Boolean disposing)
+		protected override void Dispose(bool disposing)
 		{
-			if (disposing == true)
+			if (disposing)
 			{
 			}
 
 			base.Dispose(disposing);
 		}
 
-		public MenuSystem MenuSystem
-		{
-			get { return m_menusystem; }
-		}
+		public MenuSystem MenuSystem => m_menusystem;
 
-		public abstract Int32 FadeInTime { get; }
+		public abstract int FadeInTime { get; }
 
-		public abstract Int32 FadeOutTime { get; }
+		public abstract int FadeOutTime { get; }
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly MenuSystem m_menusystem;
+		private readonly MenuSystem m_menusystem;
 
 		#endregion
 	}

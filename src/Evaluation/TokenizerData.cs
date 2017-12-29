@@ -4,18 +4,18 @@ using System.Diagnostics;
 
 namespace xnaMugen.Evaluation
 {
-	abstract class TokenData
+	internal abstract class TokenData
 	{
-		protected TokenData(Converter<String, Boolean> matcher)
+		protected TokenData(Converter<string, bool> matcher)
 		{
-			if (matcher == null) throw new ArgumentNullException("matcher");
+			if (matcher == null) throw new ArgumentNullException(nameof(matcher));
 
 			m_matcher = matcher;
 		}
 
-		public Boolean Match(String input)
+		public bool Match(string input)
 		{
-			if (input == null) throw new ArgumentNullException("input");
+			if (input == null) throw new ArgumentNullException(nameof(input));
 
 			return m_matcher(input);
 		}
@@ -23,7 +23,7 @@ namespace xnaMugen.Evaluation
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Converter<String, Boolean> m_matcher;
+		private readonly Converter<string, bool> m_matcher;
 
 		#endregion
 	}
@@ -31,38 +31,35 @@ namespace xnaMugen.Evaluation
 
 namespace xnaMugen.Evaluation.Tokenizing
 {
-	abstract class LiteralData : TokenData
+	internal abstract class LiteralData : TokenData
 	{
-		protected LiteralData(String text)
+		protected LiteralData(string text)
 			: base(x => IsTextMatch(x, text))
 		{
-			if (text == null) throw new ArgumentNullException("text");
+			if (text == null) throw new ArgumentNullException(nameof(text));
 
 			m_text = text;
 		}
 
-		static Boolean IsTextMatch(String lhs, String rhs)
+		private static bool IsTextMatch(string lhs, string rhs)
 		{
-			if (lhs == null) throw new ArgumentNullException("lhs");
-			if (rhs == null) throw new ArgumentNullException("rhs");
+			if (lhs == null) throw new ArgumentNullException(nameof(lhs));
+			if (rhs == null) throw new ArgumentNullException(nameof(rhs));
 
-			return String.Equals(lhs, rhs, StringComparison.OrdinalIgnoreCase);
+			return string.Equals(lhs, rhs, StringComparison.OrdinalIgnoreCase);
 		}
 
-		public String Text
-		{
-			get { return m_text; }
-		}
+		public string Text => m_text;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly String m_text;
+		private readonly string m_text;
 
 		#endregion
 	}
 
-	class UnknownData : TokenData
+	internal class UnknownData : TokenData
 	{
 		public UnknownData()
 			: base(x => true)
@@ -70,16 +67,16 @@ namespace xnaMugen.Evaluation.Tokenizing
 		}
 	}
 
-	class TextData : TokenData
+	internal class TextData : TokenData
 	{
 		public TextData()
 			: base(DoMatch)
 		{
 		}
 
-		static Boolean DoMatch(String input)
+		private static bool DoMatch(string input)
 		{
-			if (input == null) throw new ArgumentNullException("input");
+			if (input == null) throw new ArgumentNullException(nameof(input));
 
 			if (input.Length < 1) return false;
 
@@ -87,117 +84,111 @@ namespace xnaMugen.Evaluation.Tokenizing
 		}
 	}
 
-	class SymbolData : LiteralData
+	internal class SymbolData : LiteralData
 	{
-		public SymbolData(Symbol symbol, String text)
+		public SymbolData(Symbol symbol, string text)
 			: base(text)
 		{
-			if (symbol == Symbol.None) throw new ArgumentOutOfRangeException("symbol");
+			if (symbol == Symbol.None) throw new ArgumentOutOfRangeException(nameof(symbol));
 
 			m_symbol = symbol;
 		}
 
-		public Symbol Symbol
-		{
-			get { return m_symbol; }
-		}
+		public Symbol Symbol => m_symbol;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Symbol m_symbol;
+		private readonly Symbol m_symbol;
 
 		#endregion
 	}
 
-	abstract class NodeData : LiteralData
+	internal abstract class NodeData : LiteralData
 	{
-		protected NodeData(String text, String functionname)
+		protected NodeData(string text, string functionname)
 			: base(text)
 		{
-			if (functionname == null) throw new ArgumentNullException("functionname");
+			if (functionname == null) throw new ArgumentNullException(nameof(functionname));
 
 			m_name = functionname;
 		}
 
-		public String Name
-		{
-			get { return m_name; }
-		}
+		public string Name => m_name;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly String m_name;
+		private readonly string m_name;
 
 		#endregion
 	}
 
-	abstract class NumberData : TokenData
+	internal abstract class NumberData : TokenData
 	{
-		protected NumberData(Converter<String, Boolean> matcher)
+		protected NumberData(Converter<string, bool> matcher)
 			: base(matcher)
 		{
 		}
 
-		public abstract Number GetNumber(String text);
+		public abstract Number GetNumber(string text);
 	}
 
-	class IntData : NumberData
+	internal class IntData : NumberData
 	{
 		public IntData()
 			: base(IsIntNumber)
 		{
 		}
 
-		public override Number GetNumber(String text)
+		public override Number GetNumber(string text)
 		{
-			if (text == null) throw new ArgumentNullException("text");
+			if (text == null) throw new ArgumentNullException(nameof(text));
 
-			Int32 number;
-			if (Int32.TryParse(text, NumberStyles.Integer, NumberFormatInfo.InvariantInfo, out number) == true) return new Number(number);
+			int number;
+			if (int.TryParse(text, NumberStyles.Integer, NumberFormatInfo.InvariantInfo, out number)) return new Number(number);
 
 			return new Number();
 		}
 
-		static Boolean IsIntNumber(String input)
+		private static bool IsIntNumber(string input)
 		{
-			if (input == null) throw new ArgumentNullException("input");
+			if (input == null) throw new ArgumentNullException(nameof(input));
 
-			Int32 number;
-			return Int32.TryParse(input, NumberStyles.Integer, NumberFormatInfo.InvariantInfo, out number);
+			int number;
+			return int.TryParse(input, NumberStyles.Integer, NumberFormatInfo.InvariantInfo, out number);
 		}
 	}
 
-	class FloatData : NumberData
+	internal class FloatData : NumberData
 	{
 		public FloatData()
 			: base(IsFloatNumber)
 		{
 		}
 
-		public override Number GetNumber(String text)
+		public override Number GetNumber(string text)
 		{
-			if (text == null) throw new ArgumentNullException("text");
+			if (text == null) throw new ArgumentNullException(nameof(text));
 
-			Single number;
-			if (Single.TryParse(text, NumberStyles.Float, NumberFormatInfo.InvariantInfo, out number) == true) return new Number(number);
+			float number;
+			if (float.TryParse(text, NumberStyles.Float, NumberFormatInfo.InvariantInfo, out number)) return new Number(number);
 
 			return new Number();
 		}
 
-		static Boolean IsFloatNumber(String input)
+		private static bool IsFloatNumber(string input)
 		{
-			if (input == null) throw new ArgumentNullException("input");
+			if (input == null) throw new ArgumentNullException(nameof(input));
 
-			Single number;
-			return Single.TryParse(input, NumberStyles.Float, NumberFormatInfo.InvariantInfo, out number);
+			float number;
+			return float.TryParse(input, NumberStyles.Float, NumberFormatInfo.InvariantInfo, out number);
 		}
 	}
 
-	abstract class OperatorData : NodeData
+	internal abstract class OperatorData : NodeData
 	{
-		protected OperatorData(Operator @operator, String text, String functionname)
+		protected OperatorData(Operator @operator, string text, string functionname)
 			: base(text, functionname)
 		{
 			if (@operator == Operator.None) throw new ArgumentOutOfRangeException("@operator");
@@ -205,89 +196,77 @@ namespace xnaMugen.Evaluation.Tokenizing
 			m_operator = @operator;
 		}
 
-		public Operator Operator
-		{
-			get { return m_operator; }
-		}
+		public Operator Operator => m_operator;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Operator m_operator;
+		private readonly Operator m_operator;
 
 		#endregion
 	}
 
-	class UnaryOperatorData : OperatorData
+	internal class UnaryOperatorData : OperatorData
 	{
-		public UnaryOperatorData(Operator @operator, String text, String functionname)
+		public UnaryOperatorData(Operator @operator, string text, string functionname)
 			: base(@operator, text, functionname)
 		{
 		}
 	}
 
-	class BinaryOperatorData : OperatorData
+	internal class BinaryOperatorData : OperatorData
 	{
-		public BinaryOperatorData(Operator @operator, String text, String functionname, Int32 precedence)
+		public BinaryOperatorData(Operator @operator, string text, string functionname, int precedence)
 			: base(@operator, text, functionname)
 		{
-			if (precedence < 0) throw new ArgumentOutOfRangeException("precedence");
+			if (precedence < 0) throw new ArgumentOutOfRangeException(nameof(precedence));
 
 			m_precedence = precedence;
 		}
 
-		public Int32 Precedence
-		{
-			get { return m_precedence; }
-		}
+		public int Precedence => m_precedence;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Int32 m_precedence;
+		private readonly int m_precedence;
 
 		#endregion
 	}
 
-	class CustomFunctionData : NodeData
+	internal class CustomFunctionData : NodeData
 	{
-		public CustomFunctionData(String text, String name, Type type)
+		public CustomFunctionData(string text, string name, Type type)
 			: base(text, name)
 		{
 			m_type = type;
 			m_parse = (NodeParse)Delegate.CreateDelegate(typeof(NodeParse), type.GetMethod("Parse", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public));
 		}
 
-		public Type Type
-		{
-			get { return m_type; }
-		}
+		public Type Type => m_type;
 
-		public NodeParse Parse
-		{
-			get { return m_parse; }
-		}
+		public NodeParse Parse => m_parse;
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly Type m_type;
+		private readonly Type m_type;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		readonly NodeParse m_parse;
+		private readonly NodeParse m_parse;
 
 		#endregion
 	}
 
-	class StateRedirectionData : CustomFunctionData
+	internal class StateRedirectionData : CustomFunctionData
 	{
-		public StateRedirectionData(String text, String name, Type type)
+		public StateRedirectionData(string text, string name, Type type)
 			: base(text, name, type)
 		{
 		}
 	}
 
-	class RangeData : TokenData
+	internal class RangeData : TokenData
 	{
 		public RangeData()
 			: base(x => false)

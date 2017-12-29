@@ -1,11 +1,9 @@
-﻿using System;
-
-namespace xnaMugen.Evaluation
+﻿namespace xnaMugen.Evaluation
 {
-	interface IExpression
+	internal interface IExpression
 	{
-		Number[] Evaluate(Object state);
+		Number[] Evaluate(object state);
 
-		Boolean IsValid { get; }
+		bool IsValid { get; }
 	}
 }
