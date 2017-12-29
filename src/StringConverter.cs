@@ -222,7 +222,12 @@ namespace xnaMugen
 		[StringConversion(typeof(Blending))]
 		private object ToBlending(string s)
 		{
-			StringComparer sc = StringComparer.OrdinalIgnoreCase;
+			if (string.IsNullOrEmpty(s))
+			{
+				return new Blending();
+			}
+			
+			var sc = StringComparer.OrdinalIgnoreCase;
 
 			if (sc.Equals(s, "none"))
 			{
