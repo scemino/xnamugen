@@ -49,7 +49,6 @@ namespace xnaMugen.Video
 			m_renderer.UseOldShader	= settings.UseOldShader;
 			m_devicemanager.SynchronizeWithVerticalRetrace = settings.VSync;
 
-			//m_devicemanager.MinimumPixelShaderProfile	= m_renderer.UseOldShader ?	ShaderProfile.PS_2_0 : ShaderProfile.PS_3_0;
 			m_devicemanager.ApplyChanges();
 		}
 

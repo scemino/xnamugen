@@ -4,8 +4,8 @@ namespace xnaMugen.Elements
 {
 	internal class StaticImage : Base
 	{
-		public StaticImage(Collection collection, string name, DataMap datamap, Drawing.SpriteManager sprites, Animations.AnimationManager animations/*, Audio.SoundManager sounds*/)
-			: base(collection, name, datamap, sprites, animations/*, sounds*/)
+		public StaticImage(Collection collection, string name, DataMap datamap, Drawing.SpriteManager sprites, Animations.AnimationManager animations, Audio.SoundManager sounds)
+			: base(collection, name, datamap, sprites, animations, sounds)
 		{
 		}
 

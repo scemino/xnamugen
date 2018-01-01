@@ -32,11 +32,11 @@ namespace xnaMugen.StateMachine.Controllers
 
 			if (soundid == null) return;
 
-			//Audio.SoundManager soundmanager = SoundId.IsCommon(false) ? character.Engine.CommonSounds : character.SoundManager;
+			Audio.SoundManager soundmanager = SoundId.IsCommon(false) ? character.Engine.CommonSounds : character.SoundManager;
 
-			//Audio.Channel channel = soundmanager.Play(channelindex, soundid.Value, priority, volume, frequencymultiplier, loop);
-			//if (channel != null && pan != null) channel.RelativePan(pan.Value);
-			//if (channel != null && abspan != null) channel.AbsolutePan(abspan.Value);
+			Audio.Channel channel = soundmanager.Play(channelindex, soundid.Value, priority, volume, frequencymultiplier, loop);
+			if (channel != null && pan != null) channel.RelativePan(pan.Value);
+			if (channel != null && abspan != null) channel.AbsolutePan(abspan.Value);
 		}
 
 		public override bool IsValid()

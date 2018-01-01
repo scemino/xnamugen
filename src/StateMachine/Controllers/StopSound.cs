@@ -17,10 +17,14 @@ namespace xnaMugen.StateMachine.Controllers
 			var channelnumber = EvaluationHelper.AsInt32(character, Channel, null);
 			if (channelnumber == null) return;
 
-			if (channelnumber == -1)
-			{
-				//StateSystem.GetSubSystem<Audio.SoundSystem>().StopAllSounds();
-			}
+            if (channelnumber == -1)
+            {
+                StateSystem.GetSubSystem<Audio.SoundSystem>().StopAllSounds();
+            }
+            else
+            {
+                character.SoundManager.Stop(channelnumber.Value);
+            }
 		}
 
 		public override bool IsValid()

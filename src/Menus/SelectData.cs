@@ -18,7 +18,7 @@ namespace xnaMugen.Menus
 			m_buttonmap = buttonmap;
 			m_moveoverempty = moveoverempty;
 
-			m_elements = new Elements.Collection(SelectScreen.SpriteManager, SelectScreen.AnimationManager/*, SelectScreen.SoundManager*/, SelectScreen.MenuSystem.FontMap);
+			m_elements = new Elements.Collection(SelectScreen.SpriteManager, SelectScreen.AnimationManager, SelectScreen.SoundManager, SelectScreen.MenuSystem.FontMap);
 			m_elements.Build("cursor.active", textsection, prefix + ".cursor.active");
 			m_elements.Build("cursor.done", textsection, prefix + ".cursor.done");
 			m_elements.Build("cursor.move", textsection, prefix + ".cursor.move");
@@ -61,14 +61,14 @@ namespace xnaMugen.Menus
 
 		public void PlayCursorMoveSound()
 		{
-			//Elements.Base element = m_elements.GetElement("cursor.move");
-			//if (element != null) element.PlaySound();
+			Elements.Base element = m_elements.GetElement("cursor.move");
+			if (element != null) element.PlaySound();
 		}
 
 		public void PlaySelectSound()
 		{
-			//Elements.Base element = m_elements.GetElement("cursor.done");
-			//if (element != null) element.PlaySound();
+			Elements.Base element = m_elements.GetElement("cursor.done");
+			if (element != null) element.PlaySound();
 		}
 
 		public void DrawCursorActive(Vector2 location)

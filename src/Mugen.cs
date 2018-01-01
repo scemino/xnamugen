@@ -46,7 +46,7 @@ namespace xnaMugen
 			m_subsystems.GetSubSystem<ProfileLoader>().Initialize();
 			m_subsystems.GetSubSystem<Input.InputSystem>().Initialize();
 			m_subsystems.GetSubSystem<Video.VideoSystem>().Initialize();
-			//m_subsystems.GetSubSystem<Audio.SoundSystem>().Initialize();
+			m_subsystems.GetSubSystem<Audio.SoundSystem>().Initialize();
 			m_subsystems.GetSubSystem<Diagnostics.DiagnosticSystem>().Initialize();
 
 			m_subsystems.LoadAllMainSystems();

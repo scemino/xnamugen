@@ -42,7 +42,7 @@ namespace xnaMugen.Combat
 			MainPlayer.PlayerControl = PlayerControl.NoControl;
 			MainPlayer.Life = MainPlayer.Constants.MaximumLife;
 			MainPlayer.Power = 0;
-			//MainPlayer.SoundManager.Stop();
+			MainPlayer.SoundManager.Stop();
 			MainPlayer.JugglePoints = MainPlayer.Constants.AirJuggle;
 
 			if (Side == TeamSide.Left)
@@ -63,7 +63,7 @@ namespace xnaMugen.Combat
 				TeamMate.PlayerControl = PlayerControl.NoControl;
 				TeamMate.Life = TeamMate.Constants.MaximumLife;
 				TeamMate.Power = 0;
-				//TeamMate.SoundManager.Stop();
+				TeamMate.SoundManager.Stop();
 				TeamMate.JugglePoints = TeamMate.Constants.AirJuggle;
 
 				if (Side == TeamSide.Left)

@@ -520,8 +520,8 @@ namespace xnaMugen.Combat
 			if (attacker == null) throw new ArgumentNullException(nameof(attacker));
 			if (target == null) throw new ArgumentNullException(nameof(target));
 
-			//Audio.SoundManager snd = (playersound == true) ? attacker.SoundManager : attacker.Engine.CommonSounds;
-			//snd.Play(-1, soundid, false, 0, 1.0f, false);
+			Audio.SoundManager snd = (playersound == true) ? attacker.SoundManager : attacker.Engine.CommonSounds;
+			snd.Play(-1, soundid, false, 0, 1.0f, false);
 		}
 
 		private void MakeSpark(Projectile projectile, Character target, int animationnumber, Vector2 sparklocation, bool playeranimation)

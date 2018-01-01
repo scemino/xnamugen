@@ -52,14 +52,14 @@ namespace xnaMugen.Combat.Logic
 
 			if (TickCount == m_element.DataMap.SoundTime)
 			{
-    //            if (m_element == Engine.Elements.GetElement("round.default"))
-				//{
-				//	Engine.RoundInformation.GetRoundElement(Engine.RoundNumber).PlaySound();
-				//}
-				//else
-				//{
-				//	m_element.PlaySound();
-				//}
+                if (m_element == Engine.Elements.GetElement("round.default"))
+				{
+					Engine.RoundInformation.GetRoundElement(Engine.RoundNumber).PlaySound();
+				}
+				else
+				{
+					m_element.PlaySound();
+				}
 			}
 
 			if (m_element.FinishedDrawing(m_tickcount))

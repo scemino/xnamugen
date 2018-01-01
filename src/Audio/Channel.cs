@@ -1,171 +1,168 @@
-﻿//using Microsoft.DirectX.DirectSound;
+﻿using System;
+using System.Diagnostics;
+using System.IO;
+using Microsoft.Xna.Framework.Audio;
 
 namespace xnaMugen.Audio
 {
 	/// <summary>
 	/// A location where an instance of a sound may be played.
 	/// </summary>
-	//class Channel : Resource
-	//{
-	//	/// <summary>
-	//	/// Creates a new instance of this class.
-	//	/// </summary>
-	//	public Channel()
-	//	{
-	//		m_buffer = null;
-	//		m_panning = 0;
-	//		m_paused = false;
-	//		m_playflags = BufferPlayFlags.Default;
-	//		m_usingid = new ChannelId();
-	//	}
+	class Channel : Resource
+	{
+		/// <summary>
+		/// Creates a new instance of this class.
+		/// </summary>
+		public Channel()
+		{
+			m_panning = 0;
+			m_paused = false;
+			m_usingid = new ChannelId();
+		}
 
-	//	/// <summary>
-	//	/// Plays a sound.
-	//	/// </summary>
-	//	/// <param name="id">The ChannelId identifing the SoundManger playing the sound and the channel number.</param>
-	//	/// <param name="buffer">A SecondaryBuffer containing the sound to be playing.</param>
-	//	/// <param name="frequencymultiplier">The multiplier applied the sound to change its pitch. 1.0f for no change.</param>
-	//	/// <param name="looping">Whether the sound should loop automatically until stopped.</param>
-	//	/// <param name="volume">The volume level of the sound.</param>
-	//	public void Play(ChannelId id, SecondaryBuffer buffer, Single frequencymultiplier, Boolean looping, Int32 volume)
-	//	{
-	//		if (buffer == null) throw new ArgumentNullException("buffer");
-	//		if (volume > (Int32)Volume.Max || volume < (Int32)Volume.Min) throw new ArgumentOutOfRangeException("volume");
+		/// <summary>
+		/// Plays a sound.
+		/// </summary>
+		/// <param name="id">The ChannelId identifing the SoundManger playing the sound and the channel number.</param>
+		/// <param name="buffer">A byte[] containing the sound to be playing.</param>
+		/// <param name="frequencymultiplier">The multiplier applied the sound to change its pitch. 1.0f for no change.</param>
+		/// <param name="looping">Whether the sound should loop automatically until stopped.</param>
+		/// <param name="volume">The volume level of the sound.</param>
+		public void Play(ChannelId id, byte[] buffer, float frequencymultiplier, bool looping, int volume)
+		{
+			if (buffer == null) throw new ArgumentNullException(nameof(buffer));
 
-	//		Stop();
+			Stop();
 
-	//		m_usingid = id;
-	//		m_buffer = buffer;
+			m_usingid = id;
 
-	//		BufferPlayFlags flags = (looping == true) ? BufferPlayFlags.Looping : BufferPlayFlags.Default;
+            try
+			{
+                using (var ms = new MemoryStream(buffer))
+                {
+                    m_soundEffect = SoundEffect.FromStream(ms).CreateInstance();
+                }
+                // TODO: pitch, volume, pan
+				//m_soundEffect.Pitch = frequencymultiplier;
+                //m_soundEffect.Volume = volume;
+                //m_soundEffect.Pan = m_panning;
+				m_soundEffect.IsLooped = looping;
+				m_soundEffect.Play();
+			}
+			catch { }
+		}
 
-	//		m_buffer.Frequency = (Int32)(m_buffer.Frequency * frequencymultiplier);
-	//		m_buffer.SetCurrentPosition(0);
-	//		m_buffer.Pan = (Int32)Pan.Center;
-	//		m_buffer.Volume = volume;
+		/// <summary>
+		/// Pans a currently playing sound left or right of it current location, in pixels.
+		/// </summary>
+		/// <param name="panning">The distance from the current panning location, in pixels, that the sound should be panned.</param>
+		public void RelativePan(int panning)
+		{
+			AbsolutePan(m_panning + panning);
+		}
 
-	//		m_playflags = flags;
+		/// <summary>
+		/// Pans a currently playing sound to a new location, in pixels.
+		/// </summary>
+		/// <param name="panning">The distance from the center of the screen, in pixels, that the sound should be panned.</param>
+		public void AbsolutePan(int panning)
+		{
+			if (IsPlaying == false) return;
 
-	//		try
-	//		{
-	//			m_buffer.Play(0, flags);
-	//		}
-	//		catch { }
-	//	}
+			int halfx = Mugen.ScreenSize.X / 2;
 
-	//	/// <summary>
-	//	/// Pans a currently playing sound left or right of it current location, in pixels.
-	//	/// </summary>
-	//	/// <param name="panning">The distance from the current panning location, in pixels, that the sound should be panned.</param>
-	//	public void RelativePan(Int32 panning)
-	//	{
-	//		AbsolutePan(m_panning + panning);
-	//	}
+			m_panning = Misc.Clamp(panning, -halfx, halfx);
 
-	//	/// <summary>
-	//	/// Pans a currently playing sound to a new location, in pixels.
-	//	/// </summary>
-	//	/// <param name="panning">The distance from the center of the screen, in pixels, that the sound should be panned.</param>
-	//	public void AbsolutePan(Int32 panning)
-	//	{
-	//		if (IsPlaying == false) return;
+            float pan_percentage = (float)(m_panning + halfx) / (float)Mugen.ScreenSize.X;
 
-	//		Int32 halfx = Mugen.ScreenSize.X / 2;
+            // TODO: panning 
+            //int pan_amount = (Int32)MathHelper.Lerp((float)Pan.Left, (float)Pan.Right, pan_percentage);
 
-	//		m_panning = Misc.Clamp(panning, -halfx, halfx);
+			//m_buffer.Pan = pan_amount;
+		}
 
-	//		Single pan_percentage = (Single)(m_panning + halfx) / (Single)Mugen.ScreenSize.X;
+		/// <summary>
+		/// Stops the sounds currently playing in this Channel.
+		/// </summary>
+		public void Stop()
+		{
+            if (m_soundEffect != null)
+			{
+                m_soundEffect.Stop();
+                m_soundEffect.Dispose();
+                m_soundEffect = null;
+			}
+		}
 
-	//		Int32 pan_amount = (Int32)MathHelper.Lerp((Single)Pan.Left, (Single)Pan.Right, pan_percentage);
+		public void Pause()
+		{
+			if (IsPlaying == true)
+			{
+                m_soundEffect.Stop();
+				m_paused = true;
+			}
+		}
 
-	//		m_buffer.Pan = pan_amount;
-	//	}
+		public void UnPause()
+		{
+            if (m_soundEffect != null && m_paused == true)
+			{
+				m_paused = false;
+                m_soundEffect.Play();
+			}
+		}
 
-	//	/// <summary>
-	//	/// Stops the sounds currently playing in this Channel.
-	//	/// </summary>
-	//	public void Stop()
-	//	{
-	//		if (m_buffer != null)
-	//		{
-	//			m_buffer.Stop();
-	//			m_buffer.Dispose();
-	//			m_buffer = null;
-	//		}
-	//	}
+		/// <summary>
+		/// Disposes of resources managed by this class instance.
+		/// </summary>
+		/// <param name="disposing">Determined whether to dispose of managed resources.</param>
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing == true)
+			{
+                if (m_soundEffect != null)
+				{
+                    m_soundEffect.Stop();
+                    m_soundEffect.Dispose();
+                    m_soundEffect = null;
+				}
+			}
 
-	//	public void Pause()
-	//	{
-	//		if (IsPlaying == true)
-	//		{
-	//			m_buffer.Stop();
-	//			m_paused = true;
-	//		}
-	//	}
+			base.Dispose(disposing);
+		}
 
-	//	public void UnPause()
-	//	{
-	//		if (m_buffer != null && m_paused == true)
-	//		{
-	//			m_paused = false;
-	//			m_buffer.Play(0, m_playflags);
-	//		}
-	//	}
+		/// <summary>
+		/// Get whether there is a sound currenly playing in this Channel.
+		/// </summary>
+		/// <returns>true is a sound is playing; false otherwise.</returns>
+		public bool IsPlaying
+		{
+            get => (m_soundEffect != null) && m_soundEffect.State == SoundState.Playing;
+        }
 
-	//	/// <summary>
-	//	/// Disposes of resources managed by this class instance.
-	//	/// </summary>
-	//	/// <param name="disposing">Determined whether to dispose of managed resources.</param>
-	//	protected override void Dispose(Boolean disposing)
-	//	{
-	//		if (disposing == true)
-	//		{
-	//			if (m_buffer != null)
-	//			{
-	//				m_buffer.Stop();
-	//				m_buffer.Dispose();
-	//				m_buffer = null;
-	//			}
-	//		}
+		/// <summary>
+		/// A identifier for the SoundManager currently using this channel.
+		/// </summary>
+		/// <returns>If there is a sound playing in this Channel, then the ChannelId identifing the SoundManager and the channel number. Otherwise, a default constructed ChannelId.</returns>
+		public ChannelId UsingId
+		{
+			get { return (IsPlaying == true) ? m_usingid : new ChannelId(); }
+		}
 
-	//		base.Dispose(disposing);
-	//	}
+		#region Fields
 
-	//	/// <summary>
-	//	/// Get whether there is a sound currenly playing in this Channel.
-	//	/// </summary>
-	//	/// <returns>true is a sound is playing; false otherwise.</returns>
-	//	public Boolean IsPlaying
-	//	{
-	//		get { return (m_buffer != null) ? m_buffer.Status.Playing : false; }
-	//	}
+		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        private int m_panning;
 
-	//	/// <summary>
-	//	/// A identifier for the SoundManager currently using this channel.
-	//	/// </summary>
-	//	/// <returns>If there is a sound playing in this Channel, then the ChannelId identifing the SoundManager and the channel number. Otherwise, a default constructed ChannelId.</returns>
-	//	public ChannelId UsingId
-	//	{
-	//		get { return (IsPlaying == true) ? m_usingid : new ChannelId(); }
-	//	}
+		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        private ChannelId m_usingid;
 
-	//	#region Fields
+		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        private bool m_paused;
 
-	//	[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-	//	SecondaryBuffer m_buffer;
+		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        private SoundEffectInstance m_soundEffect;
 
-	//	[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-	//	Int32 m_panning;
-
-	//	[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-	//	ChannelId m_usingid;
-
-	//	[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-	//	Boolean m_paused;
-
-	//	[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-	//	BufferPlayFlags m_playflags;
-
-	//	#endregion
-	//}
+        #endregion
+    }
 }

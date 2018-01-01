@@ -65,8 +65,8 @@ namespace xnaMugen.StateMachine.Controllers
 
 			if (soundid != null)
 			{
-				//Audio.SoundManager soundmanager = SoundId.IsCommon(true) ? character.Engine.CommonSounds : character.SoundManager;
-				//soundmanager.Play(soundid.Value);
+				Audio.SoundManager soundmanager = SoundId.IsCommon(true) ? character.Engine.CommonSounds : character.SoundManager;
+				soundmanager.Play(soundid.Value);
 			}
 		}
 

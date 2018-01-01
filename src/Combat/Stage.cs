@@ -166,10 +166,10 @@ namespace xnaMugen.Combat
 
 		private static BoundsRect BuildBoundsRect(TextSection textsection, string left, string right, string top, string bottom)
 		{
-			var leftval = textsection.GetAttribute<int>(left);
-			var rightval = textsection.GetAttribute<int>(right);
-			var topval = textsection.GetAttribute<int>(top);
-			var downval = textsection.GetAttribute<int>(bottom);
+			var leftval = textsection.GetAttribute(left, 0);
+			var rightval = textsection.GetAttribute(right, 0);
+			var topval = textsection.GetAttribute(top, 0);
+			var downval = textsection.GetAttribute(bottom, 0);
 
 			return new BoundsRect(leftval, rightval, topval, downval);
 		}

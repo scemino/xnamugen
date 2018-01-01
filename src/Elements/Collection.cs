@@ -6,17 +6,17 @@ namespace xnaMugen.Elements
 {
 	internal class Collection
 	{
-		public Collection(Drawing.SpriteManager sprites, Animations.AnimationManager animations/*, Audio.SoundManager sounds*/, Drawing.FontMap fontmap)
+		public Collection(Drawing.SpriteManager sprites, Animations.AnimationManager animations, Audio.SoundManager sounds, Drawing.FontMap fontmap)
 		{
 			if (sprites == null) throw new ArgumentNullException(nameof(sprites));
 			if (animations == null) throw new ArgumentNullException(nameof(animations));
-			//if (sounds == null) throw new ArgumentNullException("sounds");
+			if (sounds == null) throw new ArgumentNullException("sounds");
 			if (fontmap == null) throw new ArgumentNullException(nameof(fontmap));
 
 			m_elements = new KeyedCollection<string, Base>(x => x.Name, StringComparer.OrdinalIgnoreCase);
 			m_spritemanager = sprites;
 			m_animationmanager = animations;
-			//m_soundmanager = sounds;
+			m_soundmanager = sounds;
 			m_fontmap = fontmap;
 		}
 
@@ -41,19 +41,19 @@ namespace xnaMugen.Elements
 			switch (datamap.Type)
 			{
 				case ElementType.Animation:
-					element = new AnimatedImage(this, name, datamap, SpriteManager, AnimationManager/*, SoundManager*/);
+					element = new AnimatedImage(this, name, datamap, SpriteManager, AnimationManager, SoundManager);
 					break;
 
 				case ElementType.Static:
-					element = new StaticImage(this, name, datamap, SpriteManager, AnimationManager/*, SoundManager*/);
+					element = new StaticImage(this, name, datamap, SpriteManager, AnimationManager, SoundManager);
 					break;
 
 				case ElementType.Text:
-					element = new Text(this, name, datamap, SpriteManager, AnimationManager /*, SoundManager*/);
+					element = new Text(this, name, datamap, SpriteManager, AnimationManager, SoundManager);
 					break;
 
 				default:
-					element = new Base(this, name, datamap, SpriteManager, AnimationManager /*, SoundManager*/);
+					element = new Base(this, name, datamap, SpriteManager, AnimationManager, SoundManager);
 					break;
 
 			}
@@ -71,15 +71,15 @@ namespace xnaMugen.Elements
 			return m_elements[name];
 		}
 
-		//public Audio.Channel PlaySound(String name)
-		//{
-		//	if (name == null) throw new ArgumentNullException("name");
+		public Audio.Channel PlaySound(string name)
+		{
+			if (name == null) throw new ArgumentNullException(nameof(name));
 
-		//	Elements.Base element = GetElement(name);
-		//	if (element != null) return element.PlaySound();
+			var element = GetElement(name);
+			if (element != null) return element.PlaySound();
 
-		//	return null;
-		//}
+			return null;
+		}
 
 		public void Update()
 		{
@@ -94,10 +94,10 @@ namespace xnaMugen.Elements
 			foreach (var element in m_elements) element.Reset();
 		}
 
-		//public Audio.SoundManager SoundManager
-		//{
-		//	get { return m_soundmanager; }
-		//}
+		public Audio.SoundManager SoundManager
+		{
+			get { return m_soundmanager; }
+		}
 
 		public Drawing.SpriteManager SpriteManager => m_spritemanager;
 
@@ -111,8 +111,8 @@ namespace xnaMugen.Elements
 		[DebuggerDisplay(null, Name = "Elements")]
 		private readonly KeyedCollection<string, Base> m_elements;
 
-		//[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		//readonly Audio.SoundManager m_soundmanager;
+		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+		readonly Audio.SoundManager m_soundmanager;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		private readonly Drawing.SpriteManager m_spritemanager;

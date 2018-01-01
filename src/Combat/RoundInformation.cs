@@ -90,7 +90,7 @@ namespace xnaMugen.Combat
 		{
 			if (elementname == null) throw new ArgumentNullException(nameof(elementname));
 
-			//Engine.Elements.PlaySound(elementname);
+			Engine.Elements.PlaySound(elementname);
 		}
 
 		public int NumberOfRounds => m_roundsforwin;

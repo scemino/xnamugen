@@ -554,7 +554,7 @@ namespace xnaMugen.Combat
 			}
 		}
 
-		//public abstract Audio.SoundManager SoundManager { get; }
+		public abstract Audio.SoundManager SoundManager { get; }
 
 		public abstract Commands.CommandManager CommandManager { get; }
 

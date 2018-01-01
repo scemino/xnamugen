@@ -29,7 +29,7 @@ namespace xnaMugen.Menus
 			m_cellsize = textsection.GetAttribute<Point>("cell.size");
 			m_cellspacing = textsection.GetAttribute<int>("cell.spacing");
 
-			m_elements = new Elements.Collection(SpriteManager, AnimationManager/*, SoundManager*/, MenuSystem.FontMap);
+			m_elements = new Elements.Collection(SpriteManager, AnimationManager, SoundManager, MenuSystem.FontMap);
 			m_elements.Build(textsection, "cell.bg");
 			m_elements.Build(textsection, "cell.random");
 
@@ -293,7 +293,7 @@ namespace xnaMugen.Menus
 		private void MoveStageSelection(int offset)
 		{
 			if (offset == 0) return;
-			//SoundManager.Play(m_soundstagemove);
+			SoundManager.Play(m_soundstagemove);
 
 			offset = offset % StageProfiles.Count;
 
@@ -323,7 +323,7 @@ namespace xnaMugen.Menus
 			if (pressed)
 			{
 				m_stageselected = true;
-				//SoundManager.Play(m_soundstageselect);
+				SoundManager.Play(m_soundstageselect);
 
 				m_stageselector.ButtonMap.Clear();
 			}
@@ -355,7 +355,7 @@ namespace xnaMugen.Menus
 		{
 			if (pressed)
 			{
-				//SoundManager.Play(m_soundcancel);
+				SoundManager.Play(m_soundcancel);
 
 				MenuSystem.PostEvent(new Events.SwitchScreen(ScreenType.Title));
 			}

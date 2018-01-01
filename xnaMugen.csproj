@@ -573,7 +573,6 @@
     <Compile Include="src\StringConverter.cs" />
     <Compile Include="src\StringFormatter.cs" />
     <Compile Include="src\SubSystems.cs" />
-    <Compile Include="src\MugenTest.cs" />
     <Compile Include="src\Timer.cs" />
     <Compile Include="src\Misc.cs" />
     <Compile Include="src\Video\DrawData.cs" />

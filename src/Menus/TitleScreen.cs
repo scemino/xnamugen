@@ -144,7 +144,7 @@ namespace xnaMugen.Menus
 					if (m_currentmenuitem >= menuoffset + m_visiblemenuitems) m_verticalmenudrawoffset += m_spacing.Y;
 				}
 
-				//SoundManager.Play(m_soundcursormove);
+				SoundManager.Play(m_soundcursormove);
 			}
 		}
 
@@ -166,7 +166,7 @@ namespace xnaMugen.Menus
 					if (m_currentmenuitem < menuoffset) m_verticalmenudrawoffset -= m_spacing.Y;
 				}
 
-				//SoundManager.Play(m_soundcursormove);
+				SoundManager.Play(m_soundcursormove);
 			}
 		}
 
@@ -174,7 +174,7 @@ namespace xnaMugen.Menus
 		{
 			if (pressed)
 			{
-				//SoundManager.Play(m_soundselect);
+				SoundManager.Play(m_soundselect);
 
 				if (m_currentmenuitem == (int)MainMenuOption.Versus)
 				{
@@ -192,7 +192,7 @@ namespace xnaMugen.Menus
 			if (pressed)
 			{
 				m_quitselected = true;
-				//SoundManager.Play(m_soundcancel);
+				SoundManager.Play(m_soundcancel);
 				MenuSystem.PostEvent(new Events.FadeScreen(FadeDirection.Out));
 			}
 		}

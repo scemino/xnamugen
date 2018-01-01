@@ -4,8 +4,8 @@ namespace xnaMugen.Elements
 {
 	internal class Text : Base
 	{
-		public Text(Collection collection, string name, DataMap datamap, Drawing.SpriteManager sprites, Animations.AnimationManager animations/*, Audio.SoundManager sounds*/)
-			: base(collection, name, datamap, sprites, animations/*, sounds*/)
+		public Text(Collection collection, string name, DataMap datamap, Drawing.SpriteManager sprites, Animations.AnimationManager animations, Audio.SoundManager sounds)
+			: base(collection, name, datamap, sprites, animations, sounds)
 		{
 		}
 
