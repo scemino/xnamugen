@@ -199,8 +199,8 @@ namespace xnaMugen.Animations
 			var match = m_clsnlineregex.Match(line);
 			if (match.Success == false) return null;
 
-			//if (String.Equals(match.Groups[1].Value, "1") == true) clsn.Type = ClsnType.Type1Attack;
-			//if (String.Equals(match.Groups[1].Value, "2") == true) clsn.Type = ClsnType.Type2Normal;
+			//if (string.Equals(match.Groups[1].Value, "1") == true) clsn.Type = ClsnType.Type1Attack;
+			//if (string.Equals(match.Groups[1].Value, "2") == true) clsn.Type = ClsnType.Type2Normal;
 
 			var x1 = int.Parse(match.Groups[3].Value);
 			var y1 = int.Parse(match.Groups[4].Value);

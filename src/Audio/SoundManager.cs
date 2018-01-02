@@ -161,7 +161,7 @@ namespace xnaMugen.Audio
 		/// Generates a System.String whose value is an representation of this instance.
 		/// </summary>
 		/// <returns>A System.String representation of this instance.</returns>
-		public override String ToString()
+		public override string ToString()
 		{
 			return Filepath;
 		}
@@ -170,7 +170,7 @@ namespace xnaMugen.Audio
 		/// The filepath to the SND file whose sounds this instance manages.
 		/// </summary>
 		/// <returns>The filepath the the respective SND file.</returns>
-		public String Filepath
+		public string Filepath
 		{
 			get { return m_filepath; }
 		}

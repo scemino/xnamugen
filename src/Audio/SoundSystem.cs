@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using Microsoft.Xna.Framework.Audio;
 
 namespace xnaMugen.Audio
 {
@@ -18,8 +17,7 @@ namespace xnaMugen.Audio
 		public SoundSystem(SubSystems subsystems)
 			: base(subsystems)
 		{
-            m_soundcache = new Dictionary<String, ReadOnlyDictionary<SoundId, byte[]>>(StringComparer.OrdinalIgnoreCase);
-            m_sounddevice = new DynamicSoundEffectInstance(44100, AudioChannels.Stereo);
+            m_soundcache = new Dictionary<string, ReadOnlyDictionary<SoundId, byte[]>>(StringComparer.OrdinalIgnoreCase);
 			m_volume = 0;
 			m_channels = new List<Channel>();
 
@@ -35,7 +33,7 @@ namespace xnaMugen.Audio
 
 		private void CreateSoundChannels(int count)
 		{
-			if (count <= 0) throw new ArgumentOutOfRangeException("count");
+			if (count <= 0) throw new ArgumentOutOfRangeException(nameof(count));
 
 			if (m_channels.Count != count)
 			{
@@ -51,9 +49,9 @@ namespace xnaMugen.Audio
 		/// </summary>
 		/// <param name="filepath">Relative filepath of the SND file.</param>
 		/// <returns>A new SoundManager instance capable of playing the sounds contained in a SND file.</returns>
-		public SoundManager CreateManager(String filepath)
+		public SoundManager CreateManager(string filepath)
 		{
-			if (filepath == null) throw new ArgumentNullException("filepath");
+			if (filepath == null) throw new ArgumentNullException(nameof(filepath));
 
 			ReadOnlyDictionary<SoundId, byte[]> sounds;
 			if (m_soundcache.TryGetValue(filepath, out sounds) == true) return new SoundManager(this, filepath, sounds);
@@ -75,7 +73,7 @@ namespace xnaMugen.Audio
 		/// <returns>A duplicate instance of supplied sound buffer.</returns>
 		public byte[] CloneBuffer(byte[] buffer)
 		{
-			if (buffer == null) throw new ArgumentNullException("buffer");
+			if (buffer == null) throw new ArgumentNullException(nameof(buffer));
 
             var newbuffer = new byte[buffer.Length];
             Buffer.BlockCopy(buffer, 0, newbuffer, 0, buffer.Length);
@@ -117,7 +115,7 @@ namespace xnaMugen.Audio
 		/// <param name="manager">The SoundManager to silence.</param>
 		public void Stop(SoundManager manager)
 		{
-			if (manager == null) throw new ArgumentNullException("manager");
+			if (manager == null) throw new ArgumentNullException(nameof(manager));
 
 			foreach (Channel channel in m_channels)
 			{
@@ -162,9 +160,9 @@ namespace xnaMugen.Audio
 		/// </summary>
 		/// <param name="filepath">The filepath of the SND file to load sounds from.</param>
 		/// <returns>A cached ReadOnlyDictionary mapping SoundIds to their respective SecondaryBuffers.</returns>
-		private ReadOnlyDictionary<SoundId, byte[]> GetSounds(String filepath)
+		private ReadOnlyDictionary<SoundId, byte[]> GetSounds(string filepath)
 		{
-			if (filepath == null) throw new ArgumentNullException("filepath");
+			if (filepath == null) throw new ArgumentNullException(nameof(filepath));
 
 			var sounds = new Dictionary<SoundId, byte[]>();
 
@@ -212,16 +210,8 @@ namespace xnaMugen.Audio
 		/// <returns></returns>
         private byte[] CreateSoundBuffer(IO.File file, int length)
 		{
-			if (file == null) throw new ArgumentNullException("file");
-			if (length <= 0) throw new ArgumentOutOfRangeException("length", "length must be greater than zero.");
-
-			//BufferDescription description = new BufferDescription();
-			//description.CanGetCurrentPosition = true;
-			//description.Control3D = false;
-			//description.ControlFrequency = true;
-			//description.ControlPan = true;
-			//description.ControlPositionNotify = true;
-			//description.ControlVolume = true;
+			if (file == null) throw new ArgumentNullException(nameof(file));
+			if (length <= 0) throw new ArgumentOutOfRangeException(nameof(length), "length must be greater than zero.");
 
             var buffer = file.ReadBytes(length);
 			return buffer;
@@ -241,22 +231,6 @@ namespace xnaMugen.Audio
 					{
 						channel.Dispose();
 					}
-				}
-
-				if (m_soundcache != null)
-				{
-					foreach (var data in m_soundcache.Values)
-					{
-						foreach (byte[] buffer in data.Values)
-						{
-							//buffer.Dispose();
-						}
-					}
-				}
-
-				if (m_sounddevice != null)
-				{
-					m_sounddevice.Dispose();
 				}
 			}
 
@@ -282,10 +256,7 @@ namespace xnaMugen.Audio
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        readonly DynamicSoundEffectInstance m_sounddevice;
-
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        readonly Dictionary<String, ReadOnlyDictionary<SoundId, byte[]>> m_soundcache;
+        readonly Dictionary<string, ReadOnlyDictionary<SoundId, byte[]>> m_soundcache;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		readonly List<Channel> m_channels;

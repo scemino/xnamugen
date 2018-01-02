@@ -29,8 +29,8 @@ namespace xnaMugen.Combat
             m_speed = GameSpeed.Normal;
             m_slowspeedbuffer = 0;
             m_fontmap = BuildFontMap(filesection);
-            m_fightsounds = GetSubSystem<Audio.SoundSystem>().CreateManager(BuildPath(basepath, filesection.GetAttribute<String>("snd")));
-            m_commonsounds = GetSubSystem<Audio.SoundSystem>().CreateManager(BuildPath(basepath, filesection.GetAttribute<String>("common.snd")));
+            m_fightsounds = GetSubSystem<Audio.SoundSystem>().CreateManager(BuildPath(basepath, filesection.GetAttribute<string>("snd")));
+            m_commonsounds = GetSubSystem<Audio.SoundSystem>().CreateManager(BuildPath(basepath, filesection.GetAttribute<string>("common.snd")));
             m_fightsprites = GetSubSystem<Drawing.SpriteSystem>().CreateManager(BuildPath(basepath, filesection.GetAttribute<string>("sff")));
             m_fxsprites = GetSubSystem<Drawing.SpriteSystem>().CreateManager(BuildPath(basepath, filesection.GetAttribute<string>("fightfx.sff")));
             m_fightanimations = GetSubSystem<Animations.AnimationSystem>().CreateManager(textfile.Filepath);
