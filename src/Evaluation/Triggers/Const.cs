@@ -55,6 +55,12 @@ namespace xnaMugen.Evaluation.Triggers
 			return 100.0f / (100.0f + character.BasePlayer.Constants.FallDefenseIncrease);
 		}
 
+        [Tag("data.fall.defence_up")]
+        public static float Data_Fall_Defence_Up(object state, ref bool error)
+        {
+            return Data_Fall_Defence_Mul(state, ref error);
+        }
+
 		[Tag("data.liedown.time")]
 		public static int Data_Liedown_Time(object state, ref bool error)
 		{
@@ -470,6 +476,25 @@ namespace xnaMugen.Evaluation.Triggers
 
 			return character.BasePlayer.Constants.Jump_neutral.X;
 		}
+
+        [Tag("Velocity.Jump.Neu.Y")]
+        public static float Velocity_Jump_Neu_Y(object state, ref bool error)
+        {
+            var character = state as Combat.Character;
+            if (character == null)
+            {
+                error = true;
+                return 0;
+            }
+
+            return character.BasePlayer.Constants.Jump_neutral.Y;
+        }
+
+        [Tag("Velocity.Runjump.Y")]
+        public static float Velocity_Runjump_Y(object state, ref bool error)
+        {
+            return Velocity_Jump_Neu_Y(state, ref error);
+        }
 
 		[Tag("Velocity.Jump.Back.X")]
 		public static float Velocity_Jump_Back_X(object state, ref bool error)
