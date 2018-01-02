@@ -13,23 +13,23 @@ int xFontColorIndex;
 int xFontTotalColors;
 
 bool xPalFx_Use;
-float4 xPalFx_Add;
-float4 xPalFx_Mul;
-bool xPalFx_Invert;
-float xPalFx_Color;
-float4 xPalFx_SinMath;
+//float4 xPalFx_Add;
+//float4 xPalFx_Mul;
+//bool xPalFx_Invert;
+//float xPalFx_Color;
+//float4 xPalFx_SinMath;
 
 bool xAI_Use;
-bool xAI_Invert;
-float xAI_color;
-float4 xAI_preadd;
-float4 xAI_contrast;
-float4 xAI_postadd;
-float4 xAI_paladd;
-float4 xAI_palmul;
-int xAI_number;
+//bool xAI_Invert;
+//float xAI_color;
+//float4 xAI_preadd;
+//float4 xAI_contrast;
+//float4 xAI_postadd;
+//float4 xAI_paladd;
+//float4 xAI_palmul;
+//int xAI_number;
 
-float4 xShadowColor;
+//float4 xShadowColor;
 
 struct VS_Output
 {
@@ -185,8 +185,8 @@ technique Draw
 {
     pass Pass0
     {
-        VertexShader = compile vs_4_0_level_9_1 DefaultVertexShader();
-        PixelShader = compile ps_4_0_level_9_3 DefaultPixelShader();
+        VertexShader = compile vs_3_0 DefaultVertexShader();
+        PixelShader = compile ps_3_0 DefaultPixelShader();
     }
 }
 
@@ -194,8 +194,8 @@ technique DrawOLD
 {
     pass Pass0
     {
-        VertexShader = compile vs_4_0_level_9_1 DefaultVertexShader();
-        PixelShader = compile ps_4_0_level_9_3 PixelShaderOLD();
+        VertexShader = compile vs_3_0 DefaultVertexShader();
+        PixelShader = compile ps_3_0 PixelShaderOLD();
     }
 }
 
@@ -203,8 +203,8 @@ technique FontDraw
 {
     pass Pass0
     {
-        VertexShader = compile vs_4_0_level_9_1 DefaultVertexShader();
-        PixelShader = compile ps_4_0_level_9_3 FontPixelShader();
+        VertexShader = compile vs_3_0 DefaultVertexShader();
+        PixelShader = compile ps_3_0 FontPixelShader();
     }
 }
 
@@ -212,7 +212,7 @@ technique ShadowDraw
 {
     pass Pass0
     {
-        VertexShader = compile vs_4_0_level_9_1 DefaultVertexShader();
-        PixelShader = compile ps_4_0_level_9_3 ShadowPixelShader();
+        VertexShader = compile vs_3_0 DefaultVertexShader();
+        PixelShader = compile ps_3_0 ShadowPixelShader();
     }
 }

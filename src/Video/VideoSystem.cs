@@ -65,30 +65,7 @@ namespace xnaMugen.Video
 
 			var settings	= GetSubSystem<InitializationSettings>();
 
-			string extension = null;
-			/*ImageFileFormat format = ImageFileFormat.Bmp;
-
-			switch (settings.ScreenShotFormat)
-			{
-				case ScreenShotFormat.Bmp:
-					extension =	"bmp";
-					format = ImageFileFormat.Bmp;
-					break;
-
-				case ScreenShotFormat.Jpg:
-					extension =	"jpg";
-					format = ImageFileFormat.Jpg;
-					break;
-
-				case ScreenShotFormat.Png:
-					extension =	"png";
-					format = ImageFileFormat.Png;
-					break;
-
-				default:
-					return;
-			}*/
-
+			string extension;
 			switch (settings.ScreenShotFormat)
 			{
 				case ScreenShotFormat.Png:
@@ -109,15 +86,16 @@ namespace xnaMugen.Video
 				switch (settings.ScreenShotFormat)
 				{
 					case ScreenShotFormat.Png:
-						m_screenshot.SaveAsPng(fs, settings.ScreenSize.X, settings.ScreenSize.Y);
+                        m_screenshot.SaveAsPng(fs, m_screenshot.Width, m_screenshot.Height);
 						break;
 					case ScreenShotFormat.Jpg:
-						m_screenshot.SaveAsJpeg(fs, settings.ScreenSize.X, settings.ScreenSize.Y);
+                        m_screenshot.SaveAsJpeg(fs, m_screenshot.Width, m_screenshot.Height);
 						break;
 					default:
 						return;
 				}
 			}
+            Device.SetRenderTarget(null);
 		}
 
 		public Texture2D CreatePixelTexture(Point size)
