@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using xnaMugen.Collections;
 using System.Globalization;
+using xnaMugen.Combat;
 using xnaMugen.Evaluation;
 
 namespace xnaMugen
@@ -70,8 +71,7 @@ namespace xnaMugen
 		{
 			if (str == null) throw new ArgumentNullException(nameof(str));
 
-			T output;
-			if (TryConvert(str, out output)) return output;
+			if (TryConvert(str, out T output)) return output;
 
 			Log.Write(LogLevel.Warning, LogSystem.StringConverter, "Cannot convert '{0}' to type: {1}", str, typeof(T).Name);
 			return default(T);
@@ -156,17 +156,32 @@ namespace xnaMugen
 		[StringConversion(typeof(int))]
 		private object ToInt32(string s)
 		{
+            s = RemoveTrailingGarbage(s);
 			if (int.TryParse(s, NumberStyles.Integer, NumberFormatInfo.InvariantInfo, out var val)) return val;
 
 			return Failure;
 		}
 
-		[StringConversion(typeof(float))]
-		private object ToSingle(string s)
-		{
-			if (float.TryParse(s, NumberStyles.Float, NumberFormatInfo.InvariantInfo, out var val)) return val;
+        [StringConversion(typeof(float))]
+        private object ToSingle(string s)
+        {
+            s = RemoveTrailingGarbage(s);
+            if (float.TryParse(s, NumberStyles.Float, NumberFormatInfo.InvariantInfo, out var val)) return val;
 
 			return Failure;
+		}
+		
+		private static string RemoveTrailingGarbage(string s)
+		{
+			if (string.IsNullOrEmpty(s)) return s;
+			for (var i = 0; i < s.Length; i++)
+			{
+				if (!char.IsDigit(s[i]) && s[i] != '.' && s[i] != '+' && s[i] != '-' && s[i] != 'e' && s[i] != 'E')
+				{
+					return s.Substring(0, i);
+				}
+			}
+			return s;
 		}
 
 		[StringConversion(typeof(bool))]
@@ -302,8 +317,7 @@ namespace xnaMugen
 		[StringConversion(typeof(SoundId))]
 		private object ToSoundId(string s)
 		{
-			Point p;
-			if (TryConvert(s, out p) == false) return Failure;
+			if (TryConvert(s, out Point p) == false) return Failure;
 
 			return new SoundId(p.X, p.Y);
 		}
@@ -345,7 +359,7 @@ namespace xnaMugen
 			return Failure;
 		}
 
-		[StringConversion(typeof(Combat.HitType))]
+		[StringConversion(typeof(HitType))]
 		private object ToHitType(string s)
 		{
 			if (s.Length > 2) return Failure;
@@ -390,14 +404,14 @@ namespace xnaMugen
 				}
 			}
 
-			return new Combat.HitType(aclass, apower);
+			return new HitType(aclass, apower);
 		}
 
-		[StringConversion(typeof(Combat.HitAttribute))]
+		[StringConversion(typeof(HitAttribute))]
 		private object ToHitAttribute(string s)
 		{
 			var attackheight = AttackStateType.None;
-			var attackdata = new List<Combat.HitType>();
+			var attackdata = new List<HitType>();
 
 			var first = true;
 			foreach (var str in Regex.Split(s, @"\s*,\s*", RegexOptions.IgnoreCase))
@@ -410,21 +424,19 @@ namespace xnaMugen
 				}
 				else
 				{
-					Combat.HitType hittype;
-					if (TryConvert(str, out hittype) == false) return Failure;
+					if (TryConvert(str, out HitType hittype) == false) return Failure;
 
 					attackdata.Add(hittype);
 				}
 			}
 
-			return new Combat.HitAttribute(attackheight, new ReadOnlyList<Combat.HitType>(attackdata));
+			return new HitAttribute(attackheight, new ReadOnlyList<HitType>(attackdata));
 		}
 
 		[StringConversion(typeof(SpriteEffects))]
 		private object ToSpriteEffects(string s)
 		{
-			int intvalue;
-			if (TryConvert(s, out intvalue) == false) return Failure;
+			if (TryConvert(s, out int intvalue) == false) return Failure;
 
 			return intvalue >= 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
 		}
@@ -484,7 +496,7 @@ namespace xnaMugen
 			return Failure;
 		}
 
-		[StringConversion(typeof(Combat.HitFlag))]
+		[StringConversion(typeof(HitFlag))]
 		private object ToHitFlag(string s)
 		{
 			var high = false;
@@ -503,7 +515,7 @@ namespace xnaMugen
 			if (s.IndexOf("+", StringComparison.InvariantCultureIgnoreCase) != -1) combo = HitFlagCombo.Yes;
 			if (s.IndexOf("-", StringComparison.InvariantCultureIgnoreCase) != -1) combo = HitFlagCombo.No;
 
-			return new Combat.HitFlag(combo, high, low, air, falling, down);
+			return new HitFlag(combo, high, low, air, falling, down);
 		}
 
 		[StringConversion(typeof(HitAnimationType))]
@@ -533,24 +545,21 @@ namespace xnaMugen
 			return Failure;
 		}
 
-		[StringConversion(typeof(Combat.HitPriority))]
+		[StringConversion(typeof(HitPriority))]
 		private object ToHitPriority(string s)
 		{
 			var m = m_hitpriorityregex.Match(s);
 			if (m.Success)
 			{
-				int power;
-				PriorityType pt;
-				if (TryConvert(m.Groups[1].Value, out power) == false || TryConvert(m.Groups[2].Value, out pt) == false) return Failure;
+				if (TryConvert(m.Groups[1].Value, out int power) == false || TryConvert(m.Groups[2].Value, out PriorityType pt) == false) return Failure;
 
-				return new Combat.HitPriority(pt, power);
+				return new HitPriority(pt, power);
 			}
 			else
 			{
-				int power;
-				if (TryConvert(s, out power) == false) return Failure;
+				if (TryConvert(s, out int power) == false) return Failure;
 
-				return new Combat.HitPriority(PriorityType.Miss, power);
+				return new HitPriority(PriorityType.Miss, power);
 			}
 		}
 
