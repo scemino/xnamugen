@@ -301,7 +301,7 @@
     <Compile Include="src\Enumerations.cs" />
     <Compile Include="src\EvaluationHelper.cs" />
     <Compile Include="src\Evaluation\Attributes.cs" />
-    <Compile Include="src\Evaluation\Compiler.cs" />
+    <Compile Include="src\Evaluation\ILCompiler.cs" />
     <Compile Include="src\Evaluation\EvaluationSystem.cs" />
     <Compile Include="src\Evaluation\Expression.cs" />
     <Compile Include="src\Evaluation\IExpression.cs" />
@@ -582,6 +582,8 @@
     <Compile Include="src\Video\ShaderParameters.cs" />
     <Compile Include="src\Video\Vertex.cs" />
     <Compile Include="src\Video\VideoSystem.cs" />
+    <Compile Include="src\Evaluation\ExpressionCompiler.cs" />
+    <Compile Include="src\Evaluation\ICompiler.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="data\Shader.fx" />

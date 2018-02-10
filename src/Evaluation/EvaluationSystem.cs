@@ -15,7 +15,7 @@ namespace xnaMugen.Evaluation
 			m_expressioncache = new KeyedCollection<string, Expression>(x => x.ToString(), StringComparer.OrdinalIgnoreCase);
 			m_tokenizer = new Tokenizer();
 			m_treebuilder = new TreeBuilder(this);
-			m_compiler = new Compiler();
+            m_compiler = new ExpressionCompiler();
 
 			//var exp = CreateExpression("0.0 = [-10, 10]");
 			//var result = exp.Evaluate(null);
@@ -115,7 +115,7 @@ namespace xnaMugen.Evaluation
 		private readonly TreeBuilder m_treebuilder;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		private readonly Compiler m_compiler;
+		private readonly ICompiler m_compiler;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		private readonly KeyedCollection<string, Expression> m_expressioncache;
