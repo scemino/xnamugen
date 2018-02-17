@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using System.IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using xnaMugen.Collections;
@@ -313,7 +312,7 @@ namespace xnaMugen.Video
             }
             else
             {
-                //GetShaderParameter("xPalFx_Use").SetValue(false);
+                GetShaderParameter("xPalFx_Use").SetValue(false);
             }
 
             if (parameters.AfterImageEnable)
@@ -330,7 +329,7 @@ namespace xnaMugen.Video
             }
             else
             {
-                //GetShaderParameter("xAI_Use").SetValue(false);
+                GetShaderParameter("xAI_Use").SetValue(false);
             }
         }
 

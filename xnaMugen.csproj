@@ -178,7 +178,7 @@
     <Reference Include="System" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="MonoGame.Framework">
-      <HintPath>packages\MonoGame.Framework.DesktopGL.3.6.0.1625\lib\net40\MonoGame.Framework.dll</HintPath>
+      <HintPath>packages\MonoGame.Framework.DesktopGL.3.7.0.1279-develop\lib\net45\MonoGame.Framework.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -273,9 +273,7 @@
     <Compile Include="src\Commands\InputBuffer.cs" />
     <Compile Include="src\ConstructorDelegate.cs" />
     <Compile Include="src\Delegates.cs" />
-    <Compile Include="src\Diagnostics\DiagnosticForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="src\Diagnostics\DiagnosticForm.cs" />
     <Compile Include="src\Diagnostics\DiagnosticSystem.cs" />
     <Compile Include="src\Diagnostics\GeneralPanel.cs">
       <SubType>Component</SubType>
@@ -595,9 +593,7 @@
     <None Include="xnaMugen.ini">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="MonoGame.Framework.dll.config">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="packages.config" />
   </ItemGroup>
+  <Import Project="packages\MonoGame.Framework.DesktopGL.3.7.0.1279-develop\build\MonoGame.Framework.DesktopGL.targets" Condition="Exists('packages\MonoGame.Framework.DesktopGL.3.7.0.1279-develop\build\MonoGame.Framework.DesktopGL.targets')" />
 </Project>

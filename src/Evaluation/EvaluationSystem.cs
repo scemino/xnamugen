@@ -15,6 +15,8 @@ namespace xnaMugen.Evaluation
 			m_expressioncache = new KeyedCollection<string, Expression>(x => x.ToString(), StringComparer.OrdinalIgnoreCase);
 			m_tokenizer = new Tokenizer();
 			m_treebuilder = new TreeBuilder(this);
+
+            //m_compiler = new ILCompiler();
             m_compiler = new ExpressionCompiler();
 
 			//var exp = CreateExpression("0.0 = [-10, 10]");
