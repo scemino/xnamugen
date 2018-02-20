@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using Exp = System.Linq.Expressions.Expression;
 using System.Reflection;
-using System.Reflection.Emit;
 using System.Linq;
 
 namespace xnaMugen.Evaluation
@@ -12,10 +11,8 @@ namespace xnaMugen.Evaluation
     {
         private class CompilerState
         {
-            public ILGenerator Generator { get; set; }
             public ParameterExpression FunctionState { get; set; }
-            public LabelTarget ErrorLabel { get; set; }
-            public Exp ErrorVariable { get; set; }
+            public ParameterExpression ErrorVariable { get; set; }
         }
 
         public ExpressionCompiler()
@@ -30,9 +27,8 @@ namespace xnaMugen.Evaluation
         {
             var compilerstate = new CompilerState
             {
-                FunctionState = Exp.Parameter(typeof(object)),
-                ErrorVariable = Exp.Constant(false),
-                ErrorLabel = Exp.Label()
+                FunctionState = Exp.Parameter(typeof(object), "state"),
+                ErrorVariable = Exp.Parameter(typeof(bool), "error")
             };
             var result = Make(compilerstate, node);
             if (result.Type == typeof(bool))
@@ -41,15 +37,21 @@ namespace xnaMugen.Evaluation
             }
             if (result.Type == typeof(int) || result.Type == typeof(float))
             {
-                // if result ok
+                // int or float convert to number
                 var constructor = typeof(Number).GetConstructor(new[] { result.Type });
-                result = Exp.New(typeof(Number).GetConstructor(new[] { result.Type }), new[] { result });
-                var resultFailed = Exp.New(typeof(Number).GetConstructor(new[] { typeof(int) }), new[] { Exp.Constant(200) });
+                result = Exp.New(constructor, new[] { result });
 
-                result = Exp.TryCatch(result, Exp.Catch(typeof(Exception), resultFailed));
-
-                var func = Exp.Lambda<Func<object, Number>>(result, compilerstate.FunctionState).Compile();
-                return new EvaluationCallback(func);
+                // wrap the evaluation in a try..catch
+                var exceptionParameter = Exp.Parameter(typeof(Exception), "e");
+                var writeLineMethod = typeof(Console).GetMethod(nameof(Console.WriteLine), new Type[] { typeof(string) });
+                var toStringMethod = typeof(Exception).GetMethod(nameof(Exception.ToString));
+                var catchBody = Exp.Block(
+                    Exp.Call(null, writeLineMethod, Exp.Call(exceptionParameter, toStringMethod)),
+                    Exp.Constant(new Number(0)));
+                result = Exp.TryCatch(result, Exp.Catch(exceptionParameter, catchBody));
+                // create lambda
+                var func = Exp.Lambda<Func<object, bool, Number>>(result, compilerstate.FunctionState, compilerstate.ErrorVariable).Compile();
+                return new EvaluationCallback(o => func(o, false));
             }
             throw new Exception();
         }
@@ -102,11 +104,10 @@ namespace xnaMugen.Evaluation
             {
                 return MakeRange(state, node);
             }
-
             throw new Exception();
         }
 
-        private Exp MakeMethod(CompilerState state, MethodInfo method, List<Exp> args)
+        private Exp MakeMethod(CompilerState state, MethodInfo method, IList<Exp> args)
         {
             if (state == null) throw new Exception();
             if (method == null) throw new Exception();
@@ -304,7 +305,7 @@ namespace xnaMugen.Evaluation
                     return MakeBinary(state, ExpressionType.ExclusiveOr, lhs, rhs);
 
                 case Operator.Exponent:
-                    return MakeMethod(state, typeof(Math).GetMethod("Pow"), new List<Exp> { lhs, rhs });
+                    return MakeMethod(state, typeof(Math).GetMethod(nameof(Math.Pow)), new Exp[] { lhs, rhs });
 
                 default:
                     throw new Exception();
@@ -333,22 +334,22 @@ namespace xnaMugen.Evaluation
 
             if (vardata.Type == typeof(Triggers.Var))
             {
-                return MakeMethod(state, typeof(SpecialFunctions).GetMethod("Assignment_Var"), args);
+                return MakeMethod(state, typeof(SpecialFunctions).GetMethod(nameof(SpecialFunctions.Assignment_Var)), args);
             }
 
             if (vardata.Type == typeof(Triggers.FVar))
             {
-                return MakeMethod(state, typeof(SpecialFunctions).GetMethod("Assignment_FVar"), args);
+                return MakeMethod(state, typeof(SpecialFunctions).GetMethod(nameof(SpecialFunctions.Assignment_FVar)), args);
             }
 
             if (vardata.Type == typeof(Triggers.SysVar))
             {
-                return MakeMethod(state, typeof(SpecialFunctions).GetMethod("Assignment_SysVar"), args);
+                return MakeMethod(state, typeof(SpecialFunctions).GetMethod(nameof(SpecialFunctions.Assignment_SysVar)), args);
             }
 
             if (vardata.Type == typeof(Triggers.SysFVar))
             {
-                return MakeMethod(state, typeof(SpecialFunctions).GetMethod("Assignment_SysFVar"), args);
+                return MakeMethod(state, typeof(SpecialFunctions).GetMethod(nameof(SpecialFunctions.Assignment_SysFVar)), args);
             }
 
             throw new Exception();
@@ -410,7 +411,7 @@ namespace xnaMugen.Evaluation
             if (data.Operator == Operator.Minus)
             {
                 var value = Make(state, node.Children[0]);
-                return Exp.MakeUnary(ExpressionType.Negate, value, null);
+                return Exp.Negate(value);
             }
 
             if (data.Operator == Operator.LogicalNot)
@@ -450,11 +451,11 @@ namespace xnaMugen.Evaluation
             if (expression.Type == typeof(bool)) return expression;
             if (expression.Type == typeof(int))
             {
-                return Exp.MakeBinary(ExpressionType.Equal, expression, Exp.Constant(1));
+                return Exp.NotEqual(expression, Exp.Constant(0));
             }
             if (expression.Type == typeof(float))
             {
-                return Exp.MakeBinary(ExpressionType.NotEqual, expression, Exp.Constant(0.0f));
+                return Exp.NotEqual(expression, Exp.Constant(0.0f));
             }
             throw new Exception("Cannot convert expression to boolean");
         }
@@ -465,7 +466,7 @@ namespace xnaMugen.Evaluation
 
             if (expression.Type == typeof(bool))
             {
-                expression = Exp.Condition(expression, Exp.Constant(1), Exp.Constant(0));
+                return Exp.Condition(expression, Exp.Constant(1), Exp.Constant(0));
             }
             return Exp.Convert(expression, typeof(int));
         }
@@ -599,16 +600,20 @@ namespace xnaMugen.Evaluation
 
             if (expression.Type == typeof(int))
             {
-                return Exp.Lambda(Exp.Block(
-                    Exp.IfThen(Exp.MakeBinary(ExpressionType.Equal, expression, Exp.Constant(0)), Exp.Goto(state.ErrorLabel)),
-                    expression));
+                var constructor = typeof(Exception).GetConstructor(new Type[] { typeof(string) });
+                return Exp.Block(
+                    Exp.IfThen(Exp.Equal(expression, Exp.Constant(0)), 
+                               Exp.Throw(Exp.New(constructor,Exp.Constant("Division by zero")))),
+                    expression);
             }
 
             if (expression.Type == typeof(float))
             {
-                return Exp.Lambda(Exp.Block(
-                    Exp.IfThen(Exp.MakeBinary(ExpressionType.Equal, expression, Exp.Constant(0.0f)), Exp.Goto(state.ErrorLabel)),
-                    expression));
+                var constructor = typeof(Exception).GetConstructor(new Type[] { typeof(string) });
+                return Exp.Block(
+                    Exp.IfThen(Exp.Equal(expression, Exp.Constant(0.0f)),
+                               Exp.Throw(Exp.New(constructor, Exp.Constant("Division by zero")))),
+                    expression);
             }
             return expression;
         }
