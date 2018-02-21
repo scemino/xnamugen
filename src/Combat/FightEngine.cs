@@ -286,7 +286,7 @@ namespace xnaMugen.Combat
             EnvironmentShake.Update();
             Camera.Update();
 
-            //GetSubSystem<Diagnostics.DiagnosticSystem>().Update(this);
+            GetSubSystem<Diagnostics.DiagnosticSystem>().Update(this);
 
             ++m_tickcount;
         }

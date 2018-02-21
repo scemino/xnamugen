@@ -583,6 +583,7 @@
     <Compile Include="src\Video\VideoSystem.cs" />
     <Compile Include="src\Evaluation\ExpressionCompiler.cs" />
     <Compile Include="src\Evaluation\ICompiler.cs" />
+    <Compile Include="src\Diagnostics\OperatingSystemExtension.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="data\Shader.fx" />
