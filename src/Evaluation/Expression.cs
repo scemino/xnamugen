@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Collections.Generic;
+using xnaMugen.Combat;
 
 namespace xnaMugen.Evaluation
 {
@@ -30,7 +31,7 @@ namespace xnaMugen.Evaluation
 			return true;
 		}
 
-		public Number[] Evaluate(object state)
+        public Number[] Evaluate(Character character)
 		{
 			var result = new Number[m_functions.Count];
 
@@ -38,7 +39,7 @@ namespace xnaMugen.Evaluation
 			{
 				try
 				{
-					result[i] = m_functions[i](state);
+                    result[i] = m_functions[i](character);
 				}
 				catch
 				{
@@ -49,13 +50,13 @@ namespace xnaMugen.Evaluation
 			return result;
 		}
 
-		public Number EvaluateFirst(object state)
+        public Number EvaluateFirst(Character character)
 		{
 			if (IsValid == false) return new Number();
 
 			try
 			{
-				return m_functions[0](state);
+                return m_functions[0](character);
 			}
 			catch
 			{

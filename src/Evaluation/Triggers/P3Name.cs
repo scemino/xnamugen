@@ -1,13 +1,13 @@
-using System;
+﻿using System;
+using xnaMugen.Combat;
 
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("P3Name")]
 	internal static class P3Name
 	{
-		public static bool Evaluate(object state, ref bool error, Operator @operator, string text)
+		public static bool Evaluate(Character character, ref bool error, Operator @operator, string text)
 		{
-			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;

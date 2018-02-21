@@ -1,11 +1,12 @@
+using xnaMugen.Combat;
+
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("AnimElemNo")]
 	internal static class AnimElemNo
 	{
-		public static int Evaluate(object state, ref bool error, int timeoffset)
+        public static int Evaluate(Character character, ref bool error, int timeoffset)
 		{
-			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;

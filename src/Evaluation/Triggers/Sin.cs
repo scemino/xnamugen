@@ -1,11 +1,12 @@
-using System;
+﻿using System;
+using xnaMugen.Combat;
 
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("Sin")]
 	internal static class Sin
 	{
-		public static float Evaluate(object state, ref bool error, float value)
+		public static float Evaluate(Character character, ref bool error, float value)
 		{
 			return (float)Math.Sin(value);
 		}

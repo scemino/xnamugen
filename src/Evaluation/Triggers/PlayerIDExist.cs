@@ -1,11 +1,12 @@
+﻿using xnaMugen.Combat;
+
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("PlayerIDExist")]
 	internal static class PlayerIDExist
 	{
-		public static bool Evaluate(object state, ref bool error, int id)
+		public static bool Evaluate(Character character, ref bool error, int id)
 		{
-			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;

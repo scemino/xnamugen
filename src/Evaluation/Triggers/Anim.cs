@@ -1,12 +1,13 @@
+using xnaMugen.Combat;
+
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("Anim")]
 	internal static class Anim
 	{
-		public static int Evaluate(object state, ref bool error)
+        public static int Evaluate(Character character, ref bool error)
 		{
-			var character = state as Combat.Character;
-			if (character == null || character.AnimationManager.CurrentAnimation == null)
+            if (character == null || character.AnimationManager.CurrentAnimation == null)
 			{
 				error = true;
 				return 0;

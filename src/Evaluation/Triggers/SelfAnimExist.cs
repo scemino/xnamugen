@@ -1,11 +1,12 @@
+﻿using xnaMugen.Combat;
+
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("SelfAnimExist")]
 	internal static class SelfAnimExist
 	{
-		public static bool Evaluate(object state, ref bool error, int animationnumber)
+		public static bool Evaluate(Character character, ref bool error, int animationnumber)
 		{
-			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;

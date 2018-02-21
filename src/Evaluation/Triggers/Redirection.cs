@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using xnaMugen.Combat;
 
 namespace xnaMugen.Evaluation.Triggers.Redirection
 {
 	[StateRedirection("Parent")]
 	internal static class Parent
 	{
-		public static object RedirectState(object state, ref bool error)
+        public static Character RedirectState(Character character, ref bool error)
 		{
-			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
@@ -41,9 +41,8 @@ namespace xnaMugen.Evaluation.Triggers.Redirection
 	[StateRedirection("Root")]
 	internal static class Root
 	{
-		public static object RedirectState(object state, ref bool error)
+        public static Character RedirectState(Character character, ref bool error)
 		{
-			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
@@ -76,9 +75,8 @@ namespace xnaMugen.Evaluation.Triggers.Redirection
 	[StateRedirection("Helper")]
 	internal static class Helper
 	{
-		public static object RedirectState(object state, ref bool error, int helperId)
+        public static Character RedirectState(Character character, ref bool error, int helperId)
 		{
-			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
@@ -118,9 +116,8 @@ namespace xnaMugen.Evaluation.Triggers.Redirection
 	[StateRedirection("Target")]
 	internal static class Target
 	{
-		public static object RedirectState(object state, ref bool error, int target_id)
+        public static Character RedirectState(Character character, ref bool error, int target_id)
 		{
-			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
@@ -162,9 +159,8 @@ namespace xnaMugen.Evaluation.Triggers.Redirection
 	[StateRedirection("Partner")]
 	internal static class Partner
 	{
-		public static object RedirectState(object state, ref bool error)
+        public static Character RedirectState(Character character, ref bool error)
 		{
-			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
@@ -182,7 +178,7 @@ namespace xnaMugen.Evaluation.Triggers.Redirection
 			return partner;
 		}
 
-		private static Combat.Player GetTeamMate(Combat.Character character)
+		private static Combat.Player GetTeamMate(Character character)
 		{
 			if (character == null) throw new ArgumentNullException(nameof(character));
 
@@ -210,9 +206,8 @@ namespace xnaMugen.Evaluation.Triggers.Redirection
 	[StateRedirection("Enemy")]
 	internal static class Enemy
 	{
-		public static object RedirectState(object state, ref bool error, int nth)
+        public static Character RedirectState(Character character, ref bool error, int nth)
 		{
-			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
@@ -267,9 +262,8 @@ namespace xnaMugen.Evaluation.Triggers.Redirection
 	[StateRedirection("EnemyNear")]
 	internal static class EnemyNear
 	{
-		public static object RedirectState(object state, ref bool error, int nth)
+        public static Character RedirectState(Character character, ref bool error, int nth)
 		{
-			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
@@ -332,9 +326,8 @@ namespace xnaMugen.Evaluation.Triggers.Redirection
 	[StateRedirection("PlayerID")]
 	internal static class PlayerID
 	{
-		public static object RedirectState(object state, ref bool error, int characterId)
+        public static Character RedirectState(Character character, ref bool error, int characterId)
 		{
-			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;

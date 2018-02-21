@@ -1,11 +1,12 @@
+﻿using xnaMugen.Combat;
+
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("Time")]
 	internal static class Time
 	{
-		public static int Evaluate(object state, ref bool error)
+		public static int Evaluate(Character character, ref bool error)
 		{
-			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
@@ -27,9 +28,8 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("StateTime")]
 	internal static class StateTime
 	{
-		public static int Evaluate(object state, ref bool error)
+		public static int Evaluate(Character character, ref bool error)
 		{
-			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;

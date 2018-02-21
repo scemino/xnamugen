@@ -1,63 +1,64 @@
 ﻿using Microsoft.Xna.Framework;
+using xnaMugen.Combat;
 using xnaMugen.Evaluation;
 
 namespace xnaMugen
 {
 	internal static class EvaluationHelper
 	{
-		public static int AsInt32(object state, IExpression expression, int failover)
+        public static int AsInt32(Character character, IExpression expression, int failover)
 		{
 			if (expression == null || expression.IsValid == false) return failover;
 
-			var result = expression.Evaluate(state);
+            var result = expression.Evaluate(character);
 			return result.Length > 0 ? result[0].IntValue : failover;
 		}
 
-		public static int? AsInt32(object state, IExpression expression, int? failover)
+        public static int? AsInt32(Character character, IExpression expression, int? failover)
 		{
 			if (expression == null || expression.IsValid == false) return failover;
 
-			var result = expression.Evaluate(state);
+            var result = expression.Evaluate(character);
 			return result.Length > 0 ? result[0].IntValue : failover;
 		}
 
-		public static float AsSingle(object state, IExpression expression, float failover)
+        public static float AsSingle(Character character, IExpression expression, float failover)
 		{
 			if (expression == null || expression.IsValid == false) return failover;
 
-			var result = expression.Evaluate(state);
+            var result = expression.Evaluate(character);
 			return result.Length > 0 ? result[0].FloatValue : failover;
 		}
 
-		public static float? AsSingle(object state, IExpression expression, float? failover)
+        public static float? AsSingle(Character character, IExpression expression, float? failover)
 		{
 			if (expression == null || expression.IsValid == false) return failover;
 
-			var result = expression.Evaluate(state);
+            var result = expression.Evaluate(character);
 			return result.Length > 0 ? result[0].FloatValue : failover;
 		}
 
-		public static bool AsBoolean(object state, IExpression expression, bool failover)
+        public static bool AsBoolean(Character character, IExpression expression, bool failover)
 		{
 			if (expression == null || expression.IsValid == false) return failover;
 
-			var result = expression.Evaluate(state);
+            var result = expression.Evaluate(character);
 			return result.Length > 0 ? result[0].BooleanValue : failover;
 		}
 
-		public static bool? AsBoolean(object state, IExpression expression, bool? failover)
+        public static bool? AsBoolean(Character character, IExpression expression, bool? failover)
 		{
 			if (expression == null || expression.IsValid == false) return failover;
 
-			var result = expression.Evaluate(state);
+            var result = expression.Evaluate(character);
 			return result.Length > 0 ? result[0].BooleanValue : failover;
 		}
 
-		public static Point AsPoint(object state, IExpression expression, Point failover)
+        public static Point AsPoint(Character character, IExpression expression, Point failover)
 		{
 			if (expression == null || expression.IsValid == false) return failover;
 
-			var result = expression.Evaluate(state);
+            var result = expression.Evaluate(character);
 
 			if (result.Length > 0 && result[0].NumberType != NumberType.None)
 			{
@@ -72,11 +73,11 @@ namespace xnaMugen
 			return failover;
 		}
 
-		public static Point? AsPoint(object state, IExpression expression, Point? failover)
+        public static Point? AsPoint(Character character, IExpression expression, Point? failover)
 		{
 			if (expression == null || expression.IsValid == false) return failover;
 
-			var result = expression.Evaluate(state);
+            var result = expression.Evaluate(character);
 
 			if (result.Length > 0 && result[0].NumberType != NumberType.None)
 			{
@@ -91,11 +92,11 @@ namespace xnaMugen
 			return failover;
 		}
 
-		public static SoundId AsSoundId(object state, IExpression expression, SoundId failover)
+        public static SoundId AsSoundId(Character character, IExpression expression, SoundId failover)
 		{
 			if (expression == null || expression.IsValid == false) return failover;
 
-			var result = expression.Evaluate(state);
+            var result = expression.Evaluate(character);
 
 			if (result.Length > 0 && result[0].NumberType != NumberType.None)
 			{
@@ -110,11 +111,11 @@ namespace xnaMugen
 			return failover;
 		}
 
-		public static SoundId? AsSoundId(object state, IExpression expression, SoundId? failover)
+        public static SoundId? AsSoundId(Character character, IExpression expression, SoundId? failover)
 		{
 			if (expression == null || expression.IsValid == false) return failover;
 
-			var result = expression.Evaluate(state);
+            var result = expression.Evaluate(character);
 
 			if (result.Length > 0 && result[0].NumberType != NumberType.None)
 			{
@@ -129,11 +130,11 @@ namespace xnaMugen
 			return failover;
 		}
 
-		public static Vector2 AsVector2(object state, IExpression expression, Vector2 failover)
+        public static Vector2 AsVector2(Character character, IExpression expression, Vector2 failover)
 		{
 			if (expression == null || expression.IsValid == false) return failover;
 
-			var result = expression.Evaluate(state);
+            var result = expression.Evaluate(character);
 
 			if (result.Length > 0 && result[0].NumberType != NumberType.None)
 			{
@@ -148,11 +149,11 @@ namespace xnaMugen
 			return failover;
 		}
 
-		public static Vector2? AsVector2(object state, IExpression expression, Vector2? failover)
+        public static Vector2? AsVector2(Character character, IExpression expression, Vector2? failover)
 		{
 			if (expression == null || expression.IsValid == false) return failover;
 
-			var result = expression.Evaluate(state);
+            var result = expression.Evaluate(character);
 
 			if (result.Length > 0 && result[0].NumberType != NumberType.None)
 			{
@@ -167,11 +168,11 @@ namespace xnaMugen
 			return failover;
 		}
 
-		public static Vector3 AsVector3(object state, IExpression expression, Vector3 failover)
+        public static Vector3 AsVector3(Character character, IExpression expression, Vector3 failover)
 		{
 			if (expression == null || expression.IsValid == false) return failover;
 
-			var result = expression.Evaluate(state);
+            var result = expression.Evaluate(character);
 
 			if (result.Length > 0 && result[0].NumberType != NumberType.None)
 			{
@@ -191,11 +192,11 @@ namespace xnaMugen
 			return failover;
 		}
 
-		public static Vector3? AsVector3(object state, IExpression expression, Vector3? failover)
+        public static Vector3? AsVector3(Character character, IExpression expression, Vector3? failover)
 		{
 			if (expression == null || expression.IsValid == false) return failover;
 
-			var result = expression.Evaluate(state);
+            var result = expression.Evaluate(character);
 
 			if (result.Length > 0 && result[0].NumberType != NumberType.None)
 			{
@@ -215,11 +216,11 @@ namespace xnaMugen
 			return failover;
 		}
 
-		public static Vector4 AsVector4(object state, IExpression expression, Vector4 failover)
+        public static Vector4 AsVector4(Character character, IExpression expression, Vector4 failover)
 		{
 			if (expression == null || expression.IsValid == false) return failover;
 
-			var result = expression.Evaluate(state);
+            var result = expression.Evaluate(character);
 
 			if (result.Length > 0 && result[0].NumberType != NumberType.None)
 			{
@@ -244,11 +245,11 @@ namespace xnaMugen
 			return failover;
 		}
 
-		public static Vector4? AsVector4(object state, IExpression expression, Vector4? failover)
+        public static Vector4? AsVector4(Character character, IExpression expression, Vector4? failover)
 		{
 			if (expression == null || expression.IsValid == false) return failover;
 
-			var result = expression.Evaluate(state);
+            var result = expression.Evaluate(character);
 
 			if (result.Length > 0 && result[0].NumberType != NumberType.None)
 			{
@@ -273,11 +274,11 @@ namespace xnaMugen
 			return failover;
 		}
 
-		public static Rectangle AsRectangle(object state, IExpression expression, Rectangle failover)
+        public static Rectangle AsRectangle(Character character, IExpression expression, Rectangle failover)
 		{
 			if (expression == null || expression.IsValid == false) return failover;
 
-			var result = expression.Evaluate(state);
+            var result = expression.Evaluate(character);
 
 			if (result.Length > 3 && result[0].NumberType != NumberType.None && result[1].NumberType != NumberType.None && result[2].NumberType != NumberType.None && result[3].NumberType != NumberType.None)
 			{
@@ -287,11 +288,11 @@ namespace xnaMugen
 			return failover;
 		}
 
-		public static Rectangle? AsRectangle(object state, IExpression expression, Rectangle? failover)
+        public static Rectangle? AsRectangle(Character character, IExpression expression, Rectangle? failover)
 		{
 			if (expression == null || expression.IsValid == false) return failover;
 
-			var result = expression.Evaluate(state);
+            var result = expression.Evaluate(character);
 
 			if (result.Length > 3 && result[0].NumberType != NumberType.None && result[1].NumberType != NumberType.None && result[2].NumberType != NumberType.None && result[3].NumberType != NumberType.None)
 			{

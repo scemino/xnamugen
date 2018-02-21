@@ -1,11 +1,12 @@
+﻿using xnaMugen.Combat;
+
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("NumTarget")]
 	internal static class NumTarget
 	{
-		public static int Evaluate(object state, ref bool error, int targetId)
+		public static int Evaluate(Character character, ref bool error, int targetId)
 		{
-			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;

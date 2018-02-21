@@ -1,11 +1,12 @@
-﻿namespace xnaMugen.Evaluation.Triggers
+﻿using xnaMugen.Combat;
+
+namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("Physics")]
 	internal static class Physics 
 	{
-		public static bool Evaluate(object state, ref bool error, Operator @operator, xnaMugen.Physics physics)
+		public static bool Evaluate(Character character, ref bool error, Operator @operator, xnaMugen.Physics physics)
 		{
-			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;

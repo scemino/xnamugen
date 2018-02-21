@@ -1,11 +1,12 @@
+﻿using xnaMugen.Combat;
+
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("Lose")]
 	internal static class Lose
 	{
-		public static bool Evaluate(object state, ref bool error)
+		public static bool Evaluate(Character character, ref bool error)
 		{
-			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
@@ -24,9 +25,8 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("LoseKO")]
 	internal static class LoseKO
 	{
-		public static bool Evaluate(object state, ref bool error)
+		public static bool Evaluate(Character character, ref bool error)
 		{
-			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
@@ -45,9 +45,8 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("LoseTime")]
 	internal static class LoseTime
 	{
-		public static bool Evaluate(object state, ref bool error)
+		public static bool Evaluate(Character character, ref bool error)
 		{
-			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;

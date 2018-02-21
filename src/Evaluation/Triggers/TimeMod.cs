@@ -1,11 +1,12 @@
+﻿using xnaMugen.Combat;
+
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("TimeMod")]
 	internal static class TimeMod
 	{
-		public static bool Evaluate(object state, ref bool error, int r1, int r2)
+		public static bool Evaluate(Character character, ref bool error, int r1, int r2)
 		{
-			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;

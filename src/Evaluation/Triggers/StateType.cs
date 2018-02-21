@@ -1,11 +1,12 @@
+﻿using xnaMugen.Combat;
+
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("StateType")]
 	internal static class StateType
 	{
-		public static bool Evaluate(object state, ref bool error, Operator @operator, xnaMugen.StateType statetype)
+		public static bool Evaluate(Character character, ref bool error, Operator @operator, xnaMugen.StateType statetype)
 		{
-			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;

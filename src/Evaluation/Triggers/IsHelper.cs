@@ -1,11 +1,12 @@
+﻿using xnaMugen.Combat;
+
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("IsHelper")]
 	internal static class IsHelper
 	{
-		public static bool Evaluate(object state, ref bool error, int helperid)
+		public static bool Evaluate(Character character, ref bool error, int helperid)
 		{
-			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;

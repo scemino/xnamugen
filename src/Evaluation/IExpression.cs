@@ -1,8 +1,10 @@
-﻿namespace xnaMugen.Evaluation
+﻿using xnaMugen.Combat;
+
+namespace xnaMugen.Evaluation
 {
 	internal interface IExpression
 	{
-		Number[] Evaluate(object state);
+        Number[] Evaluate(Character character);
 
 		bool IsValid { get; }
 	}

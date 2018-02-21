@@ -1,11 +1,12 @@
-﻿namespace xnaMugen.Evaluation.Triggers
+﻿using xnaMugen.Combat;
+
+namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("Assertion")]
 	internal static class Assertion
 	{
-		public static bool Evaluate(object state, ref bool error, xnaMugen.Assertion assertion)
+        public static bool Evaluate(Character character, ref bool error, xnaMugen.Assertion assertion)
 		{
-			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;

@@ -1,11 +1,12 @@
+﻿using xnaMugen.Combat;
+
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("P2MoveType")]
 	internal static class P2MoveType
 	{
-		public static bool Evaluate(object state, ref bool error, Operator @operator, xnaMugen.MoveType movetype)
+		public static bool Evaluate(Character character, ref bool error, Operator @operator, xnaMugen.MoveType movetype)
 		{
-			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;

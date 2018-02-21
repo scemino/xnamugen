@@ -1,11 +1,12 @@
+﻿using xnaMugen.Combat;
+
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("ProjGuarded")]
 	internal static class ProjGuarded
 	{
-		public static bool Evaluate(object state, ref bool error, int projId, int r2, int rhs, Operator compareType)
+		public static bool Evaluate(Character character, ref bool error, int projId, int r2, int rhs, Operator compareType)
 		{
-			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
@@ -22,9 +23,8 @@ namespace xnaMugen.Evaluation.Triggers
 			return lookingfor == found;
 		}
 
-		public static bool Evaluate(object state, ref bool error, int projId, int r2, int pre, int post, Operator compareType, Symbol preCheck, Symbol postCheck)
+		public static bool Evaluate(Character character, ref bool error, int projId, int r2, int pre, int post, Operator compareType, Symbol preCheck, Symbol postCheck)
 		{
-			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;

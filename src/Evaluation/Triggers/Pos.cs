@@ -1,11 +1,12 @@
+﻿using xnaMugen.Combat;
+
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("Pos")]
 	internal static class Pos
 	{
-		public static float Evaluate(object state, ref bool error, Axis axis)
+		public static float Evaluate(Character character, ref bool error, Axis axis)
 		{
-			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;

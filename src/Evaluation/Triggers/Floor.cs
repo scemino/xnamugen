@@ -1,16 +1,17 @@
-using System;
+﻿using System;
+using xnaMugen.Combat;
 
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("Floor")]
 	internal static class Floor
 	{
-		public static int Evaluate(object state, ref bool error, int value)
+		public static int Evaluate(Character character, ref bool error, int value)
 		{
 			return value;
 		}
 
-		public static int Evaluate(object state, ref bool error, float value)
+		public static int Evaluate(Character character, ref bool error, float value)
 		{
 			return (int)Math.Floor(value);
 		}

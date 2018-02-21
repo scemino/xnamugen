@@ -1,10 +1,11 @@
-﻿namespace xnaMugen.Evaluation
+﻿using xnaMugen.Combat;
+
+namespace xnaMugen.Evaluation
 {
 	internal static class SpecialFunctions
 	{
-		public static int Assignment_Var(object state, int index, int value)
+		public static int Assignment_Var(Character character, int index, int value)
 		{
-			var character = state as Combat.Character;
 			if (character == null) throw new EvaluationException();
 
 			if (character.Variables.SetInteger(index, false, value)) return value;
@@ -12,9 +13,8 @@
 			throw new EvaluationException();
 		}
 
-		public static float Assignment_FVar(object state, int index, float value)
+		public static float Assignment_FVar(Character character, int index, float value)
 		{
-			var character = state as Combat.Character;
 			if (character == null) throw new EvaluationException();
 
 			if (character.Variables.SetFloat(index, false, value)) return value;
@@ -22,9 +22,8 @@
 			throw new EvaluationException();
 		}
 
-		public static int Assignment_SysVar(object state, int index, int value)
+		public static int Assignment_SysVar(Character character, int index, int value)
 		{
-			var character = state as Combat.Character;
 			if (character == null) throw new EvaluationException();
 
 			if (character.Variables.SetInteger(index, true, value)) return value;
@@ -32,9 +31,8 @@
 			throw new EvaluationException();
 		}
 
-		public static float Assignment_SysFVar(object state, int index, float value)
+		public static float Assignment_SysFVar(Character character, int index, float value)
 		{
-			var character = state as Combat.Character;
 			if (character == null) throw new EvaluationException();
 
 			if (character.Variables.SetFloat(index, true, value)) return value;

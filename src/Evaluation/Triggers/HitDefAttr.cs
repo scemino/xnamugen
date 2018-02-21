@@ -1,13 +1,13 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using xnaMugen.Combat;
 
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("HitDefAttr")]
 	internal static class HitDefAttr
 	{
-		public static bool Evaluate(object state, ref bool error, Operator @operator, AttackStateType ast, Combat.HitType[] hittypes)
+		public static bool Evaluate(Character character, ref bool error, Operator @operator, AttackStateType ast, Combat.HitType[] hittypes)
 		{
-			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;

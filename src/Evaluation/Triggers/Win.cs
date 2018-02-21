@@ -1,11 +1,12 @@
+﻿using xnaMugen.Combat;
+
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("Win")]
 	internal static class Win
 	{
-		public static bool Evaluate(object state, ref bool error)
+		public static bool Evaluate(Character character, ref bool error)
 		{
-			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
@@ -24,9 +25,8 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("WinKO")]
 	internal static class WinKO
 	{
-		public static bool Evaluate(object state, ref bool error)
+		public static bool Evaluate(Character character, ref bool error)
 		{
-			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
@@ -45,9 +45,8 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("WinTime")]
 	internal static class WinTime
 	{
-		public static bool Evaluate(object state, ref bool error)
+		public static bool Evaluate(Character character, ref bool error)
 		{
-			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
@@ -66,9 +65,8 @@ namespace xnaMugen.Evaluation.Triggers
 	[CustomFunction("WinPerfect")]
 	internal static class WinPerfect
 	{
-		public static bool Evaluate(object state, ref bool error)
+		public static bool Evaluate(Character character, ref bool error)
 		{
-			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;

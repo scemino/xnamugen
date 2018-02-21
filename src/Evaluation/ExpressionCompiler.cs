@@ -4,6 +4,7 @@ using System.Linq.Expressions;
 using Exp = System.Linq.Expressions.Expression;
 using System.Reflection;
 using System.Linq;
+using xnaMugen.Combat;
 
 namespace xnaMugen.Evaluation
 {
@@ -27,7 +28,7 @@ namespace xnaMugen.Evaluation
         {
             var compilerstate = new CompilerState
             {
-                FunctionState = Exp.Parameter(typeof(object), "state"),
+                FunctionState = Exp.Parameter(typeof(Character), "state"),
                 ErrorVariable = Exp.Parameter(typeof(bool), "error")
             };
             var result = Make(compilerstate, node);
@@ -50,7 +51,7 @@ namespace xnaMugen.Evaluation
                     Exp.Constant(new Number(0)));
                 result = Exp.TryCatch(result, Exp.Catch(exceptionParameter, catchBody));
                 // create lambda
-                var func = Exp.Lambda<Func<object, bool, Number>>(result, compilerstate.FunctionState, compilerstate.ErrorVariable).Compile();
+                var func = Exp.Lambda<Func<Character, bool, Number>>(result, compilerstate.FunctionState, compilerstate.ErrorVariable).Compile();
                 return new EvaluationCallback(o => func(o, false));
             }
             throw new Exception();
@@ -185,7 +186,7 @@ namespace xnaMugen.Evaluation
             functionargs.Insert(1, state.ErrorVariable);
             var callExp = Exp.Call(null, method, functionargs);
             var oldState = state.FunctionState;
-            state.FunctionState = Exp.Parameter(typeof(object));
+            state.FunctionState = Exp.Parameter(typeof(Character));
             var lambdaExp = Exp.Lambda(Make(state, node.Children[node.Children.Count - 1]), state.FunctionState);
             state.FunctionState = oldState;
             return Exp.Invoke(lambdaExp, callExp);
@@ -499,7 +500,7 @@ namespace xnaMugen.Evaluation
             if (args == null) throw new Exception();
 
             var argtypes = new Type[args.Count + 2];
-            argtypes[0] = typeof(object);
+            argtypes[0] = typeof(Character);
             argtypes[1] = typeof(bool).MakeByRefType();
             for (var i = 0; i != args.Count; ++i) argtypes[i + 2] = args[i].Type;
             var info = functiontype.GetMethod("Evaluate", argtypes);
@@ -523,7 +524,7 @@ namespace xnaMugen.Evaluation
             if (args == null) throw new Exception();
 
             var argtypes = new Type[args.Count + 2];
-            argtypes[0] = typeof(object);
+            argtypes[0] = typeof(Character);
             argtypes[1] = typeof(bool).MakeByRefType();
             for (var i = 0; i != args.Count; ++i) argtypes[i + 2] = args[i].Type;
 

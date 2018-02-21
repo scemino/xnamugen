@@ -1,11 +1,12 @@
+﻿using xnaMugen.Combat;
+
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("Var")]
 	internal static class Var
 	{
-		public static int Evaluate(object state, ref bool error, int value)
+		public static int Evaluate(Character character, ref bool error, int value)
 		{
-			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;

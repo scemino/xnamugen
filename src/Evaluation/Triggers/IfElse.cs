@@ -1,14 +1,16 @@
+﻿using xnaMugen.Combat;
+
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("IfElse")]
 	internal static class IfElse
 	{
-		public static int Evaluate(object state, ref bool error, int r1, int r2, int r3)
+		public static int Evaluate(Character character, ref bool error, int r1, int r2, int r3)
 		{
 			return r1 != 0 ? r2 : r3;
 		}
 
-		public static float Evaluate(object state, ref bool error, float r1, float r2, float r3)
+		public static float Evaluate(Character character, ref bool error, float r1, float r2, float r3)
 		{
 			return r1 != 0 ? r2 : r3;
 		}

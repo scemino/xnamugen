@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using xnaMugen.Combat;
 
 namespace xnaMugen
 {
@@ -11,5 +12,5 @@ namespace xnaMugen.Evaluation
 
 	internal delegate Node NodeBuild(List<Token> tokens, ref int tokenindex);
 
-	internal delegate Number EvaluationCallback(object state);
+    internal delegate Number EvaluationCallback(Character character);
 }

@@ -1,11 +1,12 @@
-using System;
+﻿using System;
+using xnaMugen.Combat;
 
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("E")]
 	internal static class E
 	{
-		public static float Evaluate(object state, ref bool error)
+		public static float Evaluate(Character character, ref bool error)
 		{
 			return (float)Math.E;
 		}

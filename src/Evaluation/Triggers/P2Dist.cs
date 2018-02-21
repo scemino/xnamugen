@@ -1,4 +1,5 @@
-using System;
+﻿using System;
+using xnaMugen.Combat;
 
 namespace xnaMugen.Evaluation.Triggers
 {
@@ -6,9 +7,8 @@ namespace xnaMugen.Evaluation.Triggers
 	internal static class P2Dist
 	{
 
-		public static float Evaluate(object state, ref bool error, Axis axis)
+		public static float Evaluate(Character character, ref bool error, Axis axis)
 		{
-			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;

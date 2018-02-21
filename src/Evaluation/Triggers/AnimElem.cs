@@ -1,11 +1,12 @@
+using xnaMugen.Combat;
+
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("AnimElem")]
 	internal static class AnimElem
 	{
-		public static bool Evaluate(object state, ref bool error, int r1, int rhs, Operator compareType)
+        public static bool Evaluate(Character character, ref bool error, int r1, int rhs, Operator compareType)
 		{
-			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;
@@ -42,9 +43,8 @@ namespace xnaMugen.Evaluation.Triggers
 			return compareType == Operator.Equals ? result && character.UpdatedAnimation : result;
 		}
 
-		public static bool Evaluate(object state, ref bool error, int r1, int pre, int post, Operator compareType, Symbol preCheck, Symbol postCheck)
+        public static bool Evaluate(Character character, ref bool error, int r1, int pre, int post, Operator compareType, Symbol preCheck, Symbol postCheck)
 		{
-			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;

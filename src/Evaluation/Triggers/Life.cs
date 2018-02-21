@@ -1,11 +1,12 @@
+﻿using xnaMugen.Combat;
+
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("Life")]
 	internal static class Life
 	{
-		public static int Evaluate(object state, ref bool error)
+		public static int Evaluate(Character character, ref bool error)
 		{
-			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;

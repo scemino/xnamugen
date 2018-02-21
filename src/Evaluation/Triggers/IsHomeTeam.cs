@@ -1,11 +1,12 @@
+﻿using xnaMugen.Combat;
+
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("IsHomeTeam")]
 	internal static class IsHomeTeam
 	{
-		public static bool Evaluate(object state, ref bool error)
+		public static bool Evaluate(Character character, ref bool error)
 		{
-			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;

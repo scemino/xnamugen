@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using xnaMugen.Combat;
 
 namespace xnaMugen.Evaluation
 {
@@ -18,9 +19,9 @@ namespace xnaMugen.Evaluation
 			return Common ?? failover;
 		}
 
-		public Number[] Evaluate(object state)
+        public Number[] Evaluate(Character character)
 		{
-			return m_expression.Evaluate(state);
+            return m_expression.Evaluate(character);
 		}
 
 		public Expression Expression => m_expression;

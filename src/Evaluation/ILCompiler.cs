@@ -3,6 +3,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Threading;
 using System.Collections.Generic;
+using xnaMugen.Combat;
 
 namespace xnaMugen.Evaluation
 {
@@ -51,10 +52,10 @@ namespace xnaMugen.Evaluation
 
 		public EvaluationCallback Create(Node node)
 		{
-			var method = new DynamicMethod(string.Empty, typeof(Number), new[] { typeof(object) }, typeof(ILCompiler), true);
+			var method = new DynamicMethod(string.Empty, typeof(Number), new[] { typeof(Character) }, typeof(ILCompiler), true);
 
 			var compilerstate = new CompilerState {Generator = method.GetILGenerator()};
-			compilerstate.FunctionState = compilerstate.Generator.DeclareLocal(typeof(object));
+			compilerstate.FunctionState = compilerstate.Generator.DeclareLocal(typeof(Character));
 			compilerstate.ErrorLabel = compilerstate.Generator.DefineLabel();
 			compilerstate.ErrorVariable = compilerstate.Generator.DeclareLocal(typeof(bool));
 
@@ -219,7 +220,7 @@ namespace xnaMugen.Evaluation
 
 			var oldstate = state.FunctionState;
 
-			state.FunctionState = state.Generator.DeclareLocal(typeof(object));
+			state.FunctionState = state.Generator.DeclareLocal(typeof(Character));
 			StoreLocalVariable(state, state.FunctionState);
 
 			LoadLocalVariable(state, state.ErrorVariable);
@@ -625,7 +626,7 @@ namespace xnaMugen.Evaluation
 			if (args == null) throw new Exception();
 
 			var argtypes = new Type[args.Count + 2];
-			argtypes[0] = typeof(object);
+			argtypes[0] = typeof(Character);
 			argtypes[1] = typeof(bool).MakeByRefType();
 			for (var i = 0; i != args.Count; ++i) argtypes[i + 2] = args[i].LocalType;
 
@@ -641,7 +642,7 @@ namespace xnaMugen.Evaluation
 			if (args == null) throw new Exception();
 
 			var argtypes = new Type[args.Count + 2];
-			argtypes[0] = typeof(object);
+			argtypes[0] = typeof(Character);
 			argtypes[1] = typeof(bool).MakeByRefType();
 			for (var i = 0; i != args.Count; ++i) argtypes[i + 2] = args[i].LocalType;
 

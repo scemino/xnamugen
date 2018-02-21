@@ -1,13 +1,13 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using xnaMugen.Combat;
 
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("NumHelper")]
 	internal static class NumHelper
 	{
-		public static int Evaluate(object state, ref bool error, int helperId)
+		public static int Evaluate(Character character, ref bool error, int helperId)
 		{
-			var character = state as Combat.Character;
 			if (character == null)
 			{
 				error = true;

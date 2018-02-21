@@ -1,11 +1,12 @@
 using System;
+using xnaMugen.Combat;
 
 namespace xnaMugen.Evaluation.Triggers
 {
 	[CustomFunction("Asin")]
 	internal static class Asin
 	{
-		public static float Evaluate(object state, ref bool error, float value)
+        public static float Evaluate(Character character, ref bool error, float value)
 		{
 			if (value < -1 || value > 1)
 			{
