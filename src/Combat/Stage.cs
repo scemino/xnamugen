@@ -114,6 +114,12 @@ namespace xnaMugen.Combat
 			m_p2start.X = playerinfosection.GetAttribute<float>("p2startx");
 			m_p2start.Y = playerinfosection.GetAttribute<float>("p2starty");
 			m_p2facing = playerinfosection.GetAttribute<Facing>("p2facing");
+            m_p3start.X = playerinfosection.GetAttribute("p3startx", m_p1start.X);
+            m_p3start.Y = playerinfosection.GetAttribute("p3starty", m_p1start.Y);
+            m_p3facing = playerinfosection.GetAttribute("p3facing", m_p1facing);
+            m_p4start.X = playerinfosection.GetAttribute("p4startx", m_p2start.X);
+            m_p4start.Y = playerinfosection.GetAttribute("p4starty", m_p2start.Y);
+            m_p4facing = playerinfosection.GetAttribute("p4facing", m_p2facing);
 			m_playerbounds = BuildBoundsRect(playerinfosection, "leftbound", "rightbound", "topbound", "botbound");
 
 			m_screenleft = boundsection.GetAttribute<int>("screenleft");
@@ -240,6 +246,14 @@ namespace xnaMugen.Combat
 
 		public Facing P2Facing => m_p2facing;
 
+        public Vector2 P3Start => m_p3start;
+
+        public Facing P3Facing => m_p3facing;
+
+        public Vector2 P4Start => m_p4start;
+
+        public Facing P4Facing => m_p4facing;
+
 		public Point CameraStartLocation => m_camerastartlocation;
 
 		public BoundsRect PlayerBounds => m_playerbounds;
@@ -324,6 +338,18 @@ namespace xnaMugen.Combat
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		private readonly Facing m_p2facing;
+
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        private readonly Vector2 m_p3start;
+
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        private readonly Facing m_p3facing;
+
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        private readonly Vector2 m_p4start;
+
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        private readonly Facing m_p4facing;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		private readonly Point m_camerastartlocation;

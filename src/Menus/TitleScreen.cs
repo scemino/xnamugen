@@ -52,7 +52,7 @@ namespace xnaMugen.Menus
 #warning Some menu items aren't implemented yet
 			menutext[(int)MainMenuOption.Arcade] = "NOT IMPLEMENTED";
 			menutext[(int)MainMenuOption.TeamArcade] = "NOT IMPLEMENTED";
-			menutext[(int)MainMenuOption.TeamVersus] = "NOT IMPLEMENTED";
+			//menutext[(int)MainMenuOption.TeamVersus] = "NOT IMPLEMENTED";
 			menutext[(int)MainMenuOption.TeamCoop] = "NOT IMPLEMENTED";
 			menutext[(int)MainMenuOption.Survival] = "NOT IMPLEMENTED";
 			menutext[(int)MainMenuOption.SurvivalCoop] = "NOT IMPLEMENTED";
@@ -175,16 +175,21 @@ namespace xnaMugen.Menus
 			if (pressed)
 			{
 				SoundManager.Play(m_soundselect);
-
-				if (m_currentmenuitem == (int)MainMenuOption.Versus)
-				{
-					MenuSystem.PostEvent(new Events.SwitchScreen(ScreenType.Select));
-				}
-				else if (m_currentmenuitem == (int)MainMenuOption.Quit)
-				{
-					QuitGame(true);
-				}
-			}
+                switch (m_currentmenuitem)
+                {
+                    case (int)MainMenuOption.Versus:
+                        MenuSystem.PostEvent(new Events.SetupCombatMode(CombatMode.Versus));
+                        MenuSystem.PostEvent(new Events.SwitchScreen(ScreenType.Select));
+                        break;
+                    case (int)MainMenuOption.TeamVersus:
+                        MenuSystem.PostEvent(new Events.SetupCombatMode(CombatMode.TeamVersus));
+                        MenuSystem.PostEvent(new Events.SwitchScreen(ScreenType.Select));
+                        break;
+                    case (int)MainMenuOption.Quit:
+                        QuitGame(true);
+                        break;
+                }
+            }
 		}
 
 		private void QuitGame(bool pressed)

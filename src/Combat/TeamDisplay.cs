@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using Microsoft.Xna.Framework;
+using xnaMugen.Elements;
 
 namespace xnaMugen.Combat
 {
@@ -14,13 +15,14 @@ namespace xnaMugen.Combat
             m_combocounter = new ComboCounter(team);
 
             var textfile = m_team.Engine.GetSubSystem<IO.FileSystem>().OpenTextFile(@"data/fight.def");
-            var lifebar = textfile.GetSection("Lifebar");
+            var lifebar = textfile.GetSection(GetLifebarSectionName(team.Mode));
             var powerbar = textfile.GetSection("Powerbar");
-            var face = textfile.GetSection("Face");
-            var name = textfile.GetSection("Name");
+            var face = textfile.GetSection(GetFaceSectionName(team.Mode));
+            var name = textfile.GetSection(GetNameSectionName(team.Mode));
             var winicon = textfile.GetSection("WinIcon");
 
             var prefix = Misc.GetPrefix(m_team.Side);
+            var matePrefix = Misc.GetMatePrefix(m_team.Side);
             var elements = m_team.Engine.Elements;
 
             m_lifebg0 = elements.Build(prefix + "lifebar.bg0", lifebar, prefix + ".bg0");
@@ -28,6 +30,16 @@ namespace xnaMugen.Combat
             m_lifebg2 = elements.Build(prefix + "lifebar.bg2", lifebar, prefix + ".bg2");
             m_lifemid = elements.Build(prefix + "lifebar.mid", lifebar, prefix + ".mid");
             m_lifefront = elements.Build(prefix + "lifebar.front", lifebar, prefix + ".front");
+
+            if (team.Mode == TeamMode.Simul)
+            {
+                m_mateLifebg0 = elements.Build(matePrefix + "lifebar.bg0", lifebar, matePrefix + ".bg0");
+                m_mateLifebg1 = elements.Build(matePrefix + "lifebar.bg1", lifebar, matePrefix + ".bg1");
+                m_mateLifebg2 = elements.Build(matePrefix + "lifebar.bg2", lifebar, matePrefix + ".bg2");
+                m_mateLifemid = elements.Build(matePrefix + "lifebar.mid", lifebar, matePrefix + ".mid");
+                m_mateLifefront = elements.Build(matePrefix + "lifebar.front", lifebar, matePrefix + ".front");
+                m_mateLifebarPosition = (Vector2)lifebar.GetAttribute<Point>(matePrefix + ".pos");
+            }
 
             m_powerbg0 = elements.Build(prefix + "powerbar.bg0", powerbar, prefix + ".bg0");
             m_powerbg1 = elements.Build(prefix + "powerbar.bg1", powerbar, prefix + ".bg1");
@@ -39,7 +51,21 @@ namespace xnaMugen.Combat
             m_facebg = elements.Build(prefix + "face.bg", face, prefix + ".bg");
             m_faceimage = elements.Build(prefix + "face.face", face, prefix + ".face");
 
+            if (team.Mode == TeamMode.Simul)
+            {
+                m_mateFaceBg = elements.Build(matePrefix + "face.bg", face, matePrefix + ".bg");
+                m_mateFaceImage = elements.Build(matePrefix + "face.face", face, matePrefix + ".face");
+                m_mateFacePosition = (Vector2)face.GetAttribute<Point>(matePrefix + ".pos");
+                m_mateLifeBarRange = lifebar.GetAttribute<Point>(matePrefix + ".range.x");
+            }
+
             m_namelement = elements.Build(prefix + "name.name", name, prefix + ".name");
+
+            if (team.Mode == TeamMode.Simul)
+            {
+                m_mateNameElement = elements.Build(matePrefix + "name.name", name, matePrefix + ".name");
+                m_mateNamePosition = (Vector2)name.GetAttribute<Point>(matePrefix + ".pos");
+            }
 
             m_winiconnormal = elements.Build(prefix + "winicon.normal", winicon, prefix + ".n");
             m_winiconspecial = elements.Build(prefix + "winicon.special", winicon, prefix + ".s");
@@ -65,6 +91,45 @@ namespace xnaMugen.Combat
             m_winiconoffset = (Vector2)winicon.GetAttribute<Point>(prefix + ".iconoffset");
         }
 
+        private static string GetLifebarSectionName(TeamMode mode)
+        {
+            switch (mode)
+            {
+                case TeamMode.Simul:
+                    return "Simul Lifebar";
+                case TeamMode.Turns:
+                    return "Turns Lifebar";
+                default:
+                    return "Lifebar";
+            }
+        }
+
+        private static string GetFaceSectionName(TeamMode mode)
+        {
+            switch (mode)
+            {
+                case TeamMode.Simul:
+                    return "Simul Face";
+                case TeamMode.Turns:
+                    return "Turns Face";
+                default:
+                    return "Face";
+            }
+        }
+
+        private static string GetNameSectionName(TeamMode mode)
+        {
+            switch (mode)
+            {
+                case TeamMode.Simul:
+                    return "Simul Name";
+                case TeamMode.Turns:
+                    return "Turns Name";
+                default:
+                    return "Name";
+            }
+        }
+
         public void Update()
         {
             ComboCounter.Update();
@@ -73,9 +138,15 @@ namespace xnaMugen.Combat
         public void Draw()
         {
             DrawLifebar(m_team.MainPlayer);
+            DrawMateLifebar(m_team.TeamMate);
+
             DrawPowerbar(m_team.MainPlayer);
+
             DrawFace(m_team.MainPlayer);
+            DrawMateFace(m_team.TeamMate);
+
             PrintName(m_team.MainPlayer);
+            PrintMateName(m_team.TeamMate);
 
             DrawWinIcons();
         }
@@ -156,6 +227,36 @@ namespace xnaMugen.Combat
             }
         }
 
+        private void DrawMateLifebar(Player player)
+        {
+            if (player == null) return;
+            if (m_team.Mode == TeamMode.Turns) return;
+
+            if (m_mateLifebg0.DataMap.Type == ElementType.Static || m_mateLifebg0.DataMap.Type == ElementType.Animation)
+            {
+                m_mateLifebg0.Draw(m_lifebarposition);
+            }
+
+            if (m_mateLifebg1.DataMap.Type == ElementType.Static || m_mateLifebg1.DataMap.Type == ElementType.Animation)
+            {
+                m_mateLifebg1.Draw(m_lifebarposition);
+            }
+
+            if (m_mateLifemid.DataMap.Type == ElementType.Static)
+            {
+                //m_mateLifemid.Draw(m_lifebarposition);
+            }
+
+            if (m_mateLifefront.DataMap.Type == ElementType.Static)
+            {
+                var life_percentage = Math.Max(0.0f, player.Life / (float)player.Constants.MaximumLife);
+
+                var drawstate = m_mateLifefront.SpriteManager.SetupDrawing(m_mateLifefront.DataMap.SpriteId, m_mateLifebarPosition, Vector2.Zero, m_mateLifefront.DataMap.Scale, m_mateLifefront.DataMap.Flip);
+                drawstate.ScissorRectangle = CreateBarScissorRectangle(m_mateLifefront, m_mateLifebarPosition, life_percentage, m_mateLifeBarRange);
+                drawstate.Use();
+            }
+        }
+
         private void DrawPowerbar(Player player)
         {
             if (player == null) throw new ArgumentNullException(nameof(player));
@@ -210,6 +311,28 @@ namespace xnaMugen.Combat
             }
         }
 
+        private void DrawMateFace(Player player)
+        {
+            if (player == null) return;
+            if (m_team.Mode == TeamMode.Turns) return;
+
+            if (m_mateFaceBg.DataMap.Type == ElementType.Static || m_mateFaceBg.DataMap.Type == ElementType.Animation)
+            {
+                m_mateFaceBg.Draw(m_mateFacePosition);
+            }
+
+            if (m_mateFaceImage != null && m_mateFaceImage.DataMap.Type == ElementType.Static)
+            {
+                var drawstate = player.SpriteManager.SetupDrawing(
+                    m_mateFaceImage.DataMap.SpriteId, m_mateFacePosition + m_mateFaceImage.DataMap.Offset, 
+                    Vector2.Zero, m_mateFaceImage.DataMap.Scale, m_mateFaceImage.DataMap.Flip);
+
+                player.PaletteFx.SetShader(drawstate.ShaderParameters);
+
+                drawstate.Use();
+            }
+        }
+
         private void PrintName(Player player)
         {
             if (player == null) throw new ArgumentNullException(nameof(player));
@@ -220,7 +343,18 @@ namespace xnaMugen.Combat
             }
         }
 
-        private Rectangle CreateBarScissorRectangle(Elements.Base element, Vector2 location, float percentage, Point range)
+        private void PrintMateName(Player player)
+        {
+            if (player == null) return;
+            if (m_team.Mode == TeamMode.Turns) return;
+
+            if (m_mateNameElement.DataMap.Type == ElementType.Text)
+            {
+                m_team.Engine.Print(m_mateNameElement.DataMap.FontData, m_mateNamePosition, player.Profile.DisplayName, null);
+            }
+        }
+
+        private Rectangle CreateBarScissorRectangle(Base element, Vector2 location, float percentage, Point range)
         {
             if (element == null) throw new ArgumentNullException(nameof(element));
 
@@ -263,6 +397,9 @@ namespace xnaMugen.Combat
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         private readonly Vector2 m_lifebarposition;
+
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        private readonly Vector2 m_mateLifebarPosition;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         private readonly Point m_lifebarrange;
@@ -356,6 +493,27 @@ namespace xnaMugen.Combat
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         private readonly Elements.Base m_winiconperfect;
+
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        private Base m_mateLifebg0;
+
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        private Base m_mateLifebg1;
+
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        private Base m_mateLifebg2;
+
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        private Base m_mateLifemid;
+
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        private Base m_mateLifefront;
+        private Base m_mateFaceBg;
+        private Base m_mateFaceImage;
+        private Vector2 m_mateFacePosition;
+        private Base m_mateNameElement;
+        private Vector2 m_mateNamePosition;
+        private Point m_mateLifeBarRange;
 
         #endregion
     }

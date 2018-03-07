@@ -358,7 +358,9 @@ namespace xnaMugen
 
 		public Drawing.SpriteManager SpriteManager => m_spritemanager;
 
-		public string BasePath => m_basepath;
+        public string BasePath => m_basepath;
+		
+        public ProfileLoader ProfileLoader => m_loader  ;
 
 		#region Fields
 

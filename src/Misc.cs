@@ -113,5 +113,20 @@ namespace xnaMugen
                     throw new ArgumentOutOfRangeException(nameof(side));
             }
         }
+
+        public static string GetMatePrefix(TeamSide side)
+        {
+            switch (side)
+            {
+                case TeamSide.Left:
+                    return "p3";
+
+                case TeamSide.Right:
+                    return "p4";
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(side));
+            }
+        }
 	}
 }

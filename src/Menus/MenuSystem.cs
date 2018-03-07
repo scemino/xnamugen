@@ -44,8 +44,8 @@ namespace xnaMugen.Menus
 			m_versusscreen = new VersusScreen(this, textfile.GetSection("VS Screen"), spritepath, animpath, soundpath);
 			m_versusscreen.LoadBackgrounds("Versus", textfile);
 
-			m_selectscreen = new SelectScreen(this, textfile.GetSection("Select Info"), spritepath, animpath, soundpath);
-			m_selectscreen.LoadBackgrounds("Select", textfile);
+			SelectScreen = new SelectScreen(this, textfile.GetSection("Select Info"), spritepath, animpath, soundpath);
+			SelectScreen.LoadBackgrounds("Select", textfile);
 
 			m_combatscreen = new CombatScreen(this);
 			m_replayscreen = new RecordedCombatScreen(this);
@@ -190,13 +190,20 @@ namespace xnaMugen.Menus
 					}
 				}
 
+                if (e is Events.SetupCombatMode)
+                {
+                    var ee = e as Events.SetupCombatMode;
+
+                    SelectScreen.CombatMode = ee.Mode;
+                }
+
 				if (e is Events.SetupCombat)
 				{
 					var ee = e as Events.SetupCombat;
 
 					GetMainSystem<Combat.FightEngine>().Set(ee.Initialization);
-					VersusScreen.P1.Profile = ee.Initialization.P1.Profile;
-					VersusScreen.P2.Profile = ee.Initialization.P2.Profile;
+                    VersusScreen.P1.Profile = ee.Initialization.Team1P1.Profile;
+                    VersusScreen.P2.Profile = ee.Initialization.Team2P1.Profile;
 				}
 			}
 		}
@@ -254,7 +261,7 @@ namespace xnaMugen.Menus
 
 				if (m_versusscreen != null) m_versusscreen.Dispose();
 
-				if (m_selectscreen != null) m_selectscreen.Dispose();
+				SelectScreen?.Dispose();
 
 				if (m_fontmap != null) m_fontmap.Dispose();
 			}
@@ -270,7 +277,7 @@ namespace xnaMugen.Menus
 
 		public TitleScreen TitleScreen => m_titlescreen;
 
-		public SelectScreen SelectScreen => m_selectscreen;
+        public SelectScreen SelectScreen { get; }
 
 		public VersusScreen VersusScreen => m_versusscreen;
 
@@ -293,9 +300,6 @@ namespace xnaMugen.Menus
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		private readonly TitleScreen m_titlescreen;
-
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		private readonly SelectScreen m_selectscreen;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		private readonly VersusScreen m_versusscreen;

@@ -91,7 +91,13 @@ namespace xnaMugen
 
 			if (p1profile == null || p2profile == null || stageprofile == null) return null;
 
-			var initsettings = new Combat.EngineInitialization(mode, p1profile, p1palette, p2profile, p2palette, stageprofile, seed);
+            // TODO: fix team modes and p2 profiles
+            var initsettings = new Combat.EngineInitialization(mode, TeamMode.None, TeamMode.None, 
+                                                               p1profile, p1palette, 
+                                                               p1profile, p1palette,
+                                                               p2profile, p2palette,
+                                                               p2profile, p2palette,
+                                                               stageprofile, seed);
 
 			var replaydata = new List<Replay.RecordingData>();
 

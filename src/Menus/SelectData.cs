@@ -36,7 +36,7 @@ namespace xnaMugen.Menus
 
 		public void Reset()
 		{
-			m_currentcell = m_startcell;
+			CurrentCell = m_startcell;
 			m_selected = false;
 			m_paletteindex = 0;
 
@@ -114,7 +114,7 @@ namespace xnaMugen.Menus
 				for (var i = newlocation.Y; i < gridsize.Y; ++i)
 				{
 					newlocation.Y = i;
-					var selection = SelectScreen.GetSelection(newlocation, true);
+                    var selection = SelectScreen.Grid.GetSelection(newlocation, true);
 					if (selection != null || m_moveoverempty) return newlocation;
 				}
 			}
@@ -131,7 +131,7 @@ namespace xnaMugen.Menus
 				for (var i = newlocation.Y; i >= 0; --i)
 				{
 					newlocation.Y = i;
-					var selection = SelectScreen.GetSelection(newlocation, true);
+                    var selection = SelectScreen.Grid.GetSelection(newlocation, true);
 					if (selection != null || m_moveoverempty) return newlocation;
 				}
 			}
@@ -148,7 +148,7 @@ namespace xnaMugen.Menus
 				for (var i = newlocation.X; i >= 0; --i)
 				{
 					newlocation.X = i;
-					var selection = SelectScreen.GetSelection(newlocation, true);
+                    var selection = SelectScreen.Grid.GetSelection(newlocation, true);
 					if (selection != null || m_moveoverempty) return newlocation;
 				}
 			}
@@ -165,7 +165,7 @@ namespace xnaMugen.Menus
 				for (var i = newlocation.X; i < gridsize.X; ++i)
 				{
 					newlocation.X = i;
-					var selection = SelectScreen.GetSelection(newlocation, true);
+                    var selection = SelectScreen.Grid.GetSelection(newlocation, true);
 					if (selection != null || m_moveoverempty) return newlocation;
 				}
 			}
@@ -177,12 +177,7 @@ namespace xnaMugen.Menus
 
 		public Point StartCell => m_startcell;
 
-		public Point CurrentCell
-		{
-			get => m_currentcell;
-
-			set { m_currentcell = value; }
-		}
+		public Point CurrentCell { get; set; }
 
 		public bool IsSelected
 		{
@@ -213,9 +208,6 @@ namespace xnaMugen.Menus
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		private readonly bool m_moveoverempty;
-
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		private Point m_currentcell;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		private bool m_selected;

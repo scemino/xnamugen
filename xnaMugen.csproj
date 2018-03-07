@@ -584,6 +584,9 @@
     <Compile Include="src\Evaluation\ExpressionCompiler.cs" />
     <Compile Include="src\Evaluation\ICompiler.cs" />
     <Compile Include="src\Diagnostics\OperatingSystemExtension.cs" />
+    <Compile Include="src\Events\SetupCombatMode.cs" />
+    <Compile Include="src\Menus\TeamSelectData.cs" />
+    <Compile Include="src\Menus\SelectGrid.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="data\Shader.fx" />

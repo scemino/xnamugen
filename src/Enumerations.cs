@@ -16,7 +16,9 @@ namespace xnaMugen
 
 	internal enum Victory { None, Normal, Special, Hyper, NormalThrow, Cheese, Time, Suicude, TeamKill }
 
-	internal enum TeamSide { None, Left, Right }
+    internal enum TeamSide { None, Left, Right }
+	
+    internal enum TeamMode { None, Single, Simul, Turns }
 
 	internal enum GameSpeed { Normal, Slow }
 

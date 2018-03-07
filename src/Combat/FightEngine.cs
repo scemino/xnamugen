@@ -127,8 +127,8 @@ namespace xnaMugen.Combat
 
             m_stage = new Stage(this, init.Stage);
 
-            Team1.CreatePlayers(init.P1, null);
-            Team2.CreatePlayers(init.P2, null);
+            Team1.CreatePlayers(init.Team1Mode, init.Team1P1, init.Team1P2);
+            Team2.CreatePlayers(init.Team2Mode, init.Team2P1, init.Team2P2);
 
 			GetSubSystem<Random>().Seed(init.Seed);
 

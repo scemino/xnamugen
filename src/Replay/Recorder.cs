@@ -71,12 +71,12 @@ namespace xnaMugen.Replay
 				writer.WriteLine("[xnaMugen Replay Header]");
 				writer.WriteLine("Version = 1");
 				writer.WriteLine("Combat Mode = {0}", m_initsettings.Mode);
-				writer.WriteLine("Player 1 Name = {0}", m_initsettings.P1.Profile.PlayerName);
-				writer.WriteLine("Player 1 Version = {0}", m_initsettings.P1.Profile.Version);
-				writer.WriteLine("Player 1 Palette = {0}", m_initsettings.P1.PaletteIndex);
-				writer.WriteLine("Player 2 Name = {0}", m_initsettings.P2.Profile.PlayerName);
-				writer.WriteLine("Player 2 Version = {0}", m_initsettings.P2.Profile.Version);
-				writer.WriteLine("Player 2 Palette = {0}", m_initsettings.P2.PaletteIndex);
+				writer.WriteLine("Player 1 Name = {0}", m_initsettings.Team1P1.Profile.PlayerName);
+                writer.WriteLine("Player 1 Version = {0}", m_initsettings.Team1P1.Profile.Version);
+                writer.WriteLine("Player 1 Palette = {0}", m_initsettings.Team1P1.PaletteIndex);
+                writer.WriteLine("Player 2 Name = {0}", m_initsettings.Team2P1.Profile.PlayerName);
+                writer.WriteLine("Player 2 Version = {0}", m_initsettings.Team2P1.Profile.Version);
+                writer.WriteLine("Player 2 Palette = {0}", m_initsettings.Team2P1.PaletteIndex);
 				writer.WriteLine("Stage Path = {0}", m_initsettings.Stage.Filepath);
 				writer.WriteLine("Seed = {0}", m_initsettings.Seed);
 

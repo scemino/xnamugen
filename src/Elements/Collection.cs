@@ -1,6 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
-using xnaMugen.Collections;
 
 namespace xnaMugen.Elements
 {
@@ -10,10 +10,10 @@ namespace xnaMugen.Elements
 		{
 			if (sprites == null) throw new ArgumentNullException(nameof(sprites));
 			if (animations == null) throw new ArgumentNullException(nameof(animations));
-			if (sounds == null) throw new ArgumentNullException("sounds");
+			if (sounds == null) throw new ArgumentNullException(nameof(sounds));
 			if (fontmap == null) throw new ArgumentNullException(nameof(fontmap));
 
-			m_elements = new KeyedCollection<string, Base>(x => x.Name, StringComparer.OrdinalIgnoreCase);
+            m_elements = new Dictionary<string, Base>(StringComparer.OrdinalIgnoreCase);
 			m_spritemanager = sprites;
 			m_animationmanager = animations;
 			m_soundmanager = sounds;
@@ -58,7 +58,7 @@ namespace xnaMugen.Elements
 
 			}
 
-			m_elements.Add(element);
+            m_elements[element.Name] = element;
 			return element;
 		}
 
@@ -66,7 +66,7 @@ namespace xnaMugen.Elements
 		{
 			if (name == null) throw new ArgumentNullException(nameof(name));
 
-			if (m_elements.Contains(name) == false) return null;
+            if (m_elements.ContainsKey(name) == false) return null;
 
 			return m_elements[name];
 		}
@@ -85,13 +85,13 @@ namespace xnaMugen.Elements
 		{
 			foreach (var element in m_elements)
 			{
-				element.Update();
+                element.Value.Update();
 			}
 		}
 
 		public void Reset()
 		{
-			foreach (var element in m_elements) element.Reset();
+            foreach (var element in m_elements) element.Value.Reset();
 		}
 
 		public Audio.SoundManager SoundManager
@@ -109,7 +109,7 @@ namespace xnaMugen.Elements
 
 		//[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		[DebuggerDisplay(null, Name = "Elements")]
-		private readonly KeyedCollection<string, Base> m_elements;
+		private readonly Dictionary<string, Base> m_elements;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		readonly Audio.SoundManager m_soundmanager;

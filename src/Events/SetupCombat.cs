@@ -3,7 +3,7 @@ using System.Diagnostics;
 
 namespace xnaMugen.Events
 {
-	internal class SetupCombat : Base
+    internal class SetupCombat : Base
 	{
 		public SetupCombat(Combat.EngineInitialization initialization)
 		{
