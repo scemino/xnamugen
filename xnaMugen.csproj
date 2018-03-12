@@ -587,6 +587,10 @@
     <Compile Include="src\Events\SetupCombatMode.cs" />
     <Compile Include="src\Menus\TeamSelectData.cs" />
     <Compile Include="src\Menus\SelectGrid.cs" />
+    <Compile Include="src\Menus\TeamSelectScreenBehavior.cs" />
+    <Compile Include="src\Menus\VersusSelectScreenBehavior.cs" />
+    <Compile Include="src\Menus\ISelectScreenBehavior.cs" />
+    <Compile Include="src\Menus\StageSelect.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="data\Shader.fx" />
