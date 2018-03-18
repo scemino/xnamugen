@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -7,7 +8,7 @@ namespace xnaMugen.IO
 	/// <summary>
 	/// Represents the text data found in a file.
 	/// </summary>
-	internal class TextFile
+    internal class TextFile: IEnumerable<TextSection>
 	{
 		/// <summary>
 		/// Initializes a new instance of this class.
@@ -60,6 +61,16 @@ namespace xnaMugen.IO
 		{
 			return m_sections.GetEnumerator();
 		}
+
+        IEnumerator<TextSection> IEnumerable<TextSection>.GetEnumerator()
+        {
+            return m_sections.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return m_sections.GetEnumerator();
+        }
 
 		/// <summary>
 		/// Returns the path of the file this object represents.

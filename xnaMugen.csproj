@@ -591,6 +591,12 @@
     <Compile Include="src\Menus\VersusSelectScreenBehavior.cs" />
     <Compile Include="src\Menus\ISelectScreenBehavior.cs" />
     <Compile Include="src\Menus\StageSelect.cs" />
+    <Compile Include="src\Menus\Fader.cs" />
+    <Compile Include="src\Menus\Layer.cs" />
+    <Compile Include="src\Menus\Scene.cs" />
+    <Compile Include="src\Menus\Storyboard.cs" />
+    <Compile Include="src\Menus\StoryboardScreen.cs" />
+    <Compile Include="src\Events\SetupStoryboard.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="data\Shader.fx" />

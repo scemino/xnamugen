@@ -6,7 +6,7 @@ namespace xnaMugen
 
 	internal enum ScreenShotFormat { None, Jpg, Bmp, Png }
 
-	internal enum ScreenType { None, Title, Select, Versus, Combat, Replay }
+    internal enum ScreenType { None, Storyboard, Title, Select, Versus, Combat, Replay, Options }
 
 	internal enum FadeDirection { None, In, Out }
 

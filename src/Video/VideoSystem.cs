@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Text;
 using System.IO;
+using System.Linq;
 
 namespace xnaMugen.Video
 {
@@ -18,6 +19,8 @@ namespace xnaMugen.Video
 			m_tint = Color.White;
 			m_renderer = new Renderer(this);
 			m_stringbuilder	= new StringBuilder();
+            EmptyTexture = new Texture2D(Device, 2, 2);
+            EmptyTexture.SetData(Enumerable.Range(0, 4).Select(i => Color.White).ToArray());
 
 			Device.DeviceReset += OnDeviceReset;
 
@@ -161,6 +164,8 @@ namespace xnaMugen.Video
 
 			set => m_tint = value;
 		}
+
+        public Texture2D EmptyTexture { get; private set; }
 
 		#region	Fields
 

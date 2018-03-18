@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using xnaMugen.Drawing;
 using Microsoft.Xna.Framework;
 
@@ -11,7 +10,7 @@ namespace xnaMugen.Menus
 		{
 			if (menusystem == null) throw new ArgumentNullException(nameof(menusystem));
 
-			m_menusystem = menusystem;
+			MenuSystem = menusystem;
 		}
 
 		public virtual void SetInput(Input.InputState inputstate)
@@ -66,17 +65,11 @@ namespace xnaMugen.Menus
 			base.Dispose(disposing);
 		}
 
-		public MenuSystem MenuSystem => m_menusystem;
+		public MenuSystem MenuSystem { get; }
 
 		public abstract int FadeInTime { get; }
 
 		public abstract int FadeOutTime { get; }
 
-		#region Fields
-
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		private readonly MenuSystem m_menusystem;
-
-		#endregion
 	}
 }

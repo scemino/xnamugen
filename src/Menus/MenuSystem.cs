@@ -49,6 +49,7 @@ namespace xnaMugen.Menus
 
 			m_combatscreen = new CombatScreen(this);
 			m_replayscreen = new RecordedCombatScreen(this);
+            StoryboardScreen = new StoryboardScreen(this);
 
 			m_currentscreen = null;
 			m_newscreen = null;
@@ -160,6 +161,10 @@ namespace xnaMugen.Menus
 							SetScreen(TitleScreen);
 							break;
 
+                        case ScreenType.Storyboard:
+                            SetScreen(StoryboardScreen);
+                            break;
+
 						case ScreenType.Versus:
 							SetScreen(VersusScreen);
 							break;
@@ -195,6 +200,13 @@ namespace xnaMugen.Menus
                     var ee = e as Events.SetupCombatMode;
 
                     SelectScreen.CombatMode = ee.Mode;
+                }
+
+                if (e is Events.SetupStoryboard)
+                {
+                    var ee = (Events.SetupStoryboard)e;
+                    StoryboardScreen.Storyboard = ee.Storyboard;
+                    StoryboardScreen.Event = ee.Event;
                 }
 
 				if (e is Events.SetupCombat)
@@ -284,6 +296,8 @@ namespace xnaMugen.Menus
 		public CombatScreen CombatScreen => m_combatscreen;
 
 		public RecordedCombatScreen ReplayScreen => m_replayscreen;
+
+        public StoryboardScreen StoryboardScreen { get; private set; }
 
 		public Screen CurrentScreen => m_currentscreen;
 

@@ -234,6 +234,17 @@ namespace xnaMugen
 			return vector.Value;
 		}
 
+        [StringConversion(typeof(Vector3))]
+        private object ToVector3(string s)
+        {
+            if (TryConvert(s, out Expression expression) == false) return Failure;
+
+            var vector = EvaluationHelper.AsVector3(null, expression, null);
+            if (vector == null) return Failure;
+
+            return vector.Value;
+        }
+
 		[StringConversion(typeof(Blending))]
 		private object ToBlending(string s)
 		{
