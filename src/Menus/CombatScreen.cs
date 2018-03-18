@@ -8,7 +8,7 @@ namespace xnaMugen.Menus
 		public CombatScreen(MenuSystem menusystem)
 			: base(menusystem)
 		{
-			m_pause = PauseState.Unpaused;
+			Pause = PauseState.Unpaused;
 			m_recorder = new Replay.Recorder(this);
 		}
 
@@ -73,7 +73,7 @@ namespace xnaMugen.Menus
 				FightEngine.Update(gametime);
 			}
 
-			if (Pause == PauseState.PauseStep) m_pause = PauseState.Paused;
+			if (Pause == PauseState.PauseStep) Pause = PauseState.Paused;
 		}
 
 		public override void Draw(bool debugdraw)
@@ -93,12 +93,12 @@ namespace xnaMugen.Menus
 			{
 				if (Pause == PauseState.Paused || Pause == PauseState.PauseStep)
 				{
-					m_pause = PauseState.Unpaused;
+					Pause = PauseState.Unpaused;
 					MenuSystem.GetSubSystem<Audio.SoundSystem>().UnPauseSounds();
 				}
 				else
 				{
-					m_pause = PauseState.Paused;
+					Pause = PauseState.Paused;
 					MenuSystem.GetSubSystem<Audio.SoundSystem>().PauseSounds();
 				}
 			}
@@ -112,7 +112,7 @@ namespace xnaMugen.Menus
 		{
 			if (pressed)
 			{
-				if (Pause == PauseState.Paused) m_pause = PauseState.PauseStep;
+				if (Pause == PauseState.Paused) Pause = PauseState.PauseStep;
 			}
 		}
 
@@ -128,20 +128,12 @@ namespace xnaMugen.Menus
 		/// Gets or set whether and how the game is paused.
 		/// </summary>
 		/// <returns>Unpaused if the game is not paused; Paused if the game is paused; PauseStep if the game is paused but will still run for one tick.</returns>
-		public PauseState Pause
-		{
-			get => m_pause;
-
-			set { m_pause = value; }
-		}
+		public PauseState Pause { get; set; }
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		private readonly Replay.Recorder m_recorder;
-
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		private PauseState m_pause;
 
 		#endregion;
 	}

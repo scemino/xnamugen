@@ -17,8 +17,6 @@ namespace xnaMugen.Combat
 			var velocitysection = textfile.GetSection("Velocity");
 			var movementsection = textfile.GetSection("Movement");
 
-			var converter = player.Engine.GetSubSystem<StringConverter>();
-
 			if (datasection == null) throw new ArgumentException("Constants file '" + textfile.Filepath + "' does not have a 'Data' section");
 			if (sizesection == null) throw new ArgumentException("Constants file '" + textfile.Filepath + "' does not have a 'Size' section");
 			if (velocitysection == null) throw new ArgumentException("Constants file '" + textfile.Filepath + "' does not have a 'Velocity' section");

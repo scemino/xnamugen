@@ -16,7 +16,7 @@ namespace xnaMugen.Combat
 
 			m_init = null;
             m_entities = new EntityCollection(this);
-            m_roundnumber = 0;
+            RoundNumber = 0;
             m_stage = null;
             m_idcounter = 0;
             m_tickcount = 0;
@@ -26,7 +26,7 @@ namespace xnaMugen.Combat
             m_camera = new Camera(this);
             m_envcolor = new EnvironmentColor(this);
             m_envshake = new EnvironmentShake(this);
-            m_speed = GameSpeed.Normal;
+            Speed = GameSpeed.Normal;
             m_slowspeedbuffer = 0;
             m_fontmap = BuildFontMap(filesection);
             m_fightsounds = GetSubSystem<Audio.SoundSystem>().CreateManager(BuildPath(basepath, filesection.GetAttribute<string>("snd")));
@@ -310,7 +310,7 @@ namespace xnaMugen.Combat
 
             if (EnvironmentColor.IsActive == false && Assertions.NoFrontLayer == false) Stage.Draw(BackgroundLayer.Front);
 
-            if (m_logic != null) m_logic.Draw();
+            m_logic?.Draw();
 
             Team1.Display.ComboCounter.Draw();
             Team2.Display.ComboCounter.Draw();
@@ -328,15 +328,9 @@ namespace xnaMugen.Combat
             return m_logic is Logic.ShowWinPose && m_logic.TickCount >= 0 && (Team1.Wins.Count >= RoundInformation.NumberOfRounds || Team2.Wins.Count >= RoundInformation.NumberOfRounds);
         }
 
-        public Audio.SoundManager FightSounds
-        {
-            get { return m_fightsounds; }
-        }
+        public Audio.SoundManager FightSounds => m_fightsounds;
 
-        public Audio.SoundManager CommonSounds
-        {
-            get { return m_commonsounds; }
-        }
+        public Audio.SoundManager CommonSounds => m_commonsounds;
 
         public Drawing.SpriteManager FightSprites => m_fightsprites;
 
@@ -352,12 +346,7 @@ namespace xnaMugen.Combat
 
         public RoundState RoundState => m_logic == null ? RoundState.None : m_logic.State;
 
-        public int RoundNumber
-        {
-            get => m_roundnumber;
-
-            set { m_roundnumber = value; }
-        }
+        public int RoundNumber { get; set; }
 
         public EntityCollection Entities => m_entities;
 
@@ -381,12 +370,7 @@ namespace xnaMugen.Combat
 
         public EnvironmentShake EnvironmentShake => m_envshake;
 
-        public GameSpeed Speed
-        {
-            get => m_speed;
-
-            set { m_speed = value; }
-        }
+        public GameSpeed Speed { get; set; }
 
         public Elements.Collection Elements => m_elements;
 
@@ -422,9 +406,6 @@ namespace xnaMugen.Combat
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         private readonly EntityCollection m_entities;
-
-        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        private int m_roundnumber;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         private int m_idcounter;
@@ -464,9 +445,6 @@ namespace xnaMugen.Combat
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         private readonly CombatChecker m_combatcheck;
-
-        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        private GameSpeed m_speed;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         private int m_slowspeedbuffer;

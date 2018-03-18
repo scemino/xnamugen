@@ -18,8 +18,7 @@ namespace xnaMugen.Drawing
         {
             if (index < 0) throw new ArgumentNullException(nameof(index));
 
-            Font font;
-            if (m_fonts.TryGetValue(index, out font) == false) return null;
+	        if (m_fonts.TryGetValue(index, out var font) == false) return null;
 
             return font;
         }
@@ -30,8 +29,7 @@ namespace xnaMugen.Drawing
 
 			if (data.IsValid == false) return;
 
-			Font font;
-			if (m_fonts.TryGetValue(data.Index, out font) == false) return;
+			if (m_fonts.TryGetValue(data.Index, out var font) == false) return;
 
 			font.Print(location, data.ColorIndex, data.Justification, text, scissor);
 		}
@@ -42,7 +40,11 @@ namespace xnaMugen.Drawing
 			{
 				if (m_fonts != null)
 				{
-					foreach (var font in m_fonts.Values) if (font != null) font.Dispose();
+					foreach (var font in m_fonts.Values)
+					{
+						font?.Dispose();
+					}
+
 					m_fonts.Clear();
 				}
 			}

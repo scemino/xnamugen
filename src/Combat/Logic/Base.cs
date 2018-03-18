@@ -13,14 +13,14 @@ namespace xnaMugen.Combat.Logic
 			m_tickcount = -1;
 			m_state = state;
 			m_element = null;
-			m_text = null;
+			DisplayString = null;
 		}
 
 		public virtual void Reset()
 		{
 			m_tickcount = -1;
 			m_element = null;
-			m_text = null;
+			DisplayString = null;
 		}
 
 		public virtual void Update()
@@ -74,9 +74,9 @@ namespace xnaMugen.Combat.Logic
 
 			if (m_element != null)
 			{
-				if (m_element is Elements.Text && m_text != null)
+				if (m_element is Elements.Text && DisplayString != null)
 				{
-					Engine.Fonts.Print(m_element.DataMap.FontData, location + m_element.DataMap.Offset, m_text, null);
+					Engine.Fonts.Print(m_element.DataMap.FontData, location + m_element.DataMap.Offset, DisplayString, null);
 				}
 				else
 				{
@@ -89,12 +89,7 @@ namespace xnaMugen.Combat.Logic
 
 		public RoundState State => m_state;
 
-		public string DisplayString
-		{
-			get => m_text;
-
-			set { m_text = value; }
-		}
+		public string DisplayString { get; set; }
 
 		public Elements.Base CurrentElement => m_element;
 
@@ -108,9 +103,6 @@ namespace xnaMugen.Combat.Logic
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		private Elements.Base m_element;
-
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		private string m_text;
 
 		#endregion
 	}

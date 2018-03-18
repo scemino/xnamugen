@@ -107,10 +107,7 @@ namespace xnaMugen.Combat
 
 		public override Animations.AnimationManager AnimationManager => m_animationmanager;
 
-		public override Audio.SoundManager SoundManager
-		{
-			get { return m_soundmanager; }
-		}
+		public override Audio.SoundManager SoundManager => m_soundmanager;
 
 		public override Commands.CommandManager CommandManager => m_commandmanager;
 

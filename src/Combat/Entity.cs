@@ -10,37 +10,37 @@ namespace xnaMugen.Combat
 		protected Entity(FightEngine engine)
 			: base(engine)
 		{
-			m_draworder = 0;
-			m_location = new Vector2(0, 0);
-			m_velocity = new Vector2(0, 0);
-			m_acceleration = new Vector2(0, 0);
+			DrawOrder = 0;
+			CurrentLocation = new Vector2(0, 0);
+			CurrentVelocity = new Vector2(0, 0);
+			CurrentAcceleration = new Vector2(0, 0);
 			m_facing = Facing.Right;
-			m_flip = SpriteEffects.None;
-			m_scale = new Vector2(1, 1);
-			m_blending = new Blending();
+			CurrentFlip = SpriteEffects.None;
+			CurrentScale = new Vector2(1, 1);
+			Transparency = new Blending();
 			m_afterimages = new AfterImage(this);
-			m_drawingangle = 0;
+			DrawingAngle = 0;
 		}
 
 		public virtual void Reset()
 		{
-			m_draworder = 0;
-			m_location = new Vector2(0, 0);
-			m_velocity = new Vector2(0, 0);
-			m_acceleration = new Vector2(0, 0);
+			DrawOrder = 0;
+			CurrentLocation = new Vector2(0, 0);
+			CurrentVelocity = new Vector2(0, 0);
+			CurrentAcceleration = new Vector2(0, 0);
 			m_facing = Facing.Right;
-			m_flip = SpriteEffects.None;
-			m_scale = new Vector2(1, 1);
-			m_blending = new Blending();
-			m_drawingangle = 0;
-			m_angledraw = false;
+			CurrentFlip = SpriteEffects.None;
+			CurrentScale = new Vector2(1, 1);
+			Transparency = new Blending();
+			DrawingAngle = 0;
+			AngleDraw = false;
 
 			m_afterimages.Reset();
 		}
 
 		public virtual void CleanUp()
 		{
-			m_angledraw = false;
+			AngleDraw = false;
 		}
 
 		public void SetLocalAnimation(int animnumber, int elementnumber)
@@ -272,33 +272,13 @@ namespace xnaMugen.Combat
 
 		public abstract EntityUpdateOrder UpdateOrder { get; }
 
-		public int DrawOrder
-		{
-			get => m_draworder;
+		public int DrawOrder { get; set; }
 
-			set { m_draworder = value; }
-		}
+		public Vector2 CurrentLocation { get; set; }
 
-		public Vector2 CurrentLocation
-		{
-			get => m_location;
+		public Vector2 CurrentVelocity { get; set; }
 
-			set { m_location = value; }
-		}
-
-		public Vector2 CurrentVelocity
-		{
-			get => m_velocity;
-
-			set { m_velocity = value; }
-		}
-
-		public Vector2 CurrentAcceleration
-		{
-			get => m_acceleration;
-
-			set { m_acceleration = value; }
-		}
+		public Vector2 CurrentAcceleration { get; set; }
 
 		public Facing CurrentFacing
 		{
@@ -316,49 +296,19 @@ namespace xnaMugen.Combat
 			}
 		}
 
-		public SpriteEffects CurrentFlip
-		{
-			get => m_flip;
+		public SpriteEffects CurrentFlip { get; set; }
 
-			set { m_flip = value; }
-		}
+		public Vector2 CurrentScale { get; set; }
 
-		public Vector2 CurrentScale
-		{
-			get => m_scale;
+		public Texture2D CurrentPalette { get; set; }
 
-			set { m_scale = value; }
-		}
-
-		public Texture2D CurrentPalette
-		{
-			get => m_currentpalette;
-
-			set { m_currentpalette = value; }
-		}
-
-		public Blending Transparency
-		{
-			get => m_blending;
-
-			set { m_blending = value; }
-		}
+		public Blending Transparency { get; set; }
 
 		public AfterImage AfterImages => m_afterimages;
 
-		public float DrawingAngle
-		{
-			get => m_drawingangle;
+		public float DrawingAngle { get; set; }
 
-			set { m_drawingangle = value; }
-		}
-
-		public bool AngleDraw
-		{
-			get => m_angledraw;
-
-			set { m_angledraw = value; }
-		}
+		public bool AngleDraw { get; set; }
 
 		public abstract PaletteFx PaletteFx { get; }
 
@@ -369,40 +319,10 @@ namespace xnaMugen.Combat
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		private Vector2 m_location;
-
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		private Vector2 m_velocity;
-
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		private Vector2 m_acceleration;
-
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		private Facing m_facing;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		private SpriteEffects m_flip;
-
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		private Vector2 m_scale;
-
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		private Texture2D m_currentpalette;
-
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		private Blending m_blending;
-
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		private readonly AfterImage m_afterimages;
-
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		private int m_draworder;
-
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		private float m_drawingangle;
-
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		private bool m_angledraw;
 
 		#endregion
 	}

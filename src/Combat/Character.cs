@@ -16,18 +16,18 @@ namespace xnaMugen.Combat
 			m_movetype = MoveType.Idle;
 			m_physics = Physics.Standing;
 			m_life = 0;
-			m_id = Engine.GenerateCharacterId();
-			m_drawoffset = new Vector2(0, 0);
-			m_positionfreeze = false;
-			m_roundsexisted = 0;
+			Id = Engine.GenerateCharacterId();
+			DrawOffset = new Vector2(0, 0);
+			PositionFreeze = false;
+			RoundsExisted = 0;
 			m_bind = new CharacterBind(this);
 			m_assertions = new CharacterAssertions();
-			m_jugglepoints = 0;
+			JugglePoints = 0;
 			m_variables = new CharacterVariables();
 			m_clipboard = new StringBuilder();
 			m_currentinput = PlayerButton.None;
-			m_pushflag = false;
-			m_drawscale = Vector2.One;
+			PushFlag = false;
+			DrawScale = Vector2.One;
 			m_offensiveinfo = new OffensiveInfo(this);
 			m_defensiveinfo = new DefensiveInfo(this);
 			m_updatedanimation = false;
@@ -43,17 +43,17 @@ namespace xnaMugen.Combat
 			m_movetype = MoveType.Idle;
 			m_physics = Physics.Standing;
 			m_life = 0;
-			m_drawoffset = new Vector2(0, 0);
-			m_positionfreeze = false;
-			m_roundsexisted = 0;
+			DrawOffset = new Vector2(0, 0);
+			PositionFreeze = false;
+			RoundsExisted = 0;
 			m_bind.Reset();
 			m_assertions.Reset();
-			m_jugglepoints = 0;
+			JugglePoints = 0;
 			m_variables.Reset();
 			m_clipboard.Length = 0;
 			m_currentinput = PlayerButton.None;
-			m_pushflag = false;
-			m_drawscale = Vector2.One;
+			PushFlag = false;
+			DrawScale = Vector2.One;
 			m_offensiveinfo.Reset();
 			m_defensiveinfo.Reset();
 			m_updatedanimation = false;
@@ -619,90 +619,35 @@ namespace xnaMugen.Combat
 			}
 		}
 
-		public int Id
-		{
-			get => m_id;
+		public int Id { get; set; }
 
-			set { m_id = value; }
-		}
+		public Vector2 DrawOffset { get; set; }
 
-		public Vector2 DrawOffset
-		{
-			get => m_drawoffset;
+		public bool PositionFreeze { get; set; }
 
-			set { m_drawoffset = value; }
-		}
+		public int RoundsExisted { get; set; }
 
-		public bool PositionFreeze
-		{
-			get => m_positionfreeze;
+		public bool CameraFollowX { get; set; }
 
-			set { m_positionfreeze = value; }
-		}
+		public bool CameraFollowY { get; set; }
 
-		public int RoundsExisted
-		{
-			get => m_roundsexisted;
+		public bool ScreenBound { get; set; }
 
-			set { m_roundsexisted = value; }
-		}
-
-		public bool CameraFollowX
-		{
-			get => m_camerafollowx;
-
-			set { m_camerafollowx = value; }
-		}
-
-		public bool CameraFollowY
-		{
-			get => m_camerafollowy;
-
-			set { m_camerafollowy = value; }
-		}
-
-		public bool ScreenBound
-		{
-			get => m_screenbound;
-
-			set { m_screenbound = value; }
-		}
-
-		public bool InHitPause
-		{
-			get => m_inhitpause;
-
-			set { m_inhitpause = value; }
-		}
+		public bool InHitPause { get; set; }
 
 		public CharacterBind Bind => m_bind;
 
 		public CharacterAssertions Assertions => m_assertions;
 
-		public int JugglePoints
-		{
-			get => m_jugglepoints;
-
-			set { m_jugglepoints = value; }
-		}
+		public int JugglePoints { get; set; }
 
 		public CharacterVariables Variables => m_variables;
 
 		public StringBuilder Clipboard => m_clipboard;
 
-		public bool PushFlag
-		{
-			get => m_pushflag;
+		public bool PushFlag { get; set; }
 
-			set { m_pushflag = value; }
-		}
-
-		public Vector2 DrawScale
-		{
-			get => m_drawscale;
-
-			set { m_drawscale = value; }
-		}
+		public Vector2 DrawScale { get; set; }
 
 		public OffensiveInfo OffensiveInfo => m_offensiveinfo;
 
@@ -733,49 +678,16 @@ namespace xnaMugen.Combat
 		private int m_life;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		private int m_id;
-
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		private Vector2 m_drawoffset;
-
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		private bool m_positionfreeze;
-
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		private int m_roundsexisted;
-
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		private bool m_camerafollowx;
-
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		private bool m_camerafollowy;
-
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		private bool m_screenbound;
-
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		private bool m_inhitpause;
-
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		private readonly CharacterBind m_bind;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		private readonly CharacterAssertions m_assertions;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		private int m_jugglepoints;
-
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		private readonly CharacterVariables m_variables;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		private readonly StringBuilder m_clipboard;
-
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		private bool m_pushflag;
-
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		private Vector2 m_drawscale;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		private readonly OffensiveInfo m_offensiveinfo;
