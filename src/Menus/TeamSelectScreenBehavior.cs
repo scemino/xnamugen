@@ -235,9 +235,9 @@ namespace xnaMugen.Menus
             var p22index = m_p2TeamInfo.P2SelectData.CurrentCell.Y * Grid.Size.X + m_p2TeamInfo.P2SelectData.CurrentCell.X;
 
             var p11 = PlayerProfiles[p11index];
-            var p12 = m_p1TeamInfo.TeamMode == TeamMode.Single ? null : PlayerProfiles[p12index];
+            var p12 = m_p1TeamInfo.TeamMode != TeamMode.Simul ? null : PlayerProfiles[p12index];
             var p21 = PlayerProfiles[p21index];
-            var p22 = m_p2TeamInfo.TeamMode == TeamMode.Single ? null : PlayerProfiles[p22index];
+            var p22 = m_p2TeamInfo.TeamMode != TeamMode.Simul ? null : PlayerProfiles[p22index];
 
             var init = new Combat.EngineInitialization(CombatMode.TeamVersus,
                                                        m_p1TeamInfo.TeamMode,

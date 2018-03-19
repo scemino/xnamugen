@@ -105,20 +105,15 @@ namespace xnaMugen.Menus
                                               Vector2.One, Microsoft.Xna.Framework.Graphics.SpriteEffects.None);
             // Single
             m_selectscreen.Print(CurrentLocation == 0 ? activeFont : m_itemFont, (Vector2)m_position + (Vector2)m_itemLocation, "Single", null);
-            m_elements.GetElement("value.icon").Draw((Vector2)m_position + (Vector2)m_itemLocation);
 
             // Simul
             m_selectscreen.Print(CurrentLocation == 1 ? activeFont : m_itemFont, (Vector2)m_position + (Vector2)m_itemLocation + (Vector2)m_itemSpacing, "Simul", null);
-            m_elements.GetElement("value.icon").Draw((Vector2)m_position + (Vector2)m_itemLocation + (Vector2)m_spacing);
             m_elements.GetElement("value.icon").Draw((Vector2)m_position + (Vector2)m_itemLocation + (Vector2)m_itemSpacing);
-            m_elements.GetElement("value.icon").Draw((Vector2)m_position + (Vector2)m_itemLocation + (Vector2)m_spacing);
             m_elements.GetElement("value.icon").Draw((Vector2)m_position + (Vector2)m_itemLocation + (Vector2)m_spacing + (Vector2)m_itemSpacing);
 
             // Turns
             m_selectscreen.Print(CurrentLocation == 2 ? activeFont : m_itemFont, (Vector2)m_position + (Vector2)m_itemLocation + (Vector2)m_itemSpacing + (Vector2)m_itemSpacing, "Turns", null);
-            m_elements.GetElement("value.icon").Draw((Vector2)m_position + (Vector2)m_itemLocation + (Vector2)m_spacing + (Vector2)m_itemSpacing);
             m_elements.GetElement("value.icon").Draw((Vector2)m_position + (Vector2)m_itemLocation + (Vector2)m_itemSpacing + (Vector2)m_itemSpacing);
-            m_elements.GetElement("value.icon").Draw((Vector2)m_position + (Vector2)m_itemLocation + (Vector2)m_spacing + (Vector2)m_itemSpacing);
             m_elements.GetElement("value.icon").Draw((Vector2)m_position + (Vector2)m_itemLocation + (Vector2)m_spacing + (Vector2)m_itemSpacing + (Vector2)m_itemSpacing);
             m_elements.GetElement("empty.icon").Draw((Vector2)m_position + (Vector2)m_itemLocation + (Vector2)m_spacing + (Vector2)m_itemSpacing + (Vector2)m_spacing + (Vector2)m_itemSpacing);
             m_elements.GetElement("empty.icon").Draw((Vector2)m_position + (Vector2)m_itemLocation + (Vector2)m_spacing + (Vector2)m_itemSpacing + (Vector2)m_spacing + (Vector2)m_spacing + (Vector2)m_itemSpacing);
