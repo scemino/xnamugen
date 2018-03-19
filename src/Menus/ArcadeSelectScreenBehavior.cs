@@ -7,9 +7,9 @@ using Microsoft.Xna.Framework;
 
 namespace xnaMugen.Menus
 {
-    internal class VersusSelectScreenBehavior : ISelectScreenBehavior
+    internal class ArcadeSelectScreenBehavior : ISelectScreenBehavior
     {
-        public VersusSelectScreenBehavior(SelectScreen selectScreen, TextSection textsection)
+        public ArcadeSelectScreenBehavior(SelectScreen selectScreen, TextSection textsection)
         {
             SelectScreen = selectScreen;
 
@@ -20,7 +20,6 @@ namespace xnaMugen.Menus
             m_titlefont = textsection.GetAttribute<PrintData>("title.font");
 
             m_p1info = new SelectData(selectScreen, selectScreen.MenuSystem.GetSubSystem<Input.InputSystem>().CurrentInput[1], textsection, "p1", Grid.MoveOverEmptyBoxes);
-            m_p2info = new SelectData(selectScreen, selectScreen.MenuSystem.GetSubSystem<Input.InputSystem>().CurrentInput[2], textsection, "p2", Grid.MoveOverEmptyBoxes);
         }
 
         public void SetInput(Input.InputState inputstate)
@@ -28,13 +27,11 @@ namespace xnaMugen.Menus
             inputstate[0].Add(SystemButton.Quit, BackToTitleScreen);
 
             SetCharacterSelectionInput(m_p1info);
-            SetCharacterSelectionInput(m_p2info);
         }
 
         public void Reset()
         {
             m_p1info.Reset();
-            m_p2info.Reset();
 
             m_stageSelect.Reset();
             m_isdone = false;
@@ -44,7 +41,6 @@ namespace xnaMugen.Menus
         {
             m_stageSelect.Update();
             m_p1info.Update();
-            m_p2info.Update();
 
             CheckReady();
         }
@@ -52,9 +48,8 @@ namespace xnaMugen.Menus
         public void Draw(bool debugdraw)
         {
             Grid.Draw();
-            Grid.DrawCursorGrid(m_p1info, m_p2info);
+            Grid.DrawCursorGrid(m_p1info, null);
             DrawFace(m_p1info);
-            DrawFace(m_p2info);
 
             m_stageSelect.Draw();
             SelectScreen.Print(m_titlefont, (Vector2)m_titlelocation, VersusMode, null);
@@ -133,23 +128,26 @@ namespace xnaMugen.Menus
         private void CheckReady()
         {
             if (m_isdone) return;
-            if (m_stageSelect.IsSelected == false || m_p1info.IsSelected == false || m_p2info.IsSelected == false) return;
+            if (m_stageSelect.IsSelected == false || m_p1info.IsSelected == false) return;
 
             m_isdone = true;
 
             var p1index = m_p1info.CurrentCell.Y * Grid.Size.X + m_p1info.CurrentCell.X;
-            var p2index = m_p2info.CurrentCell.Y * Grid.Size.X + m_p2info.CurrentCell.X;
 
             var p1 = PlayerProfiles[p1index];
-            var p2 = PlayerProfiles[p2index];
+            var p2 = PlayerProfiles[0];
 
             var init = new Combat.EngineInitialization(CombatMode.Versus,
                                                        p1.Profile, m_p1info.PaletteIndex, PlayerMode.Human,
-                                                       p2.Profile, m_p2info.PaletteIndex, PlayerMode.Human,
+                                                       p2.Profile, 0, PlayerMode.Ai,
                                                        m_stageSelect.CurrentStage);
 
             SelectScreen.MenuSystem.PostEvent(new Events.SetupCombat(init));
-            SelectScreen.MenuSystem.PostEvent(new Events.SwitchScreen(ScreenType.Versus));
+
+            var storyboardPath = p1.Profile.BasePath + "/intro.def";
+            var storyboard = new Storyboard(SelectScreen.MenuSystem, storyboardPath);
+            SelectScreen.MenuSystem.PostEvent(new Events.SetupStoryboard(storyboard,new Events.SwitchScreen(ScreenType.Versus)));
+            SelectScreen.MenuSystem.PostEvent(new Events.SwitchScreen(ScreenType.Storyboard));
         }
 
         private void BackToTitleScreen(bool pressed)
@@ -161,7 +159,7 @@ namespace xnaMugen.Menus
             }
         }
 
-        public string VersusMode => "Versus Mode";
+        public string VersusMode => "Arcade";
 
         private ListIterator<PlayerSelect> PlayerProfiles => SelectScreen.MenuSystem.GetSubSystem<ProfileLoader>().PlayerProfiles;
 
@@ -184,9 +182,6 @@ namespace xnaMugen.Menus
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         private readonly SelectData m_p1info;
-
-        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        private readonly SelectData m_p2info;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         private bool m_isdone;

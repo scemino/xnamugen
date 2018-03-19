@@ -78,7 +78,9 @@ namespace xnaMugen
 
 	internal enum Physics { None, Unchanged, Standing, Crouching, Airborne }
 
-	internal enum PlayerControl { Unchanged, InControl, NoControl }
+    internal enum PlayerControl { Unchanged, InControl, NoControl }
+	
+    internal enum PlayerMode { Human, Ai }
 
 	[Flags]
 	internal enum CommandButton { None = 0, A = 1, B = 2, C = 4, X = 8, Y = 16, Z = 32, Taunt = 64 }
@@ -104,5 +106,5 @@ namespace xnaMugen
 
 	internal enum ElementType { None, Static, Animation, Text }
 
-	internal enum CombatMode { None, Versus, TeamArcade, TeamVersus, TeamCoop, Survival, SurvivalCoop, Training }
+	internal enum CombatMode { None, Arcade, Versus, TeamArcade, TeamVersus, TeamCoop, Survival, SurvivalCoop, Training }
 }

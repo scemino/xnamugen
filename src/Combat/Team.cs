@@ -101,12 +101,12 @@ namespace xnaMugen.Combat
 			Clear();
 
             Mode = mode;
-			m_p1 = new Player(Engine, p1.Profile, this);
+			m_p1 = new Player(Engine, p1.Profile, p1.Mode, this);
 			m_p1.PaletteNumber = p1.PaletteIndex;
 
 			if (p2 != null)
 			{
-				m_p2 = new Player(Engine, p2.Profile, this);
+                m_p2 = new Player(Engine, p2.Profile, p2.Mode, this);
 				m_p2.PaletteNumber = p2.PaletteIndex;
 			}
 

@@ -242,10 +242,10 @@ namespace xnaMugen.Menus
             var init = new Combat.EngineInitialization(CombatMode.TeamVersus,
                                                        m_p1TeamInfo.TeamMode,
                                                        m_p2TeamInfo.TeamMode,
-                                                       p11.Profile, m_p1TeamInfo.P1SelectData.PaletteIndex,
-                                                       p12?.Profile, m_p1TeamInfo.P2SelectData.PaletteIndex,
-                                                       p21.Profile, m_p2TeamInfo.P1SelectData.PaletteIndex,
-                                                       p22?.Profile, m_p2TeamInfo.P2SelectData.PaletteIndex,
+                                                       p11.Profile, m_p1TeamInfo.P1SelectData.PaletteIndex, PlayerMode.Human,
+                                                       p12?.Profile, m_p1TeamInfo.P2SelectData.PaletteIndex, m_p1TeamInfo.TeamMode == TeamMode.Simul ? PlayerMode.Ai : PlayerMode.Human,
+                                                       p21.Profile, m_p2TeamInfo.P1SelectData.PaletteIndex, PlayerMode.Human,
+                                                       p22?.Profile, m_p2TeamInfo.P2SelectData.PaletteIndex, m_p2TeamInfo.TeamMode == TeamMode.Simul ? PlayerMode.Ai : PlayerMode.Human,
                                                        m_stageSelect.CurrentStage);
 
             SelectScreen.MenuSystem.PostEvent(new Events.SetupCombat(init));

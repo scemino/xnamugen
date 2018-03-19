@@ -13,7 +13,14 @@ namespace xnaMugen.Menus
     {
         public Storyboard(MenuSystem menuSystem, string path)
         {
-            var textfile = menuSystem.GetSubSystem<FileSystem>().OpenTextFile(path);
+            var fileSystem = menuSystem.GetSubSystem<FileSystem>();
+            var fileExits = fileSystem.DoesFileExist(path);
+            if (!fileExits)
+            {
+                IsFinished = true;
+                return;
+            }
+            var textfile = fileSystem.OpenTextFile(path);
             var animationManager = menuSystem.GetSubSystem<AnimationSystem>().CreateManager(textfile.Filepath);
             var sceneDef = textfile.GetSection("SceneDef");
             var directoryName = System.IO.Path.GetDirectoryName(path);

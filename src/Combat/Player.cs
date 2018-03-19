@@ -9,7 +9,7 @@ namespace xnaMugen.Combat
 	[DebuggerDisplay("Player - #{Id} - {Profile.PlayerName}")]
 	internal class Player : Character
 	{
-		public Player(FightEngine engine, PlayerProfile profile, Team team)
+        public Player(FightEngine engine, PlayerProfile profile, PlayerMode mode, Team team)
 			: base(engine)
 		{
 			if (profile == null) throw new ArgumentNullException(nameof(profile));
@@ -20,7 +20,8 @@ namespace xnaMugen.Combat
 			m_animationmanager = Engine.GetSubSystem<Animations.AnimationSystem>().CreateManager(Profile.AnimationPath);
 			m_soundmanager = Engine.GetSubSystem<Audio.SoundSystem>().CreateManager(Profile.SoundPath);
 			m_statemanager = Engine.GetSubSystem<StateMachine.StateSystem>().CreateManager(this, Profile.StateFiles);
-			m_commandmanager = Engine.GetSubSystem<Commands.CommandSystem>().CreateManager(Profile.CommandPath);
+
+            m_commandmanager = Engine.GetSubSystem<Commands.CommandSystem>().CreateManager(mode, Profile.CommandPath);
 			m_constants = new PlayerConstants(this, Engine.GetSubSystem<IO.FileSystem>().OpenTextFile(Profile.ConstantsPath));
 			m_dimensions = new CharacterDimensions(Constants);
 			m_palettes = BuildPalettes();
@@ -109,7 +110,7 @@ namespace xnaMugen.Combat
 
 		public override Audio.SoundManager SoundManager => m_soundmanager;
 
-		public override Commands.CommandManager CommandManager => m_commandmanager;
+        public override Commands.ICommandManager CommandManager => m_commandmanager;
 
 		public override StateMachine.StateManager StateManager => m_statemanager;
 
@@ -178,7 +179,7 @@ namespace xnaMugen.Combat
 		readonly Audio.SoundManager m_soundmanager;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		private readonly Commands.CommandManager m_commandmanager;
+        private readonly Commands.ICommandManager m_commandmanager;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		private readonly PlayerConstants m_constants;

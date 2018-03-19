@@ -597,6 +597,8 @@
     <Compile Include="src\Menus\Storyboard.cs" />
     <Compile Include="src\Menus\StoryboardScreen.cs" />
     <Compile Include="src\Events\SetupStoryboard.cs" />
+    <Compile Include="src\Menus\ArcadeSelectScreenBehavior.cs" />
+    <Compile Include="src\Commands\AiCommandManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="data\Shader.fx" />

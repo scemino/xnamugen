@@ -50,6 +50,9 @@ namespace xnaMugen.Menus
                 m_combatMode = value;
                 switch (m_combatMode)
                 {
+                    case CombatMode.Arcade:
+                        m_selectScreenBehavior = new ArcadeSelectScreenBehavior(this, m_textsection);
+                        break;
                     case CombatMode.Versus:
                         m_selectScreenBehavior = new VersusSelectScreenBehavior(this, m_textsection);
                         break;

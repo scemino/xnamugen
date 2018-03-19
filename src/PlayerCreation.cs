@@ -5,14 +5,17 @@ namespace xnaMugen
 {
 	internal class PlayerCreation
 	{
-		public PlayerCreation(PlayerProfile profile, int paletteindex)
+        public PlayerCreation(PlayerProfile profile, int paletteindex, PlayerMode mode)
 		{
 			if (profile == null) throw new ArgumentNullException(nameof(profile));
 			if (paletteindex < 0 || paletteindex > 11) throw new ArgumentOutOfRangeException(nameof(paletteindex));
 
+            Mode = mode;
 			m_profile = profile;
 			m_paletteindex = paletteindex;
 		}
+
+        public PlayerMode Mode { get; }
 
 		public PlayerProfile Profile => m_profile;
 

@@ -93,10 +93,10 @@ namespace xnaMugen
 
             // TODO: fix team modes and p2 profiles
             var initsettings = new Combat.EngineInitialization(mode, TeamMode.None, TeamMode.None, 
-                                                               p1profile, p1palette, 
-                                                               p1profile, p1palette,
-                                                               p2profile, p2palette,
-                                                               p2profile, p2palette,
+                                                               p1profile, p1palette, PlayerMode.Human,
+                                                               p1profile, p1palette, PlayerMode.Human,
+                                                               p2profile, p2palette, PlayerMode.Human,
+                                                               p2profile, p2palette, PlayerMode.Human,
                                                                stageprofile, seed);
 
 			var replaydata = new List<Replay.RecordingData>();

@@ -164,7 +164,7 @@ namespace xnaMugen.Combat
 			get { return m_soundmanager; }
 		}
 
-		public override Commands.CommandManager CommandManager => m_commandmanager;
+		public override Commands.ICommandManager CommandManager => m_commandmanager;
 
 		public override StateMachine.StateManager StateManager => m_statemanager;
 
@@ -202,7 +202,7 @@ namespace xnaMugen.Combat
 		readonly Audio.SoundManager m_soundmanager;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		private readonly Commands.CommandManager m_commandmanager;
+		private readonly Commands.ICommandManager m_commandmanager;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		private readonly CharacterDimensions m_dimensions;

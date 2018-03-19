@@ -5,8 +5,15 @@ using xnaMugen.Collections;
 
 namespace xnaMugen.Commands
 {
-	[DebuggerDisplay("{" + nameof(Filepath) + "}")]
-	internal class CommandManager
+    internal interface ICommandManager
+    {
+        bool IsActive(string commandname);
+        void Update(PlayerButton input, Facing facing, bool paused);
+        ICommandManager Clone();
+    }
+
+    [DebuggerDisplay("{" + nameof(Filepath) + "}")]
+    internal class CommandManager: ICommandManager
 	{
 		public CommandManager(CommandSystem commandsystem, string filepath, ReadOnlyList<Command> commands)
 		{
@@ -29,10 +36,10 @@ namespace xnaMugen.Commands
 			}
 		}
 
-		public CommandManager Clone()
-		{
-			return m_commandsystem.CreateManager(Filepath);
-		}
+        ICommandManager ICommandManager.Clone()
+        {
+            return m_commandsystem.CreateManager(PlayerMode.Human, Filepath);
+        }
 
 		public void Reset()
 		{

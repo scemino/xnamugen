@@ -6,32 +6,24 @@ namespace xnaMugen.Combat
 	internal class EngineInitialization
 	{
         public EngineInitialization(CombatMode mode,
-                                    PlayerProfile team1p1, int team1p1palette,
-                                    PlayerProfile team2p1, int team2p1palette,
+                                    PlayerProfile team1p1, int team1p1palette, PlayerMode team1p1mode,
+                                    PlayerProfile team2p1, int team2p1palette, PlayerMode team2p1mode,
                                     StageProfile stage) :
         this(mode, TeamMode.None, TeamMode.None,
-             team1p1, team1p1palette, null, 0,
-             team2p1, team2p1palette, null, 0,
-             stage, Environment.TickCount)
+             team1p1, team1p1palette, team1p1mode, null, 0, PlayerMode.Human,
+             team2p1, team2p1palette, team2p1mode, null, 0, PlayerMode.Human,
+             stage)
         {
         }
 
         public EngineInitialization(CombatMode mode, TeamMode team1mode, TeamMode team2mode,
-                                    PlayerProfile team1p1, int team1p1palette, PlayerProfile team1p2, int team1p2palette, 
-                                    PlayerProfile team2p1, int team2p1palette, PlayerProfile team2p2, int team2p2palette, 
-                                    StageProfile stage):
-        this(mode, team1mode, team2mode,
-             team1p1, team1p1palette, team1p2, team1p2palette,
-             team2p1, team2p1palette, team2p2, team2p2palette, 
-             stage, Environment.TickCount)
+                                    PlayerProfile team1p1, int team1p1palette, PlayerMode team1p1mode,
+                                    PlayerProfile team1p2, int team1p2palette, PlayerMode team1p2mode,
+                                    PlayerProfile team2p1, int team2p1palette, PlayerMode team2p1mode,
+                                    PlayerProfile team2p2, int team2p2palette, PlayerMode team2p2mode,
+                                    StageProfile stage, int? seed = null)
 		{
-		}
-
-        public EngineInitialization(CombatMode mode, TeamMode team1mode, TeamMode team2mode,
-                                    PlayerProfile team1p1, int team1p1palette, PlayerProfile team1p2, int team1p2palette,
-                                    PlayerProfile team2p1, int team2p1palette, PlayerProfile team2p2, int team2p2palette,
-                                    StageProfile stage, int seed)
-		{
+            seed = seed ?? Environment.TickCount;
 			if (mode == CombatMode.None) throw new ArgumentOutOfRangeException(nameof(mode));
             if (team1p1 == null) throw new ArgumentNullException(nameof(team1p1));
             if (team1p1palette < 0 || team1p1palette > 11) throw new ArgumentOutOfRangeException(nameof(team1p1palette));
@@ -44,18 +36,18 @@ namespace xnaMugen.Combat
 			m_mode = mode;
             Team1Mode = team1mode;
             Team2Mode = team2mode;
-            m_team1p1 = new PlayerCreation(team1p1, team1p1.GetValidPaletteIndex(team1p1palette));
+            m_team1p1 = new PlayerCreation(team1p1, team1p1.GetValidPaletteIndex(team1p1palette), team1p1mode);
             if (team1p2 != null)
             {
-                m_team1p2 = new PlayerCreation(team1p2, team1p2.GetValidPaletteIndex(team1p2palette));
+                m_team1p2 = new PlayerCreation(team1p2, team1p2.GetValidPaletteIndex(team1p2palette), team1p2mode);
             }
-            m_team2p1 = new PlayerCreation(team2p1, team2p1.GetValidPaletteIndex(team2p1palette));
+            m_team2p1 = new PlayerCreation(team2p1, team2p1.GetValidPaletteIndex(team2p1palette), team2p1mode);
             if (team2p2 != null)
             {
-                m_team2p2 = new PlayerCreation(team2p2, team2p2.GetValidPaletteIndex(team2p2palette));
+                m_team2p2 = new PlayerCreation(team2p2, team2p2.GetValidPaletteIndex(team2p2palette), team2p2mode);
             }
 			m_stage = stage;
-			m_seed = seed;
+            m_seed = seed.Value;
 		}
 
 		public CombatMode Mode => m_mode;

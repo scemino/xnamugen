@@ -42,11 +42,13 @@ namespace xnaMugen.Commands
 			var check = CommandChecker.Check(command, input);
 		}
 
-		public CommandManager CreateManager(string filepath)
+		public ICommandManager CreateManager(PlayerMode mode, string filepath)
 		{
 			if (filepath == null) throw new ArgumentNullException(nameof(filepath));
 
-			return new CommandManager(this, filepath, GetCommands(filepath));
+            return mode == PlayerMode.Human ?
+                                     (ICommandManager)new CommandManager(this, filepath, GetCommands(filepath)) :
+                                     new AiCommandManager(this, filepath, GetCommands(filepath));
 		}
 
 		private ReadOnlyList<Command> GetCommands(string filepath)
