@@ -30,8 +30,21 @@ namespace xnaMugen.Combat
 		{
 			if (action == null) throw new ArgumentNullException(nameof(action));
 
+            if (Mode == TeamMode.Turns)
+            {
+                if (OtherTeam.Wins.Count == 0)
+                {
+                    action(MainPlayer);
+                }
+                else
+                {
+                    action(TeamMate);
+                }
+                return;
+            }
+
 			action(MainPlayer);
-			if (TeamMate != null) action(TeamMate);
+            if (TeamMate != null) action(TeamMate);
 		}
 
 		public void ResetPlayers()
@@ -66,7 +79,7 @@ namespace xnaMugen.Combat
                 }
 			}
 
-			if (TeamMate != null)
+            if (TeamMate != null)
 			{
 				TeamMate.StateManager.ChangeState(0);
 				TeamMate.SetLocalAnimation(0, 0);

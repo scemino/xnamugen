@@ -14,16 +14,31 @@ namespace xnaMugen.Evaluation.Triggers
 				return false;
 			}
 
-#warning Hack
-			var match = string.Equals(text, "versus", StringComparison.OrdinalIgnoreCase);
+            var mode = character.Team.Mode;
+            bool result;
+            switch (mode)
+            {
+                case xnaMugen.TeamMode.Simul:
+                    result = string.Equals(text, "simul", StringComparison.OrdinalIgnoreCase);
+                    break;
+                case xnaMugen.TeamMode.Single:
+                    result = string.Equals(text, "single", StringComparison.OrdinalIgnoreCase);
+                    break;
+                case xnaMugen.TeamMode.Turns:
+                    result = string.Equals(text, "turns", StringComparison.OrdinalIgnoreCase);
+                    break;
+                default:
+                    error = true;
+                    return false;
+            }
 
 			switch (@operator)
 			{
 				case Operator.Equals:
-					return match;
+                    return result;
 
 				case Operator.NotEquals:
-					return !match;
+                    return !result;
 
 				default:
 					error = true;

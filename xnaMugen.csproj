@@ -599,6 +599,7 @@
     <Compile Include="src\Events\SetupStoryboard.cs" />
     <Compile Include="src\Menus\ArcadeSelectScreenBehavior.cs" />
     <Compile Include="src\Commands\AiCommandManager.cs" />
+      <Compile Include="src\Menus\TeamArcadeSelectScreenBehavior.cs"/>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="data\Shader.fx" />

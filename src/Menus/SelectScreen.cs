@@ -12,8 +12,8 @@ namespace xnaMugen.Menus
             : base(screensystem, textsection, spritepath, animationpath, soundpath)
         {
             m_textsection = textsection;
-            m_elements = new Collection(SpriteManager, AnimationManager, SoundManager, MenuSystem.FontMap);
-            Grid = new SelectGrid(textsection, m_elements, PlayerProfiles);
+            var elements = new Collection(SpriteManager, AnimationManager, SoundManager, MenuSystem.FontMap);
+            Grid = new SelectGrid(textsection, elements, PlayerProfiles);
         }
 
         public override void SetInput(Input.InputState inputstate)
@@ -56,6 +56,9 @@ namespace xnaMugen.Menus
                     case CombatMode.Versus:
                         m_selectScreenBehavior = new VersusSelectScreenBehavior(this, m_textsection);
                         break;
+                    case CombatMode.TeamArcade:
+                        m_selectScreenBehavior = new TeamArcadeSelectScreenBehavior(this, m_textsection);
+                        break;
                     case CombatMode.TeamVersus:
                         m_selectScreenBehavior = new TeamSelectScreenBehavior(this, m_textsection);
                         break;
@@ -73,8 +76,8 @@ namespace xnaMugen.Menus
         private CombatMode m_combatMode;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        private TextSection m_textsection;
-        private Collection m_elements;
+        private readonly TextSection m_textsection;
+
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         private ISelectScreenBehavior m_selectScreenBehavior;
 

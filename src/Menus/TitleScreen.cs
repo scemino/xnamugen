@@ -50,9 +50,6 @@ namespace xnaMugen.Menus
 			menutext[(int)MainMenuOption.Quit] = textsection.GetAttribute<string>("menu.itemname.exit");
 
 #warning Some menu items aren't implemented yet
-			//menutext[(int)MainMenuOption.Arcade] = "NOT IMPLEMENTED";
-			menutext[(int)MainMenuOption.TeamArcade] = "NOT IMPLEMENTED";
-			//menutext[(int)MainMenuOption.TeamVersus] = "NOT IMPLEMENTED";
 			menutext[(int)MainMenuOption.TeamCoop] = "NOT IMPLEMENTED";
 			menutext[(int)MainMenuOption.Survival] = "NOT IMPLEMENTED";
 			menutext[(int)MainMenuOption.SurvivalCoop] = "NOT IMPLEMENTED";
@@ -183,6 +180,10 @@ namespace xnaMugen.Menus
                         break;
                     case (int)MainMenuOption.Versus:
                         MenuSystem.PostEvent(new Events.SetupCombatMode(CombatMode.Versus));
+                        MenuSystem.PostEvent(new Events.SwitchScreen(ScreenType.Select));
+                        break;
+                    case (int)MainMenuOption.TeamArcade:
+                        MenuSystem.PostEvent(new Events.SetupCombatMode(CombatMode.TeamArcade));
                         MenuSystem.PostEvent(new Events.SwitchScreen(ScreenType.Select));
                         break;
                     case (int)MainMenuOption.TeamVersus:

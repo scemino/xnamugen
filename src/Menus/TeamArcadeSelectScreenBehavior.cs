@@ -7,9 +7,9 @@ using Microsoft.Xna.Framework;
 
 namespace xnaMugen.Menus
 {
-    internal class TeamSelectScreenBehavior : ISelectScreenBehavior
+    internal class TeamArcadeSelectScreenBehavior : ISelectScreenBehavior
     {
-        public TeamSelectScreenBehavior(SelectScreen selectScreen, TextSection textsection)
+        public TeamArcadeSelectScreenBehavior(SelectScreen selectScreen, TextSection textsection)
         {
             SelectScreen = selectScreen;
 
@@ -22,7 +22,7 @@ namespace xnaMugen.Menus
             m_p1info = new SelectData(selectScreen, selectScreen.MenuSystem.GetSubSystem<Input.InputSystem>().CurrentInput[1], textsection, "p1", Grid.MoveOverEmptyBoxes);
             m_p2info = new SelectData(selectScreen, selectScreen.MenuSystem.GetSubSystem<Input.InputSystem>().CurrentInput[2], textsection, "p2", Grid.MoveOverEmptyBoxes);
             m_p1TeamInfo = new TeamSelectData(selectScreen, selectScreen.MenuSystem.GetSubSystem<Input.InputSystem>().CurrentInput[1], textsection, "p1", Grid.MoveOverEmptyBoxes);
-            m_p2TeamInfo = new TeamSelectData(selectScreen, selectScreen.MenuSystem.GetSubSystem<Input.InputSystem>().CurrentInput[2], textsection, "p2", Grid.MoveOverEmptyBoxes);
+            m_p2TeamInfo = new TeamSelectData(selectScreen, selectScreen.MenuSystem.GetSubSystem<Input.InputSystem>().CurrentInput[2], textsection, "p2", Grid.MoveOverEmptyBoxes, false);
         }
 
         public void SetInput(Input.InputState inputstate)
@@ -244,8 +244,8 @@ namespace xnaMugen.Menus
                                                        m_p2TeamInfo.TeamMode,
                                                        p11.Profile, m_p1TeamInfo.P1SelectData.PaletteIndex, PlayerMode.Human,
                                                        p12?.Profile, m_p1TeamInfo.P2SelectData.PaletteIndex, m_p1TeamInfo.TeamMode == TeamMode.Simul ? PlayerMode.Ai : PlayerMode.Human,
-                                                       p21.Profile, m_p2TeamInfo.P1SelectData.PaletteIndex, PlayerMode.Human,
-                                                       p22?.Profile, m_p2TeamInfo.P2SelectData.PaletteIndex, m_p2TeamInfo.TeamMode == TeamMode.Simul ? PlayerMode.Ai : PlayerMode.Human,
+                                                       p21.Profile, m_p2TeamInfo.P1SelectData.PaletteIndex, PlayerMode.Ai,
+                                                       p22?.Profile, m_p2TeamInfo.P2SelectData.PaletteIndex, PlayerMode.Ai,
                                                        m_stageSelect.CurrentStage);
 
             SelectScreen.MenuSystem.PostEvent(new Events.SetupCombat(init));
@@ -262,7 +262,7 @@ namespace xnaMugen.Menus
             }
         }
 
-        public string VersusMode => "Team Versus";
+        public string VersusMode => "Team Arcade";
 
         private ListIterator<PlayerSelect> PlayerProfiles => SelectScreen.MenuSystem.GetSubSystem<ProfileLoader>().PlayerProfiles;
 

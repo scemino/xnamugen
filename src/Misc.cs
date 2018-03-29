@@ -114,15 +114,15 @@ namespace xnaMugen
             }
         }
 
-        public static string GetMatePrefix(TeamSide side)
+        public static string GetMatePrefix(TeamMode mode, TeamSide side)
         {
             switch (side)
             {
                 case TeamSide.Left:
-                    return "p3";
+                    return mode == TeamMode.Turns? "p1.teammate" : "p3";
 
                 case TeamSide.Right:
-                    return "p4";
+                    return mode == TeamMode.Turns ? "p2.teammate" : "p4";
 
                 default:
                     throw new ArgumentOutOfRangeException(nameof(side));

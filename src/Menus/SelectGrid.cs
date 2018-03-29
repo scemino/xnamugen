@@ -58,7 +58,7 @@ namespace xnaMugen.Menus
 
         public void Draw()
         {
-            var cellbg = m_elements.GetElement("cell.bg") as Elements.StaticImage;
+            var cellbg = m_elements.GetElement("cell.bg") as StaticImage;
             if (cellbg == null) return;
 
             var sprite = cellbg.SpriteManager.GetSprite(cellbg.DataMap.SpriteId);
@@ -154,16 +154,16 @@ namespace xnaMugen.Menus
 
                     if (p1?.CurrentCell == xy && p2?.CurrentCell == xy)
                     {
-                        if (m_blinkval > 0) p1?.DrawCursorActive(location);
-                        else p2?.DrawCursorActive(location);
+                        if (m_blinkval > 0) p1.DrawCursorActive(location);
+                        else p2.DrawCursorActive(location);
                     }
                     else if (p1?.CurrentCell == xy)
                     {
-                        p1?.DrawCursorActive(location);
+                        p1.DrawCursorActive(location);
                     }
                     else if (p2?.CurrentCell == xy)
                     {
-                        p2?.DrawCursorActive(location);
+                        p2.DrawCursorActive(location);
                     }
                 }
             }

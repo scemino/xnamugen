@@ -37,6 +37,8 @@ namespace xnaMugen.Menus
 
         public TeamSelectState State { get; set; }
 
+        private bool m_self;
+
         public SelectData P1SelectData { get; }
 
         public SelectData P2SelectData { get; }
@@ -58,13 +60,14 @@ namespace xnaMugen.Menus
 
         public bool IsSelected => State == TeamSelectState.SelectSelf ? P1SelectData.IsSelected : P1SelectData.IsSelected && P2SelectData.IsSelected;
 
-        public TeamSelectData(SelectScreen selectscreen, ButtonMap buttonmap, TextSection textsection, string prefix, bool moveoverempty)
+        public TeamSelectData(SelectScreen selectscreen, ButtonMap buttonmap, TextSection textsection, string prefix, bool moveoverempty, bool self = true)
         {
             if (selectscreen == null) throw new ArgumentNullException(nameof(selectscreen));
             if (buttonmap == null) throw new ArgumentNullException(nameof(buttonmap));
             if (textsection == null) throw new ArgumentNullException(nameof(textsection));
             if (prefix == null) throw new ArgumentNullException(nameof(prefix));
 
+            m_self = self;
             P1SelectData = new SelectData(selectscreen, buttonmap, textsection, prefix, moveoverempty);
             P2SelectData = new SelectData(selectscreen, buttonmap, textsection, prefix, moveoverempty);
             m_selectscreen = selectscreen;
@@ -97,7 +100,7 @@ namespace xnaMugen.Menus
             if (State != TeamSelectState.TeamMode) return;
 
             // Title
-            m_elements.GetElement("selfTitle").Draw((Vector2)m_position);
+            m_elements.GetElement(m_self ? "selfTitle" : "enemyTitle").Draw((Vector2)m_position);
 
             // Cursor
             m_selectscreen.SpriteManager.Draw(m_cursorSpriteId, (Vector2)m_position,

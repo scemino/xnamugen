@@ -112,13 +112,6 @@ namespace xnaMugen.Combat
             base.Dispose(disposing);
         }
 
-        public Team GetWinningTeam()
-        {
-            if (Team1.VictoryStatus.Win) return Team1;
-            if (Team2.VictoryStatus.Win) return Team2;
-            return null;
-        }
-
         public void Set(EngineInitialization init)
         {
 			if (init == null) throw new ArgumentNullException(nameof(init));

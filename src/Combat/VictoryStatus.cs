@@ -19,18 +19,17 @@ namespace xnaMugen.Combat
 		public bool WinTime
 		{
 			get
-			{
-				if (WinKO) return false;
-				if (m_team.Engine.Clock.Time != 0) return false;
+            {
+                if (WinKO) return false;
+                if (m_team.Engine.Clock.Time != 0) return false;
 
-				var mylife = m_team.MainPlayer.Life + (m_team.TeamMate != null ? m_team.TeamMate.Life : 0);
-				var otherlife = m_team.OtherTeam.MainPlayer.Life + (m_team.OtherTeam.TeamMate != null ? m_team.OtherTeam.TeamMate.Life : 0);
-
-				return otherlife < mylife;
-			}
+                var mylife = GetLife(m_team);
+                var otherlife = GetLife(m_team);
+                return otherlife < mylife;
+            }
 		}
 
-		public bool WinPerfect
+        public bool WinPerfect
 		{
 			get 
 			{
@@ -43,7 +42,7 @@ namespace xnaMugen.Combat
 
 		public bool Lose => LoseKO || LoseTime;
 
-		public bool LoseKO => m_team.MainPlayer.Life == 0 && (m_team.TeamMate == null || m_team.TeamMate.Life == 0);
+        public bool LoseKO => GetLife(m_team) == 0;
 
 		public bool LoseTime
 		{
@@ -52,12 +51,23 @@ namespace xnaMugen.Combat
 				if (LoseKO) return false;
 				if (m_team.Engine.Clock.Time != 0) return false;
 
-				var mylife = m_team.MainPlayer.Life + (m_team.TeamMate != null ? m_team.TeamMate.Life : 0);
-				var otherlife = m_team.OtherTeam.MainPlayer.Life + (m_team.OtherTeam.TeamMate != null ? m_team.OtherTeam.TeamMate.Life : 0);
+                var mylife = GetLife(m_team);
+                var otherlife = GetLife(m_team.OtherTeam);
 
 				return otherlife > mylife;
 			}
 		}
+
+        private static int GetLife(Team team)
+        {
+	        if (team.Mode != TeamMode.Turns) return team.MainPlayer.Life + (team.TeamMate?.Life ?? 0);
+	        
+	        if (team.OtherTeam.Wins.Count == 0)
+	        {
+		        return team.MainPlayer.Life;
+	        }
+	        return team.TeamMate.Life;
+        }
 
 		#region Fields
 

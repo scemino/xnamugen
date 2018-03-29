@@ -22,12 +22,11 @@ namespace xnaMugen.Combat
             var winicon = textfile.GetSection("WinIcon");
 
             var prefix = Misc.GetPrefix(m_team.Side);
-            var matePrefix = Misc.GetMatePrefix(m_team.Side);
+            var matePrefix = Misc.GetMatePrefix(m_team.Mode, m_team.Side);
             var elements = m_team.Engine.Elements;
 
             m_lifebg0 = elements.Build(prefix + "lifebar.bg0", lifebar, prefix + ".bg0");
             m_lifebg1 = elements.Build(prefix + "lifebar.bg1", lifebar, prefix + ".bg1");
-            m_lifebg2 = elements.Build(prefix + "lifebar.bg2", lifebar, prefix + ".bg2");
             m_lifemid = elements.Build(prefix + "lifebar.mid", lifebar, prefix + ".mid");
             m_lifefront = elements.Build(prefix + "lifebar.front", lifebar, prefix + ".front");
 
@@ -35,15 +34,14 @@ namespace xnaMugen.Combat
             {
                 m_mateLifebg0 = elements.Build(matePrefix + "lifebar.bg0", lifebar, matePrefix + ".bg0");
                 m_mateLifebg1 = elements.Build(matePrefix + "lifebar.bg1", lifebar, matePrefix + ".bg1");
-                m_mateLifebg2 = elements.Build(matePrefix + "lifebar.bg2", lifebar, matePrefix + ".bg2");
                 m_mateLifemid = elements.Build(matePrefix + "lifebar.mid", lifebar, matePrefix + ".mid");
                 m_mateLifefront = elements.Build(matePrefix + "lifebar.front", lifebar, matePrefix + ".front");
-                m_mateLifebarPosition = (Vector2)lifebar.GetAttribute<Point>(matePrefix + ".pos");
+                m_mateLifebarPosition = (Vector2) lifebar.GetAttribute<Point>(matePrefix + ".pos");
+                m_mateLifeBarRange = lifebar.GetAttribute<Point>(matePrefix + ".range.x");
             }
 
             m_powerbg0 = elements.Build(prefix + "powerbar.bg0", powerbar, prefix + ".bg0");
             m_powerbg1 = elements.Build(prefix + "powerbar.bg1", powerbar, prefix + ".bg1");
-            m_powerbg2 = elements.Build(prefix + "powerbar.bg2", powerbar, prefix + ".bg2");
             m_powermid = elements.Build(prefix + "powerbar.mid", powerbar, prefix + ".mid");
             m_powerfront = elements.Build(prefix + "powerbar.front", powerbar, prefix + ".front");
             m_powercounter = elements.Build(prefix + "powerbar.counter", powerbar, prefix + ".counter");
@@ -51,12 +49,12 @@ namespace xnaMugen.Combat
             m_facebg = elements.Build(prefix + "face.bg", face, prefix + ".bg");
             m_faceimage = elements.Build(prefix + "face.face", face, prefix + ".face");
 
-            if (team.Mode == TeamMode.Simul)
+            if (team.Mode == TeamMode.Simul || team.Mode == TeamMode.Turns)
             {
                 m_mateFaceBg = elements.Build(matePrefix + "face.bg", face, matePrefix + ".bg");
                 m_mateFaceImage = elements.Build(matePrefix + "face.face", face, matePrefix + ".face");
-                m_mateFacePosition = (Vector2)face.GetAttribute<Point>(matePrefix + ".pos");
-                m_mateLifeBarRange = lifebar.GetAttribute<Point>(matePrefix + ".range.x");
+                m_mateFaceKo = elements.Build(matePrefix + "face.ko", face, matePrefix + ".ko");
+                m_mateFacePosition = (Vector2) face.GetAttribute<Point>(matePrefix + ".pos");
             }
 
             m_namelement = elements.Build(prefix + "name.name", name, prefix + ".name");
@@ -64,7 +62,7 @@ namespace xnaMugen.Combat
             if (team.Mode == TeamMode.Simul)
             {
                 m_mateNameElement = elements.Build(matePrefix + "name.name", name, matePrefix + ".name");
-                m_mateNamePosition = (Vector2)name.GetAttribute<Point>(matePrefix + ".pos");
+                m_mateNamePosition = (Vector2) name.GetAttribute<Point>(matePrefix + ".pos");
             }
 
             m_winiconnormal = elements.Build(prefix + "winicon.normal", winicon, prefix + ".n");
@@ -77,18 +75,17 @@ namespace xnaMugen.Combat
             m_winiconteammate = elements.Build(prefix + "winicon.teammate", winicon, prefix + ".teammate");
             m_winiconperfect = elements.Build(prefix + "winicon.perfect", winicon, prefix + ".perfect");
 
-            m_lifebarposition = (Vector2)lifebar.GetAttribute<Point>(prefix + ".pos");
+            m_lifebarposition = (Vector2) lifebar.GetAttribute<Point>(prefix + ".pos");
             m_lifebarrange = lifebar.GetAttribute<Point>(prefix + ".range.x");
 
-            m_powerbarposition = (Vector2)powerbar.GetAttribute<Point>(prefix + ".pos");
+            m_powerbarposition = (Vector2) powerbar.GetAttribute<Point>(prefix + ".pos");
             m_powerbarrange = powerbar.GetAttribute<Point>(prefix + ".range.x");
 
-            m_faceposition = (Vector2)face.GetAttribute<Point>(prefix + ".pos");
+            m_faceposition = (Vector2) face.GetAttribute<Point>(prefix + ".pos");
+            m_nameposition = (Vector2) name.GetAttribute<Point>(prefix + ".pos");
 
-            m_nameposition = (Vector2)name.GetAttribute<Point>(prefix + ".pos");
-
-            m_winiconposition = (Vector2)winicon.GetAttribute<Point>(prefix + ".pos");
-            m_winiconoffset = (Vector2)winicon.GetAttribute<Point>(prefix + ".iconoffset");
+            m_winiconposition = (Vector2) winicon.GetAttribute<Point>(prefix + ".pos");
+            m_winiconoffset = (Vector2) winicon.GetAttribute<Point>(prefix + ".iconoffset");
         }
 
         private static string GetLifebarSectionName(TeamMode mode)
@@ -137,16 +134,45 @@ namespace xnaMugen.Combat
 
         public void Draw()
         {
-            DrawLifebar(m_team.MainPlayer);
-            DrawMateLifebar(m_team.TeamMate);
+            if (m_team.Mode == TeamMode.Turns)
+            {
+                var player = m_team.OtherTeam.Wins.Count == 1 ? m_team.TeamMate : m_team.MainPlayer;
+                DrawLifebar(player);
+            }
+            else
+            {
+                DrawLifebar(m_team.MainPlayer);
+                DrawMateLifebar(m_team.TeamMate);
+            }
 
             DrawPowerbar(m_team.MainPlayer);
 
-            DrawFace(m_team.MainPlayer);
-            DrawMateFace(m_team.TeamMate);
+            if (m_team.Mode == TeamMode.Turns)
+            {
+                var player = m_team.OtherTeam.Wins.Count == 1 ? m_team.TeamMate : m_team.MainPlayer;
+                var matePlayer = m_team.OtherTeam.Wins.Count == 1 ? m_team.MainPlayer : m_team.TeamMate;
+                DrawFace(player);
+                DrawMateFace(matePlayer, m_team.OtherTeam.Wins.Count == 1);
+            }
+            else
+            {
+                DrawFace(m_team.MainPlayer);
+                DrawMateFace(m_team.TeamMate, false);
+            }
 
-            PrintName(m_team.MainPlayer);
-            PrintMateName(m_team.TeamMate);
+            
+            if (m_team.Mode == TeamMode.Turns)
+            {
+                var player = m_team.OtherTeam.Wins.Count == 1 ? m_team.TeamMate : m_team.MainPlayer;
+                var matePlayer = m_team.OtherTeam.Wins.Count == 1 ? m_team.MainPlayer : m_team.TeamMate;
+                PrintName(player);
+                PrintMateName(matePlayer);
+            }
+            else
+            {
+                PrintName(m_team.MainPlayer);
+                PrintMateName(m_team.TeamMate);
+            }
 
             DrawWinIcons();
         }
@@ -219,10 +245,12 @@ namespace xnaMugen.Combat
 
             if (m_lifefront.DataMap.Type == ElementType.Static)
             {
-                var life_percentage = Math.Max(0.0f, player.Life / (float)player.Constants.MaximumLife);
+                var life_percentage = Math.Max(0.0f, player.Life / (float) player.Constants.MaximumLife);
 
-                var drawstate = m_lifefront.SpriteManager.SetupDrawing(m_lifefront.DataMap.SpriteId, m_lifebarposition, Vector2.Zero, m_lifefront.DataMap.Scale, m_lifefront.DataMap.Flip);
-                drawstate.ScissorRectangle = CreateBarScissorRectangle(m_lifefront, m_lifebarposition, life_percentage, m_lifebarrange);
+                var drawstate = m_lifefront.SpriteManager.SetupDrawing(m_lifefront.DataMap.SpriteId, m_lifebarposition,
+                    Vector2.Zero, m_lifefront.DataMap.Scale, m_lifefront.DataMap.Flip);
+                drawstate.ScissorRectangle =
+                    CreateBarScissorRectangle(m_lifefront, m_lifebarposition, life_percentage, m_lifebarrange);
                 drawstate.Use();
             }
         }
@@ -249,10 +277,12 @@ namespace xnaMugen.Combat
 
             if (m_mateLifefront.DataMap.Type == ElementType.Static)
             {
-                var life_percentage = Math.Max(0.0f, player.Life / (float)player.Constants.MaximumLife);
+                var lifePercentage = Math.Max(0.0f, player.Life / (float) player.Constants.MaximumLife);
 
-                var drawstate = m_mateLifefront.SpriteManager.SetupDrawing(m_mateLifefront.DataMap.SpriteId, m_mateLifebarPosition, Vector2.Zero, m_mateLifefront.DataMap.Scale, m_mateLifefront.DataMap.Flip);
-                drawstate.ScissorRectangle = CreateBarScissorRectangle(m_mateLifefront, m_mateLifebarPosition, life_percentage, m_mateLifeBarRange);
+                var drawstate = m_mateLifefront.SpriteManager.SetupDrawing(m_mateLifefront.DataMap.SpriteId,
+                    m_mateLifebarPosition, Vector2.Zero, m_mateLifefront.DataMap.Scale, m_mateLifefront.DataMap.Flip);
+                drawstate.ScissorRectangle = CreateBarScissorRectangle(m_mateLifefront, m_mateLifebarPosition,
+                    lifePercentage, m_mateLifeBarRange);
                 drawstate.Use();
             }
         }
@@ -278,18 +308,21 @@ namespace xnaMugen.Combat
 
             if (m_powerfront != null && m_powerfront.DataMap.Type == ElementType.Static)
             {
-                var power_percentage = Math.Max(0.0f, player.Power / (float)player.Constants.MaximumPower);
+                var power_percentage = Math.Max(0.0f, player.Power / (float) player.Constants.MaximumPower);
 
-                var drawstate = m_powerfront.SpriteManager.SetupDrawing(m_powerfront.DataMap.SpriteId, m_powerbarposition, Vector2.Zero, m_powerfront.DataMap.Scale, m_powerfront.DataMap.Flip);
-                drawstate.ScissorRectangle = CreateBarScissorRectangle(m_powerfront, m_powerbarposition, power_percentage, m_powerbarrange);
+                var drawstate = m_powerfront.SpriteManager.SetupDrawing(m_powerfront.DataMap.SpriteId,
+                    m_powerbarposition, Vector2.Zero, m_powerfront.DataMap.Scale, m_powerfront.DataMap.Flip);
+                drawstate.ScissorRectangle = CreateBarScissorRectangle(m_powerfront, m_powerbarposition,
+                    power_percentage, m_powerbarrange);
                 drawstate.Use();
             }
 
-			if (m_powercounter.DataMap.Type == ElementType.Text)
-			{
-				var powertext = (player.Power / 1000).ToString();
-				m_team.Engine.Print(m_powercounter.DataMap.FontData, m_powerbarposition + m_powercounter.DataMap.Offset, powertext, null);
-			}
+            if (m_powercounter.DataMap.Type == ElementType.Text)
+            {
+                var powertext = (player.Power / 1000).ToString();
+                m_team.Engine.Print(m_powercounter.DataMap.FontData, m_powerbarposition + m_powercounter.DataMap.Offset,
+                    powertext, null);
+            }
         }
 
         private void DrawFace(Player player)
@@ -303,7 +336,9 @@ namespace xnaMugen.Combat
 
             if (m_faceimage != null && m_faceimage.DataMap.Type == ElementType.Static)
             {
-                var drawstate = player.SpriteManager.SetupDrawing(m_faceimage.DataMap.SpriteId, m_faceposition + m_faceimage.DataMap.Offset, Vector2.Zero, m_faceimage.DataMap.Scale, m_faceimage.DataMap.Flip);
+                var drawstate = player.SpriteManager.SetupDrawing(m_faceimage.DataMap.SpriteId,
+                    m_faceposition + m_faceimage.DataMap.Offset, Vector2.Zero, m_faceimage.DataMap.Scale,
+                    m_faceimage.DataMap.Flip);
 
                 player.PaletteFx.SetShader(drawstate.ShaderParameters);
 
@@ -311,10 +346,10 @@ namespace xnaMugen.Combat
             }
         }
 
-        private void DrawMateFace(Player player)
+        private void DrawMateFace(Player player, bool isKo)
         {
             if (player == null) return;
-            if (m_team.Mode == TeamMode.Turns) return;
+            if (m_team.Mode == TeamMode.Single) return;
 
             if (m_mateFaceBg.DataMap.Type == ElementType.Static || m_mateFaceBg.DataMap.Type == ElementType.Animation)
             {
@@ -324,12 +359,19 @@ namespace xnaMugen.Combat
             if (m_mateFaceImage != null && m_mateFaceImage.DataMap.Type == ElementType.Static)
             {
                 var drawstate = player.SpriteManager.SetupDrawing(
-                    m_mateFaceImage.DataMap.SpriteId, m_mateFacePosition + m_mateFaceImage.DataMap.Offset, 
+                    m_mateFaceImage.DataMap.SpriteId, m_mateFacePosition + m_mateFaceImage.DataMap.Offset,
                     Vector2.Zero, m_mateFaceImage.DataMap.Scale, m_mateFaceImage.DataMap.Flip);
 
                 player.PaletteFx.SetShader(drawstate.ShaderParameters);
 
                 drawstate.Use();
+            }
+
+            if (!isKo) return;
+            
+            if (m_mateFaceKo.DataMap.Type == ElementType.Static || m_mateFaceKo.DataMap.Type == ElementType.Animation)
+            {
+                m_mateFaceKo.Draw(m_mateFacePosition);
             }
         }
 
@@ -350,7 +392,8 @@ namespace xnaMugen.Combat
 
             if (m_mateNameElement.DataMap.Type == ElementType.Text)
             {
-                m_team.Engine.Print(m_mateNameElement.DataMap.FontData, m_mateNamePosition, player.Profile.DisplayName, null);
+                m_team.Engine.Print(m_mateNameElement.DataMap.FontData, m_mateNamePosition, player.Profile.DisplayName,
+                    null);
             }
         }
 
@@ -361,15 +404,16 @@ namespace xnaMugen.Combat
             var sprite = element.SpriteManager.GetSprite(element.DataMap.SpriteId);
             if (sprite == null) return new Rectangle();
 
-            var drawlocation = (Point)Video.Renderer.GetDrawLocation(sprite.Size, location, (Vector2)sprite.Axis, element.DataMap.Scale, element.DataMap.Flip);
+            var drawlocation = (Point) Video.Renderer.GetDrawLocation(sprite.Size, location, (Vector2) sprite.Axis,
+                element.DataMap.Scale, element.DataMap.Flip);
 
             var rectangle = new Rectangle();
-            rectangle.X = (int)element.DataMap.Offset.X + drawlocation.X + 1;
-            rectangle.Y = (int)element.DataMap.Offset.Y + drawlocation.Y;
+            rectangle.X = (int) element.DataMap.Offset.X + drawlocation.X + 1;
+            rectangle.Y = (int) element.DataMap.Offset.Y + drawlocation.Y;
             rectangle.Height = sprite.Size.Y + 1;
             rectangle.Width = sprite.Size.X + 1;
 
-            var position = (int)MathHelper.Lerp(range.X, range.Y, percentage);
+            var position = (int) MathHelper.Lerp(range.X, range.Y, percentage);
             if (position > 0)
             {
                 rectangle.Width = position + 2;
@@ -426,94 +470,87 @@ namespace xnaMugen.Combat
         private readonly ComboCounter m_combocounter;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        private readonly Elements.Base m_lifebg0;
+        private readonly Base m_lifebg0;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        private readonly Elements.Base m_lifebg1;
+        private readonly Base m_lifebg1;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        private readonly Elements.Base m_lifebg2;
+        private readonly Base m_lifemid;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        private readonly Elements.Base m_lifemid;
+        private readonly Base m_lifefront;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        private readonly Elements.Base m_lifefront;
+        private readonly Base m_powerbg0;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        private readonly Elements.Base m_powerbg0;
+        private readonly Base m_powerbg1;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        private readonly Elements.Base m_powerbg1;
+        private readonly Base m_powermid;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        private readonly Elements.Base m_powerbg2;
+        private readonly Base m_powerfront;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        private readonly Elements.Base m_powermid;
+        private readonly Base m_powercounter;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        private readonly Elements.Base m_powerfront;
+        private readonly Base m_facebg;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        private readonly Elements.Base m_powercounter;
+        private readonly Base m_faceimage;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        private readonly Elements.Base m_facebg;
+        private readonly Base m_namelement;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        private readonly Elements.Base m_faceimage;
+        private readonly Base m_winiconnormal;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        private readonly Elements.Base m_namelement;
+        private readonly Base m_winiconspecial;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        private readonly Elements.Base m_winiconnormal;
+        private readonly Base m_winiconhyper;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        private readonly Elements.Base m_winiconspecial;
+        private readonly Base m_winiconthrow;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        private readonly Elements.Base m_winiconhyper;
+        private readonly Base m_winiconcheese;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        private readonly Elements.Base m_winiconthrow;
+        private readonly Base m_winicontime;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        private readonly Elements.Base m_winiconcheese;
+        private readonly Base m_winiconsuicide;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        private readonly Elements.Base m_winicontime;
+        private readonly Base m_winiconteammate;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        private readonly Elements.Base m_winiconsuicide;
+        private readonly Base m_winiconperfect;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        private readonly Elements.Base m_winiconteammate;
+        private readonly Base m_mateLifebg0;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        private readonly Elements.Base m_winiconperfect;
+        private readonly Base m_mateLifebg1;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        private Base m_mateLifebg0;
+        private readonly Base m_mateLifemid;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        private Base m_mateLifebg1;
+        private readonly Base m_mateLifefront;
 
-        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        private Base m_mateLifebg2;
-
-        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        private Base m_mateLifemid;
-
-        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        private Base m_mateLifefront;
-        private Base m_mateFaceBg;
-        private Base m_mateFaceImage;
-        private Vector2 m_mateFacePosition;
-        private Base m_mateNameElement;
-        private Vector2 m_mateNamePosition;
-        private Point m_mateLifeBarRange;
+        private readonly Base m_mateFaceBg;
+        private readonly Base m_mateFaceImage;
+        private readonly Vector2 m_mateFacePosition;
+        private readonly Base m_mateNameElement;
+        private readonly Vector2 m_mateNamePosition;
+        private readonly Point m_mateLifeBarRange;
+        private readonly Base m_mateFaceKo;
 
         #endregion
     }

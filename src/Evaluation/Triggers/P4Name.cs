@@ -14,7 +14,7 @@ namespace xnaMugen.Evaluation.Triggers
 				return false;
 			}
 
-			var p4 = character.Team.TeamMate;
+            var p4 = character.Team.OtherTeam.TeamMate;
 
 			switch (@operator)
 			{
