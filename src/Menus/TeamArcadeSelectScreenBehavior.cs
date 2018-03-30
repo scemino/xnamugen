@@ -239,7 +239,7 @@ namespace xnaMugen.Menus
             var p21 = PlayerProfiles[p21index];
             var p22 = m_p2TeamInfo.TeamMode == TeamMode.Single ? null : PlayerProfiles[p22index];
 
-            var init = new Combat.EngineInitialization(CombatMode.TeamVersus,
+            var init = new Combat.EngineInitialization(CombatMode.TeamArcade,
                                                        m_p1TeamInfo.TeamMode,
                                                        m_p2TeamInfo.TeamMode,
                                                        p11.Profile, m_p1TeamInfo.P1SelectData.PaletteIndex, PlayerMode.Human,

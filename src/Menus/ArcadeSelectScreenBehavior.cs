@@ -137,7 +137,7 @@ namespace xnaMugen.Menus
             var p1 = PlayerProfiles[p1index];
             var p2 = PlayerProfiles[0];
 
-            var init = new Combat.EngineInitialization(CombatMode.Versus,
+            var init = new Combat.EngineInitialization(CombatMode.Arcade,
                                                        p1.Profile, m_p1info.PaletteIndex, PlayerMode.Human,
                                                        p2.Profile, 0, PlayerMode.Ai,
                                                        m_stageSelect.CurrentStage);

@@ -13,8 +13,7 @@ namespace xnaMugen.Evaluation.Triggers
 				return 0;
 			}
 
-#warning Not really implimented. Just a quick fix.
-			return 1;
+			return character.Engine.MatchNumber;
 		}
 
 		public static Node Parse(ParseState parsestate)
