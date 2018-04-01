@@ -3,6 +3,7 @@ using System.Diagnostics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
+using xnaMugen.Elements;
 
 namespace xnaMugen.Video
 {
@@ -13,18 +14,18 @@ namespace xnaMugen.Video
 			if (videosystem == null) throw new ArgumentNullException(nameof(videosystem));
 
 			m_videosystem = videosystem;
-			m_mode = DrawMode.Normal;
-			m_pixels = null;
-			m_palette = null;
-			m_scissorrect = Rectangle.Empty;
-			m_blending = new Blending();
+			Mode = DrawMode.Normal;
+			Pixels = null;
+			Palette = null;
+			ScissorRectangle = Rectangle.Empty;
+			Blending = new Blending();
 			m_drawdata = new List<DrawData>();
-			m_scale = Vector2.One;
-			m_axis = Vector2.Zero;
-			m_flip = SpriteEffects.None;
-			m_rotation = 0;
-			m_offset = Vector2.Zero;
-			m_stretch = Vector2.One;
+			Scale = Vector2.One;
+			Axis = Vector2.Zero;
+			Flip = SpriteEffects.None;
+			Rotation = 0;
+			Offset = Vector2.Zero;
+			Stretch = Vector2.One;
 			m_parameters = new ShaderParameters();
 		}
 
@@ -35,18 +36,18 @@ namespace xnaMugen.Video
 
 		public void Reset()
 		{
-			m_mode = DrawMode.Normal;
-			m_pixels = null;
-			m_palette = null;
-			m_scissorrect = Rectangle.Empty;
-			m_blending = new Blending();
+			Mode = DrawMode.Normal;
+			Pixels = null;
+			Palette = null;
+			ScissorRectangle = Rectangle.Empty;
+			Blending = new Blending();
 			m_drawdata.Clear();
-			m_scale = Vector2.One;
-			m_axis = Vector2.Zero;
-			m_flip = SpriteEffects.None;
-			m_rotation = 0;
-			m_offset = Vector2.Zero;
-			m_stretch = Vector2.One;
+			Scale = Vector2.One;
+			Axis = Vector2.Zero;
+			Flip = SpriteEffects.None;
+			Rotation = 0;
+			Offset = Vector2.Zero;
+			Stretch = Vector2.One;
 
 			m_parameters.Reset();
 		}
@@ -82,85 +83,65 @@ namespace xnaMugen.Video
 		{
 			return m_drawdata.GetEnumerator();
 		}
+		
+		public static Rectangle CreateBarScissorRectangle(Base element, Vector2 location, float percentage, Point range)
+		{
+			if (element == null) throw new ArgumentNullException(nameof(element));
+
+			var sprite = element.SpriteManager.GetSprite(element.DataMap.SpriteId);
+			if (sprite == null) return new Rectangle();
+
+			var drawlocation = (Point) Video.Renderer.GetDrawLocation(sprite.Size, location, (Vector2) sprite.Axis,
+				element.DataMap.Scale, element.DataMap.Flip);
+
+			var rectangle = new Rectangle();
+			rectangle.X = (int) element.DataMap.Offset.X + drawlocation.X + 1;
+			rectangle.Y = (int) element.DataMap.Offset.Y + drawlocation.Y;
+			rectangle.Height = sprite.Size.Y + 1;
+			rectangle.Width = sprite.Size.X + 1;
+
+			var position = (int) MathHelper.Lerp(range.X, range.Y, percentage);
+			if (position > 0)
+			{
+				rectangle.Width = position + 2;
+			}
+			else if (position < 0)
+			{
+				rectangle.Width = -position + 2;
+
+				rectangle.X += position - range.Y - 1;
+			}
+			else
+			{
+				rectangle.Width = 0;
+			}
+
+			return rectangle;
+		}
 
 		public ShaderParameters ShaderParameters => m_parameters;
 
-		public DrawMode Mode
-		{
-			get => m_mode;
+		public DrawMode Mode { get; set; }
 
-			set { m_mode = value; }
-		}
+		public Texture2D Pixels { get; set; }
 
-		public Texture2D Pixels
-		{
-			get => m_pixels;
+		public Texture2D Palette { get; set; }
 
-			set { m_pixels = value; }
-		}
+		public Rectangle ScissorRectangle { get; set; }
 
-		public Texture2D Palette
-		{
-			get => m_palette;
+		public Blending Blending { get; set; }
 
-			set { m_palette = value; }
-		}
+		public Vector2 Scale { get; set; }
 
-		public Rectangle ScissorRectangle
-		{
-			get => m_scissorrect;
+		public Vector2 Axis { get; set; }
 
-			set { m_scissorrect = value; }
-		}
+		public Vector2 Offset { get; set; }
 
-		public Blending Blending
-		{
-			get => m_blending;
+		public SpriteEffects Flip { get; set; }
 
-			set { m_blending = value; }
-		}
+		public float Rotation { get; set; }
 
-		public Vector2 Scale
-		{
-			get => m_scale;
-
-			set { m_scale = value; }
-		}
-
-		public Vector2 Axis
-		{
-			get => m_axis;
-
-			set { m_axis = value; }
-		}
-
-		public Vector2 Offset
-		{
-			get => m_offset;
-
-			set { m_offset = value; }
-		}
-
-		public SpriteEffects Flip
-		{
-			get => m_flip;
-
-			set { m_flip = value; }
-		}
-
-		public float Rotation
-		{
-			get => m_rotation;
-
-			set { m_rotation = value; }
-		}
-
-		public Vector2 Stretch
-		{
-			get => m_stretch;
-
-			set { m_stretch = value; }
-		}
+		public Vector2 Stretch { get; set; }
 
 		#region Fields
 
@@ -171,40 +152,7 @@ namespace xnaMugen.Video
 		private readonly ShaderParameters m_parameters;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		private DrawMode m_mode;
-
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		private Texture2D m_pixels;
-
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		private Texture2D m_palette;
-
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		private Rectangle m_scissorrect;
-
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		private Blending m_blending;
-
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		private Vector2 m_scale;
-
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		private Vector2 m_axis;
-
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		private Vector2 m_offset;
-
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		private SpriteEffects m_flip;
-
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		private List<DrawData> m_drawdata;
-
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		private float m_rotation;
-
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		private Vector2 m_stretch;
+		private readonly List<DrawData> m_drawdata;
 
 		#endregion
 	}

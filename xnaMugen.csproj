@@ -241,6 +241,7 @@
     </Compile>
     <Compile Include="src\Combat\HitPriority.cs" />
     <Compile Include="src\Combat\HitType.cs" />
+      <Compile Include="src\Combat\Lifebar.cs"/>
     <Compile Include="src\Combat\Logic\Base.cs" />
     <Compile Include="src\Combat\Logic\CombatOver.cs" />
     <Compile Include="src\Combat\Logic\DisplayRoundNumber.cs" />
