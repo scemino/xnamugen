@@ -175,6 +175,9 @@
   </Target>
   -->
   <ItemGroup>
+      <Reference Include="Mono.Options, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <HintPath>packages\Mono.Options.5.3.0.1\lib\net4-client\Mono.Options.dll</HintPath>
+      </Reference>
     <Reference Include="System" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="MonoGame.Framework">
@@ -465,6 +468,7 @@
     <Compile Include="src\Menus\VersusData.cs" />
     <Compile Include="src\Menus\VersusScreen.cs" />
     <Compile Include="src\Mugen.cs" />
+      <Compile Include="src\MugenOptions.cs"/>
     <Compile Include="src\PlayerCreation.cs" />
     <Compile Include="src\Point.cs" />
     <Compile Include="src\Profiles.cs" />

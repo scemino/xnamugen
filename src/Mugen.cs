@@ -2,7 +2,10 @@ using System;
 using Microsoft.Xna.Framework;
 using System.Diagnostics;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
+using xnaMugen.Evaluation;
 
 namespace xnaMugen
 {
@@ -14,12 +17,9 @@ namespace xnaMugen
 		/// <summary>
 		/// Initializes a new instance of this class. Sets game timing and default screen size.
 		/// </summary>
-		public Mugen(string[] args)
+		public Mugen(MugenOptions options)
 		{
-			if (args == null) throw new ArgumentNullException(nameof(args));
-
-			m_args = new List<string>(args);
-
+			Options = options;
 			IsFixedTimeStep = true;
 			TargetElapsedTime = TimeSpan.FromTicks(TimeSpan.TicksPerSecond / 60);
 			IsMouseVisible = true;
@@ -29,7 +29,7 @@ namespace xnaMugen
 			graphics.PreferredBackBufferHeight = ScreenSize.Y;
             graphics.ApplyChanges();
 
-			m_debugdraw = false;
+			DebugDraw = false;
 			m_takescreeshot = false;
 		}
 
@@ -129,18 +129,77 @@ namespace xnaMugen
 		{
 			base.BeginRun();
 
-            var recordingpath = m_args.Count > 0 ? m_args[0] : string.Empty;
+            var recordingpath = Options.RecordingPath ?? string.Empty;
 
 			var recording = BuildRecording(recordingpath);
 			if (recording != null)
 			{
 				m_subsystems.GetMainSystem<Menus.MenuSystem>().PostEvent(new Events.LoadReplay(recording));
 				m_subsystems.GetMainSystem<Menus.MenuSystem>().PostEvent(new Events.SwitchScreen(ScreenType.Replay));
+				return;
 			}
-			else
+
+			if (Options.Stage != null || Options.Player1 != null)
 			{
-				m_subsystems.GetMainSystem<Menus.MenuSystem>().PostEvent(new Events.SwitchScreen(ScreenType.Title));
+				var p1 = GetPlayer(Options.Player1);
+				var p2 = GetPlayer(Options.Player2);
+				var p3 = Options.Player3 != null ? GetPlayer(Options.Player3) : null;
+				var p4 = Options.Player4 != null ? GetPlayer(Options.Player4) : null;
+
+				StageProfile stage = null;
+				var stages = m_subsystems.GetMainSystem<Menus.MenuSystem>().GetSubSystem<ProfileLoader>().StageProfiles;
+				if (Options.Stage != null)
+				{
+					var filePath = $"stages/{Options.Stage}.def";
+					stage = stages.FirstOrDefault(o =>
+						string.Equals(o.Filepath, $"stages/{Options.Stage}.def", StringComparison.OrdinalIgnoreCase));
+					if (stage == null)
+					{
+						throw new EvaluationException($"Error message: Can't open stage :{filePath}");
+					}
+				}
+
+				stage = stage ?? stages.FirstOrDefault();
+
+				var team1Mode = p3 != null ? TeamMode.Simul : TeamMode.Single;
+				var team2Mode = p4 != null ? TeamMode.Simul : TeamMode.Single;
+				var init = new Combat.EngineInitialization(CombatMode.Versus,
+					team1Mode, team2Mode,
+					p1.Profile, 0, PlayerMode.Human, p3?.Profile, 0, PlayerMode.Ai,
+					p2.Profile, 0, PlayerMode.Human, p4?.Profile, 0, PlayerMode.Ai,
+					stage);
+
+				m_subsystems.GetMainSystem<Menus.MenuSystem>().PostEvent(new Events.SetupCombat(init));
+				m_subsystems.GetMainSystem<Menus.MenuSystem>().PostEvent(new Events.SwitchScreen(ScreenType.Versus));
+				return;
 			}
+
+			m_subsystems.GetMainSystem<Menus.MenuSystem>().PostEvent(new Events.SwitchScreen(ScreenType.Title));
+		}
+
+		private PlayerSelect GetPlayer(string name)
+		{
+			var playerProfiles = m_subsystems.GetMainSystem<Menus.MenuSystem>().GetSubSystem<ProfileLoader>().PlayerProfiles;
+			var playerPath = GetPlayerPath(name);
+			var player = playerPath != null
+				? playerProfiles.FirstOrDefault(o => o.Profile.DefinitionPath == playerPath)
+				: playerProfiles[0];
+			if (player == null)
+			{
+				throw new EvaluationException($"Error message: Cannot find character :{playerPath}");
+			}
+
+			return player;
+		}
+
+		private static string GetPlayerPath(string name)
+		{
+			string playerPath = null;
+			if (name != null)
+			{
+				playerPath = string.Equals(Path.GetExtension(name), ".def") ? name : $"chars/{name}/{name}.def";
+			}
+			return playerPath;
 		}
 
 		protected override void EndRun()
@@ -230,23 +289,14 @@ namespace xnaMugen
 		/// Gets or sets whether debug information is drawn to screen.
 		/// </summary>
 		/// <returns>true if debug information is drawn; false otherwise.</returns>
-		public bool DebugDraw
-		{
-			get => m_debugdraw;
-
-			set => m_debugdraw = value;
-		}
+		public bool DebugDraw { get; set; }
+		
+		public MugenOptions Options { get; }
 
 		#region Fields
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		private readonly List<string> m_args;
-
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		private SubSystems m_subsystems;
-
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		private bool m_debugdraw;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		private bool m_takescreeshot;

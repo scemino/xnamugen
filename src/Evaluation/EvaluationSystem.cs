@@ -5,7 +5,20 @@ using xnaMugen.Collections;
 
 namespace xnaMugen.Evaluation
 {
-	internal class EvaluationException : Exception { }
+	internal class EvaluationException : Exception
+	{
+		public EvaluationException()
+		{
+		}
+		
+		public EvaluationException(string message): base(message)
+		{
+		}
+		
+		public EvaluationException(string message, Exception exception): base(message, exception)
+		{
+		}
+	}
 
 	internal class EvaluationSystem : SubSystem
 	{
