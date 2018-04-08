@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using xnaMugen.Collections;
 using System.Globalization;
+using System.Linq;
 using xnaMugen.Combat;
 using xnaMugen.Evaluation;
 
@@ -99,13 +100,8 @@ namespace xnaMugen
 		[StringConversion(typeof(Keys))]
 		private object ToKeys(string s)
 		{
-			var sc = StringComparer.OrdinalIgnoreCase;
-			foreach (Keys key in Enum.GetValues(typeof(Keys)))
-			{
-				if (sc.Equals(key.ToString(), s)) return key;
-			}
-
-			return Failure;
+			if (!Enum.TryParse(s, true, out Keys key)) return Failure;
+			return key;
 		}
 
 		[StringConversion(typeof(string))]

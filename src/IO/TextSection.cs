@@ -74,17 +74,14 @@ namespace xnaMugen.IO
 			if (key == null) throw new ArgumentNullException(nameof(key));
 
 			var value = GetValue(key);
-			T returnvalue;
-
-			if (value != null)
+			if (value == null) return failover;
+			
+			if (m_filesystem.GetSubSystem<StringConverter>().TryConvert(value, out T returnvalue))
 			{
-				if (m_filesystem.GetSubSystem<StringConverter>().TryConvert(value, out returnvalue))
-				{
-					return returnvalue;
-				}
-
-				Log.Write(LogLevel.Warning, LogSystem.FileSystem, "Cannot convert '{1}' for key '{0}' to type: {2}", key, value, typeof(T).Name);
+				return returnvalue;
 			}
+
+			Log.Write(LogLevel.Warning, LogSystem.FileSystem, "Cannot convert '{1}' for key '{0}' to type: {2}", key, value, typeof(T).Name);
 
 			return failover;
 		}

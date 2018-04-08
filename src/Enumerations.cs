@@ -64,7 +64,21 @@ namespace xnaMugen
 	internal enum PlayerButton { None = 0, Up = 1, Down = 2, Left = 4, Right = 8, A = 16, B = 32, C = 64, X = 128, Y = 256, Z = 512, Taunt = 1024, Pause = 2048 }
 
 	[Flags]
-	internal enum SystemButton { None = 0, Pause = 1, PauseStep = 2, Quit = 4, DebugDraw = 8, FullLifeAndPower = 16, TestCheat = 32, TakeScreenshot = 64 }
+	internal enum SystemButton
+	{
+		None = 0,
+		Pause = 1,
+		PauseStep = 2,
+		Quit = 4,
+		DebugDraw = 8,
+		FullLifeAndPower = 16,
+		TestCheat = 32,
+		TakeScreenshot = 64,
+		SetPlayer1LifeToZero = 128,
+		SetPlayer2LifeToZero = 256,
+		SetBothPlayersLifeToOne = 512,
+		TimeOver = 1024
+	}
 
 	internal enum RoundState { None, PreIntro, Intro, Fight, PreOver, Over }
 

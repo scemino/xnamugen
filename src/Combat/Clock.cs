@@ -15,17 +15,17 @@ namespace xnaMugen.Combat
             m_bgelement = Engine.Elements.Build("time bg", timesection, "bg");
             m_counterelement = Engine.Elements.Build("time counter", timesection, "counter");
 
-			m_time = -1;
+			Time = -1;
         }
 
 	    private string BuildTimeString()
 		{
-			return m_time >= 0 ? m_time.ToString() : "o";
+			return Time >= 0 ? Time.ToString() : "o";
 		}
 
 		public void Tick()
 		{
-			if (m_time > 0) --m_time;
+			if (Time > 0) --Time;
 		}
 
         public void Draw()
@@ -38,14 +38,9 @@ namespace xnaMugen.Combat
 			}
         }
 
-		public int Time
-		{
-			get => m_time;
+		public int Time { get; set; }
 
-			set { m_time = value; }
-		}
-
-        #region Fields
+	    #region Fields
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         private readonly Vector2 m_position;
@@ -56,9 +51,6 @@ namespace xnaMugen.Combat
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         private readonly Elements.Base m_counterelement;
 
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		private int m_time;
-
-        #endregion
+	    #endregion
     }
 }

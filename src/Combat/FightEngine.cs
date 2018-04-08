@@ -145,6 +145,20 @@ namespace xnaMugen.Combat
             }
         }
 
+        private void SetPlayerLifeTo(bool pressed, Character character, int life)
+        {
+            if (!pressed) return;
+            if (RoundState != RoundState.Fight) return;
+            character.Life = life;
+        }
+        
+        private void TimeOver(bool pressed)
+        {
+            if (!pressed) return;
+            if (RoundState != RoundState.Fight) return;
+            Clock.Time = 0;
+        }
+
         public int GenerateCharacterId()
         {
             return m_idcounter++;
@@ -163,6 +177,14 @@ namespace xnaMugen.Combat
             }
 
             inputstate[0].Add(SystemButton.FullLifeAndPower, RestoreLifeAndPower);
+            inputstate[0].Add(SystemButton.SetPlayer1LifeToZero, p => SetPlayerLifeTo(p, Team1.MainPlayer, 0));
+            inputstate[0].Add(SystemButton.SetPlayer2LifeToZero, p => SetPlayerLifeTo(p, Team2.MainPlayer, 0));
+            inputstate[0].Add(SystemButton.SetBothPlayersLifeToOne, p =>
+            {
+                SetPlayerLifeTo(p, Team1.MainPlayer, 1);
+                SetPlayerLifeTo(p, Team2.MainPlayer, 1);
+            });
+            inputstate[0].Add(SystemButton.TimeOver, TimeOver);
             inputstate[0].Add(SystemButton.TestCheat, Tester);
         }
 

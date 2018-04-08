@@ -12,8 +12,8 @@
 		/// <param name="button">The PlayerButton to reference.</param>
 		public ButtonWrapper(int buttonmap, PlayerButton button)
 		{
-			m_buttonmap = buttonmap;
-			m_button = (int)button;
+			MapIndex = buttonmap;
+			ButtonIndex = (int)button;
 		}
 
 		/// <summary>
@@ -23,33 +23,23 @@
 		/// <param name="button">The SystemButton to reference.</param>
 		public ButtonWrapper(int buttonmap, SystemButton button)
 		{
-			m_buttonmap = buttonmap;
-			m_button = (int)button;
-		}
-
-		public ButtonWrapper(int buttonmap, int buttonindex)
-		{
-			m_buttonmap = buttonmap;
-			m_button = buttonindex;
+			MapIndex = buttonmap;
+			ButtonIndex = (int)button;
 		}
 
 		/// <summary>
 		/// Returns the index of the ButtonMap.
 		/// </summary>
 		/// <returns>The index of the ButtonMap.</returns>
-		public int MapIndex => m_buttonmap;
+		public int MapIndex { get; }
 
 		/// <summary>
 		/// Returns the index of the button.
 		/// </summary>
 		/// <returns>The button index.</returns>
-		public int ButtonIndex => m_button;
+		public int ButtonIndex { get; }
 
 		#region Fields
-
-		private readonly int m_buttonmap;
-
-		private readonly int m_button;
 
 		#endregion
 	}

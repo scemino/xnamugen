@@ -16,8 +16,8 @@ namespace xnaMugen.Menus
 			var info = textfile.GetSection("info");
 			var files = textfile.GetSection("files");
 
-			m_motifname = info.GetAttribute("name", string.Empty);
-			m_motifauthor = info.GetAttribute("author", string.Empty);
+			MotifName = info.GetAttribute("name", string.Empty);
+			MotifAuthor = info.GetAttribute("author", string.Empty);
 
 			var fontmap = new Dictionary<int, Font>();
 
@@ -32,26 +32,26 @@ namespace xnaMugen.Menus
 			var fontpath3 = files.GetAttribute<string>("font3", null);
 			if (fontpath3 != null) fontmap[3] = spritesystem.LoadFont(fontpath3);
 
-			m_fontmap = new FontMap(fontmap);
+			FontMap = new FontMap(fontmap);
 
 			var soundpath = @"data/" + files.GetAttribute<string>("snd");
 			var spritepath = @"data/" + files.GetAttribute<string>("spr");
 			var animpath = textfile.Filepath;
 
-			m_titlescreen = new TitleScreen(this, textfile.GetSection("Title Info"), spritepath, animpath, soundpath);
-			m_titlescreen.LoadBackgrounds("Title", textfile);
+			TitleScreen = new TitleScreen(this, textfile.GetSection("Title Info"), spritepath, animpath, soundpath);
+			TitleScreen.LoadBackgrounds("Title", textfile);
 
-			m_versusscreen = new VersusScreen(this, textfile.GetSection("VS Screen"), spritepath, animpath, soundpath);
-			m_versusscreen.LoadBackgrounds("Versus", textfile);
+			VersusScreen = new VersusScreen(this, textfile.GetSection("VS Screen"), spritepath, animpath, soundpath);
+			VersusScreen.LoadBackgrounds("Versus", textfile);
 
 			SelectScreen = new SelectScreen(this, textfile.GetSection("Select Info"), spritepath, animpath, soundpath);
 			SelectScreen.LoadBackgrounds("Select", textfile);
 
-			m_combatscreen = new CombatScreen(this);
-			m_replayscreen = new RecordedCombatScreen(this);
+			CombatScreen = new CombatScreen(this);
+			ReplayScreen = new RecordedCombatScreen(this);
             StoryboardScreen = new StoryboardScreen(this);
 
-			m_currentscreen = null;
+			CurrentScreen = null;
 			m_newscreen = null;
 			m_fade = 0;
 			m_fadespeed = 0;
@@ -69,7 +69,7 @@ namespace xnaMugen.Menus
 		{
 			if (screen == null) throw new ArgumentNullException(nameof(screen));
 
-			if (m_currentscreen != null)
+			if (CurrentScreen != null)
 			{
 				m_newscreen = screen;
 
@@ -77,7 +77,7 @@ namespace xnaMugen.Menus
 			}
 			else
 			{
-				m_currentscreen = screen;
+				CurrentScreen = screen;
 
 				PostEvent(new Events.FadeScreen(FadeDirection.In));
 			}
@@ -130,7 +130,7 @@ namespace xnaMugen.Menus
 
 		public void Draw(bool debugdraw)
 		{
-			m_currentscreen.Draw(debugdraw);
+			CurrentScreen.Draw(debugdraw);
 		}
 
 		private void RunEvents()
@@ -254,7 +254,7 @@ namespace xnaMugen.Menus
 
 					if (m_newscreen != null)
 					{
-						m_currentscreen = m_newscreen;
+						CurrentScreen = m_newscreen;
 						m_newscreen = null;
 
 						FadeInScreen(CurrentScreen);
@@ -269,63 +269,39 @@ namespace xnaMugen.Menus
 		{
 			if (disposing)
 			{
-				if (m_titlescreen != null) m_titlescreen.Dispose();
+				if (TitleScreen != null) TitleScreen.Dispose();
 
-				if (m_versusscreen != null) m_versusscreen.Dispose();
+				if (VersusScreen != null) VersusScreen.Dispose();
 
 				SelectScreen?.Dispose();
 
-				if (m_fontmap != null) m_fontmap.Dispose();
+				if (FontMap != null) FontMap.Dispose();
 			}
 
 			base.Dispose(disposing);
 		}
 
-		public string MotifName => m_motifname;
+		public string MotifName { get; }
 
-		public string MotifAuthor => m_motifauthor;
+		public string MotifAuthor { get; }
 
-		public FontMap FontMap => m_fontmap;
+		public FontMap FontMap { get; }
 
-		public TitleScreen TitleScreen => m_titlescreen;
+		public TitleScreen TitleScreen { get; }
 
-        public SelectScreen SelectScreen { get; }
+		public SelectScreen SelectScreen { get; }
 
-		public VersusScreen VersusScreen => m_versusscreen;
+		public VersusScreen VersusScreen { get; }
 
-		public CombatScreen CombatScreen => m_combatscreen;
+		public CombatScreen CombatScreen { get; }
 
-		public RecordedCombatScreen ReplayScreen => m_replayscreen;
+		public RecordedCombatScreen ReplayScreen { get; }
 
-        public StoryboardScreen StoryboardScreen { get; private set; }
+		public StoryboardScreen StoryboardScreen { get; }
 
-		public Screen CurrentScreen => m_currentscreen;
+		public Screen CurrentScreen { get; private set; }
 
 		#region Fields
-
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		private readonly string m_motifname;
-
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		private readonly string m_motifauthor;
-
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		private readonly FontMap m_fontmap;
-
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		private readonly TitleScreen m_titlescreen;
-
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		private readonly VersusScreen m_versusscreen;
-
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		private readonly CombatScreen m_combatscreen;
-
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		private readonly RecordedCombatScreen m_replayscreen;
-
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		private Screen m_currentscreen;
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		private Screen m_newscreen;
